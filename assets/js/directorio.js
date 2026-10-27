@@ -109,16 +109,26 @@
 				params.append( 'search', filterSearch.value.trim() );
 			}
 
+			const fetchHeaders = {};
+			if ( restNonce && typeof restNonce === 'string' && restNonce.trim().length > 0 ) {
+				fetchHeaders['X-WP-Nonce'] = restNonce.trim();
+			}
+
 			fetch( restUrl + 'centros?' + params.toString(), {
-				headers: { 'X-WP-Nonce': restNonce }
+				headers: fetchHeaders
 			} )
-			.then( response => response.json() )
-			.then( data => {
+			.then( function( response ) {
+				if ( ! response.ok ) {
+					throw new Error( 'HTTP ' + response.status );
+				}
+				return response.json();
+			} )
+			.then( function( data ) {
 				loadingState.style.display = 'none';
 				currentCentros = data.centros || [];
 
 				if ( countNumber ) {
-					countNumber.textContent = String( data.total || currentCentros.length );
+					countNumber.textContent = String( data.total !== undefined ? data.total : currentCentros.length );
 				}
 
 				if ( currentCentros.length === 0 ) {
@@ -133,7 +143,8 @@
 					updateMapMarkers( currentCentros );
 				}
 			} )
-			.catch( () => {
+			.catch( function( err ) {
+				console.error( 'RadioEdu Conecta API error:', err );
 				loadingState.style.display = 'none';
 				noResultsState.style.display = 'block';
 			} );

@@ -19,6 +19,12 @@ defined( 'ABSPATH' ) || exit;
 
 <div id="radioedu-conecta-app" class="radioedu-app-container">
 
+	<?php if ( ! empty( $js_data ) ) : ?>
+		<script type="text/javascript">
+			window.radioeduConectaData = <?php echo wp_json_encode( $js_data ); ?>;
+		</script>
+	<?php endif; ?>
+
 	<!-- 1. HERO / BANNER PRINCIPAL -->
 	<header class="radioedu-hero-banner">
 		<div class="radioedu-hero-content">
