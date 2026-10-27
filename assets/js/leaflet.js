@@ -1,10 +1,10 @@
-Title: Live Content
+/*Title: Live Content
 
 Description: Fetched live
 
 Source: https://unpkg.com/leaflet@1.9.4/dist/leaflet.js
 
----
+*/
 
 /* @preserve
  * Leaflet 1.9.4, a JS library for interactive maps. https://leafletjs.com
