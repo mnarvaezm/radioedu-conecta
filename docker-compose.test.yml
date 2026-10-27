@@ -1,0 +1,48 @@
+services:
+  db:
+    image: mariadb:10.11
+    container_name: radioedu-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpresspassword
+    volumes:
+      - radioedu_db_data:/var/lib/mysql
+    networks:
+      - radioedu-net
+
+  wordpress:
+    image: wordpress:6.7-php8.2-apache
+    container_name: radioedu-wordpress
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      # Puerto 8090 para no colisionar con otros contenedores activos (80, 8080, 8097)
+      - "8090:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpresspassword
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DEBUG: 1
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_DEBUG_LOG', true );
+        define( 'WP_DEBUG_DISPLAY', false );
+        define( 'SCRIPT_DEBUG', true );
+    volumes:
+      - radioedu_wp_data:/var/www/html
+      # Mapeo del código del plugin en tiempo real
+      - .:/var/www/html/wp-content/plugins/radioedu-conecta
+    networks:
+      - radioedu-net
+
+networks:
+  radioedu-net:
+    driver: bridge
+
+volumes:
+  radioedu_db_data:
+  radioedu_wp_data:

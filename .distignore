@@ -1,0 +1,16 @@
+.git
+.gitignore
+.distignore
+.agents
+AGENTS.md
+BRIEFING.md
+composer.json
+composer.lock
+package.json
+package-lock.json
+node_modules
+tests
+*.zip
+*.log
+.DS_Store
+Thumbs.db
