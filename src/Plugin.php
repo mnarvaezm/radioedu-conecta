@@ -9,9 +9,14 @@ declare( strict_types=1 );
 
 namespace RadioEdu\Conecta;
 
+use RadioEdu\Conecta\Admin\CentroMetaBoxes;
+use RadioEdu\Conecta\Admin\Settings;
 use RadioEdu\Conecta\Capabilities\RoleCapabilities;
 use RadioEdu\Conecta\Database\ColaboracionesTable;
+use RadioEdu\Conecta\Frontend\DirectorioShortcode;
 use RadioEdu\Conecta\PostTypes\CentroPostType;
+use RadioEdu\Conecta\Rest\CentrosController;
+use RadioEdu\Conecta\Rest\ColaboracionesController;
 use RadioEdu\Conecta\Taxonomies\TaxonomiesRegistrar;
 
 defined( 'ABSPATH' ) || exit;
@@ -56,8 +61,29 @@ final class Plugin {
 		add_action( 'init', [ CentroPostType::class, 'register' ], 5 );
 		add_action( 'init', [ TaxonomiesRegistrar::class, 'register_all' ], 5 );
 
-		// 3. Comprobación y actualización de esquema en el admin.
-		add_action( 'admin_init', [ $this, 'maybe_update_db_schema' ] );
+		// 3. Registrar Meta Boxes y Ajustes del panel de administración.
+		if ( is_admin() ) {
+			CentroMetaBoxes::register();
+			Settings::register();
+			add_action( 'admin_init', [ $this, 'maybe_update_db_schema' ] );
+		}
+
+		// 4. Registrar endpoints de la REST API.
+		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
+
+		// 5. Registrar Shortcodes y Assets del Front-end.
+		DirectorioShortcode::register();
+	}
+
+	/**
+	 * Registra las rutas de la REST API de RadioEdu Conecta.
+	 */
+	public function register_rest_routes(): void {
+		$centros_controller = new CentrosController();
+		$centros_controller->register_routes();
+
+		$colaboraciones_controller = new ColaboracionesController();
+		$colaboraciones_controller->register_routes();
 	}
 
 	/**

@@ -1,0 +1,23 @@
+/**
+ * Estilos para el panel de administración de RadioEdu Conecta.
+ */
+.radioedu-metabox-wrapper .form-table th {
+	width: 220px;
+	font-weight: 600;
+}
+
+.radioedu-logo-preview-box {
+	display: inline-block;
+	padding: 8px;
+	background: #f8fafc;
+	border: 1px dashed #cbd5e1;
+	border-radius: 8px;
+	min-height: 60px;
+	vertical-align: middle;
+}
+
+.radioedu-logo-preview-box img {
+	display: block;
+	object-fit: cover;
+	box-shadow: 0 2px 6px rgba(0, 131, 143, 0.2);
+}

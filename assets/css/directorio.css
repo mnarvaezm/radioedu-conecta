@@ -1,0 +1,685 @@
+/**
+ * Estilos visuales del directorio RadioEdu Conecta - Traspasando Fronteras.
+ * Diseño moderno, accesible (WCAG 2.2 AA) y responsive.
+ */
+
+:root {
+	--radioedu-teal-dark: #006978;
+	--radioedu-teal-primary: #00838f;
+	--radioedu-teal-light: #e0f7fa;
+	--radioedu-teal-hover: #004d40;
+	--radioedu-coral: #e91e63;
+	--radioedu-coral-bg: #fce4ec;
+	--radioedu-mint: #00796b;
+	--radioedu-mint-bg: #e0f2f1;
+	--radioedu-blue: #1565c0;
+	--radioedu-blue-bg: #e3f2fd;
+	--radioedu-lavender: #6a1b9a;
+	--radioedu-lavender-bg: #f3e5f5;
+	--radioedu-gray-bg: #f8fafc;
+	--radioedu-text-dark: #0f172a;
+	--radioedu-text-muted: #64748b;
+	--radioedu-border: #e2e8f0;
+	--radioedu-radius-lg: 16px;
+	--radioedu-radius-md: 10px;
+	--radioedu-radius-sm: 6px;
+	--radioedu-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.04);
+	--radioedu-shadow-md: 0 6px 18px rgba(0, 131, 143, 0.08);
+	--radioedu-shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12);
+}
+
+.radioedu-app-container {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	color: var(--radioedu-text-dark);
+	max-width: 1360px;
+	margin: 0 auto;
+	padding: 16px;
+	box-sizing: border-box;
+}
+
+.radioedu-app-container * {
+	box-sizing: border-box;
+}
+
+/* 1. HERO BANNER */
+.radioedu-hero-banner {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 36px 40px;
+	background: linear-gradient(135deg, #e0f7fa 0%, #ffffff 50%, #e1f5fe 100%);
+	border-radius: var(--radioedu-radius-lg);
+	border: 1px solid #b2ebf2;
+	margin-bottom: 24px;
+	position: relative;
+	overflow: hidden;
+}
+
+.radioedu-hero-content {
+	max-width: 720px;
+}
+
+.radioedu-hero-title {
+	font-size: 2.3rem;
+	font-weight: 800;
+	color: var(--radioedu-teal-dark);
+	margin: 0 0 8px 0;
+	line-height: 1.2;
+}
+
+.radioedu-hero-subtitle {
+	font-size: 1.15rem;
+	color: #37474f;
+	margin: 0;
+	line-height: 1.5;
+}
+
+.radioedu-hero-badge {
+	flex-shrink: 0;
+	margin-left: 20px;
+}
+
+.radioedu-sticky-note {
+	background: #fff9c4;
+	border: 1px solid #fff59d;
+	padding: 14px 18px;
+	border-radius: 8px;
+	transform: rotate(2.5deg);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	display: flex;
+	flex-direction: column;
+	max-width: 200px;
+}
+
+.radioedu-note-quote {
+	font-size: 0.85rem;
+	font-style: italic;
+	color: #455a64;
+	margin-bottom: 4px;
+}
+
+.radioedu-note-caption {
+	font-size: 0.8rem;
+	font-weight: 700;
+	color: #00796b;
+	text-transform: uppercase;
+}
+
+/* 2. FILTERS BAR */
+.radioedu-filters-bar {
+	background: #ffffff;
+	padding: 20px 24px;
+	border-radius: var(--radioedu-radius-lg);
+	border: 1px solid var(--radioedu-border);
+	box-shadow: var(--radioedu-shadow-md);
+	margin-bottom: 24px;
+}
+
+.radioedu-filters-form {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 14px;
+	align-items: flex-end;
+}
+
+.radioedu-filter-group {
+	flex: 1 1 150px;
+	display: flex;
+	flex-direction: column;
+}
+
+.radioedu-search-group {
+	flex: 1.5 1 200px;
+}
+
+.radioedu-filter-label {
+	font-size: 0.82rem;
+	font-weight: 700;
+	color: var(--radioedu-text-dark);
+	margin-bottom: 6px;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.radioedu-filter-select,
+.radioedu-filter-input {
+	height: 42px;
+	border: 1px solid #cbd5e1;
+	border-radius: var(--radioedu-radius-md);
+	padding: 0 12px;
+	font-size: 0.9rem;
+	background-color: #ffffff;
+	color: var(--radioedu-text-dark);
+	transition: border-color 0.2s, box-shadow 0.2s;
+	width: 100%;
+}
+
+.radioedu-filter-select:focus,
+.radioedu-filter-input:focus {
+	border-color: var(--radioedu-teal-primary);
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(0, 131, 143, 0.15);
+}
+
+.radioedu-filter-action {
+	flex-shrink: 0;
+}
+
+.radioedu-btn-primary {
+	background-color: var(--radioedu-teal-primary);
+	color: #ffffff;
+	border: none;
+	border-radius: var(--radioedu-radius-md);
+	padding: 0 24px;
+	height: 42px;
+	font-size: 0.95rem;
+	font-weight: 600;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	transition: background-color 0.2s, transform 0.1s;
+}
+
+.radioedu-btn-primary:hover {
+	background-color: var(--radioedu-teal-dark);
+}
+
+.radioedu-btn-primary:active {
+	transform: scale(0.98);
+}
+
+/* 3. RESULTS & CONTROLS BAR */
+.radioedu-results-controls-bar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin-bottom: 20px;
+}
+
+.radioedu-heading-count {
+	font-size: 1.35rem;
+	font-weight: 700;
+	color: var(--radioedu-text-dark);
+	margin: 0;
+}
+
+.radioedu-controls-right {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+.radioedu-btn-toggle {
+	background: #ffffff;
+	border: 1px solid var(--radioedu-border);
+	padding: 8px 16px;
+	border-radius: var(--radioedu-radius-md);
+	font-size: 0.9rem;
+	font-weight: 600;
+	color: var(--radioedu-teal-dark);
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	transition: all 0.2s;
+}
+
+.radioedu-btn-toggle:hover,
+.radioedu-btn-toggle[aria-pressed="true"] {
+	background: var(--radioedu-teal-light);
+	border-color: var(--radioedu-teal-primary);
+	color: var(--radioedu-teal-dark);
+}
+
+.radioedu-sort-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.radioedu-sort-label {
+	font-size: 0.88rem;
+	color: var(--radioedu-text-muted);
+}
+
+.radioedu-sort-select {
+	height: 38px;
+	border: 1px solid #cbd5e1;
+	border-radius: var(--radioedu-radius-md);
+	padding: 0 10px;
+	font-size: 0.88rem;
+	background: #ffffff;
+}
+
+/* 4. CARDS GRID */
+.radioedu-cards-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+	gap: 24px;
+}
+
+.radioedu-card {
+	background: #ffffff;
+	border-radius: var(--radioedu-radius-lg);
+	border: 1px solid var(--radioedu-border);
+	box-shadow: var(--radioedu-shadow-sm);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	transition: transform 0.2s, box-shadow 0.2s;
+	position: relative;
+}
+
+.radioedu-card:hover {
+	transform: translateY(-4px);
+	box-shadow: var(--radioedu-shadow-lg);
+	border-color: #b2ebf2;
+}
+
+/* Header de la tarjeta */
+.radioedu-card-cover {
+	height: 150px;
+	background: linear-gradient(135deg, #00838f 0%, #00acc1 100%);
+	position: relative;
+	background-size: cover;
+	background-position: center;
+}
+
+.radioedu-card-fav-btn {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.9);
+	border: none;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1rem;
+	color: #64748b;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+	transition: color 0.2s, transform 0.1s;
+}
+
+.radioedu-card-fav-btn:hover {
+	color: var(--radioedu-coral);
+	transform: scale(1.1);
+}
+
+.radioedu-card-fav-btn.is-active {
+	color: var(--radioedu-coral);
+}
+
+.radioedu-card-logo {
+	position: absolute;
+	bottom: -22px;
+	left: 18px;
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	border: 3px solid #ffffff;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+	background: #ffffff;
+	object-fit: cover;
+}
+
+/* Cuerpo de la tarjeta */
+.radioedu-card-body {
+	padding: 30px 18px 18px 18px;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.radioedu-card-title {
+	font-size: 1.15rem;
+	font-weight: 700;
+	margin: 0 0 6px 0;
+	color: var(--radioedu-text-dark);
+}
+
+.radioedu-card-location {
+	font-size: 0.85rem;
+	color: var(--radioedu-text-muted);
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin-bottom: 14px;
+}
+
+.radioedu-flag-badge {
+	font-size: 1rem;
+}
+
+/* Píldoras / Tags */
+.radioedu-card-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-bottom: 18px;
+}
+
+.radioedu-tag {
+	font-size: 0.75rem;
+	font-weight: 600;
+	padding: 4px 10px;
+	border-radius: 20px;
+	text-decoration: none;
+	display: inline-block;
+}
+
+.radioedu-tag-mint {
+	background-color: var(--radioedu-mint-bg);
+	color: var(--radioedu-mint);
+}
+
+.radioedu-tag-coral {
+	background-color: var(--radioedu-coral-bg);
+	color: var(--radioedu-coral);
+}
+
+.radioedu-tag-blue {
+	background-color: var(--radioedu-blue-bg);
+	color: var(--radioedu-blue);
+}
+
+.radioedu-tag-lavender {
+	background-color: var(--radioedu-lavender-bg);
+	color: var(--radioedu-lavender);
+}
+
+/* Pie de tarjeta / Botones */
+.radioedu-card-footer {
+	display: flex;
+	gap: 10px;
+	margin-top: auto;
+	padding-top: 12px;
+	border-top: 1px solid #f1f5f9;
+}
+
+.radioedu-btn-secondary {
+	flex: 1;
+	background: #ffffff;
+	border: 1px solid #cbd5e1;
+	border-radius: var(--radioedu-radius-md);
+	padding: 8px 12px;
+	font-size: 0.88rem;
+	font-weight: 600;
+	color: var(--radioedu-teal-dark);
+	text-align: center;
+	text-decoration: none;
+	cursor: pointer;
+	transition: background 0.2s, border-color 0.2s;
+}
+
+.radioedu-btn-secondary:hover {
+	background: #f8fafc;
+	border-color: #94a3b8;
+}
+
+.radioedu-btn-match {
+	flex: 1.4;
+	background: var(--radioedu-teal-primary);
+	color: #ffffff;
+	border: none;
+	border-radius: var(--radioedu-radius-md);
+	padding: 8px 12px;
+	font-size: 0.88rem;
+	font-weight: 600;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	transition: background 0.2s;
+}
+
+.radioedu-btn-match:hover {
+	background: var(--radioedu-teal-dark);
+}
+
+/* 5. SLIDE-OUT DRAWER / OFFCANVAS */
+.radioedu-drawer-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(15, 23, 42, 0.4);
+	backdrop-filter: blur(3px);
+	z-index: 99998;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.3s, visibility 0.3s;
+}
+
+.radioedu-drawer-overlay.is-open {
+	opacity: 1;
+	visibility: visible;
+}
+
+.radioedu-match-drawer {
+	position: fixed;
+	top: 0;
+	right: 0;
+	width: 460px;
+	max-width: 95vw;
+	height: 100%;
+	background: #ffffff;
+	box-shadow: -6px 0 24px rgba(0, 0, 0, 0.15);
+	z-index: 99999;
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	transform: translateX(100%);
+	transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+	padding: 24px;
+}
+
+.radioedu-match-drawer.is-open {
+	transform: translateX(0);
+}
+
+.radioedu-drawer-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	padding-bottom: 16px;
+	border-bottom: 1px solid var(--radioedu-border);
+	margin-bottom: 20px;
+}
+
+.radioedu-drawer-title {
+	font-size: 1.4rem;
+	font-weight: 700;
+	color: var(--radioedu-text-dark);
+	margin: 0 0 4px 0;
+}
+
+.radioedu-drawer-subtitle {
+	font-size: 0.9rem;
+	color: var(--radioedu-text-muted);
+	margin: 0;
+}
+
+.radioedu-btn-close {
+	background: none;
+	border: none;
+	font-size: 1.3rem;
+	cursor: pointer;
+	color: var(--radioedu-text-muted);
+	padding: 4px 8px;
+	border-radius: 4px;
+}
+
+.radioedu-btn-close:hover {
+	color: var(--radioedu-text-dark);
+	background: #f1f5f9;
+}
+
+/* Formulario Drawer */
+.radioedu-drawer-form {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	flex: 1;
+}
+
+.radioedu-form-field {
+	display: flex;
+	flex-direction: column;
+}
+
+.radioedu-form-row {
+	display: flex;
+	gap: 12px;
+}
+
+.radioedu-col-6 {
+	flex: 1;
+}
+
+.radioedu-form-label {
+	font-size: 0.85rem;
+	font-weight: 600;
+	margin-bottom: 6px;
+	color: var(--radioedu-text-dark);
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.radioedu-form-input,
+.radioedu-form-select,
+.radioedu-form-textarea {
+	border: 1px solid #cbd5e1;
+	border-radius: var(--radioedu-radius-md);
+	padding: 10px 12px;
+	font-size: 0.9rem;
+	font-family: inherit;
+	width: 100%;
+}
+
+.radioedu-form-input:focus,
+.radioedu-form-select:focus,
+.radioedu-form-textarea:focus {
+	border-color: var(--radioedu-teal-primary);
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(0, 131, 143, 0.15);
+}
+
+.radioedu-btn-submit {
+	background: var(--radioedu-teal-primary);
+	color: #ffffff;
+	border: none;
+	border-radius: var(--radioedu-radius-md);
+	padding: 12px 20px;
+	font-size: 1rem;
+	font-weight: 700;
+	cursor: pointer;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	transition: background 0.2s;
+	margin-top: 8px;
+}
+
+.radioedu-btn-submit:hover {
+	background: var(--radioedu-teal-dark);
+}
+
+.radioedu-drawer-feedback {
+	padding: 12px 14px;
+	border-radius: var(--radioedu-radius-md);
+	font-size: 0.88rem;
+	line-height: 1.4;
+}
+
+.radioedu-feedback-success {
+	background: #e8f5e9;
+	color: #1b5e20;
+	border: 1px solid #c8e6c9;
+}
+
+.radioedu-feedback-error {
+	background: #ffebee;
+	color: #b71c1c;
+	border: 1px solid #ffcdd2;
+}
+
+/* Guía inferior 3 pasos */
+.radioedu-drawer-guide {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #f8fafc;
+	padding: 16px;
+	border-radius: var(--radioedu-radius-md);
+	margin-top: 24px;
+	border: 1px solid var(--radioedu-border);
+}
+
+.radioedu-guide-step {
+	text-align: center;
+	font-size: 0.78rem;
+	color: var(--radioedu-text-dark);
+	flex: 1;
+}
+
+.radioedu-guide-step p {
+	margin: 2px 0 0 0;
+	font-size: 0.72rem;
+	color: var(--radioedu-text-muted);
+}
+
+.radioedu-guide-arrow {
+	color: #94a3b8;
+	font-size: 0.9rem;
+}
+
+/* SPINNER & EMPTY STATE */
+.radioedu-loading-state,
+.radioedu-no-results-state {
+	text-align: center;
+	padding: 60px 20px;
+	grid-column: 1 / -1;
+}
+
+.radioedu-spinner {
+	width: 44px;
+	height: 44px;
+	border: 4px solid #b2ebf2;
+	border-top-color: var(--radioedu-teal-primary);
+	border-radius: 50%;
+	animation: radioedu-spin 0.8s linear infinite;
+	margin: 0 auto 16px auto;
+}
+
+@keyframes radioedu-spin {
+	to { transform: rotate(360deg); }
+}
+
+.radioedu-no-results-icon {
+	font-size: 3rem;
+	margin-bottom: 12px;
+}
+
+@media (max-width: 900px) {
+	.radioedu-hero-banner {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 20px;
+	}
+	.radioedu-hero-badge {
+		margin-left: 0;
+	}
+}
