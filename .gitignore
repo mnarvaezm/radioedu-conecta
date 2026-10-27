@@ -1,0 +1,18 @@
+# Dependencias
+/vendor/
+/node_modules/
+
+# Builds y empaquetado
+/build/
+*.zip
+
+# Logs y entornos locales
+*.log
+.env
+.env.local
+
+# IDEs y SO
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

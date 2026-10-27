@@ -1,0 +1,21 @@
+{
+  "name": "radioedu-conecta",
+  "version": "1.0.0",
+  "description": "Frontend assets and build scripts for RadioEdu Conecta WordPress plugin.",
+  "main": "assets/js/directorio.js",
+  "scripts": {
+    "build": "wp-scripts build",
+    "start": "wp-scripts start",
+    "lint:js": "wp-scripts lint-js src assets",
+    "lint:css": "wp-scripts lint-style assets"
+  },
+  "keywords": [
+    "wordpress",
+    "plugin",
+    "radioedu",
+    "radio-escolar",
+    "educarex"
+  ],
+  "author": "RadioEdu - Junta de Extremadura",
+  "license": "GPL-2.0-or-later"
+}

@@ -1,0 +1,25 @@
+{
+  "name": "radioedu/radioedu-conecta",
+  "description": "Directorio colaborativo y sistema de propuestas para la red de radios escolares Traspasando Fronteras (RadioEdu - Educarex).",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "RadioEdu - Junta de Extremadura",
+      "homepage": "https://radioedu.educarex.es"
+    }
+  ],
+  "require": {
+    "php": ">=8.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "RadioEdu\\Conecta\\": "src/"
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "sort-packages": true,
+    "allow-plugins": {}
+  }
+}
