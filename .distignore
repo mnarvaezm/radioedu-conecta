@@ -4,6 +4,9 @@
 .agents
 AGENTS.md
 BRIEFING.md
+ARCHITECTURE.md
+TESTING-PROTOCOL.md
+docker-compose.test.yml
 composer.json
 composer.lock
 package.json
