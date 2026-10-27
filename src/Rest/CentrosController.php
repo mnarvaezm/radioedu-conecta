@@ -208,8 +208,44 @@ class CentrosController extends WP_REST_Controller {
 	public function prepare_item_for_response( $post_id, $request ): array {
 		$title      = get_the_title( $post_id );
 		$logo_id    = (int) get_post_meta( $post_id, '_radioedu_logo_id', true );
-		$logo_url   = $logo_id ? wp_get_attachment_image_url( $logo_id, 'thumbnail' ) : '';
-		$thumb_url  = get_the_post_thumbnail_url( $post_id, 'medium_large' ) ?: '';
+		$logo_url   = $logo_id ? wp_get_attachment_image_url( $logo_id, 'thumbnail' ) : (string) get_post_meta( $post_id, '_radioedu_logo_url', true );
+		$thumb_url  = get_the_post_thumbnail_url( $post_id, 'medium_large' ) ?: (string) get_post_meta( $post_id, '_radioedu_cover_url', true );
+
+		// Fallback automático para centros de ejemplo si no tienen imagen personalizada asignada.
+		$post_name = (string) get_post_field( 'post_name', $post_id );
+		if ( empty( $thumb_url ) ) {
+			$demo_covers = [
+				'sierra-de-gata' => 'header-sierra-gata.jpg',
+				'montjuic'       => 'header-montjuic.jpg',
+				'la-mar'         => 'header-la-mar.jpg',
+				'san-jose'       => 'header-san-jose.jpg',
+				'valle-de-tena'  => 'header-valle-tena.jpg',
+				'san-patricio'   => 'header-san-patricio.jpg',
+			];
+			foreach ( $demo_covers as $slug_part => $img_file ) {
+				if ( false !== strpos( $post_name, $slug_part ) && file_exists( RADIOEDU_CONECTA_DIR . 'assets/images/demo/' . $img_file ) ) {
+					$thumb_url = RADIOEDU_CONECTA_URL . 'assets/images/demo/' . $img_file;
+					break;
+				}
+			}
+		}
+
+		if ( empty( $logo_url ) ) {
+			$demo_logos = [
+				'sierra-de-gata' => 'logo-sierra-gata.jpg',
+				'montjuic'       => 'logo-montjuic.jpg',
+				'la-mar'         => 'logo-la-mar.jpg',
+				'san-jose'       => 'logo-san-jose.jpg',
+				'valle-de-tena'  => 'logo-valle-tena.jpg',
+				'san-patricio'   => 'logo-san-patricio.jpg',
+			];
+			foreach ( $demo_logos as $slug_part => $img_file ) {
+				if ( false !== strpos( $post_name, $slug_part ) && file_exists( RADIOEDU_CONECTA_DIR . 'assets/images/demo/' . $img_file ) ) {
+					$logo_url = RADIOEDU_CONECTA_URL . 'assets/images/demo/' . $img_file;
+					break;
+				}
+			}
+		}
 		$bandera    = (string) get_post_meta( $post_id, '_radioedu_bandera', true );
 		$lat        = (string) get_post_meta( $post_id, '_radioedu_lat', true );
 		$lng        = (string) get_post_meta( $post_id, '_radioedu_lng', true );
