@@ -1,6 +1,6 @@
 <?php
 /**
- * Shortcode y renderizado del directorio Traspasando Fronteras.
+ * Shortcode, vista de perfil individual y renderizado del directorio Traspasando Fronteras.
  *
  * @package RadioEdu\Conecta\Frontend
  */
@@ -10,13 +10,14 @@ declare( strict_types=1 );
 namespace RadioEdu\Conecta\Frontend;
 
 use RadioEdu\Conecta\Admin\Settings;
+use RadioEdu\Conecta\PostTypes\CentroPostType;
 use RadioEdu\Conecta\Rest\ColaboracionesController;
 use RadioEdu\Conecta\Taxonomies\TaxonomiesRegistrar;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Gestiona el registro del shortcode [radioedu_directorio] y la carga de sus assets.
+ * Gestiona el registro del shortcode [radioedu_directorio], la ficha single de centro y sus assets.
  */
 class DirectorioShortcode {
 
@@ -26,22 +27,30 @@ class DirectorioShortcode {
 	public const SHORTCODE_TAG = 'radioedu_directorio';
 
 	/**
-	 * Registra el shortcode en WordPress.
+	 * Registra el shortcode y el filtro de perfil individual en WordPress.
 	 */
 	public static function register(): void {
 		add_shortcode( self::SHORTCODE_TAG, [ self::class, 'render_shortcode' ] );
 		add_action( 'wp_enqueue_scripts', [ self::class, 'register_assets' ] );
+		add_filter( 'the_content', [ self::class, 'render_single_centro_profile' ], 20 );
 	}
 
 	/**
 	 * Registra los assets de front-end para su posterior encolado condicional.
 	 */
 	public static function register_assets(): void {
+		$css_ver = file_exists( RADIOEDU_CONECTA_DIR . 'assets/css/directorio.css' )
+			? (string) filemtime( RADIOEDU_CONECTA_DIR . 'assets/css/directorio.css' )
+			: RADIOEDU_CONECTA_VERSION;
+		$js_ver  = file_exists( RADIOEDU_CONECTA_DIR . 'assets/js/directorio.js' )
+			? (string) filemtime( RADIOEDU_CONECTA_DIR . 'assets/js/directorio.js' )
+			: RADIOEDU_CONECTA_VERSION;
+
 		wp_register_style(
 			'radioedu-directorio-css',
 			RADIOEDU_CONECTA_URL . 'assets/css/directorio.css',
 			[],
-			RADIOEDU_CONECTA_VERSION
+			$css_ver
 		);
 
 		// Librería Leaflet para mapa (embebida localmente sin CDNs de terceros para cumplimiento RGPD).
@@ -67,12 +76,174 @@ class DirectorioShortcode {
 			'radioedu-directorio-js',
 			RADIOEDU_CONECTA_URL . 'assets/js/directorio.js',
 			[ 'radioedu-leaflet-js' ],
-			RADIOEDU_CONECTA_VERSION,
+			$js_ver,
 			[
 				'in_footer' => true,
 				'strategy'  => 'defer',
 			]
 		);
+
+		// Encolar estilos automáticamente en la página de perfil individual de una emisora.
+		if ( is_singular( CentroPostType::POST_TYPE ) ) {
+			wp_enqueue_style( 'radioedu-directorio-css' );
+		}
+	}
+
+	/**
+	 * Renderiza la ficha completa del perfil de la radio escolar en su vista individual.
+	 *
+	 * @param string $content Contenido original del post.
+	 * @return string HTML enriquecido del perfil del centro.
+	 */
+	public static function render_single_centro_profile( string $content ): string {
+		if ( ! is_singular( CentroPostType::POST_TYPE ) || ! in_the_loop() || ! is_main_query() ) {
+			return $content;
+		}
+
+		$post_id = (int) get_the_ID();
+		if ( $post_id <= 0 ) {
+			return $content;
+		}
+
+		$title     = get_the_title( $post_id );
+		$logo_id   = (int) get_post_meta( $post_id, '_radioedu_logo_id', true );
+		$logo_url  = $logo_id ? (string) wp_get_attachment_image_url( $logo_id, 'medium' ) : (string) get_post_meta( $post_id, '_radioedu_logo_url', true );
+		$cover_url = get_the_post_thumbnail_url( $post_id, 'large' ) ?: (string) get_post_meta( $post_id, '_radioedu_cover_url', true );
+
+		// Fallback para centros de ejemplo si no tienen imagen personalizada asignada.
+		$post_name = (string) get_post_field( 'post_name', $post_id );
+		if ( empty( $cover_url ) ) {
+			$demo_covers = [
+				'sierra-de-gata' => 'header-sierra-gata.jpg',
+				'montjuic'       => 'header-montjuic.jpg',
+				'la-mar'         => 'header-la-mar.jpg',
+				'san-jose'       => 'header-san-jose.jpg',
+				'valle-de-tena'  => 'header-valle-tena.jpg',
+				'san-patricio'   => 'header-san-patricio.jpg',
+			];
+			foreach ( $demo_covers as $slug_part => $img_file ) {
+				if ( false !== strpos( $post_name, $slug_part ) && file_exists( RADIOEDU_CONECTA_DIR . 'assets/images/demo/' . $img_file ) ) {
+					$cover_url = RADIOEDU_CONECTA_URL . 'assets/images/demo/' . $img_file;
+					break;
+				}
+			}
+		}
+
+		if ( empty( $logo_url ) ) {
+			$demo_logos = [
+				'sierra-de-gata' => 'logo-sierra-gata.jpg',
+				'montjuic'       => 'logo-montjuic.jpg',
+				'la-mar'         => 'logo-la-mar.jpg',
+				'san-jose'       => 'logo-san-jose.jpg',
+				'valle-de-tena'  => 'logo-valle-tena.jpg',
+				'san-patricio'   => 'logo-san-patricio.jpg',
+			];
+			foreach ( $demo_logos as $slug_part => $img_file ) {
+				if ( false !== strpos( $post_name, $slug_part ) && file_exists( RADIOEDU_CONECTA_DIR . 'assets/images/demo/' . $img_file ) ) {
+					$logo_url = RADIOEDU_CONECTA_URL . 'assets/images/demo/' . $img_file;
+					break;
+				}
+			}
+		}
+
+		$bandera     = (string) get_post_meta( $post_id, '_radioedu_bandera', true ) ?: 'es-ex';
+		$flag_emoji  = self::get_flag_emoji( $bandera );
+		$podcast_url = (string) get_post_meta( $post_id, '_radioedu_podcast_url', true );
+		$web_centro  = (string) get_post_meta( $post_id, '_radioedu_web_centro', true );
+		$edades      = (string) get_post_meta( $post_id, '_radioedu_edades', true );
+		$disponible  = '0' !== get_post_meta( $post_id, '_radioedu_disponible_colaborar', true );
+
+		// Ubicación.
+		$ubicacion      = '';
+		$localizaciones = get_the_terms( $post_id, TaxonomiesRegistrar::TAX_LOCALIZACION );
+		if ( ! empty( $localizaciones ) && ! is_wp_error( $localizaciones ) ) {
+			$loc_names = wp_list_pluck( $localizaciones, 'name' );
+			$ubicacion = implode( ', ', array_reverse( $loc_names ) );
+		}
+
+		// Idiomas.
+		$idiomas_texto = '';
+		$idiomas_terms = get_the_terms( $post_id, TaxonomiesRegistrar::TAX_IDIOMA );
+		if ( ! empty( $idiomas_terms ) && ! is_wp_error( $idiomas_terms ) ) {
+			$idiomas_texto = implode( ', ', wp_list_pluck( $idiomas_terms, 'name' ) );
+		}
+
+		// Etiquetas (Formatos, Temáticas, Etapas) idénticas a la tarjeta.
+		$tags = [];
+
+		$formatos = get_the_terms( $post_id, TaxonomiesRegistrar::TAX_FORMATO );
+		if ( ! empty( $formatos ) && ! is_wp_error( $formatos ) ) {
+			foreach ( $formatos as $term ) {
+				$tags[] = [
+					'name'  => $term->name,
+					'color' => 'mint',
+				];
+			}
+		}
+
+		$tematicas = get_the_terms( $post_id, TaxonomiesRegistrar::TAX_TEMATICA );
+		if ( ! empty( $tematicas ) && ! is_wp_error( $tematicas ) ) {
+			foreach ( $tematicas as $term ) {
+				$tags[] = [
+					'name'  => $term->name,
+					'color' => 'coral',
+				];
+			}
+		}
+
+		$etapas = get_the_terms( $post_id, TaxonomiesRegistrar::TAX_ETAPA );
+		if ( ! empty( $etapas ) && ! is_wp_error( $etapas ) ) {
+			foreach ( $etapas as $term ) {
+				$tags[] = [
+					'name'  => $term->name,
+					'color' => 'blue',
+				];
+			}
+		}
+
+		// URL de retorno al directorio Traspasando Fronteras.
+		$directorio_page = get_page_by_path( 'traspasando-fronteras' );
+		$directorio_url  = $directorio_page ? (string) get_permalink( $directorio_page->ID ) : home_url( '/' );
+
+		$raw_description_html = $content;
+
+		ob_start();
+		include RADIOEDU_CONECTA_DIR . 'templates/single-centro.php';
+		return (string) ob_get_clean();
+	}
+
+	/**
+	 * Devuelve el icono representativo de la bandera/región.
+	 *
+	 * @param string $code Código de bandera.
+	 * @return string Emoji o insignia.
+	 */
+	private static function get_flag_emoji( string $code ): string {
+		$flags = [
+			'es-ex' => '🟩⬜⬛',
+			'es-ct' => '🟨🟥',
+			'es-vc' => '🇪🇸',
+			'es-ar' => '🇪🇸',
+			'es-an' => '🟩⬜🟩',
+			'es-md' => '🇪🇸',
+			'es-ga' => '🇪🇸',
+			'es-pv' => '🇪🇸',
+			'es'    => '🇪🇸',
+			'pt'    => '🇵🇹',
+			'fr'    => '🇫🇷',
+			'it'    => '🇮🇹',
+			'ie'    => '🇮🇪',
+			'uk'    => '🇬🇧',
+			'de'    => '🇩🇪',
+			'mx'    => '🇲🇽',
+			'ar'    => '🇦🇷',
+			'co'    => '🇨🇴',
+			'cl'    => '🇨🇱',
+			'eu'    => '🇪🇺',
+			'world' => '🌍',
+		];
+
+		return $flags[ $code ] ?? '📻';
 	}
 
 	/**

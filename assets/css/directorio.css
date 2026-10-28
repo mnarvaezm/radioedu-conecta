@@ -683,3 +683,265 @@
 		margin-left: 0;
 	}
 }
+
+
+/* ==========================================================================
+   6. VISTA DE PERFIL INDIVIDUAL DE EMISORA ESCOLAR (single-radioedu_centro)
+   ========================================================================== */
+
+body.single-radioedu_centro .wp-block-post-title,
+body.single-radioedu_centro .wp-block-post-date,
+body.single-radioedu_centro .entry-header,
+body.single-radioedu_centro main > .wp-block-separator {
+	display: none !important;
+}
+
+.radioedu-single-profile {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	color: var(--radioedu-text-dark);
+	max-width: 980px !important;
+	width: 100%;
+	margin: 0 auto 48px auto;
+	box-sizing: border-box;
+}
+
+.radioedu-single-profile * {
+	box-sizing: border-box;
+}
+
+.radioedu-profile-topbar {
+	margin-bottom: 16px;
+}
+
+.radioedu-profile-back-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.92rem;
+	font-weight: 600;
+	color: var(--radioedu-teal-primary);
+	text-decoration: none;
+	padding: 6px 12px;
+	border-radius: var(--radioedu-radius-md);
+	background: var(--radioedu-teal-light);
+	transition: background 0.2s, color 0.2s;
+}
+
+.radioedu-profile-back-link:hover {
+	background: #b2ebf2;
+	color: var(--radioedu-teal-dark);
+}
+
+.radioedu-profile-card {
+	background: #ffffff;
+	border-radius: var(--radioedu-radius-lg);
+	border: 1px solid var(--radioedu-border);
+	box-shadow: var(--radioedu-shadow-lg);
+	overflow: hidden;
+}
+
+/* 6.1 Imagen de cabecera arriba */
+.radioedu-profile-cover {
+	height: 280px;
+	background: linear-gradient(135deg, #006978 0%, #00acc1 100%);
+	background-size: cover;
+	background-position: center;
+	position: relative;
+}
+
+.radioedu-profile-cover-overlay {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(to bottom, rgba(15, 23, 42, 0.15) 0%, rgba(15, 23, 42, 0.45) 100%);
+}
+
+.radioedu-profile-status-badge {
+	position: absolute;
+	top: 18px;
+	right: 18px;
+	background: rgba(255, 255, 255, 0.95);
+	padding: 6px 14px;
+	border-radius: 999px;
+	font-size: 0.82rem;
+	font-weight: 700;
+	color: var(--radioedu-text-dark);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+	z-index: 2;
+}
+
+/* 6.2 Bloque de identidad y datos debajo de la cabecera (a la izquierda) */
+.radioedu-profile-header-info {
+	padding: 0 36px 32px 36px;
+	text-align: left;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.radioedu-profile-identity {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	width: 100%;
+	margin-bottom: 18px;
+}
+
+.radioedu-profile-logo-wrap {
+	margin-top: -52px;
+	margin-bottom: 14px;
+	position: relative;
+	z-index: 3;
+}
+
+.radioedu-profile-logo {
+	width: 104px;
+	height: 104px;
+	border-radius: 50%;
+	border: 4px solid #ffffff;
+	background: #ffffff;
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+	object-fit: cover;
+	display: block;
+}
+
+.radioedu-profile-logo-placeholder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 2.5rem;
+	background: var(--radioedu-teal-light);
+}
+
+.radioedu-profile-title-block {
+	text-align: left;
+}
+
+.radioedu-profile-title {
+	font-size: 2rem;
+	font-weight: 800;
+	color: var(--radioedu-text-dark);
+	margin: 0 0 8px 0;
+	line-height: 1.2;
+}
+
+.radioedu-profile-location {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 1rem;
+	font-weight: 500;
+	color: var(--radioedu-text-muted);
+}
+
+.radioedu-profile-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 22px;
+	justify-content: flex-start;
+}
+
+.radioedu-profile-tags .radioedu-tag {
+	font-size: 0.84rem;
+	padding: 6px 14px;
+}
+
+.radioedu-profile-meta-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin-bottom: 24px;
+	width: 100%;
+	justify-content: flex-start;
+}
+
+.radioedu-profile-meta-item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	background: var(--radioedu-gray-bg);
+	border: 1px solid var(--radioedu-border);
+	border-radius: var(--radioedu-radius-md);
+	padding: 12px 18px;
+	min-width: 220px;
+}
+
+.radioedu-profile-meta-icon {
+	font-size: 1.4rem;
+}
+
+.radioedu-profile-meta-label {
+	display: block;
+	font-size: 0.76rem;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--radioedu-text-muted);
+	margin-bottom: 2px;
+}
+
+.radioedu-profile-meta-value {
+	display: block;
+	font-size: 0.95rem;
+	color: var(--radioedu-text-dark);
+}
+
+.radioedu-profile-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	justify-content: flex-start;
+	width: 100%;
+}
+
+.radioedu-profile-btn-inline {
+	flex: 0 0 auto !important;
+	padding: 10px 20px !important;
+	height: 42px;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	text-decoration: none;
+}
+
+/* 6.3 Texto descriptivo debajo */
+.radioedu-profile-description-section {
+	padding: 32px 36px 40px 36px;
+	border-top: 1px solid var(--radioedu-border);
+	background: #fafcfd;
+	text-align: left;
+}
+
+.radioedu-profile-section-heading {
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: var(--radioedu-teal-dark);
+	margin: 0 0 16px 0;
+}
+
+.radioedu-profile-description-content {
+	font-size: 1.05rem;
+	line-height: 1.75;
+	color: #334155;
+}
+
+.radioedu-profile-description-content p {
+	margin: 0 0 16px 0;
+}
+
+.radioedu-profile-description-content p:last-child {
+	margin-bottom: 0;
+}
+
+@media (max-width: 680px) {
+	.radioedu-profile-cover {
+		height: 200px;
+	}
+	.radioedu-profile-header-info,
+	.radioedu-profile-description-section {
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+	.radioedu-profile-title {
+		font-size: 1.55rem;
+	}
+}
