@@ -27,6 +27,13 @@ class DirectorioShortcode {
 	public const SHORTCODE_TAG = 'radioedu_directorio';
 
 	/**
+	 * Controla que window.radioeduConectaData no se inyecte más de una vez por petición.
+	 *
+	 * @var bool
+	 */
+	private static bool $inline_data_added = false;
+
+	/**
 	 * Registra el shortcode y el filtro de perfil individual en WordPress.
 	 */
 	public static function register(): void {
@@ -83,10 +90,86 @@ class DirectorioShortcode {
 			]
 		);
 
-		// Encolar estilos automáticamente en la página de perfil individual de una emisora.
+		// Encolar estilos y script del drawer en la página de perfil individual de una emisora.
 		if ( is_singular( CentroPostType::POST_TYPE ) ) {
 			wp_enqueue_style( 'radioedu-directorio-css' );
+			wp_enqueue_script( 'radioedu-directorio-js' );
 		}
+	}
+
+	/**
+	 * Obtiene los centros gestionados por el usuario actual y construye el payload para JS.
+	 *
+	 * @return array{user_center_id: int, user_center_name: string, user_centers_list: array<int, array{id: int, nombre: string}>, js_data: array<string, mixed>}
+	 */
+	private static function build_user_context_and_js_data(): array {
+		$current_user_id   = get_current_user_id();
+		$user_center_id    = 0;
+		$user_center_name  = '';
+		$user_centers_list = [];
+
+		if ( $current_user_id > 0 ) {
+			$managed_ids = ColaboracionesController::get_user_managed_center_ids( $current_user_id );
+
+			foreach ( $managed_ids as $p_id ) {
+				$c_title = get_the_title( $p_id );
+				if ( 0 === $user_center_id ) {
+					$user_center_id   = $p_id;
+					$user_center_name = $c_title;
+				}
+				$user_centers_list[] = [
+					'id'     => $p_id,
+					'nombre' => $c_title,
+				];
+			}
+		}
+
+		$js_data = [
+			'restUrl'        => esc_url_raw( rest_url( 'radioedu-conecta/v1/' ) ),
+			'restNonce'      => is_user_logged_in() ? wp_create_nonce( 'wp_rest' ) : '',
+			'isLoggedIn'     => is_user_logged_in(),
+			'loginUrl'       => esc_url_raw( wp_login_url( (string) get_permalink() ) ),
+			'canPropose'     => current_user_can( 'propose_radioedu_colaboracion' ),
+			'userCenterId'   => $user_center_id,
+			'userCenterName' => $user_center_name,
+			'userCenters'    => $user_centers_list,
+			'mapCenter'      => [
+				'lat'  => (float) Settings::get( 'default_lat', '39.4699' ),
+				'lng'  => (float) Settings::get( 'default_lng', '-6.3708' ),
+				'zoom' => (int) Settings::get( 'default_zoom', 8 ),
+			],
+			'i18n'           => [
+				'resultsCount'     => __( 'Resultados (%s centros)', 'radioedu-conecta' ),
+				'noResults'        => __( 'No se encontraron centros con los filtros seleccionados.', 'radioedu-conecta' ),
+				'loading'          => __( 'Cargando centros...', 'radioedu-conecta' ),
+				'viewProfile'      => __( 'Ver perfil', 'radioedu-conecta' ),
+				'proposeMatch'     => __( 'Proponer match', 'radioedu-conecta' ),
+				'unavailable'      => __( 'No disponible', 'radioedu-conecta' ),
+				'favorite'         => __( 'Añadir a favoritos', 'radioedu-conecta' ),
+				'sending'          => __( 'Enviando propuesta...', 'radioedu-conecta' ),
+				'sendSuccess'      => __( '¡Propuesta enviada con éxito!', 'radioedu-conecta' ),
+				'loginRequired'    => __( 'Debes iniciar sesión con tu cuenta de coordinador de centro para enviar propuestas de colaboración.', 'radioedu-conecta' ),
+				'noPermission'     => __( 'Tu cuenta actual no dispone de permisos de coordinador para proponer colaboraciones.', 'radioedu-conecta' ),
+				'selectYourCenter' => __( 'Por favor, selecciona tu centro escolar.', 'radioedu-conecta' ),
+				'errorOccurred'    => __( 'Ha ocurrido un error al procesar la solicitud.', 'radioedu-conecta' ),
+			],
+		];
+
+		if ( ! self::$inline_data_added ) {
+			wp_add_inline_script(
+				'radioedu-directorio-js',
+				'window.radioeduConectaData = ' . wp_json_encode( $js_data ) . ';',
+				'before'
+			);
+			self::$inline_data_added = true;
+		}
+
+		return [
+			'user_center_id'    => $user_center_id,
+			'user_center_name'  => $user_center_name,
+			'user_centers_list' => $user_centers_list,
+			'js_data'           => $js_data,
+		];
 	}
 
 	/**
@@ -104,6 +187,15 @@ class DirectorioShortcode {
 		if ( $post_id <= 0 ) {
 			return $content;
 		}
+
+		if ( ! wp_style_is( 'radioedu-directorio-css', 'registered' ) ) {
+			self::register_assets();
+		}
+		wp_enqueue_style( 'radioedu-directorio-css' );
+		wp_enqueue_script( 'radioedu-directorio-js' );
+
+		$user_ctx          = self::build_user_context_and_js_data();
+		$user_centers_list = $user_ctx['user_centers_list'];
 
 		$title     = get_the_title( $post_id );
 		$logo_id   = (int) get_post_meta( $post_id, '_radioedu_logo_id', true );
@@ -263,66 +355,10 @@ class DirectorioShortcode {
 		wp_enqueue_script( 'radioedu-leaflet-js' );
 		wp_enqueue_script( 'radioedu-directorio-js' );
 
-		// Determinar los centros que el usuario conectado coordina o puede gestionar.
-		$current_user_id   = get_current_user_id();
-		$user_center_id    = 0;
-		$user_center_name  = '';
-		$user_centers_list = [];
-
-		if ( $current_user_id > 0 ) {
-			$managed_ids = ColaboracionesController::get_user_managed_center_ids( $current_user_id );
-
-			foreach ( $managed_ids as $p_id ) {
-				$title = get_the_title( $p_id );
-				if ( 0 === $user_center_id ) {
-					$user_center_id   = $p_id;
-					$user_center_name = $title;
-				}
-				$user_centers_list[] = [
-					'id'     => $p_id,
-					'nombre' => $title,
-				];
-			}
-		}
-
-		// Preparar datos y textos para JavaScript de manera segura.
-		// El nonce solo se genera para usuarios autenticados para evitar fallos 403 con cachés de página.
-		$js_data = [
-			'restUrl'        => esc_url_raw( rest_url( 'radioedu-conecta/v1/' ) ),
-			'restNonce'      => is_user_logged_in() ? wp_create_nonce( 'wp_rest' ) : '',
-			'isLoggedIn'     => is_user_logged_in(),
-			'loginUrl'       => esc_url_raw( wp_login_url( (string) get_permalink() ) ),
-			'canPropose'     => current_user_can( 'propose_radioedu_colaboracion' ),
-			'userCenterId'   => $user_center_id,
-			'userCenterName' => $user_center_name,
-			'userCenters'    => $user_centers_list,
-			'mapCenter'      => [
-				'lat'  => (float) Settings::get( 'default_lat', '39.4699' ),
-				'lng'  => (float) Settings::get( 'default_lng', '-6.3708' ),
-				'zoom' => (int) Settings::get( 'default_zoom', 8 ),
-			],
-			'i18n'           => [
-				'resultsCount'     => __( 'Resultados (%s centros)', 'radioedu-conecta' ),
-				'noResults'        => __( 'No se encontraron centros con los filtros seleccionados.', 'radioedu-conecta' ),
-				'loading'          => __( 'Cargando centros...', 'radioedu-conecta' ),
-				'viewProfile'      => __( 'Ver perfil', 'radioedu-conecta' ),
-				'proposeMatch'     => __( 'Proponer match', 'radioedu-conecta' ),
-				'unavailable'      => __( 'No disponible', 'radioedu-conecta' ),
-				'favorite'         => __( 'Añadir a favoritos', 'radioedu-conecta' ),
-				'sending'          => __( 'Enviando propuesta...', 'radioedu-conecta' ),
-				'sendSuccess'      => __( '¡Propuesta enviada con éxito!', 'radioedu-conecta' ),
-				'loginRequired'    => __( 'Debes iniciar sesión con tu cuenta de coordinador de centro para enviar propuestas de colaboración.', 'radioedu-conecta' ),
-				'noPermission'     => __( 'Tu cuenta actual no dispone de permisos de coordinador para proponer colaboraciones.', 'radioedu-conecta' ),
-				'selectYourCenter' => __( 'Por favor, selecciona tu centro escolar.', 'radioedu-conecta' ),
-				'errorOccurred'    => __( 'Ha ocurrido un error al procesar la solicitud.', 'radioedu-conecta' ),
-			],
-		];
-
-		wp_add_inline_script(
-			'radioedu-directorio-js',
-			'window.radioeduConectaData = ' . wp_json_encode( $js_data ) . ';',
-			'before'
-		);
+		$user_ctx          = self::build_user_context_and_js_data();
+		$user_center_id    = $user_ctx['user_center_id'];
+		$user_center_name  = $user_ctx['user_center_name'];
+		$user_centers_list = $user_ctx['user_centers_list'];
 
 		// Obtener términos de taxonomías para los selectores de filtro.
 		$etapas      = get_terms(

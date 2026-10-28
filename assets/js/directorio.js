@@ -8,8 +8,9 @@
 	'use strict';
 
 	document.addEventListener( 'DOMContentLoaded', function() {
-		const appContainer = document.getElementById( 'radioedu-conecta-app' );
-		if ( ! appContainer ) {
+		const appContainer  = document.getElementById( 'radioedu-conecta-app' );
+		const singleProfile = document.querySelector( '.radioedu-single-profile' );
+		if ( ! appContainer && ! singleProfile ) {
 			return;
 		}
 
@@ -420,6 +421,18 @@
 			drawerOverlay.addEventListener( 'click', closeMatchDrawer );
 		}
 
+		// Botón "Proponer match" en la página de perfil individual de una emisora.
+		const singleMatchBtn = document.getElementById( 'radioedu-single-btn-match' );
+		if ( singleMatchBtn ) {
+			singleMatchBtn.addEventListener( 'click', function() {
+				openMatchDrawer( {
+					id: Number( singleMatchBtn.dataset.id || 0 ),
+					nombre: singleMatchBtn.dataset.nombre || '',
+					ubicacion: singleMatchBtn.dataset.ubicacion || ''
+				} );
+			} );
+		}
+
 		// Envío asíncrono del formulario de Match.
 		if ( matchForm ) {
 			matchForm.addEventListener( 'submit', function( e ) {
@@ -624,7 +637,9 @@
 			} );
 		}
 
-		// Carga inicial
-		fetchCentros( false );
+		// Carga inicial del directorio (solo si estamos en la página con #radioedu-conecta-app)
+		if ( appContainer && cardsContainer ) {
+			fetchCentros( false );
+		}
 	} );
 } )();
