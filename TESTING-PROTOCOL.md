@@ -1,6 +1,6 @@
 # Protocolo de Pruebas y Validación: RadioEdu Conecta
 
-Este protocolo describe paso a paso las pruebas funcionales, de seguridad, de base de datos y de compatibilidad necesarias para validar el plugin **RadioEdu Conecta** en un entorno Dockerizado, garantizando el cumplimiento de los estándares de WordPress.org y las directrices de `AGENTS.md`.
+Este protocolo describe paso a paso las pruebas funcionales, de seguridad, de base de datos y de compatibilidad necesarias para validar el plugin **RadioEdu Conecta** en el entorno Dockerizado, garantizando el cumplimiento de los estándares de WordPress.org y las directrices de `AGENTS.md`.
 
 ---
 
@@ -9,168 +9,59 @@ Este protocolo describe paso a paso las pruebas funcionales, de seguridad, de ba
 El archivo [docker-compose.test.yml](file:///c:/radioedu-conecta/docker-compose.test.yml) está preconfigurado con:
 * **WordPress**: 6.7 sobre PHP 8.2 (Apache).
 * **Base de Datos**: MariaDB 10.11.
-* **Puerto asignado**: `8090` (para evitar colisiones con otros servicios activos en los puertos 80 y 8080).
+* **Puerto asignado**: `8090` (`http://localhost:8090`).
 * **Modo Depuración Activo**: `WP_DEBUG=true`, `WP_DEBUG_LOG=true`, `SCRIPT_DEBUG=true`.
 * **Montaje en Vivo**: La carpeta local del plugin se monta directamente en `/var/www/html/wp-content/plugins/radioedu-conecta`.
 
 ---
 
-## 2. Fase 1: Despliegue del Contenedor
+## 2. Fase 1: Despliegue y Activación
 
 ### Paso 1.1: Iniciar los contenedores
-Ejecuta en la terminal PowerShell dentro del directorio del proyecto:
 ```powershell
 docker compose -f docker-compose.test.yml up -d
 ```
 
-### Paso 1.2: Verificar el estado
-Comprueba que los contenedores `radioedu-wordpress` y `radioedu-db` están corriendo:
+### Paso 1.2: Activar el plugin y sincronizar las 6 emisoras de demostración
+1. Accede a `http://localhost:8090/wp-admin` e inicia sesión.
+2. En **Plugins → Plugins instalados**, activa **RadioEdu Conecta**.
+3. Al activarlo en un sitio individual sin centros previos, se crean automáticamente las **6 emisoras de demostración** con sus imágenes de cabecera y logotipos, además de la página `/traspasando-fronteras/` con el shortcode `[radioedu_directorio]`.
+4. También puedes volver a sincronizarlas en cualquier momento desde **RadioEdu Centros → Ajustes → "Sincronizar / Cargar las 6 emisoras de ejemplo"**.
+
+### Paso 1.3: Verificar Tabla Personalizada y Logs
 ```powershell
-docker ps --filter "name=radioedu"
+docker exec radioedu-wordpress wp db query "DESCRIBE wp_radioedu_colaboraciones;" --allow-root
 ```
+*Criterio de éxito*: Deben figurar `id`, `centro_emisor_id`, `centro_receptor_id`, `usuario_emisor_id`, `idea_proyecto`, `curso_edades`, `idiomas`, `fechas_aprox`, `estado`, `respuesta_mensaje`, `created_at`, `updated_at`.
 
 ---
 
-## 3. Fase 2: Configuración Inicial de WordPress
-
-1. Abre el navegador en: **`http://localhost:8090`**.
-2. Completa la instalación guiada de WordPress:
-   * **Idioma**: Español.
-   * **Título del sitio**: *RadioEdu - Traspasando Fronteras (Test)*.
-   * **Usuario**: `admin`.
-   * **Contraseña**: `admin1234` *(entorno de pruebas local)*.
-   * **Correo electrónico**: `admin@educarex.local`.
-3. Inicia sesión en el panel de control: `http://localhost:8090/wp-admin`.
-
----
-
-## 4. Fase 3: Activación del Plugin y Verificación de BD
-
-### Paso 3.1: Activar el plugin
-1. Dirígete a **Plugins → Plugins instalados**.
-2. Localiza **RadioEdu Conecta** y pulsa **Activar**.
-3. Comprueba que aparece el nuevo elemento en el menú lateral: **RadioEdu Centros** con el icono de audio.
-
-### Paso 3.2: Verificar Base de Datos y Schemas
-Comprueba que la tabla personalizada `wp_radioedu_colaboraciones` ha sido creada correctamente:
-```powershell
-docker exec -it radioedu-wordpress bash -c "mysql -uwordpress -pwordpresspassword -hdb wordpress -e 'DESCRIBE wp_radioedu_colaboraciones;'"
-```
-*Criterio de éxito*: Deben figurar los campos `id`, `centro_emisor_id`, `centro_receptor_id`, `usuario_emisor_id`, `idea_proyecto`, `curso_edades`, `idiomas`, `fechas_aprox`, `estado`, `created_at`, `updated_at`.
-
-### Paso 3.3: Auditoría de Logs de Depuración
-Verifica que no se ha registrado ningún *Notice*, *Warning* o *Deprecated*:
-```powershell
-docker exec -it radioedu-wordpress cat /var/www/html/wp-content/debug.log
-```
-*Criterio de éxito*: El archivo debe estar vacío o no existir.
-
----
-
-## 5. Fase 4: Pruebas Funcionales y Población de Datos
-
-### Paso 4.1: Crear Centros de Prueba
-Crea al menos 3 centros desde **RadioEdu Centros → Añadir nuevo centro**:
-
-1. **Centro 1: IES Sierra de Gata Radio**
-   * *Título*: IES Sierra de Gata Radio
-   * *Contenido*: Proyecto de radio escolar en el entorno de la Sierra de Gata.
-   * *Foto de cabecera*: Sube una foto panorámica.
-   * *Logo de la radio*: Sube un logo circular en el metabox.
-   * *Bandera*: `Extremadura (España)`.
-   * *Coordenadas*: Latitud `40.2398`, Longitud `-6.7214`.
-   * *Taxonomías*:
-     * Etapas: *Secundaria*.
-     * Idiomas: *Español*.
-     * Temáticas: *Medioambiente*, *Rural*.
-     * Formatos: *Podcast*, *Entrevistas*.
-   * *Publicar*.
-
-2. **Centro 2: Ràdio Institut Montjuïc**
-   * *Título*: Ràdio Institut Montjuïc
-   * *Bandera*: `Cataluña (España)`.
-   * *Coordenadas*: Latitud `41.3667`, Longitud `2.1583`.
-   * *Taxonomías*:
-     * Etapas: *Secundaria*, *Bachillerato*.
-     * Idiomas: *Español*, *Catalán*.
-     * Temáticas: *Música*, *Cultura*.
-     * Formatos: *Entrevistas*, *Magacín*.
-   * *Publicar*.
-
-3. **Centro 3: Coláiste Dublin Radio**
-   * *Título*: Coláiste Dublin Radio
-   * *Bandera*: `Irlanda`.
-   * *Coordenadas*: Latitud `53.3498`, Longitud `-6.2603`.
-   * *Taxonomías*:
-     * Etapas: *Secundaria*.
-     * Idiomas: *Inglés*.
-     * Temáticas: *Proyectos europeos*, *Idiomas*.
-     * Formatos: *Podcast*.
-   * *Publicar*.
-
-### Paso 4.2: Publicar la Página del Directorio
-1. Dirígete a **Páginas → Añadir nueva página**.
-2. Título: *Traspasando Fronteras*.
-3. Contenido: Inserta un bloque de shortcode con:
-   ```text
-   [radioedu_directorio]
-   ```
-4. Pulsa **Publicar** y abre la página en el navegador.
-
----
-
-## 6. Fase 5: Validación de Interfaz y Filtros (Mockup Parity)
+## 3. Fase 2: Validación del Directorio, Mapa y Ficha de Perfil
 
 | ID | Prueba | Acción | Resultado Esperado |
 | :--- | :--- | :--- | :--- |
-| **TC-01** | **Carga inicial** | Cargar la página pública. | Se muestran el banner Hero, la barra de filtros, el contador de centros y la cuadrícula de tarjetas con fotos, logos circulares, banderas e insignias de colores. |
-| **TC-02** | **Filtro por Ubicación** | Seleccionar `Extremadura` en el desplegable de ubicación. | La lista se actualiza asíncronamente mostrando únicamente los centros extremeños sin recargar la página. |
-| **TC-03** | **Filtro por Idioma** | Seleccionar `Inglés`. | Se muestran sólo emisoras que emiten en inglés (ej. Coláiste Dublin Radio). |
-| **TC-04** | **Búsqueda por texto** | Escribir *Sierra* en "Busca colaboración con...". | Filtra al instante el IES Sierra de Gata Radio. |
-| **TC-05** | **Vista de mapa** | Pulsar el botón **"Vista de mapa"**. | El grid se oculta y aparece el mapa interactivo Leaflet con los marcadores geolocalizados. Al hacer clic en un pin, se abre el popup con los datos del centro. |
-| **TC-06** | **Sistema de Favoritos** | Pulsar el corazón (`♡`) en una tarjeta. | El corazón cambia a rojo (`❤️`) y persiste tras refrescar la página (`localStorage`). |
+| **TC-01** | **Carga inicial del directorio** | Abrir `http://localhost:8090/traspasando-fronteras/`. | Se muestran el banner Hero, la barra de filtros, el contador de centros y la cuadrícula de tarjetas con cabeceras, logos circulares, banderas e insignias de colores. |
+| **TC-02** | **Filtros facetados y búsqueda** | Filtrar por ubicación, idioma, etapa, temática, formato o texto libre. | La cuadrícula se actualiza asíncronamente vía `GET /wp-json/radioedu-conecta/v1/centros` sin recargar la página. |
+| **TC-03** | **Ordenación por Afinidad** | Seleccionar *"Más afines"* en "Ordenar por". | Prioriza los centros disponibles y ordena según coincidencias de taxonomías con el centro del usuario conectado. |
+| **TC-04** | **Vista de Mapa y Consentimiento RGPD** | Pulsar **"Vista de mapa"**. | Antes de conectar con `tile.openstreetmap.org`, se muestra el aviso RGPD. Al pulsar *"Aceptar y mostrar el mapa interactivo"*, se carga el mapa Leaflet con los marcadores y popups construidos con nodos DOM seguros. |
+| **TC-05** | **Ficha de Perfil Individual** | Pulsar **"Ver perfil"** en cualquier tarjeta (ej. `/centro-radioedu/ceip-san-jose/`). | Se muestra la ficha con imagen de cabecera arriba, insignia de disponibilidad, logo circular, nombre, bandera, ubicación, etiquetas de colores, edades, idiomas, botones de acción a la izquierda y descripción debajo. |
+| **TC-06** | **Solicitud de Match desde el Perfil** | Pulsar **"✈️ Proponer match"** dentro de la página de perfil individual de la emisora. | Se despliega directamente el panel lateral *"Solicitud de match"* en esa misma pantalla sin necesidad de volver al directorio. |
 
 ---
 
-## 7. Fase 6: Flujo de Match (Colaboraciones)
+## 4. Fase 3: Flujo Completo de Match y Seguridad (Anti-IDOR / Rate Limit)
 
 | ID | Prueba | Acción | Resultado Esperado |
 | :--- | :--- | :--- | :--- |
-| **TC-07** | **Apertura de Drawer** | Pulsar el botón **"Proponer match"** en una tarjeta. | Se despliega suavemente el panel lateral derecho con el centro receptor precargado y el formulario completo. |
-| **TC-08** | **Envío de Propuesta** | Rellenar la idea del proyecto y pulsar **Enviar propuesta**. | Aparece mensaje de confirmación en verde y se registra la colaboración con estado `pendiente`. |
-| **TC-09** | **Rate Limiting (Anti-spam)** | Intentar enviar más de 10 solicitudes seguidas. | El servidor responde con error HTTP `429 (Too Many Requests)` indicando que se ha alcanzado el límite por hora. |
-| **TC-10** | **Privacidad RGPD** | Inspeccionar el código fuente del navegador (`F12`). | **Ningún correo electrónico** de los coordinadores aparece expuesto en el HTML. |
+| **TC-07** | **Envío de Propuesta** | Completar el formulario en el panel lateral y pulsar **Enviar propuesta**. | Devuelve HTTP `201`, muestra confirmación en verde y registra la propuesta en estado `pendiente`. |
+| **TC-08** | **Protección Anti-IDOR** | Enviar por REST API un `centro_emisor_id` que no pertenece al coordinador autenticado. | El servidor rechaza la petición con HTTP `403 (radioedu_forbidden_center)`. |
+| **TC-09** | **Gestión en WP Admin** | Ir a **RadioEdu Centros → Colaboraciones (Matches)** y pulsar **Aceptar** o **Declinar** con un mensaje. | El estado pasa a `aceptada` o `rechazada`, se envía el correo de notificación al centro emisor (incluyendo el email de contacto si fue aceptada) y se muestra el enlace `mailto:`. |
+| **TC-10** | **Rate Limiting de Ventana Fija** | Intentar enviar más de 10 propuestas en menos de 1 hora. | El servidor responde con HTTP `429 (Too Many Requests)` sin reiniciar la ventana de expiración de 1 hora. |
+| **TC-11** | **Privacidad RGPD** | Inspeccionar el HTML público y la respuesta JSON de `/wp-json/radioedu-conecta/v1/centros`. | Ningún correo electrónico ni nombre personal de coordinador aparece expuesto públicamente. |
 
 ---
 
-## 8. Fase 7: Pruebas Multisite (Educarex)
+## 5. Fase 4: Desinstalación Limpia (`uninstall.php`)
 
-1. En el archivo `wp-config.php` del contenedor, activar multisite:
-   ```php
-   define( 'WP_ALLOW_MULTISITE', true );
-   ```
-2. En el panel de control, ir a **Herramientas → Configuración de la red** e instalar la red.
-3. Desactivar el plugin a nivel de sitio y pulsar **Activar en la red** (*Network Activate*).
-4. Crear un nuevo sitio escolar (ej. `/centro2/`) y verificar que el directorio y los CPT funcionan de manera aislada y limpia.
-
----
-
-## 9. Fase 8: Validación de Desinstalación Limpia (`uninstall.php`)
-
-1. Dirígete a **Plugins → Plugins instalados**.
-2. Desactiva **RadioEdu Conecta** y pulsa **Borrar**.
-3. Comprueba en la base de datos que no quedan tablas ni opciones huérfanas:
-   ```powershell
-   docker exec -it radioedu-wordpress bash -c "mysql -uwordpress -pwordpresspassword -hdb wordpress -e 'SHOW TABLES LIKE \"%radioedu%\"; SELECT option_name FROM wp_options WHERE option_name LIKE \"%radioedu%\";'"
-   ```
-   *Criterio de éxito*: No debe devolverse ningún registro (0 tablas, 0 opciones huérfanas).
-
----
-
-## 10. Comandos Útiles de Gestión Docker
-
-* **Iniciar el entorno**: `docker compose -f docker-compose.test.yml up -d`
-* **Detener el entorno**: `docker compose -f docker-compose.test.yml stop`
-* **Reiniciar servicios**: `docker compose -f docker-compose.test.yml restart`
-* **Ver logs en tiempo real**: `docker compose -f docker-compose.test.yml logs -f wordpress`
-* **Destruir y reiniciar desde cero**: `docker compose -f docker-compose.test.yml down -v`
+1. En **Plugins → Plugins instalados**, desactiva **RadioEdu Conecta** y pulsa **Borrar**.
+2. Verifica en la base de datos que se han eliminado la tabla `wp_radioedu_colaboraciones`, los posts `radioedu_centro`, los términos de las 5 taxonomías, las opciones, los transients y las capacidades personalizadas.

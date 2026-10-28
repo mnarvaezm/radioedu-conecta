@@ -1,6 +1,6 @@
 # Briefing del Proyecto: RadioEdu Conecta
 
-Este documento recopila los requisitos funcionales, técnicos, de diseño y de arquitectura del plugin **RadioEdu Conecta**, conforme al punto 0 y 12 de las directrices del proyecto y al diseño conceptual analizado de *Traspasando Fronteras*.
+Este documento recopila los requisitos funcionales, técnicos, de diseño y de arquitectura del plugin **RadioEdu Conecta**, conforme al punto 0 y 12 de las directrices del proyecto y al diseño oficial de *Traspasando Fronteras*.
 
 ---
 
@@ -14,108 +14,70 @@ Este documento recopila los requisitos funcionales, técnicos, de diseño y de a
 
 ---
 
-### 2. Definición del Producto e Interfaz (Basado en Mockup Oficial)
+### 2. Definición del Producto e Interfaz
 
 #### A. Banner / Hero de Cabecera
 - Título: **Traspasando Fronteras**
 - Subtítulo: *Conectamos radios escolares de Extremadura con otras emisoras de España y del mundo.*
-- Gráfico temático con mapa de conexiones y mensaje institucional (*"Diferentes voces, un mismo mundo - Radios escolares que hacen un mundo más grande"*).
+- Nota adhesiva institucional (*"Diferentes voces, un mismo mundo - Radios escolares que hacen un mundo más grande 🌍"*).
 
 #### B. Barra Superior de Filtros Facetados (Búsqueda Instantánea)
 Filtros desplegables combinables en una barra horizontal:
 1. 📍 **Ubicación**: País / Comunidad / Provincia / Localidad (Extremadura, resto de España e Internacional).
-2. 💬 **Idioma**: Español, Inglés, Portugués, Francés, etc.
-3. 🎓 **Etapa educativa**: Infantil, Primaria, Secundaria, Bachillerato, FP, Educación Especial, Adultos...
-4. 🏷️ **Temas**: Medioambiente, Convivencia, Igualdad, Ciencia/STEAM, Cultura, Rural, Proyectos Europeos, etc.
-5. 🎙️ **Formato**: Podcast, Entrevistas, Magacín, Noticias, Música, Ficción Sonora...
-6. 👥 **Busca colaboración con...**: Input de texto / selector para filtrar por nombre o palabras clave de proyecto.
+2. 💬 **Idioma**: Español, Inglés, Portugués, Francés, Catalán, Valenciano, etc.
+3. 🎓 **Etapa educativa**: Infantil, Primaria, Secundaria, Bachillerato, FP...
+4. 🏷️ **Temas**: Medioambiente, Convivencia, Igualdad, Música, Cultura, Rural, Proyectos Europeos, etc.
+5. 🎙️ **Formato**: Podcast, Entrevistas, Magacín, Noticias, Ficción Sonora...
+6. 👥 **Busca colaboración con...**: Input de texto para filtrar por nombre o palabras clave de proyecto.
 7. Botón de acción **Buscar centros**.
 
-#### C. Barra de Estado y Visualización
-- Contador dinámico de resultados (ej. *"Resultados (24 centros)"*).
+#### C. Barra de Estado, Paginación y Visualización
+- Contador dinámico de resultados (ej. *"Resultados (6 centros)"*).
 - Selector **Ordenar por**:
-  - *Más afines* (algoritmo de coincidencia de tags/intereses con el centro del usuario).
+  - *Más afines* (prioriza centros disponibles y ordena según el número de etiquetas/taxonomías compartidas con el centro del usuario conectado).
   - *Más recientes*.
   - *Alfabético (A-Z)*.
-- Botón alternador **Vista de mapa** (toggle entre grid de tarjetas y mapa interactivo Leaflet).
+- Botón alternador **Vista de mapa** (toggle entre cuadrícula de tarjetas y mapa interactivo Leaflet con aviso de consentimiento RGPD previo a cargar cartografía de OpenStreetMap).
+- Botón **Cargar más centros** cuando existen múltiples páginas de resultados.
 
 #### D. Tarjeta de Centro (Card Grid)
 - **Cabecera**: Foto/fachada del centro o ilustración de cabecera.
-- **Acción rápida**: Botón de favoritos/guardado en forma de corazón (`♡` / `❤️`).
+- **Acción rápida**: Botón de favoritos en forma de corazón (`♡` / `❤️`) persistente en `localStorage`.
 - **Avatar circular**: Logo distintivo de la radio escolar superpuesto sobre la foto.
 - **Datos principales**:
   - Nombre de la radio escolar y centro (ej. *IES Sierra de Gata Radio*).
-  - Bandera de la región/país + Localidad y Provincia (ej. Bandera de Extremadura + *Hoyos, Cáceres (Extremadura)*, Bandera de Irlanda + *Dublín, Irlanda*).
+  - Bandera de la región/país + Localidad y Provincia.
 - **Insignias / Tags (Píldoras de colores según categoría)**:
-  - Formatos (Verde menta): *Podcast*, *Entrevistas*.
-  - Temáticas (Coral/Lavanda): *Medioambiente*, *Convivencia*, *Música*.
-  - Contexto (Azul suave): *Rural*, *Intercambio cultural*, *Proyectos europeos*.
+  - Formatos (Verde menta): *Podcast*, *Entrevistas*, *Magacín*, *Noticias*.
+  - Temáticas (Coral): *Medioambiente*, *Convivencia*, *Música*, *Igualdad*.
+  - Etapas (Azul suave): *Primaria*, *Secundaria*, *Bachillerato*, *FP*.
 - **Acciones inferiores**:
-  - Botón secundario: **Ver perfil** (abre ficha detallada o modal del centro).
-  - Botón principal: **Proponer match** (botón destacado con icono de enviar).
+  - Botón secundario: **Ver perfil** (abre la ficha detallada de la emisora).
+  - Botón principal: **Proponer match** (o *No disponible* si el centro ha pausado la recepción de propuestas).
 
-#### E. Panel Lateral Desplegable: "Solicitud de match" (Drawer / Offcanvas)
-Se abre al hacer clic en *Proponer match* en cualquier tarjeta:
-- **Cabecera**:
-  - Título: *Solicitud de match*
-  - Subtítulo: *¡Cuéntanos tu idea y empezad a crear juntos!*
-  - Botón de cierre `✕`.
+#### E. Ficha de Perfil Individual de la Emisora (`templates/single-centro.php`)
+- **Enlace superior**: Retorno directo al directorio (*"← Volver al directorio Traspasando Fronteras"*).
+- **Cabecera superior**: Imagen de portada a ancho completo con insignia de estado (*"🟢 Disponible para colaborar"* / *"⚪ No disponible actualmente"*).
+- **Bloque de identidad e información (debajo de la cabecera, alineado a la izquierda)**:
+  - Logotipo circular de la emisora superpuesto.
+  - Nombre de la emisora, bandera y ubicación geográfica.
+  - Píldoras de colores (Formatos, Temáticas y Etapas).
+  - Bloques informativos de **Cursos / Edades** e **Idiomas de trabajo**.
+  - Botones de acción: **✈️ Proponer match** (abre el panel lateral de solicitud directamente en la misma ficha sin volver al directorio), **🎧 Escuchar Podcast / Emisora** y **🌐 Web del centro**.
+- **Sección inferior**: Texto descriptivo completo de la emisora escolar (*"Sobre nuestra emisora escolar"*).
+
+#### F. Panel Lateral Desplegable: "Solicitud de match" (Drawer / Offcanvas) y Gestión en WP Admin
+- Se abre al hacer clic en *Proponer match* tanto desde las tarjetas del directorio como desde la ficha individual del centro.
 - **Campos del formulario**:
-  - 🏫 **Tu centro**: Selector preasignado con el centro del coordinador autenticado.
-  - 🏛️ **Centro con el que quieres colaborar**: Preseleccionado según la tarjeta pulsada.
-  - 💡 **Idea de proyecto**: Textarea para describir la propuesta conjunta (ej. *"Queremos crear un podcast conjunto sobre..."*).
-  - 👥 **Curso o edades**: Selector de rango de edad / nivel educativo.
-  - 💬 **Idioma(s)**: Selector de idioma de la colaboración.
-  - 📅 **Fechas aproximadas**: Rango de fechas estimado para el proyecto.
-  - 🚀 Botón **Enviar propuesta**.
-- **Pie del panel (Guía en 3 pasos)**:
-  1. *Encuentra*: Busca centros afines a tus intereses.
-  2. *Conecta*: Envía tu propuesta de match.
-  3. *Crea*: ¡Desarrollad juntos vuestro proyecto!
+  - 🏫 **Tu centro**: Selector con los centros gestionados por el usuario autenticado (por autoría, email de coordinación o permisos de edición).
+  - 🏛️ **Centro con el que quieres colaborar**: Preseleccionado según el centro elegido.
+  - 💡 **Idea de proyecto**, 👥 **Curso o edades**, 💬 **Idioma(s)** y 📅 **Fechas aproximadas**.
+- **Gestión en el Panel de Administración (`RadioEdu Centros → Colaboraciones (Matches)`)**:
+  - Permite a los coordinadores y administradores ver todas las solicitudes recibidas y enviadas, escribir un mensaje de respuesta y **Aceptar** o **Declinar** propuestas pendientes.
 
 ---
 
-### 3. Modelo de Datos y Arquitectura en WordPress
-
-#### A. Custom Post Type: `radioedu_centro`
-- `post_title`: Nombre de la radio y centro escolar.
-- `post_content`: Descripción detallada del proyecto de radio, historia y líneas de trabajo.
-- `post_excerpt`: Resumen corto mostrado en la tarjeta.
-- `thumbnail` (Imagen destacada): Foto de cabecera del centro.
-
-#### B. Taxonomías (Filtros Facetados)
-1. `radioedu_etapa` (Etapas educativas).
-2. `radioedu_idioma` (Idiomas del proyecto).
-3. `radioedu_tematica` (Temas de interés).
-4. `radioedu_formato` (Formatos de radio y podcast).
-5. `radioedu_localizacion` (País, Comunidad Autónoma, Provincia, Localidad).
-
-#### C. Post Meta (`wp_postmeta`)
-- `_radioedu_logo_id`: ID del archivo adjunto para el logo circular de la radio.
-- `_radioedu_bandera`: Código de país/región para mostrar la bandera oficial.
-- `_radioedu_coordinador_id`: ID del usuario `WP_User` responsable de la emisora.
-- `_radioedu_lat` y `_radioedu_lng`: Coordenadas geográficas para la vista en mapa.
-- `_radioedu_podcast_url`: URL de streaming o canal de podcasts (iVoox, Spotify, web propia).
-- `_radioedu_edades`: Rango de edades de los alumnos.
-
-#### D. Tabla Personalizada: `{$wpdb->prefix}radioedu_colaboraciones`
-Almacena las solicitudes de colaboración sin saturar la tabla `wp_postmeta`:
-- `id` (bigint auto_increment, PK)
-- `centro_emisor_id` (bigint, FK a posts)
-- `centro_receptor_id` (bigint, FK a posts)
-- `usuario_emisor_id` (bigint, FK a users)
-- `mensaje` (text)
-- `curso_edades` (varchar 100)
-- `idiomas` (varchar 100)
-- `fechas_aprox` (varchar 150)
-- `estado` (enum: 'pendiente', 'aceptada', 'rechazada', 'cancelada')
-- `created_at` (datetime)
-- `updated_at` (datetime)
-
----
-
-### 4. Seguridad, Privacidad y Rendimiento
-- **Nonces y Permisos**: Todo envío de propuesta de match exige `wp_verify_nonce` y comprobación de rol/capacidad (`propose_radioedu_colaboracion`).
-- **Privacidad Escolar**: Cero exposición pública de direcciones de correo electrónico personales o de contacto. La comunicación inicial se realiza 100% dentro de la plataforma y vía notificaciones del sistema (`wp_mail`).
-- **REST API Segura**: Endpoint `/wp-json/radioedu-conecta/v1/centros` con paginación, sanitización de argumentos de filtro y rate-limiting en `/v1/colaboraciones`.
-- **Assets Limpios**: JavaScript Vanilla (ESNext) sin jQuery, con estilos CSS modernos encapsulados y mapa con Leaflet embebido localmente sin CDN externa (cumplimiento RGPD y WordPress.org).
+### 3. Seguridad, Privacidad RGPD y Multisite
+- **Anti-IDOR y Permisos**: Todo envío de propuesta verifica `X-WP-Nonce`, capacidad `propose_radioedu_colaboracion`, disponibilidad del centro receptor y autorización real del usuario sobre el centro emisor (`ColaboracionesController::user_can_manage_center()`).
+- **Privacidad Escolar Asimétrica y RGPD**: Cero exposición pública de correos electrónicos de docentes. Integración con los exportadores y borradores de datos personales del Core de WordPress (`PrivacyPolicy`).
+- **Multisite y Desinstalación Limpia**: Soporte para activación individual o en red, hooks `wp_initialize_site` / `wp_uninitialize_site` y borrado completo de tablas, CPTs, términos, opciones, transients y capacidades en `uninstall.php`.

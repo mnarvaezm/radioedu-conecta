@@ -1,6 +1,6 @@
 # ARCHITECTURE & TECHNICAL SPECIFICATION: RadioEdu Conecta
 
-> **AI System Note:** This document provides a comprehensive, deterministic, machine-readable architectural blueprint of the `radioedu-conecta` WordPress plugin. It details runtime lifecycles, data contracts, security mitigaciones, frontend pipelines, and Architecture Decision Records (ADRs) for any artificial intelligence or human engineer contributing to this repository.
+> **AI System Note:** This document provides a comprehensive, deterministic, machine-readable architectural blueprint of the `radioedu-conecta` WordPress plugin. It details runtime lifecycles, data contracts, security mitigations, frontend pipelines, and Architecture Decision Records (ADRs) for any artificial intelligence or human engineer contributing to this repository.
 
 ---
 
@@ -10,6 +10,7 @@
 system_id: radioedu-conecta
 display_name: RadioEdu Conecta (Traspasando Fronteras)
 version: 1.0.0
+db_schema_version: 1.0.1
 php_version_requirement: ">=8.1"
 wp_version_requirement: ">=6.5"
 tested_up_to: "6.7"
@@ -33,9 +34,10 @@ institutional_context:
 
 ### Purpose & Value Proposition
 **RadioEdu Conecta** is the official collaborative platform for the **Traspasando Fronteras** initiative. It enables primary, secondary, and vocational schools across Extremadura (Spain) and worldwide to:
-1. Publicly register and showcase their school radio station profile, equipment, genres, and educational stages.
-2. Discover partner stations via a faceted real-time filter directory and an interactive geographical map.
-3. Propose structured institutional twinning/collaboration ("Matches") without exposing personal coordinator contact information to the public web.
+1. Publicly register and showcase their school radio station profile, cover image, circular logo, equipment, genres, and educational stages.
+2. Discover partner stations via a faceted real-time filter directory (with taxonomy-based affinity sorting and pagination) and an interactive geographical map.
+3. Propose structured institutional twinning/collaboration ("Matches") directly from the directory or from the individual station profile page without exposing personal coordinator contact information to the public web.
+4. Manage, accept, or decline collaboration proposals from the WordPress Administration Panel (`RadioEdu Centros -> Colaboraciones (Matches)`).
 
 ---
 
@@ -56,14 +58,14 @@ c:\radioedu-conecta\
 ├── .distignore                          # Build exclusion rules for release distribution
 ├── .gitignore                           # Git repository exclusions
 ├── docker-compose.test.yml              # Local testing environment on port 8090 (WP 6.7 + MariaDB 10.11)
-├── radioedu-conecta.zip                 # Production release archive (pre-compiled, ~99 KB)
+├── radioedu-conecta.zip                 # Production release archive (POSIX paths, ~9.35 MB with demo media)
 ├── src/
-│   ├── Plugin.php                       # Core singleton orchestrator (lifecycle, hooks, DB schema check)
+│   ├── Plugin.php                       # Core singleton orchestrator (lifecycle, hooks, Multisite, DB schema check)
 │   ├── Admin/
 │   │   ├── CentroMetaBoxes.php          # Metaboxes for CPT (coordinates, logo upload, RGPD emails, podcast)
 │   │   ├── ColaboracionesAdminPage.php  # Admin panel to view, accept, or decline match proposals
-│   │   ├── DemoDataImporter.php         # Demo stations importer & synchronizer
-│   │   └── Settings.php                 # WordPress Settings API options (map defaults, notification flags)
+│   │   ├── DemoDataImporter.php         # Demo stations importer & synchronizer (6 sample stations + images)
+│   │   └── Settings.php                 # WordPress Settings API options (map defaults, notification flags, demo sync)
 │   ├── Capabilities/
 │   │   └── RoleCapabilities.php         # Custom capabilities management for admin, editor, and author roles
 │   ├── Database/
@@ -71,7 +73,7 @@ c:\radioedu-conecta\
 │   ├── Emails/
 │   │   └── NotificationService.php      # wp_mail() notification pipeline for proposals and match responses
 │   ├── Frontend/
-│   │   └── DirectorioShortcode.php      # Shortcode handler [radioedu_directorio] & asset enqueueing
+│   │   └── DirectorioShortcode.php      # Shortcode [radioedu_directorio], single station profile filter & assets
 │   ├── PostTypes/
 │   │   └── CentroPostType.php           # Custom Post Type registration (`radioedu_centro`)
 │   ├── Privacy/
@@ -80,14 +82,17 @@ c:\radioedu-conecta\
 │   │   ├── CentrosController.php        # REST Controller (`GET /radioedu-conecta/v1/centros`)
 │   │   └── ColaboracionesController.php # REST Controller (`POST|PATCH|GET /radioedu-conecta/v1/colaboraciones`)
 │   └── Taxonomies/
-│       └── TaxonomiesRegistrar.php      # 5 faceted taxonomies registration & query bindings
+│       └── TaxonomiesRegistrar.php      # 5 faceted taxonomies registration & capability bindings
 ├── templates/
-│   └── directorio.php                   # Frontend view template: Banner, Facet Bar, Grid, Map, Drawer modal
+│   ├── directorio.php                   # Frontend directory view: Banner, Facet Bar, Grid, Map, Drawer modal
+│   └── single-centro.php                # Single station profile view: Cover, Identity, Tags, Metadata, Description & Drawer
 ├── assets/
 │   ├── css/
 │   │   ├── admin.css                    # Styling for admin metaboxes and media uploader preview
-│   │   ├── directorio.css               # Styling for directory UI, facet filters, card grid, drawer, sticky note
+│   │   ├── directorio.css               # Styling for directory UI, facet filters, card grid, single profile, and drawer
 │   │   └── leaflet.css                  # Self-contained Leaflet 1.9.4 CSS (zero CDN)
+│   ├── images/
+│   │   └── demo/                        # Local cover photos and circular logos for the 6 demo radio stations
 │   └── js/
 │       ├── admin.js                     # WP Media Uploader connector for radio station logo
 │       ├── directorio.js                # Frontend reactive controller (DOM builder, Leaflet manager, Drawer)
@@ -102,20 +107,23 @@ c:\radioedu-conecta\
 
 ## 3. Core Architectural Principles & Institutional Constraints
 
-### 3.1 Zero Third-Party CDN Dependency (Firewall Compliance)
-* **Context:** Extremadura's regional educational network (*Educarex*) operates behind strict institutional proxies and firewall rules that block external unverified CDNs (unpkg, cdnjs, Google CDNs). Furthermore, WordPress.org Official Guidelines forbid external asset calls without explicit consent.
-* **Implementation:** The Leaflet map engine (`leaflet.js` v1.9.4, `leaflet.css` v1.9.4) and all assets are strictly vendored locally in `/assets/`. No dynamic font or script tags reference third-party domains.
+### 3.1 Zero Third-Party CDN Dependency & Explicit Map Tile Consent
+* **Context:** Extremadura's regional educational network (*Educarex*) operates behind strict institutional proxies and firewall rules that block external unverified CDNs. Furthermore, WordPress.org Official Guidelines and GDPR forbid loading external resources without explicit user consent.
+* **Implementation:**
+  - The Leaflet map engine (`leaflet.js` v1.9.4, `leaflet.css` v1.9.4) and all demo station images are vendored locally in `/assets/`.
+  - External OpenStreetMap cartography tiles (`tile.openstreetmap.org`) are **never** loaded automatically on page load; the user must explicitly click **"Aceptar y mostrar el mapa interactivo"** (`#radioedu-btn-accept-map`) before any connection to OpenStreetMap servers is established.
 
-### 3.2 Asymmetric RGPD / GDPR Privacy Model
+### 3.2 Asymmetric RGPD / GDPR Privacy Model & Core Privacy Tools
 * **Constraint:** School radio station coordinators are public school teachers; their email addresses must never be indexed, scraped, or visible in public DOM/JSON responses.
 * **Implementation:**
   - Coordinators' emails and direct names are saved in `_radioedu_coordinador_email` and `_radioedu_coordinador_nombre` post meta.
   - `CentrosController::prepare_item_for_response()` **explicitly omits** these fields from public REST API payloads.
-  - External coordinators interact with other schools exclusively through the platform's proposal system. The plugin dispatches transactional emails on the server side (`NotificationService`), revealing contact details only once a proposal is explicitly accepted.
+  - External coordinators interact with other schools exclusively through the platform's proposal system. The plugin dispatches transactional emails on the server side (`NotificationService`), revealing the receiving coordinator's contact details (`Nombre <email>`) only once a proposal is explicitly **accepted** (`estado === 'aceptada'`).
+  - `PrivacyPolicy.php` integrates with WordPress Core's GDPR subsystem (`wp_add_privacy_policy_content`, `wp_privacy_personal_data_exporters`, `wp_privacy_personal_data_erasers`) to export or erase/anonymize coordinator data upon request.
 
-### 3.3 Strict Output Escaping & Zero `innerHTML`
-* **Server-side (PHP):** Strict "Late Escaping" rule. Variables are escaped at the exact moment of output using `esc_html()`, `esc_attr()`, `esc_url()`, or `wp_json_encode()`.
-* **Client-side (JavaScript):** `assets/js/directorio.js` prohibits `innerHTML`. All dynamic card nodes, badges, and modals are assembled using `document.createElement()`, `setAttribute()`, and `textContent` to eliminate Cross-Site Scripting (XSS) vectors.
+### 3.3 Strict Output Escaping, Zero `innerHTML`, and URL Validation
+* **Server-side (PHP):** Strict "Late Escaping" rule. Variables are escaped at the exact moment of output using `esc_html()`, `esc_attr()`, `esc_url()`, `wp_kses_post()`, or `wp_json_encode()`. All SQL queries use `$wpdb->prepare()` with `%i` identifier placeholders for table names.
+* **Client-side (JavaScript):** `assets/js/directorio.js` prohibits `innerHTML` and HTML string concatenation. All dynamic card nodes, badges, and Leaflet map popups (`marker.bindPopup(popupNode)`) are assembled using `document.createElement()` and `textContent`. All external URLs are validated via `sanitizeHttpUrl()` (`http:` / `https:` whitelist) and escaped before CSS `url(...)` injection.
 
 ---
 
@@ -123,17 +131,18 @@ c:\radioedu-conecta\
 
 ### 4.1 Custom Post Type: `radioedu_centro`
 * **Registered in:** [src/PostTypes/CentroPostType.php](file:///c:/radioedu-conecta/src/PostTypes/CentroPostType.php)
-* **Features:** `title`, `editor` (station description), `thumbnail` (station header/cover image), `excerpt` (brief intro), `revisions`.
-* **Icon:** `dashicons-format-audio`.
-* **REST Visibility:** `show_in_rest => true` with `rest_base => radioedu_centros`.
+* **Features:** `title`, `editor` (station description), `thumbnail` (station header/cover image), `excerpt` (brief intro), `author`.
+* **Single Profile Template:** Rendered dynamically via `DirectorioShortcode::render_single_centro_profile()` using [templates/single-centro.php](file:///c:/radioedu-conecta/templates/single-centro.php), featuring the full-width cover header, left-aligned station logo, title, flag, location, colored tags, metadata cards, action buttons (including direct Match Drawer trigger), and descriptive text below.
 
 #### Meta Keys Schema (`wp_postmeta`)
 | Meta Key | Data Type | Sanitization / Validation | Description | Public in REST? |
-| :--- | :--- | :--- | :--- | :--- |
+| :--- | :--- | :--- | :--- | :---: |
 | `_radioedu_logo_id` | `int` | `absint()` | Attachment ID for the circular radio station logo | Yes (URL) |
-| `_radioedu_bandera` | `string` | `sanitize_key()` | Region/Country flag code (e.g., `es-ex`, `es-an`, `pt`, `fr`) | Yes |
-| `_radioedu_lat` | `float` (stored as `string`) | `(string)(float)$val` | Latitude coordinates for Leaflet map pin | Yes |
-| `_radioedu_lng` | `float` (stored as `string`) | `(string)(float)$val` | Longitude coordinates for Leaflet map pin | Yes |
+| `_radioedu_logo_url` | `string` (URL) | `esc_url_raw()` | Fallback URL for bundled demo station logos | Yes (URL) |
+| `_radioedu_cover_url` | `string` (URL) | `esc_url_raw()` | Fallback URL for bundled demo station cover images | Yes (URL) |
+| `_radioedu_bandera` | `string` | `sanitize_key()` + whitelist | Region/Country flag code (`es-ex`, `es-ct`, `ie`, etc.) | Yes |
+| `_radioedu_lat` | `float` (stored as `string`) | Clamped `[-90.0, 90.0]` | Latitude coordinates for Leaflet map pin | Yes |
+| `_radioedu_lng` | `float` (stored as `string`) | Clamped `[-180.0, 180.0]` | Longitude coordinates for Leaflet map pin | Yes |
 | `_radioedu_podcast_url` | `string` (URL) | `esc_url_raw()` | External RSS / iVoox / Educarex podcast feed URL | Yes |
 | `_radioedu_web_centro` | `string` (URL) | `esc_url_raw()` | Official school website URL | Yes |
 | `_radioedu_edades` | `string` | `sanitize_text_field()` | Student age range (e.g. `10-14 años`) | Yes |
@@ -143,12 +152,13 @@ c:\radioedu-conecta\
 
 ### 4.2 Faceted Taxonomies
 * **Registered in:** [src/Taxonomies/TaxonomiesRegistrar.php](file:///c:/radioedu-conecta/src/Taxonomies/TaxonomiesRegistrar.php)
-* All bound to post type `radioedu_centro`:
-  1. `radioedu_etapa` (`hierarchical => true`): Educational stage (Infantil, Primaria, Secundaria, Bachillerato, FP, Universidad).
-  2. `radioedu_idioma` (`hierarchical => false`): Broadcast language (Castellano, Inglés, Francés, Portugués, Bilingüe).
-  3. `radioedu_tematica` (`hierarchical => false`): Content themes (Ciencia y Tecnología, Historia, Literatura, Medio Ambiente, Igualdad).
-  4. `radioedu_formato` (`hierarchical => false`): Audio formats (Entrevistas, Informativos, Ficción Sonora, Magacín, Tertulias).
-  5. `radioedu_localizacion` (`hierarchical => true`): Geographical taxonomy (España > Extremadura > Cáceres / Badajoz; Internacional > Portugal, etc.).
+* **Capabilities:** `manage_terms`, `edit_terms`, `delete_terms` mapped to `manage_radioedu`; `assign_terms` mapped to `edit_radioedu_centros`.
+* Bound to post type `radioedu_centro`:
+  1. `radioedu_etapa` (`hierarchical => true`): Educational stage (Infantil, Primaria, Secundaria, Bachillerato, FP).
+  2. `radioedu_idioma` (`hierarchical => false`): Broadcast language (Español, Inglés, Francés, Portugués, Catalán, Valenciano).
+  3. `radioedu_tematica` (`hierarchical => false`): Content themes (Medioambiente, Convivencia, Igualdad, Música, Cultura, Rural, Proyectos europeos).
+  4. `radioedu_formato` (`hierarchical => false`): Audio formats (Podcast, Entrevistas, Magacín, Noticias, Ficción sonora).
+  5. `radioedu_localizacion` (`hierarchical => true`): Geographical taxonomy.
 
 ### 4.3 Custom Database Table: `{$wpdb->prefix}radioedu_colaboraciones`
 * **Managed in:** [src/Database/ColaboracionesTable.php](file:///c:/radioedu-conecta/src/Database/ColaboracionesTable.php)
@@ -176,12 +186,6 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
 ) {$charset_collate};
 ```
 
-* **State Machine for `estado` column:**
-  ```text
-  [pendiente] ──(PATCH by target coordinator)──► [aceptada]
-              └──(PATCH by target coordinator)──► [rechazada]
-  ```
-
 ---
 
 ## 5. Security & Authorization Matrix
@@ -194,9 +198,12 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
 | `manage_radioedu` | ✅ | ❌ | ❌ | ❌ |
 | `edit_radioedu_centros` | ✅ | ✅ | ✅ | ❌ |
 | `edit_published_radioedu_centros` | ✅ | ✅ | ✅ | ❌ |
+| `edit_private_radioedu_centros` | ✅ | ✅ | ❌ | ❌ |
 | `publish_radioedu_centros`| ✅ | ✅ | ✅ | ❌ |
+| `read_private_radioedu_centros` | ✅ | ✅ | ❌ | ❌ |
 | `delete_radioedu_centros` | ✅ | ✅ | ✅ | ❌ |
 | `delete_published_radioedu_centros` | ✅ | ✅ | ✅ | ❌ |
+| `delete_private_radioedu_centros` | ✅ | ✅ | ❌ | ❌ |
 | `edit_others_radioedu_centros` | ✅ | ✅ | ❌ | ❌ |
 | `delete_others_radioedu_centros` | ✅ | ❌ | ❌ | ❌ |
 | `propose_radioedu_colaboracion` | ✅ | ✅ | ✅ | ❌ |
@@ -211,184 +218,52 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
   - `page` (`int`, default: 1): Current page.
   - `per_page` (`int`, default: 24, max: 100): Centros per page.
   - `search` (`string`): Free-text search matching title/description.
-  - `orden` (`enum`: `afines`, `recientes`, `alfa`): Ordering criteria.
-  - `etapa` (`string`): Taxonomy slug for educational stage.
-  - `idioma` (`string`): Taxonomy slug for language.
-  - `tematica` (`string`): Taxonomy slug for content theme.
-  - `formato` (`string`): Taxonomy slug for audio format.
-  - `ubicacion` (`string`): Taxonomy slug for geographic location.
-* **Success Response (HTTP 200):**
-```json
-{
-  "centros": [
-    {
-      "id": 5,
-      "nombre": "Radio Alconchel - CEIP Ntra Sra de la Luz",
-      "descripcion": "Emisora escolar centrada en el patrimonio cultural y la naturaleza.",
-      "foto_cabecera": "http://localhost:8090/wp-content/uploads/2026/10/cover.jpg",
-      "logo_radio": "http://localhost:8090/wp-content/uploads/2026/10/logo.png",
-      "bandera": "es-ex",
-      "ubicacion": "Badajoz, Extremadura, España",
-      "lat": "38.5172",
-      "lng": "-7.1064",
-      "podcast_url": "https://radioedu.educarex.es/radioalconchel",
-      "web_centro": "https://cpnsdelaluz.educarex.es",
-      "edades": "6-12 años",
-      "disponible": true,
-      "tags": [
-        { "name": "Magacín", "slug": "magacin", "type": "formato", "color": "mint" },
-        { "name": "Medio Ambiente", "slug": "medio-ambiente", "type": "tematica", "color": "coral" },
-        { "name": "Primaria", "slug": "primaria", "type": "etapa", "color": "blue" }
-      ],
-      "enlace_perfil": "http://localhost:8090/radioedu-centros/radio-alconchel/"
-    }
-  ],
-  "total": 6,
-  "total_pages": 1,
-  "page": 1,
-  "per_page": 24
-}
-```
+  - `orden` (`enum`: `afines`, `recientes`, `alfa`): Ordering criteria (`afines` prioritizes available centers and ranks by shared taxonomy tags with `afines_a`).
+  - `afines_a` (`int`, default: 0): Reference center ID of the current user for affinity scoring.
+  - `etapa`, `idioma`, `tematica`, `formato`, `ubicacion` (`string`): Taxonomy slugs.
 
-### 6.2 `POST /wp-json/radioedu-conecta/v1/colaboraciones`
+### 6.2 `GET /wp-json/radioedu-conecta/v1/colaboraciones`
+* **Permission:** Authenticated user with `propose_radioedu_colaboracion` or `manage_radioedu`.
+* **Behavior:** Returns collaboration proposals where the current user is the sender (`usuario_emisor_id`) or manages either the sending (`centro_emisor_id`) or receiving (`centro_receptor_id`) center (or all records if `manage_radioedu`).
+
+### 6.3 `POST /wp-json/radioedu-conecta/v1/colaboraciones`
 * **Permission:** Authenticated user with `current_user_can('propose_radioedu_colaboracion')`.
-* **Rate Limiting:** Maximum 10 proposals per user per hour (tracked via transient `radioedu_rate_{user_id}`). Returns `HTTP 429` if exceeded.
-* **Request Payload (JSON):**
-```json
-{
-  "centro_emisor_id": 5,
-  "centro_receptor_id": 8,
-  "idea_proyecto": "Queremos hacer un podcast conjunto sobre leyendas de Extremadura y Portugal.",
-  "curso_edades": "10-12 años (5º y 6º Primaria)",
-  "idiomas": "Castellano y Portugués",
-  "fechas_aprox": "Segundo trimestre escolar (Enero - Marzo)"
-}
-```
-* **Validation Rules:**
+* **IDOR & Integrity Validation:**
   - `centro_emisor_id` !== `centro_receptor_id` (cannot propose to self).
-  - Both centers must exist with `post_status === 'publish'`.
-  - `idea_proyecto` cannot be empty.
-* **Success Response (HTTP 201):**
-```json
-{
-  "success": true,
-  "message": "¡Propuesta de match enviada con éxito!",
-  "id": 14
-}
-```
+  - Both centers must have `post_type === 'radioedu_centro'` and `post_status === 'publish'`.
+  - `ColaboracionesController::user_can_manage_center( $centro_emisor_id, $user_id )` must be `true` (prevents spoofing another school's station).
+  - Receiving center must be available (`_radioedu_disponible_colaborar !== '0'`).
+* **Rate Limiting:** Fixed 1-hour window allowing a maximum of 10 proposals per user per hour (`radioedu_rate_{user_id}`). Returns `HTTP 429` if exceeded.
 
-### 6.3 `PATCH /wp-json/radioedu-conecta/v1/colaboraciones/{id}`
-* **Permission:** Target station coordinator (`current_user_can('edit_post', $centro_receptor_id)`) or Super Admin (`manage_radioedu`).
-* **Request Payload (JSON):**
-```json
-{
-  "estado": "aceptada",
-  "respuesta": "¡Encantados de colaborar! Os escribo a vuestro correo para coordinar los guiones."
-}
-```
-* **Result:** Updates table record, sets `updated_at`, triggers `NotificationService::send_status_update_email()`.
+### 6.4 `PATCH /wp-json/radioedu-conecta/v1/colaboraciones/{id}`
+* **Permission:** Target station coordinator (`ColaboracionesController::user_can_manage_center( $centro_receptor_id )`) or Admin (`manage_radioedu`).
+* **Result:** Updates table record (`aceptada` or `rechazada`), sets `updated_at`, and triggers `NotificationService::send_status_update_email()`.
 
 ---
 
-## 7. Frontend UI / UX Pipeline & Lifecycle
+## 7. Frontend & Admin Workflows
 
-### 7.1 Architecture of the Reactive Directory (`directorio.js`)
+### 7.1 Drawer Offcanvas Workflow (Directory & Single Station Profile)
+1. User clicks **"Proponer match"** on any station card in `[radioedu_directorio]` **or** directly on the station's individual profile page (`single-radioedu_centro`).
+2. If visitor is **unauthenticated**, a notice prompts login and redirects to `/wp-login.php`.
+3. If user is authenticated without `canPropose`, an authorization alert is displayed.
+4. If user is an authorized coordinator/editor/admin:
+   - The drawer opens smoothly (`.is-open` applied to `#radioedu-match-drawer` and `#radioedu-drawer-overlay`).
+   - Target station ID and name/location are pre-populated into `#radioedu-match-receptor` and `#radioedu-match-receptor-txt`.
+   - Emisor center dropdown (`#radioedu-match-emisor`) lists the user's managed centers.
+5. On submission, client issues `fetch(restUrl + 'colaboraciones', { method: 'POST' })` with `X-WP-Nonce`.
 
-```mermaid
-graph TD
-    A[DOMContentLoaded] --> B[Read window.radioeduConectaData]
-    B --> C[Bind Event Listeners: filters, search, toggle-map, drawer]
-    C --> D[fetchCentros: Query REST API with current filter state]
-    D --> E{REST Response OK?}
-    E -- No --> F[Log console error & show notification]
-    E -- Yes --> G[Render Results Count: countNumber.textContent]
-    G --> H[renderCards: document.createElement loop]
-    G --> I[renderMapMarkers: Leaflet Pin Sync]
-    H --> J[Bind Match Button click: openMatchDrawer]
-```
-
-### 7.2 Drawer Offcanvas Workflow
-1. User clicks **"Proponer match"** on a station card.
-2. If visitor is **unauthenticated**, the drawer shows a login prompt notice redirecting to `/wp-login.php`.
-3. If user is **authenticated**:
-   - The drawer opens smoothly (`.radioedu-drawer-open` applied to panel and backdrop).
-   - Target station ID and name are pre-populated into `#radioedu-match-receptor`.
-   - Emisor center dropdown is selected to the user's coordinator center.
-4. On submission, client issues `fetch(restUrl + 'colaboraciones', { method: 'POST' })` with `X-WP-Nonce` header.
-5. On HTTP 201, feedback notice shows success, form resets, and drawer closes after 2.5 seconds.
+### 7.2 Admin Match Management (`ColaboracionesAdminPage.php`)
+1. Accessible under **RadioEdu Centros → Colaboraciones (Matches)**.
+2. Displays a table of received and sent proposals for the current coordinator's centers (or all proposals for `manage_radioedu`).
+3. For pending proposals where the user manages the receiving center, provides an inline response textarea and **Aceptar** / **Declinar** buttons protected by `check_admin_referer`.
+4. Once accepted, displays direct `mailto:` links for both coordinators and sends an acceptance email containing the coordinator's contact information.
 
 ---
 
-## 8. Architecture Decision Records (ADRs)
+## 8. Multisite (Educarex) Lifecycle Specifications
 
-### ADR-001: Custom Table vs Custom Post Type for Proposals
-* **Decision:** Store proposals in `{$wpdb->prefix}radioedu_colaboraciones` instead of a CPT `radioedu_match`.
-* **Rationale:**
-  1. *Security & Privacy:* Proposals contain direct private ideas, coordinator email trails, and status exchanges. Storing them in standard `wp_posts` exposes them to generic query exposure, REST discovery, and search indexing bugs.
-  2. *Relational Integrity & Indexing:* Proposals have rigid relational requirements (`centro_emisor_id`, `centro_receptor_id`, `usuario_emisor_id`, `estado`). Custom indexes on these columns make queries 10x faster than post meta joins.
-  3. *Uncluttered WP Admin:* Avoids bloating the core posts table in high-activity multisite networks.
-
-### ADR-002: Inlined Config Data vs `wp_localize_script()` in FSE / Block Themes
-* **Decision:** Inline `window.radioeduConectaData` directly in [templates/directorio.php](file:///c:/radioedu-conecta/templates/directorio.php) as `<script type="text/javascript">window.radioeduConectaData = ...</script>`.
-* **Rationale:**
-  - In WordPress 6.5+ Full Site Editing (FSE) block themes (such as Twenty Twenty-Five), calling `wp_localize_script()` inside a shortcode function execution happens *after* the footer or header script tags have already resolved their dependency arrays. This caused `window.radioeduConectaData` to be missing, breaking all dynamic queries.
-  - Inlining the JSON-encoded payload ensures atomic availability before the deferred `directorio.js` script initializes.
-
-### ADR-003: Conditional REST Nonce Header
-* **Decision:** In `assets/js/directorio.js`, only attach the `X-WP-Nonce` header when `restNonce` is a non-empty string.
-* **Rationale:**
-  - WordPress Core REST API (`rest_cookie_check_errors()`) checks: if an admin/logged-in session cookie is present *and* an `X-WP-Nonce` header is supplied, but that header is empty or invalid, WordPress unconditionally responds with **HTTP 403 `Cookie check failed`**, even on public readable endpoints!
-  - By omitting the header when unauthenticated or empty, public reads to `/centros` work seamlessly for all visitors.
-
-### ADR-004: Local Leaflet Asset Bundling
-* **Decision:** Bundle Leaflet 1.9.4 CSS and JS locally in `assets/`.
-* **Rationale:**
-  - Compliance with WordPress.org Official Guidelines (no third-party CDN tracking).
-  - Compliance with Junta de Extremadura institutional network firewall restrictions.
-
-### ADR-005: Fallback PSR-4 Autoloader
-* **Decision:** Include a lightweight fallback autoloader in [radioedu-conecta.php](file:///c:/radioedu-conecta/radioedu-conecta.php) before loading `vendor/autoload.php`.
-* **Rationale:**
-  - Ensures the plugin functions even if uploaded directly to a server where `composer install` has not been executed, preventing fatal errors on site activation.
-
----
-
-## 9. Multisite (Educarex) Lifecycle Specifications
-
-* **Network Activation:**
-  - When network-activated, [src/Plugin.php](file:///c:/radioedu-conecta/src/Plugin.php) iterates through all active sites via `get_sites()` with `switch_to_blog()`.
-  - Executes table creation (`dbDelta`), role capability assignments, and rewrite flush on every sub-site.
-* **New Site Creation:**
-  - Listens to `wp_initialize_site` to automatically provision the custom table and capabilities when a new educational school site is spawned.
-* **Uninstallation:**
-  - Handled in [uninstall.php](file:///c:/radioedu-conecta/uninstall.php).
-  - Iterates through all sites in the network to drop `{$wpdb->prefix}radioedu_colaboraciones`, purge options (`radioedu_conecta_db_version`, `radioedu_conecta_settings`), delete transients, and revoke custom capabilities from all roles.
-
----
-
-## 10. Operational & Build Automation Playbook
-
-### 10.1 Testing Environment (Docker on Port 8090)
-* **Configuration:** [docker-compose.test.yml](file:///c:/radioedu-conecta/docker-compose.test.yml)
-* **WordPress URL:** `http://localhost:8090`
-* **Admin Credentials:** `admin` / `password123`
-* **WP-CLI Execution:**
-  ```powershell
-  docker compose -f docker-compose.test.yml exec -u www-data wordpress wp <command>
-  ```
-
-### 10.2 Seeding Test Data (6 Sample Centers)
-* Script located at [scratch/seed_test_data.php](file:///C:/Users/manuel.narvaez/.gemini/antigravity-ide/brain/6edc2d8e-5436-4134-ac60-1d6d59959bbc/scratch/seed_test_data.php).
-* Execute via WP-CLI:
-  ```powershell
-  docker cp "C:\Users\manuel.narvaez\.gemini\antigravity-ide\brain\6edc2d8e-5436-4134-ac60-1d6d59959bbc\scratch\seed_test_data.php" radioedu-wordpress:/tmp/seed.php
-  docker compose -f docker-compose.test.yml exec -u www-data wordpress wp eval-file /tmp/seed.php
-  ```
-
-### 10.3 Generating the Distributable Release ZIP
-* Execution script: [scratch/build_zip.ps1](file:///C:/Users/manuel.narvaez/.gemini/antigravity-ide/brain/6edc2d8e-5436-4134-ac60-1d6d59959bbc/scratch/build_zip.ps1)
-* Command:
-  ```powershell
-  powershell -ExecutionPolicy Bypass -File "C:\Users\manuel.narvaez\.gemini\antigravity-ide\brain\6edc2d8e-5436-4134-ac60-1d6d59959bbc\scratch\build_zip.ps1"
-  ```
-* Output: `c:\radioedu-conecta\radioedu-conecta.zip` (~99 KB).
+* **Single Site Activation:** Creates `{$wpdb->prefix}radioedu_colaboraciones`, assigns role capabilities, registers CPT/taxonomies, seeds the 6 demo stations if 0 stations exist, and flushes rewrite rules.
+* **Network Activation (`$network_wide = true`):** Iterates through sites via `get_sites()` + `switch_to_blog()`, provisioning tables and capabilities without bulk-seeding demo posts to prevent timeouts on large networks.
+* **Dynamic Site Provisioning & Teardown:** Hooks `wp_initialize_site` (`Plugin::on_initialize_site()`) and `wp_uninitialize_site` (`Plugin::on_uninitialize_site()`).
+* **Complete Uninstallation ([uninstall.php](file:///c:/radioedu-conecta/uninstall.php)):** Drops `{$wpdb->prefix}radioedu_colaboraciones`, deletes all `radioedu_centro` posts and postmeta, deletes terms across all 5 custom taxonomies, removes options and transients, and revokes all 12 custom capabilities across single-site or entire Multisite networks.
