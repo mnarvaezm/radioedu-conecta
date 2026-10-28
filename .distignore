@@ -1,4 +1,5 @@
 .git
+.github
 .gitignore
 .distignore
 .agents
@@ -11,6 +12,9 @@ composer.json
 composer.lock
 package.json
 package-lock.json
+phpcs.xml.dist
+phpstan.neon.dist
+phpunit.xml.dist
 node_modules
 tests
 *.zip

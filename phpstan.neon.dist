@@ -1,0 +1,11 @@
+parameters:
+    level: 6
+    paths:
+        - radioedu-conecta.php
+        - uninstall.php
+        - src/
+    bootstrapFiles:
+        - radioedu-conecta.php
+    ignoreErrors:
+        - '#Constant ABSPATH not found\.#'
+        - '#Constant WP_UNINSTALL_PLUGIN not found\.#'

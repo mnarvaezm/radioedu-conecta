@@ -9,63 +9,1273 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-27T17:40:00+00:00\n"
+"POT-Creation-Date: 2026-10-28T04:12:00+01:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI\n"
+"X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: radioedu-conecta\n"
 
 #. Plugin Name of the plugin
 msgid "RadioEdu Conecta"
-msgstr "RadioEdu Conecta"
+msgstr ""
 
 #. Plugin URI of the plugin
 msgid "https://radioedu.educarex.es/conecta"
-msgstr "https://radioedu.educarex.es/conecta"
+msgstr ""
 
 #. Description of the plugin
 msgid "Directorio interactivo y sistema colaborativo (\"Traspasando Fronteras\") para la red de radios escolares de Extremadura y del mundo."
-msgstr "Directorio interactivo y sistema colaborativo (\"Traspasando Fronteras\") para la red de radios escolares de Extremadura y del mundo."
+msgstr ""
 
 #. Author of the plugin
 msgid "RadioEdu - Consejería de Educación, Ciencia y Formación Profesional (Junta de Extremadura)"
-msgstr "RadioEdu - Consejería de Educación, Ciencia y Formación Profesional (Junta de Extremadura)"
+msgstr ""
 
-#: radioedu-conecta.php
+#. translators: 1: Required PHP version, 2: Current PHP version
+#: radioedu-conecta.php:73
+#, php-format
+msgid "RadioEdu Conecta requires PHP version %1$s or higher. Your server is running PHP %2$s."
+msgstr ""
+
+#. translators: 1: Required WordPress version, 2: Current WordPress version
+#: radioedu-conecta.php:92
+#, php-format
+msgid "RadioEdu Conecta requires WordPress %1$s or higher. You are using WordPress %2$s."
+msgstr ""
+
+#: radioedu-conecta.php:153
+#: src/Admin/Settings.php:40
 msgid "Ajustes"
-msgstr "Ajustes"
+msgstr ""
 
-#: templates/directorio.php
+#: src/Admin/CentroMetaBoxes.php:48
+msgid "Extremadura (España)"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:49
+msgid "Andalucía (España)"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:50
+msgid "Aragón (España)"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:51
+msgid "Asturias (España)"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:52
+msgid "Cantabria (España)"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:53
+msgid "Castilla y León (España)"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:54
+msgid "Castilla-La Mancha (España)"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:55
+msgid "Cataluña (España)"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:56
+msgid "Comunidad Valenciana (España)"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:57
+msgid "Galicia (España)"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:58
+msgid "Islas Baleares (España)"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:59
+msgid "Islas Canarias (España)"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:60
+msgid "La Rioja (España)"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:61
+msgid "Madrid (España)"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:62
+msgid "Murcia (España)"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:63
+msgid "Navarra (España)"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:64
+msgid "País Vasco (España)"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:65
+msgid "España (General)"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:66
+msgid "Portugal"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:67
+msgid "Francia"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:68
+msgid "Italia"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:69
+msgid "Irlanda"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:70
+msgid "Reino Unido"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:71
+msgid "Alemania"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:72
+msgid "Unión Europea / Internacional"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:73
+msgid "México"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:74
+msgid "Argentina"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:75
+msgid "Colombia"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:76
+msgid "Chile"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:77
+msgid "Otro / Internacional"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:111
+msgid "Seleccionar logo de la radio"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:112
+msgid "Usar este logo"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:123
+msgid "Datos de la Emisora y Coordinación (Traspasando Fronteras)"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:162
+msgid "Logo de la Radio Escolar"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:168
+msgid "Logo de la radio"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:170
+msgid "No hay logo asignado. Se mostrará un icono por defecto."
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:174
+msgid "Subir / Elegir Logo"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:175
+msgid "Eliminar logo"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:177
+msgid "Imagen circular distintiva de la emisora escolar (recomendado 300x300 px formato PNG o JPG)."
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:184
+msgid "Bandera / Región"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:188
+msgid "-- Selecciona región o país --"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:195
+msgid "Determina la bandera mostrada en la tarjeta de resultados y filtros geográficos."
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:202
+msgid "Coordenadas para el Mapa"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:205
+msgid "Latitud:"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:208
+msgid "Longitud:"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:211
+msgid "Coordenadas decimales para ubicar el centro en el mapa interactivo (ej. Cáceres: 39.4699, -6.3708)."
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:218
+msgid "URL de Podcast / Streaming"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:222
+msgid "Enlace donde se pueden escuchar las grabaciones o emisiones del centro escolar."
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:229
+msgid "Web Oficial del Centro"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:239
+msgid "Cursos / Edades del Alumnado"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:243
+msgid "Informa a otros centros sobre el grupo de edad de los alumnos que participan en la radio."
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:250
+msgid "Coordinador/a Responsable"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:253
+msgid "Nombre del docente coordinador"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:255
+msgid "Email:"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:259
+msgid "Aviso de Privacidad (RGPD):"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:260
+msgid "El correo NO se publicará en el directorio público. Se emplea exclusivamente para avisos internos del sistema cuando otro centro envíe una propuesta de colaboración."
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:267
+msgid "Estado de Colaboración"
+msgstr ""
+
+#: src/Admin/CentroMetaBoxes.php:272
+msgid "Disponible para recibir propuestas de match y proyectos conjuntos"
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:42
+msgid "Propuestas de Colaboración (Matches)"
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:43
+msgid "Colaboraciones (Matches)"
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:55
+#: src/Admin/DemoDataImporter.php:37
+msgid "No tienes permisos para realizar esta acción."
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:65
+msgid "Parámetros de respuesta no válidos."
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:81
+msgid "No tienes permisos para responder a las propuestas de este centro."
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:117
+#: src/Admin/Settings.php:214
+msgid "No tienes permisos suficientes para acceder a esta página."
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:160
+msgid "Propuestas de Colaboración (Matches) - Traspasando Fronteras"
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:162
+msgid "Consulta las solicitudes de hermanamiento recibidas o enviadas por tu emisora escolar y coordina proyectos conjuntos."
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:168
+msgid "La respuesta a la propuesta de colaboración se ha guardado correctamente y se ha notificado al centro emisor."
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:175
+msgid "Todavía no hay propuestas de colaboración registradas para tus centros escolares."
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:181
+#: src/Privacy/PrivacyPolicy.php:149
+msgid "Fecha"
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:182
+msgid "Centro Emisor"
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:183
+msgid "Centro Receptor"
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:184
+msgid "Idea del Proyecto y Detalles"
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:185
+#: src/Privacy/PrivacyPolicy.php:157
+msgid "Estado"
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:186
+msgid "Respuesta / Acciones"
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:217
+msgid "Edades:"
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:220
+msgid "Idiomas:"
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:223
+msgid "Fechas:"
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:228
+msgid "Aceptada"
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:230
+msgid "Declinada"
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:232
+msgid "Pendiente"
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:246
+msgid "Mensaje de respuesta"
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:253
+msgid "Escribe un mensaje para el centro emisor..."
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:256
+msgid "Aceptar"
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:259
+msgid "Declinar"
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:263
+msgid "En espera de respuesta del centro receptor."
+msgstr ""
+
+#: src/Admin/Settings.php:39
+msgid "Ajustes de RadioEdu Conecta"
+msgstr ""
+
+#: src/Admin/Settings.php:64
+msgid "Configuración del Mapa Interactivo"
+msgstr ""
+
+#: src/Admin/Settings.php:66
+msgid "Define el centro geográfico y nivel de zoom inicial al abrir la vista de mapa en el directorio."
+msgstr ""
+
+#: src/Admin/Settings.php:73
+msgid "Centro del mapa (Latitud / Longitud)"
+msgstr ""
+
+#: src/Admin/Settings.php:82
+msgid "Notificaciones por Correo Electrónico"
+msgstr ""
+
+#: src/Admin/Settings.php:84
+msgid "Gestiona las notificaciones automáticas enviadas a los docentes coordinadores de las emisoras."
+msgstr ""
+
+#: src/Admin/Settings.php:91
+msgid "Avisos automáticos"
+msgstr ""
+
+#: src/Admin/Settings.php:175
+msgid "Lat:"
+msgstr ""
+
+#: src/Admin/Settings.php:178
+msgid "Lng:"
+msgstr ""
+
+#: src/Admin/Settings.php:181
+msgid "Zoom inicial (1-18):"
+msgstr ""
+
+#: src/Admin/Settings.php:184
+msgid "Por defecto centrado en Extremadura (39.4699, -6.3708, zoom 8)."
+msgstr ""
+
+#: src/Admin/Settings.php:198
+msgid "Notificar por correo al coordinador del centro receptor cuando reciba una nueva propuesta de colaboración."
+msgstr ""
+
+#: src/Admin/Settings.php:203
+msgid "Notificar por correo al coordinador emisor cuando su propuesta sea aceptada o rechazada."
+msgstr ""
+
+#: src/Admin/Settings.php:220
+msgid "Configuración global del directorio de radios escolares Traspasando Fronteras."
+msgstr ""
+
+#. translators: %d: number of imported centers
+#: src/Admin/Settings.php:229
+#, php-format
+msgid "¡Se han cargado o sincronizado con éxito %d emisoras de ejemplo con sus imágenes, taxonomías y coordenadas en el mapa!"
+msgstr ""
+
+#: src/Admin/Settings.php:248
+msgid "Emisoras de Demostración (Traspasando Fronteras)"
+msgstr ""
+
+#: src/Admin/Settings.php:250
+msgid "El instalador incluye 6 emisoras completas de ejemplo con fotografías de cabecera, logotipos, edades, formatos, idiomas y coordenadas geográficas. Puedes volver a generarlas o sincronizarlas en cualquier momento con este botón:"
+msgstr ""
+
+#: src/Admin/Settings.php:255
+msgid "Sincronizar / Cargar las 6 emisoras de ejemplo"
+msgstr ""
+
+#. translators: 1: Nombre del centro emisor
+#: src/Emails/NotificationService.php:86
+#, php-format
+msgid "[RadioEdu Traspasando Fronteras] ¡Nueva propuesta de match de %1$s!"
+msgstr ""
+
+#. translators: 1: Centro receptor, 2: Centro emisor, 3: Idea de proyecto, 4: Edades, 5: Fechas, 6: URL del panel
+#: src/Emails/NotificationService.php:96
+msgid "No especificado"
+msgstr ""
+
+#: src/Emails/NotificationService.php:97
+msgid "Por acordar"
+msgstr ""
+
+#: src/Emails/NotificationService.php:151
+msgid "ACEPTADA"
+msgstr ""
+
+#: src/Emails/NotificationService.php:152
+msgid "DECLINADA"
+msgstr ""
+
+#. translators: 1: Centro receptor, 2: Estado legible
+#: src/Emails/NotificationService.php:156
+#, php-format
+msgid "[RadioEdu Traspasando Fronteras] Tu propuesta a %1$s ha sido %2$s"
+msgstr ""
+
+#. translators: 1: Nombre del coordinador receptor, 2: Email del coordinador receptor
+#: src/Emails/NotificationService.php:168
+#, php-format
+msgid "Contacto de coordinación de la emisora: %1$s <%2$s>"
+msgstr ""
+
+#. translators: 1: Centro emisor, 2: Centro receptor, 3: Estado, 4: Respuesta, 5: Datos de contacto si fue aceptada
+#: src/Emails/NotificationService.php:181
+msgid "Sin mensaje adicional."
+msgstr ""
+
+#. translators: %s: Número de centros
+#: src/Frontend/DirectorioShortcode.php:142
+#: templates/directorio.php:152
+#, php-format
+msgid "Resultados (%s centros)"
+msgstr ""
+
+#: src/Frontend/DirectorioShortcode.php:143
+msgid "No se encontraron centros con los filtros seleccionados."
+msgstr ""
+
+#: src/Frontend/DirectorioShortcode.php:144
+msgid "Cargando centros..."
+msgstr ""
+
+#: src/Frontend/DirectorioShortcode.php:145
+msgid "Ver perfil"
+msgstr ""
+
+#: src/Frontend/DirectorioShortcode.php:146
+#: templates/single-centro.php:117
+msgid "Proponer match"
+msgstr ""
+
+#: src/Frontend/DirectorioShortcode.php:147
+#: templates/single-centro.php:121
+msgid "No disponible"
+msgstr ""
+
+#: src/Frontend/DirectorioShortcode.php:148
+msgid "Añadir a favoritos"
+msgstr ""
+
+#: src/Frontend/DirectorioShortcode.php:149
+msgid "Enviando propuesta..."
+msgstr ""
+
+#: src/Frontend/DirectorioShortcode.php:150
+msgid "¡Propuesta enviada con éxito!"
+msgstr ""
+
+#: src/Frontend/DirectorioShortcode.php:151
+msgid "Debes iniciar sesión con tu cuenta de coordinador de centro para enviar propuestas de colaboración."
+msgstr ""
+
+#: src/Frontend/DirectorioShortcode.php:152
+msgid "Tu cuenta actual no dispone de permisos de coordinador para proponer colaboraciones."
+msgstr ""
+
+#: src/Frontend/DirectorioShortcode.php:153
+msgid "Por favor, selecciona tu centro escolar."
+msgstr ""
+
+#: src/Frontend/DirectorioShortcode.php:154
+msgid "Ha ocurrido un error al procesar la solicitud."
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:29
+msgctxt "Post type general name"
+msgid "Centros y Radios"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:30
+msgctxt "Post type singular name"
+msgid "Centro de Radio"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:31
+msgctxt "Admin Menu text"
+msgid "RadioEdu Centros"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:32
+msgctxt "Add New on Toolbar"
+msgid "Centro de Radio"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:33
+msgid "Añadir nuevo centro"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:34
+msgid "Añadir nuevo centro de radio"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:35
+msgid "Nuevo centro"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:36
+msgid "Editar centro de radio"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:37
+msgid "Ver ficha de centro"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:38
+msgid "Todos los centros"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:39
+msgid "Buscar centros de radio"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:40
+msgid "Centro superior:"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:41
+msgid "No se encontraron centros."
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:42
+msgid "No hay centros en la papelera."
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:43
+msgctxt "Overrides the \"Featured Image\" phrase"
+msgid "Foto de cabecera / Fachada del centro"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:44
+msgctxt "Overrides the \"Set featured image\" phrase"
+msgid "Asignar foto de cabecera"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:45
+msgctxt "Overrides the \"Remove featured image\" phrase"
+msgid "Quitar foto de cabecera"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:46
+msgctxt "Overrides the \"Use as featured image\" phrase"
+msgid "Usar como foto de cabecera"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:47
+msgctxt "The post type archive label"
+msgid "Directorio de radios escolares"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:48
+msgctxt "The post type attributes label"
+msgid "Atributos de centro"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:49
+msgctxt "Overrides the \"Insert into post\" phrase"
+msgid "Insertar en la ficha de centro"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:50
+msgctxt "Overrides the \"Uploaded to this post\" phrase"
+msgid "Subido a este centro"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:51
+msgctxt "Screen reader text for the filter links"
+msgid "Filtrar lista de centros"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:52
+msgctxt "Screen reader text for the pagination"
+msgid "Navegación de lista de centros"
+msgstr ""
+
+#: src/PostTypes/CentroPostType.php:53
+msgctxt "Screen reader text for the items list"
+msgid "Lista de centros"
+msgstr ""
+
+#: src/Privacy/PrivacyPolicy.php:41
+msgid "RadioEdu Conecta (Traspasando Fronteras)"
+msgstr ""
+
+#: src/Privacy/PrivacyPolicy.php:42
+msgid "Este sitio utiliza el plugin RadioEdu Conecta para gestionar el directorio de radios escolares. Los datos de contacto del docente coordinador (nombre y correo electrónico profesional) se almacenan de forma interna y nunca se exponen públicamente en el directorio web ni en las respuestas públicas de la API REST."
+msgstr ""
+
+#: src/Privacy/PrivacyPolicy.php:43
+msgid "Al activar voluntariamente la vista de mapa interactivo, el navegador del usuario se conecta con los servidores de OpenStreetMap Foundation para descargar la cartografía."
+msgstr ""
+
+#: src/Privacy/PrivacyPolicy.php:57
+#: src/Privacy/PrivacyPolicy.php:71
+msgid "RadioEdu Conecta (Coordinadores y Propuestas)"
+msgstr ""
+
+#: src/Privacy/PrivacyPolicy.php:107
+msgid "RadioEdu Conecta - Coordinación de Centros"
+msgstr ""
+
+#: src/Privacy/PrivacyPolicy.php:111
+msgid "Centro escolar"
+msgstr ""
+
+#: src/Privacy/PrivacyPolicy.php:115
+msgid "Nombre del coordinador"
+msgstr ""
+
+#: src/Privacy/PrivacyPolicy.php:119
+msgid "Email de coordinación"
+msgstr ""
+
+#: src/Privacy/PrivacyPolicy.php:145
+msgid "RadioEdu Conecta - Propuestas de Colaboración"
+msgstr ""
+
+#: src/Privacy/PrivacyPolicy.php:153
+#: templates/directorio.php:269
+#: templates/single-centro.php:197
+msgid "Idea de proyecto"
+msgstr ""
+
+#: src/Rest/CentrosController.php:386
+msgid "Número de página de resultados."
+msgstr ""
+
+#: src/Rest/CentrosController.php:394
+msgid "Número de centros por página."
+msgstr ""
+
+#: src/Rest/CentrosController.php:403
+msgid "Término de búsqueda por nombre o palabra clave."
+msgstr ""
+
+#: src/Rest/CentrosController.php:409
+msgid "Criterio de ordenación."
+msgstr ""
+
+#: src/Rest/CentrosController.php:417
+msgid "ID del centro de referencia para calcular afinidad."
+msgstr ""
+
+#: src/Rest/CentrosController.php:424
+msgid "Slug de etapa educativa."
+msgstr ""
+
+#: src/Rest/CentrosController.php:430
+msgid "Slug de idioma."
+msgstr ""
+
+#: src/Rest/CentrosController.php:436
+msgid "Slug de temática."
+msgstr ""
+
+#: src/Rest/CentrosController.php:442
+msgid "Slug de formato de programa."
+msgstr ""
+
+#: src/Rest/CentrosController.php:448
+msgid "Slug de ubicación geográfica."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:331
+msgid "Has alcanzado el límite de propuestas por hora. Por favor, inténtalo más tarde."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:346
+msgid "No puedes enviar una propuesta de colaboración a tu propio centro escolar."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:354
+msgid "Por favor, describe brevemente la idea del proyecto conjunto."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:368
+msgid "Uno de los centros especificados no es válido o no está publicado."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:377
+msgid "No tienes permisos para enviar propuestas en nombre del centro emisor seleccionado."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:386
+msgid "Este centro escolar no está disponible actualmente para recibir nuevas propuestas de colaboración."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:416
+msgid "No se pudo registrar la propuesta en la base de datos."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:439
+msgid "¡Propuesta de match enviada con éxito! La emisora receptora recibirá una notificación para comenzar a coordinar el proyecto."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:460
+msgid "El estado indicado no es válido."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:484
+msgid "No se pudo actualizar la propuesta."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:495
+msgid "Estado de la colaboración actualizado correctamente."
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:59
+msgctxt "taxonomy general name"
+msgid "Etapas Educativas"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:60
+msgctxt "taxonomy singular name"
+msgid "Etapa Educativa"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:61
+msgid "Buscar etapas educativas"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:62
+msgid "Todas las etapas"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:63
+msgid "Etapa superior"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:64
+msgid "Etapa superior:"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:65
+msgid "Editar etapa"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:66
+msgid "Actualizar etapa"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:67
+msgid "Añadir nueva etapa educativa"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:68
+msgid "Nombre de nueva etapa"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:69
+msgid "Etapas Educativas"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:94
+msgctxt "taxonomy general name"
+msgid "Idiomas"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:95
+msgctxt "taxonomy singular name"
+msgid "Idioma"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:96
+msgid "Buscar idiomas"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:97
+msgid "Todos los idiomas"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:98
+msgid "Editar idioma"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:99
+msgid "Actualizar idioma"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:100
+msgid "Añadir nuevo idioma"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:101
+msgid "Nombre del nuevo idioma"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:102
+msgid "Idiomas"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:127
+msgctxt "taxonomy general name"
+msgid "Temas de Interés"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:128
+msgctxt "taxonomy singular name"
+msgid "Tema de Interés"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:129
+msgid "Buscar temas"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:130
+msgid "Todos los temas"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:131
+msgid "Editar tema"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:132
+msgid "Actualizar tema"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:133
+msgid "Añadir nuevo tema"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:134
+msgid "Nombre del nuevo tema"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:135
+msgid "Temas de Interés"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:160
+msgctxt "taxonomy general name"
+msgid "Formatos de Radio"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:161
+msgctxt "taxonomy singular name"
+msgid "Formato de Radio"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:162
+msgid "Buscar formatos"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:163
+msgid "Todos los formatos"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:164
+msgid "Editar formato"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:165
+msgid "Actualizar formato"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:166
+msgid "Añadir nuevo formato"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:167
+msgid "Nombre del nuevo formato"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:168
+msgid "Formatos de Radio"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:193
+msgctxt "taxonomy general name"
+msgid "Ubicaciones"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:194
+msgctxt "taxonomy singular name"
+msgid "Ubicación"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:195
+msgid "Buscar ubicaciones"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:196
+msgid "Todas las ubicaciones"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:197
+msgid "Ubicación superior"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:198
+msgid "Ubicación superior:"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:199
+msgid "Editar ubicación"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:200
+msgid "Actualizar ubicación"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:201
+msgid "Añadir nueva ubicación"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:202
+msgid "Nombre de la ubicación"
+msgstr ""
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:203
+msgid "Ubicaciones"
+msgstr ""
+
+#: templates/directorio.php:25
 msgid "Traspasando Fronteras"
-msgstr "Traspasando Fronteras"
+msgstr ""
 
-#: templates/directorio.php
+#: templates/directorio.php:27
 msgid "Conectamos radios escolares de Extremadura con otras emisoras de España y del mundo."
-msgstr "Conectamos radios escolares de Extremadura con otras emisoras de España y del mundo."
+msgstr ""
 
-#: templates/directorio.php
+#: templates/directorio.php:32
 msgid "Diferentes voces, un mismo mundo"
-msgstr "Diferentes voces, un mismo mundo"
+msgstr ""
 
-#: templates/directorio.php
+#: templates/directorio.php:33
 msgid "RADIOS ESCOLARES QUE HACEN UN MUNDO MÁS GRANDE 🌍"
-msgstr "RADIOS ESCOLARES QUE HACEN UN MUNDO MÁS GRANDE 🌍"
+msgstr ""
 
-#: templates/directorio.php
+#: templates/directorio.php:39
+msgid "Filtros del directorio"
+msgstr ""
+
+#: templates/directorio.php:45
+msgid "Ubicación"
+msgstr ""
+
+#: templates/directorio.php:48
+msgid "Cualquier lugar"
+msgstr ""
+
+#: templates/directorio.php:62
+msgid "Idioma"
+msgstr ""
+
+#: templates/directorio.php:65
+msgid "Cualquier idioma"
+msgstr ""
+
+#: templates/directorio.php:79
+msgid "Etapa educativa"
+msgstr ""
+
+#: templates/directorio.php:82
+msgid "Cualquiera"
+msgstr ""
+
+#: templates/directorio.php:96
+msgid "Temas"
+msgstr ""
+
+#: templates/directorio.php:99
+msgid "Cualquier tema"
+msgstr ""
+
+#: templates/directorio.php:113
+msgid "Formato"
+msgstr ""
+
+#: templates/directorio.php:116
+msgid "Cualquier formato"
+msgstr ""
+
+#: templates/directorio.php:130
+msgid "Busca colaboración con..."
+msgstr ""
+
+#: templates/directorio.php:132
+msgid "Cualquier centro o temática..."
+msgstr ""
+
+#: templates/directorio.php:138
 msgid "Buscar centros"
-msgstr "Buscar centros"
+msgstr ""
 
-#: templates/directorio.php
+#: templates/directorio.php:163
 msgid "Vista de mapa"
-msgstr "Vista de mapa"
+msgstr ""
 
-#: templates/directorio.php
+#: templates/directorio.php:168
+msgid "Ordenar por"
+msgstr ""
+
+#: templates/directorio.php:170
+msgid "Más afines"
+msgstr ""
+
+#: templates/directorio.php:171
+msgid "Más recientes"
+msgstr ""
+
+#: templates/directorio.php:172
+msgid "Alfabético (A-Z)"
+msgstr ""
+
+#: templates/directorio.php:185
+msgid "Mapa geográfico interactivo (OpenStreetMap)"
+msgstr ""
+
+#: templates/directorio.php:186
+msgid "Al cargar el mapa cartográfico se establecerá conexión con los servidores externos de OpenStreetMap Foundation para descargar las imágenes del mapa."
+msgstr ""
+
+#: templates/directorio.php:188
+msgid "Aceptar y mostrar el mapa interactivo"
+msgstr ""
+
+#: templates/directorio.php:202
+msgid "Cargar más centros"
+msgstr ""
+
+#: templates/directorio.php:208
+msgid "Cargando..."
+msgstr ""
+
+#: templates/directorio.php:209
+msgid "Buscando centros afines en la red..."
+msgstr ""
+
+#: templates/directorio.php:215
+msgid "No se han encontrado emisoras con estos filtros"
+msgstr ""
+
+#: templates/directorio.php:216
+msgid "Prueba a seleccionar otros temas, idiomas o restablecer la búsqueda."
+msgstr ""
+
+#: templates/directorio.php:218
+msgid "Limpiar todos los filtros"
+msgstr ""
+
+#: templates/directorio.php:230
+#: templates/single-centro.php:158
 msgid "Solicitud de match"
-msgstr "Solicitud de match"
+msgstr ""
 
-#: templates/directorio.php
+#: templates/directorio.php:231
+#: templates/single-centro.php:159
 msgid "¡Cuéntanos tu idea y empezad a crear juntos!"
-msgstr "¡Cuéntanos tu idea y empezad a crear juntos!"
+msgstr ""
 
-#: templates/directorio.php
+#: templates/directorio.php:233
+#: templates/single-centro.php:161
+msgid "Cerrar panel"
+msgstr ""
+
+#: templates/directorio.php:241
+#: templates/single-centro.php:169
+msgid "Tu centro"
+msgstr ""
+
+#: templates/directorio.php:252
+#: templates/single-centro.php:180
+msgid "Sin centro asignado como coordinador"
+msgstr ""
+
+#: templates/directorio.php:252
+#: templates/single-centro.php:180
+msgid "Debes iniciar sesión para enviar propuestas"
+msgstr ""
+
+#: templates/directorio.php:260
+#: templates/single-centro.php:188
+msgid "Centro con el que quieres colaborar"
+msgstr ""
+
+#: templates/directorio.php:271
+#: templates/single-centro.php:199
+msgid "Ejemplo: Queremos crear un podcast conjunto sobre la vida en entornos rurales, con entrevistas a estudiantes de ambos centros..."
+msgstr ""
+
+#: templates/directorio.php:278
+#: templates/single-centro.php:206
+msgid "Curso o edades"
+msgstr ""
+
+#: templates/directorio.php:280
+#: templates/single-centro.php:208
+msgid "Ej: 12-14 años (1º-2º ESO)"
+msgstr ""
+
+#: templates/directorio.php:284
+#: templates/single-centro.php:212
+msgid "Idioma(s)"
+msgstr ""
+
+#: templates/directorio.php:286
+#: templates/single-centro.php:214
+msgid "Ej: Español / Inglés"
+msgstr ""
+
+#: templates/directorio.php:293
+#: templates/single-centro.php:221
+msgid "Fechas aproximadas"
+msgstr ""
+
+#: templates/directorio.php:295
+#: templates/single-centro.php:223
+msgid "Ej: 2º Trimestre (Enero - Marzo)"
+msgstr ""
+
+#: templates/directorio.php:304
+#: templates/single-centro.php:232
 msgid "Enviar propuesta"
-msgstr "Enviar propuesta"
+msgstr ""
+
+#: templates/directorio.php:314
+#: templates/single-centro.php:242
+msgid "1. Encuentra"
+msgstr ""
+
+#: templates/directorio.php:315
+#: templates/single-centro.php:243
+msgid "Busca centros afines a tus intereses"
+msgstr ""
+
+#: templates/directorio.php:320
+#: templates/single-centro.php:248
+msgid "2. Conecta"
+msgstr ""
+
+#: templates/directorio.php:321
+#: templates/single-centro.php:249
+msgid "Envía tu propuesta de match"
+msgstr ""
+
+#: templates/directorio.php:326
+#: templates/single-centro.php:254
+msgid "3. Crea"
+msgstr ""
+
+#: templates/directorio.php:327
+#: templates/single-centro.php:255
+msgid "¡Desarrollad juntos vuestro proyecto!"
+msgstr ""
+
+#: templates/single-centro.php:32
+msgid "Volver al directorio Traspasando Fronteras"
+msgstr ""
+
+#: templates/single-centro.php:44
+msgid "Disponible para colaborar"
+msgstr ""
+
+#: templates/single-centro.php:45
+msgid "No disponible actualmente"
+msgstr ""
+
+#: templates/single-centro.php:67
+#: templates/single-centro.php:115
+msgid "Extremadura"
+msgstr ""
+
+#: templates/single-centro.php:89
+msgid "Cursos / Edades"
+msgstr ""
+
+#: templates/single-centro.php:99
+msgid "Idiomas de trabajo"
+msgstr ""
+
+#: templates/single-centro.php:127
+msgid "Escuchar Podcast / Emisora"
+msgstr ""
+
+#: templates/single-centro.php:133
+msgid "Web del centro"
+msgstr ""
+
+#: templates/single-centro.php:143
+msgid "Sobre nuestra emisora escolar"
+msgstr ""
