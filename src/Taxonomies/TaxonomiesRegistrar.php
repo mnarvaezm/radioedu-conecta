@@ -25,6 +25,22 @@ class TaxonomiesRegistrar {
 	public const TAX_LOCALIZACION = 'radioedu_localizacion';
 
 	/**
+	 * Capacidades comunes para las taxonomías del directorio:
+	 * Los coordinadores (author) pueden asignar términos a su centro,
+	 * mientras que la gestión del vocabulario requiere 'manage_radioedu'.
+	 *
+	 * @return array<string, string>
+	 */
+	private static function get_taxonomy_capabilities(): array {
+		return [
+			'manage_terms' => 'manage_radioedu',
+			'edit_terms'   => 'manage_radioedu',
+			'delete_terms' => 'manage_radioedu',
+			'assign_terms' => 'edit_radioedu_centros',
+		];
+	}
+
+	/**
 	 * Registra todas las taxonomías en WordPress.
 	 */
 	public static function register_all(): void {
@@ -65,6 +81,7 @@ class TaxonomiesRegistrar {
 				'rewrite'           => [ 'slug' => 'etapa-educativa' ],
 				'show_in_rest'      => true,
 				'rest_base'         => 'etapas',
+				'capabilities'      => self::get_taxonomy_capabilities(),
 			]
 		);
 	}
@@ -97,6 +114,7 @@ class TaxonomiesRegistrar {
 				'rewrite'           => [ 'slug' => 'idioma-radio' ],
 				'show_in_rest'      => true,
 				'rest_base'         => 'idiomas',
+				'capabilities'      => self::get_taxonomy_capabilities(),
 			]
 		);
 	}
@@ -129,6 +147,7 @@ class TaxonomiesRegistrar {
 				'rewrite'           => [ 'slug' => 'tema-radio' ],
 				'show_in_rest'      => true,
 				'rest_base'         => 'tematicas',
+				'capabilities'      => self::get_taxonomy_capabilities(),
 			]
 		);
 	}
@@ -161,6 +180,7 @@ class TaxonomiesRegistrar {
 				'rewrite'           => [ 'slug' => 'formato-radio' ],
 				'show_in_rest'      => true,
 				'rest_base'         => 'formatos',
+				'capabilities'      => self::get_taxonomy_capabilities(),
 			]
 		);
 	}
@@ -195,6 +215,7 @@ class TaxonomiesRegistrar {
 				'rewrite'           => [ 'slug' => 'ubicacion' ],
 				'show_in_rest'      => true,
 				'rest_base'         => 'ubicaciones',
+				'capabilities'      => self::get_taxonomy_capabilities(),
 			]
 		);
 	}

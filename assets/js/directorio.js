@@ -1,9 +1,9 @@
 /**
  * Lógica interactiva en el frontal de RadioEdu Conecta - Traspasando Fronteras.
- * Cero innerHTML para prevención de XSS. Utiliza createElement y textContent.
+ * Cero innerHTML y cero concatenación HTML para prevención estricta de XSS.
  */
 
-/* global radioeduConectaData, L */
+/* global L */
 ( function() {
 	'use strict';
 
@@ -14,20 +14,25 @@
 		}
 
 		// Configuración inyectada desde PHP.
-		const config = window.radioeduConectaData || {};
-		const restUrl = config.restUrl || '/wp-json/radioedu-conecta/v1/';
+		const config    = window.radioeduConectaData || {};
+		const restUrl   = config.restUrl || '/wp-json/radioedu-conecta/v1/';
 		const restNonce = config.restNonce || '';
-		const i18n = config.i18n || {};
+		const i18n      = config.i18n || {};
 
 		// Elementos del DOM.
 		const cardsContainer   = document.getElementById( 'radioedu-cards-container' );
 		const countNumber      = document.getElementById( 'radioedu-count-number' );
 		const loadingState     = document.getElementById( 'radioedu-loading' );
 		const noResultsState   = document.getElementById( 'radioedu-no-results' );
+		const paginationWrap   = document.getElementById( 'radioedu-pagination-wrap' );
+		const btnLoadMore      = document.getElementById( 'radioedu-btn-load-more' );
 		const btnBuscar        = document.getElementById( 'radioedu-btn-buscar' );
 		const btnReset         = document.getElementById( 'radioedu-btn-reset' );
 		const btnToggleMap     = document.getElementById( 'radioedu-btn-toggle-map' );
 		const mapView          = document.getElementById( 'radioedu-map-view' );
+		const mapConsent       = document.getElementById( 'radioedu-map-consent' );
+		const btnAcceptMap     = document.getElementById( 'radioedu-btn-accept-map' );
+		const leafletMapEl     = document.getElementById( 'radioedu-leaflet-map' );
 		const sortSelect       = document.getElementById( 'radioedu-sort-select' );
 
 		// Drawer de Match.
@@ -49,16 +54,47 @@
 		const filterFormato   = document.getElementById( 'radioedu-filter-formato' );
 		const filterSearch    = document.getElementById( 'radioedu-filter-search' );
 
-		let isMapView = false;
-		let leafletMap = null;
-		let mapMarkers = [];
+		let isMapView      = false;
+		let hasMapConsent  = false;
+		let leafletMap     = null;
+		let mapMarkers     = [];
 		let currentCentros = [];
+		let currentPage    = 1;
+		let totalPages     = 1;
+
+		try {
+			hasMapConsent = sessionStorage.getItem( 'radioedu_osm_consent' ) === '1';
+		} catch ( e ) {
+			hasMapConsent = false;
+		}
+
+		/**
+		 * Valida que una URL sea segura (http/https) para prevenir XSS (javascript:/data:).
+		 *
+		 * @param {string} rawUrl URL de entrada.
+		 * @return {string} URL validada o cadena vacía.
+		 */
+		function sanitizeHttpUrl( rawUrl ) {
+			if ( ! rawUrl || typeof rawUrl !== 'string' ) {
+				return '';
+			}
+			try {
+				const parsed = new URL( rawUrl, window.location.origin );
+				if ( parsed.protocol === 'http:' || parsed.protocol === 'https:' ) {
+					return parsed.href;
+				}
+			} catch ( e ) {
+				return '';
+			}
+			return '';
+		}
 
 		// Favoritos locales en localStorage.
 		function getFavorites() {
 			try {
 				const favs = localStorage.getItem( 'radioedu_favoritos' );
-				return favs ? JSON.parse( favs ) : [];
+				const parsed = favs ? JSON.parse( favs ) : [];
+				return Array.isArray( parsed ) ? parsed : [];
 			} catch ( e ) {
 				return [];
 			}
@@ -80,16 +116,27 @@
 		}
 
 		// Consulta a la REST API con los filtros activos.
-		function fetchCentros() {
-			cardsContainer.style.display = 'none';
-			noResultsState.style.display = 'none';
+		function fetchCentros( appendPage ) {
+			const isAppend = Boolean( appendPage );
+			if ( ! isAppend ) {
+				currentPage = 1;
+				cardsContainer.style.display = 'none';
+				noResultsState.style.display = 'none';
+				if ( paginationWrap ) {
+					paginationWrap.style.display = 'none';
+				}
+			}
 			loadingState.style.display = 'block';
 
 			const params = new URLSearchParams( {
-				per_page: '30',
+				page: String( currentPage ),
+				per_page: '24',
 				orden: sortSelect ? sortSelect.value : 'afines'
 			} );
 
+			if ( config.userCenterId ) {
+				params.append( 'afines_a', String( config.userCenterId ) );
+			}
 			if ( filterUbicacion && filterUbicacion.value ) {
 				params.append( 'ubicacion', filterUbicacion.value );
 			}
@@ -110,7 +157,7 @@
 			}
 
 			const fetchHeaders = {};
-			if ( restNonce && typeof restNonce === 'string' && restNonce.trim().length > 0 ) {
+			if ( config.isLoggedIn && restNonce && typeof restNonce === 'string' && restNonce.trim().length > 0 ) {
 				fetchHeaders['X-WP-Nonce'] = restNonce.trim();
 			}
 
@@ -125,7 +172,14 @@
 			} )
 			.then( function( data ) {
 				loadingState.style.display = 'none';
-				currentCentros = data.centros || [];
+				const fetched = Array.isArray( data.centros ) ? data.centros : [];
+				totalPages    = Number( data.total_pages || 1 );
+
+				if ( isAppend ) {
+					currentCentros = currentCentros.concat( fetched );
+				} else {
+					currentCentros = fetched;
+				}
 
 				if ( countNumber ) {
 					countNumber.textContent = String( data.total !== undefined ? data.total : currentCentros.length );
@@ -134,33 +188,44 @@
 				if ( currentCentros.length === 0 ) {
 					noResultsState.style.display = 'block';
 					cardsContainer.style.display = 'none';
+					if ( paginationWrap ) {
+						paginationWrap.style.display = 'none';
+					}
 				} else {
-					renderCards( currentCentros );
-					cardsContainer.style.display = 'grid';
+					renderCards( fetched, isAppend );
+					if ( ! isMapView ) {
+						cardsContainer.style.display = 'grid';
+					}
+					if ( paginationWrap ) {
+						paginationWrap.style.display = ( currentPage < totalPages && ! isMapView ) ? 'block' : 'none';
+					}
 				}
 
-				if ( isMapView ) {
+				if ( isMapView && leafletMap ) {
 					updateMapMarkers( currentCentros );
 				}
 			} )
 			.catch( function( err ) {
+				// eslint-disable-next-line no-console
 				console.error( 'RadioEdu Conecta API error:', err );
 				loadingState.style.display = 'none';
-				noResultsState.style.display = 'block';
+				if ( ! isAppend ) {
+					noResultsState.style.display = 'block';
+				}
 			} );
 		}
 
 		// Mapeo seguro de banderas a iconos emoji/insignias representativas.
 		function getFlagEmoji( code ) {
 			const flags = {
-				'es-ex': '🟩⬜⬛', // Extremadura
-				'es-ct': '🟨🟥',   // Cataluña
-				'es-vc': '🇪🇸',     // Comunitat Valenciana
-				'es-ar': '🇪🇸',     // Aragón
-				'es-an': '🟩⬜🟩', // Andalucía
-				'es-md': '🇪🇸',     // Madrid
-				'es-ga': '🇪🇸',     // Galicia
-				'es-pv': '🇪🇸',     // País Vasco
+				'es-ex': '🟩⬜⬛',
+				'es-ct': '🟨🟥',
+				'es-vc': '🇪🇸',
+				'es-ar': '🇪🇸',
+				'es-an': '🟩⬜🟩',
+				'es-md': '🇪🇸',
+				'es-ga': '🇪🇸',
+				'es-pv': '🇪🇸',
 				'es': '🇪🇸',
 				'pt': '🇵🇹',
 				'fr': '🇫🇷',
@@ -171,15 +236,19 @@
 				'mx': '🇲🇽',
 				'ar': '🇦🇷',
 				'co': '🇨🇴',
+				'cl': '🇨🇱',
+				'eu': '🇪🇺',
 				'world': '🌍'
 			};
 			return flags[ code ] || '📻';
 		}
 
 		// Renderizado seguro en el DOM (sin innerHTML).
-		function renderCards( centros ) {
-			while ( cardsContainer.firstChild ) {
-				cardsContainer.removeChild( cardsContainer.firstChild );
+		function renderCards( centros, append ) {
+			if ( ! append ) {
+				while ( cardsContainer.firstChild ) {
+					cardsContainer.removeChild( cardsContainer.firstChild );
+				}
 			}
 
 			const favs = getFavorites();
@@ -187,13 +256,15 @@
 			centros.forEach( function( centro ) {
 				const card = document.createElement( 'article' );
 				card.className = 'radioedu-card';
-				card.dataset.id = centro.id;
+				card.dataset.id = String( centro.id );
 
 				// 1. Cover
 				const cover = document.createElement( 'div' );
 				cover.className = 'radioedu-card-cover';
-				if ( centro.foto_cabecera ) {
-					cover.style.backgroundImage = 'url("' + encodeURI( centro.foto_cabecera ) + '")';
+				const safeCoverUrl = sanitizeHttpUrl( centro.foto_cabecera );
+				if ( safeCoverUrl ) {
+					const cssSafeUrl = safeCoverUrl.replace( /["'()\\]/g, '\\$&' );
+					cover.style.backgroundImage = 'url("' + cssSafeUrl + '")';
 				}
 
 				// Botón Favorito
@@ -213,8 +284,9 @@
 				// Logo de la radio
 				const logo = document.createElement( 'img' );
 				logo.className = 'radioedu-card-logo';
-				logo.alt = centro.nombre;
-				logo.src = centro.logo_radio || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="%2300838f"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 15c-1.66 0-3-1.34-3-3V9c0-1.66 1.34-3 3-3s3 1.34 3 3v5c0 1.66-1.34 3-3 3z"/></svg>';
+				logo.alt = String( centro.nombre || '' );
+				const safeLogoUrl = sanitizeHttpUrl( centro.logo_radio );
+				logo.src = safeLogoUrl || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="%2300838f"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 15c-1.66 0-3-1.34-3-3V9c0-1.66 1.34-3 3-3s3 1.34 3 3v5c0 1.66-1.34 3-3 3z"/></svg>';
 				cover.appendChild( logo );
 
 				card.appendChild( cover );
@@ -225,7 +297,7 @@
 
 				const title = document.createElement( 'h3' );
 				title.className = 'radioedu-card-title';
-				title.textContent = centro.nombre;
+				title.textContent = String( centro.nombre || '' );
 				body.appendChild( title );
 
 				const location = document.createElement( 'div' );
@@ -243,14 +315,16 @@
 				body.appendChild( location );
 
 				// Píldoras de Tags
-				if ( centro.tags && centro.tags.length > 0 ) {
+				if ( Array.isArray( centro.tags ) && centro.tags.length > 0 ) {
 					const tagsWrapper = document.createElement( 'div' );
 					tagsWrapper.className = 'radioedu-card-tags';
 
+					const allowedColors = [ 'mint', 'coral', 'blue' ];
 					centro.tags.slice( 0, 5 ).forEach( function( tag ) {
 						const tagSpan = document.createElement( 'span' );
-						tagSpan.className = 'radioedu-tag radioedu-tag-' + ( tag.color || 'mint' );
-						tagSpan.textContent = tag.name;
+						const colorClass = allowedColors.includes( tag.color ) ? tag.color : 'mint';
+						tagSpan.className = 'radioedu-tag radioedu-tag-' + colorClass;
+						tagSpan.textContent = String( tag.name || '' );
 						tagsWrapper.appendChild( tagSpan );
 					} );
 
@@ -263,7 +337,7 @@
 
 				const btnPerfil = document.createElement( 'a' );
 				btnPerfil.className = 'radioedu-btn-secondary';
-				btnPerfil.href = centro.enlace_perfil || '#';
+				btnPerfil.href = sanitizeHttpUrl( centro.enlace_perfil ) || '#';
 				btnPerfil.textContent = i18n.viewProfile || 'Ver perfil';
 				footer.appendChild( btnPerfil );
 
@@ -271,16 +345,22 @@
 				btnMatch.className = 'radioedu-btn-match';
 				btnMatch.setAttribute( 'type', 'button' );
 
-				const planeIcon = document.createElement( 'span' );
-				planeIcon.textContent = '✈️';
-				btnMatch.appendChild( planeIcon );
+				if ( centro.disponible === false ) {
+					btnMatch.disabled = true;
+					btnMatch.textContent = i18n.unavailable || 'No disponible';
+				} else {
+					const planeIcon = document.createElement( 'span' );
+					planeIcon.textContent = '✈️';
+					btnMatch.appendChild( planeIcon );
 
-				const matchText = document.createTextNode( ' ' + ( i18n.proposeMatch || 'Proponer match' ) );
-				btnMatch.appendChild( matchText );
+					const matchText = document.createTextNode( ' ' + ( i18n.proposeMatch || 'Proponer match' ) );
+					btnMatch.appendChild( matchText );
 
-				btnMatch.addEventListener( 'click', function() {
-					openMatchDrawer( centro );
-				} );
+					btnMatch.addEventListener( 'click', function() {
+						openMatchDrawer( centro );
+					} );
+				}
+
 				footer.appendChild( btnMatch );
 
 				body.appendChild( footer );
@@ -293,13 +373,21 @@
 		// Gestión del Drawer de Solicitud de Match.
 		function openMatchDrawer( centro ) {
 			if ( ! config.isLoggedIn ) {
-				alert( i18n.loginRequired || 'Debes iniciar sesión para proponer un match de colaboración.' );
-				window.location.href = config.loginUrl;
+				window.alert( i18n.loginRequired || 'Debes iniciar sesión para proponer un match de colaboración.' );
+				const safeLoginUrl = sanitizeHttpUrl( config.loginUrl );
+				if ( safeLoginUrl ) {
+					window.location.href = safeLoginUrl;
+				}
+				return;
+			}
+
+			if ( ! config.canPropose ) {
+				window.alert( i18n.noPermission || 'Tu cuenta actual no dispone de permisos de coordinador para proponer colaboraciones.' );
 				return;
 			}
 
 			if ( matchReceptorTxt ) {
-				matchReceptorTxt.value = centro.nombre + ' (' + ( centro.ubicacion || '' ) + ')';
+				matchReceptorTxt.value = centro.nombre + ( centro.ubicacion ? ' (' + centro.ubicacion + ')' : '' );
 			}
 			if ( matchReceptorId ) {
 				matchReceptorId.value = String( centro.id );
@@ -337,15 +425,15 @@
 			matchForm.addEventListener( 'submit', function( e ) {
 				e.preventDefault();
 
-				const emisorId = matchEmisorId ? matchEmisorId.value : config.userCenterId;
+				const emisorId   = matchEmisorId ? matchEmisorId.value : config.userCenterId;
 				const receptorId = matchReceptorId ? matchReceptorId.value : '';
-				const idea = document.getElementById( 'radioedu-match-idea' ).value;
-				const edades = document.getElementById( 'radioedu-match-edades' ).value;
-				const idiomas = document.getElementById( 'radioedu-match-idiomas' ).value;
-				const fechas = document.getElementById( 'radioedu-match-fechas' ).value;
+				const idea       = document.getElementById( 'radioedu-match-idea' ).value;
+				const edades     = document.getElementById( 'radioedu-match-edades' ).value;
+				const idiomas    = document.getElementById( 'radioedu-match-idiomas' ).value;
+				const fechas     = document.getElementById( 'radioedu-match-fechas' ).value;
 
 				if ( ! emisorId ) {
-					alert( i18n.selectYourCenter || 'Selecciona tu centro emisor.' );
+					window.alert( i18n.selectYourCenter || 'Selecciona tu centro emisor.' );
 					return;
 				}
 
@@ -359,8 +447,8 @@
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify( {
-						centro_emisor_id: emisorId,
-						centro_receptor_id: receptorId,
+						centro_emisor_id: Number( emisorId ),
+						centro_receptor_id: Number( receptorId ),
 						idea_proyecto: idea,
 						curso_edades: edades,
 						idiomas: idiomas,
@@ -394,6 +482,34 @@
 			} );
 		}
 
+		// Activar mapa tras consentimiento RGPD para carga de teselas externas.
+		function activateLeafletMap() {
+			if ( mapConsent ) {
+				mapConsent.style.display = 'none';
+			}
+			if ( leafletMapEl ) {
+				leafletMapEl.style.display = 'block';
+			}
+			if ( ! leafletMap && typeof L !== 'undefined' ) {
+				initLeafletMap();
+			} else if ( leafletMap ) {
+				leafletMap.invalidateSize();
+			}
+			updateMapMarkers( currentCentros );
+		}
+
+		if ( btnAcceptMap ) {
+			btnAcceptMap.addEventListener( 'click', function() {
+				hasMapConsent = true;
+				try {
+					sessionStorage.setItem( 'radioedu_osm_consent', '1' );
+				} catch ( e ) {
+					// Ignorar si sessionStorage está restringido.
+				}
+				activateLeafletMap();
+			} );
+		}
+
 		// Toggle Vista de Mapa
 		if ( btnToggleMap && mapView ) {
 			btnToggleMap.addEventListener( 'click', function() {
@@ -402,16 +518,23 @@
 
 				if ( isMapView ) {
 					mapView.style.display = 'block';
+					mapView.setAttribute( 'aria-hidden', 'false' );
 					cardsContainer.style.display = 'none';
+					if ( paginationWrap ) {
+						paginationWrap.style.display = 'none';
+					}
 					btnToggleMap.classList.add( 'is-active' );
 
-					if ( ! leafletMap && typeof L !== 'undefined' ) {
-						initLeafletMap();
+					if ( hasMapConsent ) {
+						activateLeafletMap();
 					}
-					updateMapMarkers( currentCentros );
 				} else {
 					mapView.style.display = 'none';
+					mapView.setAttribute( 'aria-hidden', 'true' );
 					cardsContainer.style.display = 'grid';
+					if ( paginationWrap ) {
+						paginationWrap.style.display = ( currentPage < totalPages ) ? 'block' : 'none';
+					}
 					btnToggleMap.classList.remove( 'is-active' );
 				}
 			} );
@@ -428,12 +551,12 @@
 			} ).addTo( leafletMap );
 		}
 
+		// Actualización segura de marcadores usando nodos DOM (cero HTML concatenado).
 		function updateMapMarkers( centros ) {
 			if ( ! leafletMap || typeof L === 'undefined' ) {
 				return;
 			}
 
-			// Limpiar marcadores anteriores
 			mapMarkers.forEach( m => leafletMap.removeLayer( m ) );
 			mapMarkers = [];
 
@@ -444,27 +567,50 @@
 
 					if ( ! isNaN( latNum ) && ! isNaN( lngNum ) ) {
 						const marker = L.marker( [ latNum, lngNum ] ).addTo( leafletMap );
-						marker.bindPopup(
-							'<strong>' + encodeHTMLEntities( centro.nombre ) + '</strong><br>' +
-							encodeHTMLEntities( centro.ubicacion || '' ) + '<br>' +
-							'<a href="' + encodeURI( centro.enlace_perfil || '#' ) + '" style="color:#00838f;font-weight:600;">' + ( i18n.viewProfile || 'Ver perfil' ) + '</a>'
-						);
+
+						const popupNode = document.createElement( 'div' );
+						const strongEl  = document.createElement( 'strong' );
+						strongEl.textContent = String( centro.nombre || '' );
+						popupNode.appendChild( strongEl );
+						popupNode.appendChild( document.createElement( 'br' ) );
+
+						const locSpan = document.createElement( 'span' );
+						locSpan.textContent = String( centro.ubicacion || '' );
+						popupNode.appendChild( locSpan );
+						popupNode.appendChild( document.createElement( 'br' ) );
+
+						const linkEl = document.createElement( 'a' );
+						linkEl.href = sanitizeHttpUrl( centro.enlace_perfil ) || '#';
+						linkEl.style.color = '#00838f';
+						linkEl.style.fontWeight = '600';
+						linkEl.textContent = i18n.viewProfile || 'Ver perfil';
+						popupNode.appendChild( linkEl );
+
+						marker.bindPopup( popupNode );
 						mapMarkers.push( marker );
 					}
 				}
 			} );
 		}
 
-		function encodeHTMLEntities( str ) {
-			return String( str ).replace( /&/g, '&amp;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' ).replace( /"/g, '&quot;' );
-		}
-
-		// Eventos de filtro
+		// Eventos de filtro y paginación
 		if ( btnBuscar ) {
-			btnBuscar.addEventListener( 'click', fetchCentros );
+			btnBuscar.addEventListener( 'click', function() {
+				fetchCentros( false );
+			} );
 		}
 		if ( sortSelect ) {
-			sortSelect.addEventListener( 'change', fetchCentros );
+			sortSelect.addEventListener( 'change', function() {
+				fetchCentros( false );
+			} );
+		}
+		if ( btnLoadMore ) {
+			btnLoadMore.addEventListener( 'click', function() {
+				if ( currentPage < totalPages ) {
+					currentPage += 1;
+					fetchCentros( true );
+				}
+			} );
 		}
 		if ( btnReset ) {
 			btnReset.addEventListener( 'click', function() {
@@ -474,11 +620,11 @@
 				if ( filterTematica ) { filterTematica.value = ''; }
 				if ( filterFormato ) { filterFormato.value = ''; }
 				if ( filterSearch ) { filterSearch.value = ''; }
-				fetchCentros();
+				fetchCentros( false );
 			} );
 		}
 
 		// Carga inicial
-		fetchCentros();
+		fetchCentros( false );
 	} );
 } )();

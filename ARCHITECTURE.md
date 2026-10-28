@@ -61,6 +61,8 @@ c:\radioedu-conecta\
 │   ├── Plugin.php                       # Core singleton orchestrator (lifecycle, hooks, DB schema check)
 │   ├── Admin/
 │   │   ├── CentroMetaBoxes.php          # Metaboxes for CPT (coordinates, logo upload, RGPD emails, podcast)
+│   │   ├── ColaboracionesAdminPage.php  # Admin panel to view, accept, or decline match proposals
+│   │   ├── DemoDataImporter.php         # Demo stations importer & synchronizer
 │   │   └── Settings.php                 # WordPress Settings API options (map defaults, notification flags)
 │   ├── Capabilities/
 │   │   └── RoleCapabilities.php         # Custom capabilities management for admin, editor, and author roles
@@ -72,6 +74,8 @@ c:\radioedu-conecta\
 │   │   └── DirectorioShortcode.php      # Shortcode handler [radioedu_directorio] & asset enqueueing
 │   ├── PostTypes/
 │   │   └── CentroPostType.php           # Custom Post Type registration (`radioedu_centro`)
+│   ├── Privacy/
+│   │   └── PrivacyPolicy.php            # RGPD/GDPR personal data exporter, eraser, and policy notice
 │   ├── Rest/
 │   │   ├── CentrosController.php        # REST Controller (`GET /radioedu-conecta/v1/centros`)
 │   │   └── ColaboracionesController.php # REST Controller (`POST|PATCH|GET /radioedu-conecta/v1/colaboraciones`)
@@ -189,7 +193,10 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
 | :--- | :---: | :---: | :---: | :---: |
 | `manage_radioedu` | ✅ | ❌ | ❌ | ❌ |
 | `edit_radioedu_centros` | ✅ | ✅ | ✅ | ❌ |
+| `edit_published_radioedu_centros` | ✅ | ✅ | ✅ | ❌ |
 | `publish_radioedu_centros`| ✅ | ✅ | ✅ | ❌ |
+| `delete_radioedu_centros` | ✅ | ✅ | ✅ | ❌ |
+| `delete_published_radioedu_centros` | ✅ | ✅ | ✅ | ❌ |
 | `edit_others_radioedu_centros` | ✅ | ✅ | ❌ | ❌ |
 | `delete_others_radioedu_centros` | ✅ | ❌ | ❌ | ❌ |
 | `propose_radioedu_colaboracion` | ✅ | ✅ | ✅ | ❌ |

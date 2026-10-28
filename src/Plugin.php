@@ -10,15 +10,18 @@ declare( strict_types=1 );
 namespace RadioEdu\Conecta;
 
 use RadioEdu\Conecta\Admin\CentroMetaBoxes;
+use RadioEdu\Conecta\Admin\ColaboracionesAdminPage;
 use RadioEdu\Conecta\Admin\DemoDataImporter;
 use RadioEdu\Conecta\Admin\Settings;
 use RadioEdu\Conecta\Capabilities\RoleCapabilities;
 use RadioEdu\Conecta\Database\ColaboracionesTable;
 use RadioEdu\Conecta\Frontend\DirectorioShortcode;
 use RadioEdu\Conecta\PostTypes\CentroPostType;
+use RadioEdu\Conecta\Privacy\PrivacyPolicy;
 use RadioEdu\Conecta\Rest\CentrosController;
 use RadioEdu\Conecta\Rest\ColaboracionesController;
 use RadioEdu\Conecta\Taxonomies\TaxonomiesRegistrar;
+use WP_Site;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -62,19 +65,29 @@ final class Plugin {
 		add_action( 'init', [ CentroPostType::class, 'register' ], 5 );
 		add_action( 'init', [ TaxonomiesRegistrar::class, 'register_all' ], 5 );
 
-		// 3. Registrar Meta Boxes y Ajustes del panel de administración.
+		// 3. Registrar herramientas de Privacidad / RGPD.
+		PrivacyPolicy::register();
+
+		// 4. Registrar Meta Boxes, Gestión de Colaboraciones y Ajustes del panel de administración.
 		if ( is_admin() ) {
 			CentroMetaBoxes::register();
+			ColaboracionesAdminPage::register();
 			Settings::register();
 			DemoDataImporter::register();
 			add_action( 'admin_init', [ $this, 'maybe_update_db_schema' ] );
 		}
 
-		// 4. Registrar endpoints de la REST API.
+		// 5. Registrar endpoints de la REST API.
 		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
 
-		// 5. Registrar Shortcodes y Assets del Front-end.
+		// 6. Registrar Shortcodes y Assets del Front-end.
 		DirectorioShortcode::register();
+
+		// 7. Ciclo de vida Multisite (aprovisionamiento y limpieza de nuevos sitios en la red).
+		if ( is_multisite() ) {
+			add_action( 'wp_initialize_site', [ $this, 'on_initialize_site' ], 20, 1 );
+			add_action( 'wp_uninitialize_site', [ $this, 'on_uninitialize_site' ], 20, 1 );
+		}
 	}
 
 	/**
@@ -100,13 +113,38 @@ final class Plugin {
 	}
 
 	/**
-	 * Ejecuta migraciones idempotentes de la base de datos si la versión ha cambiado.
+	 * Ejecuta migraciones idempotentes de la base de datos y capacidades si la versión ha cambiado.
 	 */
 	public function maybe_update_db_schema(): void {
 		$installed_ver = get_option( 'radioedu_conecta_db_version', '0' );
 		if ( version_compare( (string) $installed_ver, ColaboracionesTable::DB_VERSION, '<' ) ) {
+			RoleCapabilities::add_capabilities();
 			ColaboracionesTable::create_table();
 		}
+	}
+
+	/**
+	 * Aprovisiona un nuevo sitio creado en una red Multisite.
+	 *
+	 * @param WP_Site $new_site Objeto del nuevo sitio.
+	 */
+	public function on_initialize_site( WP_Site $new_site ): void {
+		switch_to_blog( (int) $new_site->blog_id );
+		self::activate_single_site( false );
+		restore_current_blog();
+	}
+
+	/**
+	 * Limpia la tabla personalizada y capacidades cuando se elimina un sitio en Multisite.
+	 *
+	 * @param WP_Site $old_site Objeto del sitio eliminado.
+	 */
+	public function on_uninitialize_site( WP_Site $old_site ): void {
+		switch_to_blog( (int) $old_site->blog_id );
+		ColaboracionesTable::drop_table();
+		RoleCapabilities::remove_capabilities();
+		delete_option( 'radioedu_conecta_settings' );
+		restore_current_blog();
 	}
 
 	/**
@@ -119,24 +157,26 @@ final class Plugin {
 			$site_ids = get_sites(
 				[
 					'fields' => 'ids',
-					'number' => 0,
+					'number' => 500,
 				]
 			);
 
 			foreach ( $site_ids as $site_id ) {
 				switch_to_blog( (int) $site_id );
-				self::activate_single_site();
+				self::activate_single_site( false );
 				restore_current_blog();
 			}
 		} else {
-			self::activate_single_site();
+			self::activate_single_site( true );
 		}
 	}
 
 	/**
 	 * Activación para un sitio individual.
+	 *
+	 * @param bool $seed_demo Si se deben importar las emisoras demo cuando el sitio no tiene centros.
 	 */
-	private static function activate_single_site(): void {
+	private static function activate_single_site( bool $seed_demo = true ): void {
 		// Crear tabla de colaboraciones con dbDelta.
 		ColaboracionesTable::create_table();
 
@@ -147,8 +187,14 @@ final class Plugin {
 		CentroPostType::register();
 		TaxonomiesRegistrar::register_all();
 
-		// Cargar automáticamente las 6 emisoras de ejemplo con sus imágenes.
-		DemoDataImporter::import_demo_centers();
+		// Cargar automáticamente las 6 emisoras de ejemplo sólo en activación individual si aún no existen centros.
+		if ( $seed_demo ) {
+			$existing_count = wp_count_posts( CentroPostType::POST_TYPE );
+			$published      = isset( $existing_count->publish ) ? (int) $existing_count->publish : 0;
+			if ( 0 === $published ) {
+				DemoDataImporter::import_demo_centers();
+			}
+		}
 
 		// Regenerar reglas de reescritura.
 		flush_rewrite_rules( false );
@@ -164,7 +210,7 @@ final class Plugin {
 			$site_ids = get_sites(
 				[
 					'fields' => 'ids',
-					'number' => 0,
+					'number' => 500,
 				]
 			);
 

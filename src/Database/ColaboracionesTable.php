@@ -17,9 +17,9 @@ defined( 'ABSPATH' ) || exit;
 class ColaboracionesTable {
 
 	/**
-	 * Versión del esquema de base de datos.
+	 * Versión del esquema de base de datos y capacidades.
 	 */
-	public const DB_VERSION = '1.0.0';
+	public const DB_VERSION = '1.0.1';
 
 	/**
 	 * Nombre base de la tabla (sin prefijo de WP).
@@ -82,7 +82,7 @@ class ColaboracionesTable {
 		global $wpdb;
 		$table_name = self::get_table_name();
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query( "DROP TABLE IF EXISTS {$table_name}" );
+		$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $table_name ) );
 		delete_option( 'radioedu_conecta_db_version' );
 	}
 }

@@ -19,12 +19,6 @@ defined( 'ABSPATH' ) || exit;
 
 <div id="radioedu-conecta-app" class="radioedu-app-container">
 
-	<?php if ( ! empty( $js_data ) ) : ?>
-		<script type="text/javascript">
-			window.radioeduConectaData = <?php echo wp_json_encode( $js_data ); ?>;
-		</script>
-	<?php endif; ?>
-
 	<!-- 1. HERO / BANNER PRINCIPAL -->
 	<header class="radioedu-hero-banner">
 		<div class="radioedu-hero-content">
@@ -184,14 +178,29 @@ defined( 'ABSPATH' ) || exit;
 	<!-- 4. CONTENIDO PRINCIPAL: CUADRÍCULA DE TARJETAS Y MAPA -->
 	<main class="radioedu-main-layout">
 
-		<!-- Vista Mapa Interactivo (oculta por defecto) -->
+		<!-- Vista Mapa Interactivo (oculta por defecto, con aviso RGPD previo a cargar teselas de OpenStreetMap) -->
 		<div id="radioedu-map-view" class="radioedu-map-view" style="display: none;" aria-hidden="true">
-			<div id="radioedu-leaflet-map" style="height: 520px; width: 100%; border-radius: 16px;"></div>
+			<div id="radioedu-map-consent" class="radioedu-no-results-state" style="padding: 32px; text-align: center;">
+				<div class="radioedu-no-results-icon">🗺️</div>
+				<h3><?php esc_html_e( 'Mapa geográfico interactivo (OpenStreetMap)', 'radioedu-conecta' ); ?></h3>
+				<p><?php esc_html_e( 'Al cargar el mapa cartográfico se establecerá conexión con los servidores externos de OpenStreetMap Foundation para descargar las imágenes del mapa.', 'radioedu-conecta' ); ?></p>
+				<button type="button" id="radioedu-btn-accept-map" class="radioedu-btn-primary">
+					<?php esc_html_e( 'Aceptar y mostrar el mapa interactivo', 'radioedu-conecta' ); ?>
+				</button>
+			</div>
+			<div id="radioedu-leaflet-map" style="display: none; height: 520px; width: 100%; border-radius: 16px;"></div>
 		</div>
 
 		<!-- Cuadrícula de Tarjetas -->
 		<div id="radioedu-cards-container" class="radioedu-cards-grid" aria-live="polite">
 			<!-- Cargado dinámicamente vía REST API en directorio.js -->
+		</div>
+
+		<!-- Paginación: Cargar más -->
+		<div id="radioedu-pagination-wrap" style="display: none; text-align: center; margin-top: 28px;">
+			<button type="button" id="radioedu-btn-load-more" class="radioedu-btn-secondary">
+				<?php esc_html_e( 'Cargar más centros', 'radioedu-conecta' ); ?>
+			</button>
 		</div>
 
 		<!-- Estado de Carga (Spinner) -->
@@ -240,7 +249,7 @@ defined( 'ABSPATH' ) || exit;
 						<?php endforeach; ?>
 					</select>
 				<?php else : ?>
-					<input type="text" id="radioedu-match-emisor-txt" class="radioedu-form-input" value="<?php echo esc_attr( is_user_logged_in() ? __( 'Sin centro asignado como autor', 'radioedu-conecta' ) : __( 'Debes iniciar sesión para enviar propuestas', 'radioedu-conecta' ) ); ?>" disabled />
+					<input type="text" id="radioedu-match-emisor-txt" class="radioedu-form-input" value="<?php echo esc_attr( is_user_logged_in() ? __( 'Sin centro asignado como coordinador', 'radioedu-conecta' ) : __( 'Debes iniciar sesión para enviar propuestas', 'radioedu-conecta' ) ); ?>" disabled />
 					<input type="hidden" id="radioedu-match-emisor" name="centro_emisor_id" value="" />
 				<?php endif; ?>
 			</div>

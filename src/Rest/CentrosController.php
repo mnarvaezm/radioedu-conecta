@@ -76,16 +76,17 @@ class CentrosController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error Respuesta REST con los centros.
 	 */
 	public function get_items( $request ) {
-		$page     = (int) $request->get_param( 'page' );
-		$per_page = (int) $request->get_param( 'per_page' );
+		$page     = max( 1, (int) $request->get_param( 'page' ) );
+		$per_page = min( 100, max( 1, (int) $request->get_param( 'per_page' ) ) );
 		$search   = (string) $request->get_param( 'search' );
 		$orden    = (string) $request->get_param( 'orden' );
+		$afines_a = absint( $request->get_param( 'afines_a' ) );
 
 		$args = [
 			'post_type'      => CentroPostType::POST_TYPE,
 			'post_status'    => 'publish',
-			'paged'          => max( 1, $page ),
-			'posts_per_page' => min( 100, max( 1, $per_page ) ),
+			'paged'          => $page,
+			'posts_per_page' => $per_page,
 		];
 
 		// Búsqueda por texto libre.
@@ -93,19 +94,16 @@ class CentrosController extends WP_REST_Controller {
 			$args['s'] = sanitize_text_field( $search );
 		}
 
-		// Ordenación.
+		// Ordenación base en WP_Query.
 		switch ( $orden ) {
-			case 'alfa':
-				$args['orderby'] = 'title';
-				$args['order']   = 'ASC';
-				break;
 			case 'recientes':
 				$args['orderby'] = 'date';
 				$args['order']   = 'DESC';
 				break;
+			case 'alfa':
 			case 'afines':
 			default:
-				$args['orderby'] = 'menu_order title';
+				$args['orderby'] = 'title';
 				$args['order']   = 'ASC';
 				break;
 		}
@@ -113,54 +111,29 @@ class CentrosController extends WP_REST_Controller {
 		// Filtros por Taxonomías (tax_query).
 		$tax_queries = [];
 
-		$filtro_etapa = $request->get_param( 'etapa' );
-		if ( ! empty( $filtro_etapa ) ) {
-			$tax_queries[] = [
-				'taxonomy' => TaxonomiesRegistrar::TAX_ETAPA,
-				'field'    => 'slug',
-				'terms'    => sanitize_text_field( (string) $filtro_etapa ),
-			];
-		}
+		$taxonomy_map = [
+			'etapa'     => TaxonomiesRegistrar::TAX_ETAPA,
+			'idioma'    => TaxonomiesRegistrar::TAX_IDIOMA,
+			'tematica'  => TaxonomiesRegistrar::TAX_TEMATICA,
+			'formato'   => TaxonomiesRegistrar::TAX_FORMATO,
+			'ubicacion' => TaxonomiesRegistrar::TAX_LOCALIZACION,
+		];
 
-		$filtro_idioma = $request->get_param( 'idioma' );
-		if ( ! empty( $filtro_idioma ) ) {
-			$tax_queries[] = [
-				'taxonomy' => TaxonomiesRegistrar::TAX_IDIOMA,
-				'field'    => 'slug',
-				'terms'    => sanitize_text_field( (string) $filtro_idioma ),
-			];
-		}
-
-		$filtro_tematica = $request->get_param( 'tematica' );
-		if ( ! empty( $filtro_tematica ) ) {
-			$tax_queries[] = [
-				'taxonomy' => TaxonomiesRegistrar::TAX_TEMATICA,
-				'field'    => 'slug',
-				'terms'    => sanitize_text_field( (string) $filtro_tematica ),
-			];
-		}
-
-		$filtro_formato = $request->get_param( 'formato' );
-		if ( ! empty( $filtro_formato ) ) {
-			$tax_queries[] = [
-				'taxonomy' => TaxonomiesRegistrar::TAX_FORMATO,
-				'field'    => 'slug',
-				'terms'    => sanitize_text_field( (string) $filtro_formato ),
-			];
-		}
-
-		$filtro_ubicacion = $request->get_param( 'ubicacion' );
-		if ( ! empty( $filtro_ubicacion ) ) {
-			$tax_queries[] = [
-				'taxonomy' => TaxonomiesRegistrar::TAX_LOCALIZACION,
-				'field'    => 'slug',
-				'terms'    => sanitize_text_field( (string) $filtro_ubicacion ),
-			];
+		foreach ( $taxonomy_map as $param_key => $taxonomy_slug ) {
+			$param_val = $request->get_param( $param_key );
+			if ( ! empty( $param_val ) ) {
+				$tax_queries[] = [
+					'taxonomy' => $taxonomy_slug,
+					'field'    => 'slug',
+					'terms'    => sanitize_text_field( (string) $param_val ),
+				];
+			}
 		}
 
 		if ( ! empty( $tax_queries ) ) {
 			$tax_queries['relation'] = 'AND';
-			$args['tax_query']       = $tax_queries;
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+			$args['tax_query'] = $tax_queries;
 		}
 
 		$query = new WP_Query( $args );
@@ -182,6 +155,51 @@ class CentrosController extends WP_REST_Controller {
 			wp_reset_postdata();
 		}
 
+		// Si el orden es 'afines', ordenar priorizando centros disponibles y con mayor coincidencia de etiquetas/taxonomías.
+		if ( 'afines' === $orden && count( $items ) > 1 ) {
+			$ref_slugs = $this->get_reference_center_term_slugs( $afines_a );
+			usort(
+				$items,
+				static function ( array $a, array $b ) use ( $ref_slugs, $afines_a ): int {
+					// Priorizar centros disponibles para colaborar.
+					$disp_a = ! empty( $a['disponible'] ) ? 1 : 0;
+					$disp_b = ! empty( $b['disponible'] ) ? 1 : 0;
+					if ( $disp_a !== $disp_b ) {
+						return $disp_b <=> $disp_a;
+					}
+
+					// Si hay centro de referencia del usuario, calcular coincidencias de tags y colocar el propio centro al final.
+					if ( $afines_a > 0 ) {
+						$is_self_a = ( (int) $a['id'] === $afines_a ) ? 1 : 0;
+						$is_self_b = ( (int) $b['id'] === $afines_a ) ? 1 : 0;
+						if ( $is_self_a !== $is_self_b ) {
+							return $is_self_a <=> $is_self_b;
+						}
+					}
+
+					if ( ! empty( $ref_slugs ) ) {
+						$score_a = 0;
+						foreach ( $a['tags'] as $tag ) {
+							if ( in_array( $tag['slug'], $ref_slugs, true ) ) {
+								++$score_a;
+							}
+						}
+						$score_b = 0;
+						foreach ( $b['tags'] as $tag ) {
+							if ( in_array( $tag['slug'], $ref_slugs, true ) ) {
+								++$score_b;
+							}
+						}
+						if ( $score_a !== $score_b ) {
+							return $score_b <=> $score_a;
+						}
+					}
+
+					return strcasecmp( (string) $a['nombre'], (string) $b['nombre'] );
+				}
+			);
+		}
+
 		$response = rest_ensure_response(
 			[
 				'centros'     => $items,
@@ -199,17 +217,53 @@ class CentrosController extends WP_REST_Controller {
 	}
 
 	/**
+	 * Obtiene los slugs de taxonomías del centro de referencia del usuario para calcular afinidad.
+	 *
+	 * @param int $center_id ID del centro de referencia.
+	 * @return array<int, string>
+	 */
+	private function get_reference_center_term_slugs( int $center_id ): array {
+		if ( $center_id <= 0 ) {
+			$user_id = get_current_user_id();
+			if ( $user_id > 0 ) {
+				$managed = ColaboracionesController::get_user_managed_center_ids( $user_id );
+				if ( ! empty( $managed ) ) {
+					$center_id = $managed[0];
+				}
+			}
+		}
+
+		if ( $center_id <= 0 || CentroPostType::POST_TYPE !== get_post_type( $center_id ) ) {
+			return [];
+		}
+
+		$taxonomies = [
+			TaxonomiesRegistrar::TAX_ETAPA,
+			TaxonomiesRegistrar::TAX_IDIOMA,
+			TaxonomiesRegistrar::TAX_TEMATICA,
+			TaxonomiesRegistrar::TAX_FORMATO,
+		];
+
+		$terms = wp_get_object_terms( $center_id, $taxonomies, [ 'fields' => 'slugs' ] );
+		if ( is_wp_error( $terms ) || ! is_array( $terms ) ) {
+			return [];
+		}
+
+		return array_map( 'strval', $terms );
+	}
+
+	/**
 	 * Prepara los datos del centro escolar para la respuesta REST.
 	 *
 	 * @param int             $post_id ID del centro.
 	 * @param WP_REST_Request $request Petición REST.
 	 * @return array<string, mixed>
 	 */
-	public function prepare_item_for_response( $post_id, $request ): array {
-		$title      = get_the_title( $post_id );
-		$logo_id    = (int) get_post_meta( $post_id, '_radioedu_logo_id', true );
-		$logo_url   = $logo_id ? wp_get_attachment_image_url( $logo_id, 'thumbnail' ) : (string) get_post_meta( $post_id, '_radioedu_logo_url', true );
-		$thumb_url  = get_the_post_thumbnail_url( $post_id, 'medium_large' ) ?: (string) get_post_meta( $post_id, '_radioedu_cover_url', true );
+	public function prepare_item_for_response( $post_id, $request ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass
+		$title     = get_the_title( $post_id );
+		$logo_id   = (int) get_post_meta( $post_id, '_radioedu_logo_id', true );
+		$logo_url  = $logo_id ? wp_get_attachment_image_url( $logo_id, 'thumbnail' ) : (string) get_post_meta( $post_id, '_radioedu_logo_url', true );
+		$thumb_url = get_the_post_thumbnail_url( $post_id, 'medium_large' ) ?: (string) get_post_meta( $post_id, '_radioedu_cover_url', true );
 
 		// Fallback automático para centros de ejemplo si no tienen imagen personalizada asignada.
 		$post_name = (string) get_post_field( 'post_name', $post_id );
@@ -246,6 +300,7 @@ class CentrosController extends WP_REST_Controller {
 				}
 			}
 		}
+
 		$bandera    = (string) get_post_meta( $post_id, '_radioedu_bandera', true );
 		$lat        = (string) get_post_meta( $post_id, '_radioedu_lat', true );
 		$lng        = (string) get_post_meta( $post_id, '_radioedu_lng', true );
@@ -261,10 +316,10 @@ class CentrosController extends WP_REST_Controller {
 		if ( ! empty( $formatos ) && ! is_wp_error( $formatos ) ) {
 			foreach ( $formatos as $term ) {
 				$tags[] = [
-					'name'     => $term->name,
-					'slug'     => $term->slug,
-					'type'     => 'formato',
-					'color'    => 'mint', // Verde menta suave como en el mockup.
+					'name'  => $term->name,
+					'slug'  => $term->slug,
+					'type'  => 'formato',
+					'color' => 'mint',
 				];
 			}
 		}
@@ -273,10 +328,10 @@ class CentrosController extends WP_REST_Controller {
 		if ( ! empty( $tematicas ) && ! is_wp_error( $tematicas ) ) {
 			foreach ( $tematicas as $term ) {
 				$tags[] = [
-					'name'     => $term->name,
-					'slug'     => $term->slug,
-					'type'     => 'tematica',
-					'color'    => 'coral', // Coral/Rosa suave como en el mockup.
+					'name'  => $term->name,
+					'slug'  => $term->slug,
+					'type'  => 'tematica',
+					'color' => 'coral',
 				];
 			}
 		}
@@ -285,38 +340,38 @@ class CentrosController extends WP_REST_Controller {
 		if ( ! empty( $etapas ) && ! is_wp_error( $etapas ) ) {
 			foreach ( $etapas as $term ) {
 				$tags[] = [
-					'name'     => $term->name,
-					'slug'     => $term->slug,
-					'type'     => 'etapa',
-					'color'    => 'blue', // Azul suave.
+					'name'  => $term->name,
+					'slug'  => $term->slug,
+					'type'  => 'etapa',
+					'color' => 'blue',
 				];
 			}
 		}
 
-		// Ubicación textual (extraída de la taxonomía o post_excerpt).
+		// Ubicación textual (extraída de la taxonomía).
 		$ubicacion_texto = '';
 		$localizaciones  = get_the_terms( $post_id, TaxonomiesRegistrar::TAX_LOCALIZACION );
 		if ( ! empty( $localizaciones ) && ! is_wp_error( $localizaciones ) ) {
-			$loc_names = wp_list_pluck( $localizaciones, 'name' );
+			$loc_names       = wp_list_pluck( $localizaciones, 'name' );
 			$ubicacion_texto = implode( ', ', array_reverse( $loc_names ) );
 		}
 
 		return [
-			'id'              => $post_id,
-			'nombre'          => $title,
-			'descripcion'     => get_the_excerpt( $post_id ),
-			'foto_cabecera'   => $thumb_url,
-			'logo_radio'      => $logo_url,
-			'bandera'         => $bandera ?: 'es-ex',
-			'ubicacion'       => $ubicacion_texto,
-			'lat'             => $lat,
-			'lng'             => $lng,
-			'podcast_url'     => $podcast,
-			'web_centro'      => $web,
-			'edades'          => $edades,
-			'disponible'      => $disponible,
-			'tags'            => $tags,
-			'enlace_perfil'   => get_permalink( $post_id ),
+			'id'            => $post_id,
+			'nombre'        => $title,
+			'descripcion'   => get_the_excerpt( $post_id ),
+			'foto_cabecera' => esc_url_raw( (string) $thumb_url ),
+			'logo_radio'    => esc_url_raw( (string) $logo_url ),
+			'bandera'       => $bandera ?: 'es-ex',
+			'ubicacion'     => $ubicacion_texto,
+			'lat'           => $lat,
+			'lng'           => $lng,
+			'podcast_url'   => esc_url_raw( $podcast ),
+			'web_centro'    => esc_url_raw( $web ),
+			'edades'        => $edades,
+			'disponible'    => $disponible,
+			'tags'          => $tags,
+			'enlace_perfil' => esc_url_raw( (string) get_permalink( $post_id ) ),
 		];
 	}
 
@@ -356,6 +411,13 @@ class CentrosController extends WP_REST_Controller {
 				'enum'              => [ 'afines', 'recientes', 'alfa' ],
 				'default'           => 'afines',
 				'sanitize_callback' => 'sanitize_key',
+				'validate_callback' => 'rest_validate_request_arg',
+			],
+			'afines_a'  => [
+				'description'       => __( 'ID del centro de referencia para calcular afinidad.', 'radioedu-conecta' ),
+				'type'              => 'integer',
+				'default'           => 0,
+				'sanitize_callback' => 'absint',
 				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'etapa'     => [

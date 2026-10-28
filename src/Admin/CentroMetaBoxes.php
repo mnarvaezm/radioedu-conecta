@@ -39,6 +39,46 @@ class CentroMetaBoxes {
 	}
 
 	/**
+	 * Devuelve la lista blanca de códigos de bandera/región soportados.
+	 *
+	 * @return array<string, string>
+	 */
+	public static function get_available_flags(): array {
+		return [
+			'es-ex' => __( 'Extremadura (España)', 'radioedu-conecta' ),
+			'es-an' => __( 'Andalucía (España)', 'radioedu-conecta' ),
+			'es-ar' => __( 'Aragón (España)', 'radioedu-conecta' ),
+			'es-as' => __( 'Asturias (España)', 'radioedu-conecta' ),
+			'es-cb' => __( 'Cantabria (España)', 'radioedu-conecta' ),
+			'es-cl' => __( 'Castilla y León (España)', 'radioedu-conecta' ),
+			'es-cm' => __( 'Castilla-La Mancha (España)', 'radioedu-conecta' ),
+			'es-ct' => __( 'Cataluña (España)', 'radioedu-conecta' ),
+			'es-vc' => __( 'Comunidad Valenciana (España)', 'radioedu-conecta' ),
+			'es-ga' => __( 'Galicia (España)', 'radioedu-conecta' ),
+			'es-ib' => __( 'Islas Baleares (España)', 'radioedu-conecta' ),
+			'es-cn' => __( 'Islas Canarias (España)', 'radioedu-conecta' ),
+			'es-ri' => __( 'La Rioja (España)', 'radioedu-conecta' ),
+			'es-md' => __( 'Madrid (España)', 'radioedu-conecta' ),
+			'es-mc' => __( 'Murcia (España)', 'radioedu-conecta' ),
+			'es-nc' => __( 'Navarra (España)', 'radioedu-conecta' ),
+			'es-pv' => __( 'País Vasco (España)', 'radioedu-conecta' ),
+			'es'    => __( 'España (General)', 'radioedu-conecta' ),
+			'pt'    => __( 'Portugal', 'radioedu-conecta' ),
+			'fr'    => __( 'Francia', 'radioedu-conecta' ),
+			'it'    => __( 'Italia', 'radioedu-conecta' ),
+			'ie'    => __( 'Irlanda', 'radioedu-conecta' ),
+			'uk'    => __( 'Reino Unido', 'radioedu-conecta' ),
+			'de'    => __( 'Alemania', 'radioedu-conecta' ),
+			'eu'    => __( 'Unión Europea / Internacional', 'radioedu-conecta' ),
+			'mx'    => __( 'México', 'radioedu-conecta' ),
+			'ar'    => __( 'Argentina', 'radioedu-conecta' ),
+			'co'    => __( 'Colombia', 'radioedu-conecta' ),
+			'cl'    => __( 'Chile', 'radioedu-conecta' ),
+			'world' => __( 'Otro / Internacional', 'radioedu-conecta' ),
+		];
+	}
+
+	/**
 	 * Encola scripts necesarios para el selector de medios en la pantalla de edición del centro.
 	 *
 	 * @param string $hook_suffix Pantalla actual del panel de administración.
@@ -97,7 +137,7 @@ class CentroMetaBoxes {
 		wp_nonce_field( self::NONCE_ACTION, self::NONCE_FIELD );
 
 		$logo_id      = (int) get_post_meta( $post->ID, '_radioedu_logo_id', true );
-		$logo_url     = $logo_id ? wp_get_attachment_image_url( $logo_id, 'thumbnail' ) : '';
+		$logo_url     = $logo_id ? (string) wp_get_attachment_image_url( $logo_id, 'thumbnail' ) : (string) get_post_meta( $post->ID, '_radioedu_logo_url', true );
 		$podcast_url  = (string) get_post_meta( $post->ID, '_radioedu_podcast_url', true );
 		$web_centro   = (string) get_post_meta( $post->ID, '_radioedu_web_centro', true );
 		$bandera      = (string) get_post_meta( $post->ID, '_radioedu_bandera', true );
@@ -111,38 +151,7 @@ class CentroMetaBoxes {
 			$disponible = '1'; // Por defecto disponible para colaborar.
 		}
 
-		$banderas_disponibles = [
-			'es-ex' => __( 'Extremadura (España)', 'radioedu-conecta' ),
-			'es-an' => __( 'Andalucía (España)', 'radioedu-conecta' ),
-			'es-ar' => __( 'Aragón (España)', 'radioedu-conecta' ),
-			'es-as' => __( 'Asturias (España)', 'radioedu-conecta' ),
-			'es-cb' => __( 'Cantabria (España)', 'radioedu-conecta' ),
-			'es-cl' => __( 'Castilla y León (España)', 'radioedu-conecta' ),
-			'es-cm' => __( 'Castilla-La Mancha (España)', 'radioedu-conecta' ),
-			'es-ct' => __( 'Cataluña (España)', 'radioedu-conecta' ),
-			'es-vc' => __( 'Comunidad Valenciana (España)', 'radioedu-conecta' ),
-			'es-ga' => __( 'Galicia (España)', 'radioedu-conecta' ),
-			'es-ib' => __( 'Islas Baleares (España)', 'radioedu-conecta' ),
-			'es-cn' => __( 'Islas Canarias (España)', 'radioedu-conecta' ),
-			'es-ri' => __( 'La Rioja (España)', 'radioedu-conecta' ),
-			'es-md' => __( 'Madrid (España)', 'radioedu-conecta' ),
-			'es-mc' => __( 'Murcia (España)', 'radioedu-conecta' ),
-			'es-nc' => __( 'Navarra (España)', 'radioedu-conecta' ),
-			'es-pv' => __( 'País Vasco (España)', 'radioedu-conecta' ),
-			'es'    => __( 'España (General)', 'radioedu-conecta' ),
-			'pt'    => __( 'Portugal', 'radioedu-conecta' ),
-			'fr'    => __( 'Francia', 'radioedu-conecta' ),
-			'it'    => __( 'Italia', 'radioedu-conecta' ),
-			'ie'    => __( 'Irlanda', 'radioedu-conecta' ),
-			'uk'    => __( 'Reino Unido', 'radioedu-conecta' ),
-			'de'    => __( 'Alemania', 'radioedu-conecta' ),
-			'eu'    => __( 'Unión Europea / Internacional', 'radioedu-conecta' ),
-			'mx'    => __( 'México', 'radioedu-conecta' ),
-			'ar'    => __( 'Argentina', 'radioedu-conecta' ),
-			'co'    => __( 'Colombia', 'radioedu-conecta' ),
-			'cl'    => __( 'Chile', 'radioedu-conecta' ),
-			'world' => __( 'Otro / Internacional', 'radioedu-conecta' ),
-		];
+		$banderas_disponibles = self::get_available_flags();
 		?>
 		<div class="radioedu-metabox-wrapper">
 			<table class="form-table" role="presentation">
@@ -155,7 +164,7 @@ class CentroMetaBoxes {
 						<td>
 							<input type="hidden" id="radioedu_logo_id" name="radioedu_logo_id" value="<?php echo esc_attr( (string) $logo_id ); ?>" />
 							<div id="radioedu-logo-preview" class="radioedu-logo-preview-box">
-								<?php if ( $logo_url ) : ?>
+								<?php if ( '' !== $logo_url ) : ?>
 									<img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php esc_attr_e( 'Logo de la radio', 'radioedu-conecta' ); ?>" style="max-width: 120px; height: auto; border-radius: 50%; border: 2px solid #00838f;" />
 								<?php else : ?>
 									<span class="description"><?php esc_html_e( 'No hay logo asignado. Se mostrará un icono por defecto.', 'radioedu-conecta' ); ?></span>
@@ -163,7 +172,7 @@ class CentroMetaBoxes {
 							</div>
 							<p style="margin-top: 8px;">
 								<button type="button" class="button" id="radioedu_logo_button"><?php esc_html_e( 'Subir / Elegir Logo', 'radioedu-conecta' ); ?></button>
-								<button type="button" class="button button-link-delete" id="radioedu_logo_remove" style="<?php echo $logo_id ? '' : 'display:none;'; ?>"><?php esc_html_e( 'Eliminar logo', 'radioedu-conecta' ); ?></button>
+								<button type="button" class="button button-link-delete" id="radioedu_logo_remove" style="<?php echo ( $logo_id || '' !== $logo_url ) ? '' : 'display:none;'; ?>"><?php esc_html_e( 'Eliminar logo', 'radioedu-conecta' ); ?></button>
 							</p>
 							<p class="description"><?php esc_html_e( 'Imagen circular distintiva de la emisora escolar (recomendado 300x300 px formato PNG o JPG).', 'radioedu-conecta' ); ?></p>
 						</td>
@@ -190,7 +199,7 @@ class CentroMetaBoxes {
 					<!-- 3. Coordenadas geográficas para el mapa -->
 					<tr>
 						<th scope="row">
-							<label><?php esc_html_e( 'Coordenadas para el Mapa', 'radioedu-conecta' ); ?></label>
+							<label for="radioedu_lat"><?php esc_html_e( 'Coordenadas para el Mapa', 'radioedu-conecta' ); ?></label>
 						</th>
 						<td>
 							<label for="radioedu_lat" style="margin-right: 5px;"><?php esc_html_e( 'Latitud:', 'radioedu-conecta' ); ?></label>
@@ -277,7 +286,7 @@ class CentroMetaBoxes {
 	 * @param int     $post_id ID del post guardado.
 	 * @param WP_Post $post    Objeto del post.
 	 */
-	public static function save_meta_boxes( int $post_id, WP_Post $post ): void {
+	public static function save_meta_boxes( int $post_id, WP_Post $post ): void { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		// 1. Comprobaciones de seguridad de WordPress.
 		if ( ! isset( $_POST[ self::NONCE_FIELD ] ) ) {
 			return;
@@ -296,30 +305,41 @@ class CentroMetaBoxes {
 			return;
 		}
 
-		// 2. Sanitización y guardado de cada campo.
+		// 2. Sanitización y validación de cada campo.
 		// Logo ID.
 		if ( isset( $_POST['radioedu_logo_id'] ) ) {
 			$logo_id = absint( $_POST['radioedu_logo_id'] );
 			update_post_meta( $post_id, '_radioedu_logo_id', $logo_id );
 		}
 
-		// Bandera / Región.
+		// Bandera / Región (validación contra lista blanca).
 		if ( isset( $_POST['radioedu_bandera'] ) ) {
-			$bandera = sanitize_key( wp_unslash( $_POST['radioedu_bandera'] ) );
-			update_post_meta( $post_id, '_radioedu_bandera', $bandera );
+			$bandera       = sanitize_key( wp_unslash( $_POST['radioedu_bandera'] ) );
+			$allowed_flags = array_keys( self::get_available_flags() );
+			if ( '' === $bandera || in_array( $bandera, $allowed_flags, true ) ) {
+				update_post_meta( $post_id, '_radioedu_bandera', $bandera );
+			}
 		}
 
-		// Coordenadas.
+		// Coordenadas (validación de rangos geográficos [-90, 90] y [-180, 180]).
 		if ( isset( $_POST['radioedu_lat'] ) ) {
 			$lat_raw = sanitize_text_field( wp_unslash( $_POST['radioedu_lat'] ) );
-			$lat     = '' !== $lat_raw ? (string) (float) $lat_raw : '';
-			update_post_meta( $post_id, '_radioedu_lat', $lat );
+			if ( '' !== $lat_raw && is_numeric( $lat_raw ) ) {
+				$lat_float = max( -90.0, min( 90.0, (float) $lat_raw ) );
+				update_post_meta( $post_id, '_radioedu_lat', (string) $lat_float );
+			} else {
+				update_post_meta( $post_id, '_radioedu_lat', '' );
+			}
 		}
 
 		if ( isset( $_POST['radioedu_lng'] ) ) {
 			$lng_raw = sanitize_text_field( wp_unslash( $_POST['radioedu_lng'] ) );
-			$lng     = '' !== $lng_raw ? (string) (float) $lng_raw : '';
-			update_post_meta( $post_id, '_radioedu_lng', $lng );
+			if ( '' !== $lng_raw && is_numeric( $lng_raw ) ) {
+				$lng_float = max( -180.0, min( 180.0, (float) $lng_raw ) );
+				update_post_meta( $post_id, '_radioedu_lng', (string) $lng_float );
+			} else {
+				update_post_meta( $post_id, '_radioedu_lng', '' );
+			}
 		}
 
 		// Podcast URL.
