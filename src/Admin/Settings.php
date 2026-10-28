@@ -9,6 +9,7 @@ declare( strict_types=1 );
 
 namespace RadioEdu\Conecta\Admin;
 
+use RadioEdu\Conecta\Admin\DemoDataImporter;
 use RadioEdu\Conecta\PostTypes\CentroPostType;
 
 defined( 'ABSPATH' ) || exit;
@@ -219,6 +220,20 @@ class Settings {
 				<?php esc_html_e( 'Configuración global del directorio de radios escolares Traspasando Fronteras.', 'radioedu-conecta' ); ?>
 			</p>
 
+			<?php if ( isset( $_GET['demo_imported'] ) ) : ?>
+				<div class="notice notice-success is-dismissible" style="margin-top: 15px;">
+					<p>
+						<?php
+						printf(
+							/* translators: %d: number of imported centers */
+							esc_html__( '¡Se han cargado o sincronizado con éxito %d emisoras de ejemplo con sus imágenes, taxonomías y coordenadas en el mapa!', 'radioedu-conecta' ),
+							absint( $_GET['demo_imported'] )
+						);
+						?>
+					</p>
+				</div>
+			<?php endif; ?>
+
 			<form method="post" action="options.php">
 				<?php
 				settings_fields( self::SETTINGS_GROUP );
@@ -226,6 +241,20 @@ class Settings {
 				submit_button();
 				?>
 			</form>
+
+			<hr style="margin: 35px 0 25px 0;" />
+
+			<div class="card" style="max-width: 800px; padding: 20px;">
+				<h2><?php esc_html_e( 'Emisoras de Demostración (Traspasando Fronteras)', 'radioedu-conecta' ); ?></h2>
+				<p>
+					<?php esc_html_e( 'El instalador incluye 6 emisoras completas de ejemplo con fotografías de cabecera, logotipos, edades, formatos, idiomas y coordenadas geográficas. Puedes volver a generarlas o sincronizarlas en cualquier momento con este botón:', 'radioedu-conecta' ); ?>
+				</p>
+				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+					<input type="hidden" name="action" value="radioedu_import_demo_data" />
+					<?php wp_nonce_field( DemoDataImporter::NONCE_ACTION, DemoDataImporter::NONCE_NAME ); ?>
+					<?php submit_button( __( 'Sincronizar / Cargar las 6 emisoras de ejemplo', 'radioedu-conecta' ), 'secondary', 'submit_demo', false ); ?>
+				</form>
+			</div>
 		</div>
 		<?php
 	}

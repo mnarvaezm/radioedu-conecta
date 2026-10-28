@@ -10,6 +10,7 @@ declare( strict_types=1 );
 namespace RadioEdu\Conecta;
 
 use RadioEdu\Conecta\Admin\CentroMetaBoxes;
+use RadioEdu\Conecta\Admin\DemoDataImporter;
 use RadioEdu\Conecta\Admin\Settings;
 use RadioEdu\Conecta\Capabilities\RoleCapabilities;
 use RadioEdu\Conecta\Database\ColaboracionesTable;
@@ -65,6 +66,7 @@ final class Plugin {
 		if ( is_admin() ) {
 			CentroMetaBoxes::register();
 			Settings::register();
+			DemoDataImporter::register();
 			add_action( 'admin_init', [ $this, 'maybe_update_db_schema' ] );
 		}
 
@@ -144,6 +146,9 @@ final class Plugin {
 		// Registrar tipos de contenido y taxonomías antes del flush.
 		CentroPostType::register();
 		TaxonomiesRegistrar::register_all();
+
+		// Cargar automáticamente las 6 emisoras de ejemplo con sus imágenes.
+		DemoDataImporter::import_demo_centers();
 
 		// Regenerar reglas de reescritura.
 		flush_rewrite_rules( false );
