@@ -4,8 +4,8 @@
 
 - **Contribuidores:** radioedu (Consejería de Educación, Ciencia y Formación Profesional - Junta de Extremadura)
 - **Etiquetas:** radio-escolar, podcast, educacion, directorio, colaboracion, multisite, rgpd
-- **Versión mínima de WordPress:** 6.5
-- **Probado hasta:** 6.7
+- **Versión mínima de WordPress:** 7.0
+- **Probado hasta:** 7.1
 - **Versión mínima de PHP:** 8.1
 - **Versión estable:** 1.0.0
 - **Licencia:** GPL-2.0-or-later
@@ -39,8 +39,21 @@
 ## Instalación
 
 1. Sube el archivo `radioedu-conecta.zip` desde **Plugins → Añadir nuevo plugin → Subir plugin** en WordPress, o descomprime la carpeta `radioedu-conecta` en `/wp-content/plugins/`.
-2. Activa el plugin desde el menú **Plugins** (en instalaciones individuales se cargarán automáticamente las 6 emisoras de demostración y la página `/traspasando-fronteras/` con el shortcode `[radioedu_directorio]`).
+2. Activa el plugin desde el menú **Plugins**. La activación no publica contenido: si quieres las 6 emisoras de demostración y la página `/traspasando-fronteras/` con el shortcode `[radioedu_directorio]`, cárgalas desde **RadioEdu Centros → Ajustes**.
 3. Gestiona los centros desde **RadioEdu Centros**, responde a propuestas desde **RadioEdu Centros → Colaboraciones (Matches)** y configura el mapa o las notificaciones en **RadioEdu Centros → Ajustes**.
+
+---
+
+## Desarrollo
+
+El JavaScript fuente (`assets/js/admin.js`, `assets/js/directorio.js`) usa `@wordpress/i18n` y `@wordpress/a11y`, así que el navegador solo puede ejecutar la versión compilada en `build/`. Esa carpeta se versiona y la CI comprueba que está al día:
+
+```bash
+npm ci
+npm run build    # regenera build/*.js y build/*.asset.php; haz commit del resultado
+```
+
+Si falta `build/`, el plugin no falla: el directorio y el editor de centros se muestran sin la parte interactiva. Las pruebas completas están en [TESTING-PROTOCOL.md](TESTING-PROTOCOL.md).
 
 ---
 

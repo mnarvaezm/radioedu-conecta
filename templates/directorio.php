@@ -16,6 +16,8 @@
  * @var string         $drawer_receptor_label
  */
 
+declare( strict_types=1 );
+
 defined( 'ABSPATH' ) || exit;
 ?>
 
@@ -179,6 +181,7 @@ defined( 'ABSPATH' ) || exit;
 
 	<!-- 4. CONTENIDO PRINCIPAL: CUADRÍCULA DE TARJETAS Y MAPA -->
 	<main class="radioedu-main-layout">
+		<p id="radioedu-directory-error" role="alert" hidden><?php esc_html_e( 'No se han podido cargar los centros. Vuelve a pulsar Buscar centros para reintentar.', 'radioedu-conecta' ); ?></p>
 
 		<!-- Vista Mapa Interactivo (oculta por defecto, con aviso RGPD previo a cargar teselas de OpenStreetMap) -->
 		<div id="radioedu-map-view" class="radioedu-map-view" style="display: none;" aria-hidden="true">

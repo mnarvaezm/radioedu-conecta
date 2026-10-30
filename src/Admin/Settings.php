@@ -174,8 +174,8 @@ class Settings {
 			$sanitized['default_zoom'] = (string) ( $zoom >= 1 && $zoom <= 18 ? $zoom : 8 );
 		}
 
-		$sanitized['notify_on_proposal'] = ! empty( $input['notify_on_proposal'] ) ? '1' : '0';
-		$sanitized['notify_on_status']   = ! empty( $input['notify_on_status'] ) ? '1' : '0';
+		$sanitized['notify_on_proposal'] = isset( $input['notify_on_proposal'] ) && in_array( $input['notify_on_proposal'], [ '1', 1, true ], true ) ? '1' : '0';
+		$sanitized['notify_on_status']   = isset( $input['notify_on_status'] ) && in_array( $input['notify_on_status'], [ '1', 1, true ], true ) ? '1' : '0';
 
 		return $sanitized;
 	}
@@ -246,7 +246,7 @@ class Settings {
 						printf(
 							/* translators: %d: number of imported centers */
 							esc_html__( '¡Se han cargado o sincronizado con éxito %d emisoras de ejemplo con sus imágenes, taxonomías y coordenadas en el mapa!', 'radioedu-conecta' ),
-							absint( $_GET['demo_imported'] ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only integer.
+							is_scalar( $_GET['demo_imported'] ) ? absint( wp_unslash( $_GET['demo_imported'] ) ) : 0 // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only integer.
 						);
 						?>
 					</p>

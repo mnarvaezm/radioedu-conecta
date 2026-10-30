@@ -121,7 +121,7 @@ class ColaboracionesController extends WP_REST_Controller {
 		}
 
 		$uid = $user_id > 0 ? $user_id : get_current_user_id();
-		if ( $uid <= 0 ) {
+		if ( $uid <= 0 || ( ! user_can( $uid, 'manage_radioedu' ) && ! user_can( $uid, 'propose_radioedu_colaboracion' ) && ! user_can( $uid, 'edit_radioedu_centros' ) ) ) {
 			return false;
 		}
 
@@ -174,7 +174,7 @@ class ColaboracionesController extends WP_REST_Controller {
 	 * @return bool
 	 */
 	public function update_item_permissions_check( $request ): bool {
-		if ( ! is_user_logged_in() ) {
+		if ( ! is_user_logged_in() || ( ! current_user_can( 'manage_radioedu' ) && ! current_user_can( 'propose_radioedu_colaboracion' ) && ! current_user_can( 'edit_radioedu_centros' ) ) ) {
 			return false;
 		}
 
@@ -194,9 +194,9 @@ class ColaboracionesController extends WP_REST_Controller {
 	 * Obtiene la lista de propuestas de colaboración asociadas al usuario actual (o todas si es administrador).
 	 *
 	 * @param WP_REST_Request $request Objeto de la petición.
-	 * @return WP_REST_Response|WP_Error
+	 * @return WP_REST_Response
 	 */
-	public function get_items( $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass
+	public function get_items( $request ): WP_REST_Response { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass -- WordPress requires this argument.
 		$user_id = get_current_user_id();
 		$rows    = ColaboracionesTable::get_for_user(
 			$user_id,
@@ -233,7 +233,7 @@ class ColaboracionesController extends WP_REST_Controller {
 	 * @return array<int, int> Lista de IDs de centros.
 	 */
 	public static function get_user_managed_center_ids( int $user_id ): array {
-		if ( $user_id <= 0 ) {
+		if ( $user_id <= 0 || ( ! user_can( $user_id, 'manage_radioedu' ) && ! user_can( $user_id, 'propose_radioedu_colaboracion' ) && ! user_can( $user_id, 'edit_radioedu_centros' ) ) ) {
 			return [];
 		}
 
@@ -293,7 +293,11 @@ class ColaboracionesController extends WP_REST_Controller {
 	 * @param WP_REST_Request $request Objeto de la petición.
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function create_item( $request ) {
+	public function create_item( $request ): WP_REST_Response|WP_Error {
+		if ( ! $this->create_item_permissions_check( $request ) ) {
+			return new WP_Error( 'radioedu_forbidden', __( 'No tienes permisos para realizar esta acción.', 'radioedu-conecta' ), [ 'status' => 403 ] );
+		}
+
 		$user_id = get_current_user_id();
 
 		// Protección Rate Limiting con ventana fija de 1 hora por usuario.
@@ -345,7 +349,9 @@ class ColaboracionesController extends WP_REST_Controller {
 			CentroPostType::POST_TYPE !== get_post_type( $centro_emisor_id ) ||
 			CentroPostType::POST_TYPE !== get_post_type( $centro_receptor_id ) ||
 			'publish' !== get_post_status( $centro_emisor_id ) ||
-			'publish' !== get_post_status( $centro_receptor_id )
+			'publish' !== get_post_status( $centro_receptor_id ) ||
+			'' !== get_post_field( 'post_password', $centro_emisor_id ) ||
+			'' !== get_post_field( 'post_password', $centro_receptor_id )
 		) {
 			return new WP_Error(
 				'radioedu_invalid_center',
@@ -432,7 +438,7 @@ class ColaboracionesController extends WP_REST_Controller {
 	 * @param WP_REST_Request $request Objeto de la petición.
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function update_item( $request ) {
+	public function update_item( $request ): WP_REST_Response|WP_Error {
 		$id     = absint( $request->get_param( 'id' ) );
 		$estado = sanitize_key( (string) $request->get_param( 'estado' ) );
 		$result = self::respond_to_proposal(
@@ -466,6 +472,10 @@ class ColaboracionesController extends WP_REST_Controller {
 	 * @return WP_Error|null Null si se resolvió correctamente; WP_Error en caso contrario.
 	 */
 	public static function respond_to_proposal( int $id, string $estado, string $respuesta ): ?WP_Error {
+		if ( ! current_user_can( 'manage_radioedu' ) && ! current_user_can( 'propose_radioedu_colaboracion' ) && ! current_user_can( 'edit_radioedu_centros' ) ) {
+			return new WP_Error( 'radioedu_forbidden', __( 'No tienes permisos para realizar esta acción.', 'radioedu-conecta' ), [ 'status' => 403 ] );
+		}
+
 		if ( ! in_array( $estado, ColaboracionesTable::RESPONSE_STATUSES, true ) ) {
 			return new WP_Error(
 				'radioedu_invalid_status',
@@ -481,6 +491,15 @@ class ColaboracionesController extends WP_REST_Controller {
 				__( 'La propuesta de colaboración no existe.', 'radioedu-conecta' ),
 				[ 'status' => 404 ]
 			);
+		}
+
+		if ( ! current_user_can( 'manage_radioedu' ) && ! self::user_can_manage_center( (int) $colab->centro_receptor_id ) ) {
+			return new WP_Error( 'radioedu_forbidden_center', __( 'No tienes permisos para responder a las propuestas de este centro.', 'radioedu-conecta' ), [ 'status' => 403 ] );
+		}
+
+		$respuesta = sanitize_textarea_field( $respuesta );
+		if ( mb_strlen( $respuesta ) > ColaboracionesTable::MAX_RESPUESTA_LENGTH ) {
+			return new WP_Error( 'radioedu_invalid_response', __( 'El mensaje de respuesta es demasiado largo.', 'radioedu-conecta' ), [ 'status' => 400 ] );
 		}
 
 		if ( 'pendiente' !== $colab->estado || ! ColaboracionesTable::resolve_pending( $id, $estado, $respuesta ) ) {

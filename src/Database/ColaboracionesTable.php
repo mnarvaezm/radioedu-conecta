@@ -19,7 +19,7 @@ class ColaboracionesTable {
 	/**
 	 * Versión del esquema de base de datos y capacidades.
 	 */
-	public const DB_VERSION = '1.0.1';
+	public const DB_VERSION = '1.0.2';
 
 	/**
 	 * Nombre base de la tabla (sin prefijo de WP).

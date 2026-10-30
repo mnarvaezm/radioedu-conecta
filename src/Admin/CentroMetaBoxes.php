@@ -97,27 +97,26 @@ class CentroMetaBoxes {
 			[],
 			RADIOEDU_CONECTA_VERSION
 		);
+
+		// Only the compiled bundle can run; without a build the logo picker is skipped, not fatal.
+		$asset_file = RADIOEDU_CONECTA_DIR . 'build/admin.asset.php';
+		if ( ! is_readable( $asset_file ) ) {
+			return;
+		}
+		$asset = require $asset_file;
+
 		// wp_enqueue_media() ya registra 'media-editor'; el script no necesita jQuery propio.
 		wp_enqueue_script(
 			'radioedu-conecta-admin-js',
-			RADIOEDU_CONECTA_URL . 'assets/js/admin.js',
-			[ 'media-editor' ],
-			RADIOEDU_CONECTA_VERSION,
+			RADIOEDU_CONECTA_URL . 'build/admin.js',
+			array_merge( [ 'media-editor' ], $asset['dependencies'] ),
+			$asset['version'],
 			[
 				'in_footer' => true,
 				'strategy'  => 'defer',
 			]
 		);
-		wp_localize_script(
-			'radioedu-conecta-admin-js',
-			'radioeduAdminI18n',
-			[
-				'selectLogo' => __( 'Seleccionar logo de la radio', 'radioedu-conecta' ),
-				'useLogo'    => __( 'Usar este logo', 'radioedu-conecta' ),
-				'logoAlt'    => __( 'Logo de la radio', 'radioedu-conecta' ),
-				'noLogo'     => __( 'No hay logo asignado. Se mostrará un icono por defecto.', 'radioedu-conecta' ),
-			]
-		);
+		wp_set_script_translations( 'radioedu-conecta-admin-js', 'radioedu-conecta', RADIOEDU_CONECTA_DIR . 'languages' );
 	}
 
 	/**
@@ -140,6 +139,9 @@ class CentroMetaBoxes {
 	 * @param WP_Post $post Objeto del post actual.
 	 */
 	public static function render_detalles_box( WP_Post $post ): void {
+		if ( ! current_user_can( 'edit_post', $post->ID ) ) {
+			return;
+		}
 		wp_nonce_field( self::NONCE_ACTION, self::NONCE_FIELD );
 
 		$logo_id     = (int) get_post_meta( $post->ID, '_radioedu_logo_id', true );
@@ -290,9 +292,12 @@ class CentroMetaBoxes {
 	 * @param int     $post_id ID del post guardado.
 	 * @param WP_Post $post    Objeto del post.
 	 */
-	public static function save_meta_boxes( int $post_id, WP_Post $post ): void { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+	public static function save_meta_boxes( int $post_id, WP_Post $post ): void {
+		if ( CentroPostType::POST_TYPE !== $post->post_type || wp_is_post_revision( $post_id ) ) {
+			return;
+		}
 		// 1. Comprobaciones de seguridad de WordPress.
-		if ( ! isset( $_POST[ self::NONCE_FIELD ] ) ) {
+		if ( ! isset( $_POST[ self::NONCE_FIELD ] ) || ! is_string( $_POST[ self::NONCE_FIELD ] ) ) {
 			return;
 		}
 
@@ -311,9 +316,11 @@ class CentroMetaBoxes {
 
 		// 2. Sanitización y validación de cada campo.
 		// Logo ID: sólo se aceptan adjuntos de tipo imagen.
-		if ( isset( $_POST['radioedu_logo_id'] ) ) {
-			$logo_id = absint( $_POST['radioedu_logo_id'] );
-			if ( 0 === $logo_id || wp_attachment_is_image( $logo_id ) ) {
+		// read_post (not edit_post) lets authors reuse library images uploaded by others while
+		// still rejecting attachments of private posts they cannot see.
+		if ( isset( $_POST['radioedu_logo_id'] ) && is_string( $_POST['radioedu_logo_id'] ) ) {
+			$logo_id = absint( wp_unslash( $_POST['radioedu_logo_id'] ) );
+			if ( 0 === $logo_id || ( wp_attachment_is_image( $logo_id ) && current_user_can( 'read_post', $logo_id ) ) ) {
 				update_post_meta( $post_id, '_radioedu_logo_id', $logo_id );
 			}
 		}
@@ -349,13 +356,13 @@ class CentroMetaBoxes {
 		}
 
 		// Podcast URL.
-		if ( isset( $_POST['radioedu_podcast_url'] ) ) {
+		if ( isset( $_POST['radioedu_podcast_url'] ) && is_string( $_POST['radioedu_podcast_url'] ) ) {
 			$podcast_url = esc_url_raw( wp_unslash( $_POST['radioedu_podcast_url'] ), [ 'http', 'https' ] );
 			update_post_meta( $post_id, '_radioedu_podcast_url', $podcast_url );
 		}
 
 		// Web del Centro.
-		if ( isset( $_POST['radioedu_web_centro'] ) ) {
+		if ( isset( $_POST['radioedu_web_centro'] ) && is_string( $_POST['radioedu_web_centro'] ) ) {
 			$web_centro = esc_url_raw( wp_unslash( $_POST['radioedu_web_centro'] ), [ 'http', 'https' ] );
 			update_post_meta( $post_id, '_radioedu_web_centro', $web_centro );
 		}
@@ -373,13 +380,13 @@ class CentroMetaBoxes {
 		}
 
 		// Email de coordinador.
-		if ( isset( $_POST['radioedu_coordinador_email'] ) ) {
+		if ( isset( $_POST['radioedu_coordinador_email'] ) && is_string( $_POST['radioedu_coordinador_email'] ) ) {
 			$email_coord = sanitize_email( wp_unslash( $_POST['radioedu_coordinador_email'] ) );
 			update_post_meta( $post_id, '_radioedu_coordinador_email', $email_coord );
 		}
 
 		// Disponibilidad para colaborar (checkbox: 1 o 0).
-		$disponible = isset( $_POST['radioedu_disponible_colaborar'] ) ? '1' : '0';
+		$disponible = isset( $_POST['radioedu_disponible_colaborar'] ) && is_string( $_POST['radioedu_disponible_colaborar'] ) && '1' === sanitize_text_field( wp_unslash( $_POST['radioedu_disponible_colaborar'] ) ) ? '1' : '0';
 		update_post_meta( $post_id, '_radioedu_disponible_colaborar', $disponible );
 	}
 }

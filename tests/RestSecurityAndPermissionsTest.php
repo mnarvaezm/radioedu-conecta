@@ -230,6 +230,7 @@ class RestSecurityAndPermissionsTest extends WP_UnitTestCase {
 	 * Answering a non-existent proposal returns 404 instead of silently succeeding.
 	 */
 	public function test_answering_missing_proposal_returns_not_found(): void {
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
 		$result = ColaboracionesController::respond_to_proposal( 999999, 'aceptada', '' );
 
 		$this->assertWPError( $result );

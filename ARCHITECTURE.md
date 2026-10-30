@@ -12,8 +12,8 @@ display_name: RadioEdu Conecta (Traspasando Fronteras)
 version: 1.0.0
 db_schema_version: 1.0.1
 php_version_requirement: ">=8.1"
-wp_version_requirement: ">=6.5"
-tested_up_to: "6.7"
+wp_version_requirement: ">=7.0"
+tested_up_to: "7.1"
 license: GPL-2.0-or-later
 text_domain: radioedu-conecta
 psr4_namespace: RadioEdu\Conecta\
@@ -57,7 +57,7 @@ c:\radioedu-conecta\
 ├── package.json                         # npm script configurations (@wordpress/scripts)
 ├── .distignore                          # Build exclusion rules for release distribution
 ├── .gitignore                           # Git repository exclusions
-├── docker-compose.test.yml              # Local testing environment on port 8090 (WP 6.7 + MariaDB 10.11)
+├── docker-compose.test.yml              # Local testing environment on port 8090 (WP 7.1 + MariaDB 10.11)
 ├── radioedu-conecta.zip                 # Production release archive (POSIX paths, ~9.35 MB with demo media)
 ├── src/
 │   ├── Plugin.php                       # Core singleton orchestrator (lifecycle, hooks, Multisite, DB schema check)
@@ -95,9 +95,12 @@ c:\radioedu-conecta\
 │   ├── images/
 │   │   └── demo/                        # Local cover photos and circular logos for the 6 demo radio stations
 │   └── js/
-│       ├── admin.js                     # WP Media Uploader connector for radio station logo
-│       ├── directorio.js                # Frontend reactive controller (DOM builder, Leaflet manager, Drawer)
+│       ├── admin.js                     # Source: WP Media Uploader connector for radio station logo
+│       ├── directorio.js                # Source: frontend reactive controller (DOM builder, Leaflet manager, Drawer)
 │       └── leaflet.js                   # Self-contained Leaflet 1.9.4 JavaScript runtime (zero CDN)
+├── build/                               # Committed `npm run build` output (@wordpress/scripts); the only JS the plugin loads
+│   ├── admin.js / admin.asset.php       # Compiled admin.js + generated dependencies (wp-i18n) and version hash
+│   └── directorio.js / directorio.asset.php # Compiled directorio.js + dependencies (wp-a11y, wp-i18n)
 ├── languages/
 │   └── radioedu-conecta.pot             # GNU gettext internationalization template
 └── vendor/
@@ -124,7 +127,7 @@ c:\radioedu-conecta\
 
 ### 3.3 Strict Output Escaping, Zero `innerHTML`, and URL Validation
 * **Server-side (PHP):** Strict "Late Escaping" rule. Variables are escaped at the exact moment of output using `esc_html()`, `esc_attr()`, `esc_url()`, `wp_kses_post()`, or `wp_json_encode()`. All SQL queries use `$wpdb->prepare()` with `%i` identifier placeholders for table names.
-* **Client-side (JavaScript):** `assets/js/directorio.js` prohibits `innerHTML` and HTML string concatenation. All dynamic card nodes, badges, and Leaflet map popups (`marker.bindPopup(popupNode)`) are assembled using `document.createElement()` and `textContent`. All external URLs are validated via `sanitizeHttpUrl()` (`http:` / `https:` whitelist) and escaped before CSS `url(...)` injection. Server-side, the profile cover URL is percent-encoded for CSS context (`DirectorioShortcode::css_safe_url()`) because `esc_url()` keeps quotes and parentheses that the browser decodes before parsing CSS.
+* **Client-side (JavaScript):** `assets/js/directorio.js` (compiled to `build/directorio.js`) prohibits `innerHTML` and HTML string concatenation. All dynamic card nodes, badges, and Leaflet map popups (`marker.bindPopup(popupNode)`) are assembled using `document.createElement()` and `textContent`. All external URLs are validated via `sanitizeHttpUrl()` (`http:` / `https:` whitelist) and escaped before CSS `url(...)` injection. Server-side, the profile cover URL is percent-encoded for CSS context (`DirectorioShortcode::css_safe_url()`) because `esc_url()` keeps quotes and parentheses that the browser decodes before parsing CSS.
 
 ---
 
@@ -219,8 +222,8 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
   - `page` (`int`, default: 1): Current page.
   - `per_page` (`int`, default: 24, max: 100): Centros per page.
   - `search` (`string`): Free-text search matching title/description.
-  - `orden` (`enum`: `afines`, `recientes`, `alfa`): Ordering criteria (`afines` prioritizes available centers and ranks by shared taxonomy tags with `afines_a`).
-  - `afines_a` (`int`, default: 0): Reference center ID of the current user for affinity scoring.
+  - `orden` (`enum`: `afines`, `recientes`, `alfa`): Ordering criteria (`afines` prioritizes available centers and ranks by shared taxonomy tags with the reference center, which is sorted last; the ordering runs in SQL, before pagination).
+  - `afines_a` (`int`, default: 0): Optional reference center ID. When omitted, the endpoint uses the logged-in coordinator's own center; global managers (`manage_radioedu` / `edit_others_radioedu_centros`) get no self center, so no arbitrary center is pushed to the end. The bundled directory JavaScript relies on this default and does not send the parameter.
   - `etapa`, `idioma`, `tematica`, `formato`, `ubicacion` (`string`): Taxonomy slugs.
 
 ### 6.2 `GET /wp-json/radioedu-conecta/v1/colaboraciones`
@@ -265,8 +268,8 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
 
 ## 8. Multisite (Educarex) Lifecycle Specifications
 
-* **Single Site Activation:** Creates `{$wpdb->prefix}radioedu_colaboraciones`, assigns role capabilities, registers CPT/taxonomies, seeds the 6 demo stations if 0 stations exist, and flushes rewrite rules.
-* **Network Activation (`$network_wide = true`):** Iterates through sites via `get_sites()` + `switch_to_blog()`, provisioning tables and capabilities without bulk-seeding demo posts to prevent timeouts on large networks.
+* **Single Site Activation:** Creates `{$wpdb->prefix}radioedu_colaboraciones`, assigns role capabilities, registers CPT/taxonomies and flushes rewrite rules. Activation never publishes content: the 6 demo stations and the `/traspasando-fronteras/` page are created only when an administrator clicks the demo sync button in **Ajustes**. The importer marks what it creates with `_radioedu_conecta_demo` and only overwrites centros that carry that marker or the demo podcast URL, so a real school with a colliding slug is never touched.
+* **Network Activation (`$network_wide = true`):** Iterates through sites via `get_sites()` + `switch_to_blog()`, provisioning tables and capabilities without seeding demo posts.
 * **Dynamic Site Provisioning & Teardown:** `wp_initialize_site` (`Plugin::on_initialize_site()`) provisions new sites only when the plugin is network-active. On site deletion the custom table is added to core's drop list through the `wpmu_drop_tables` filter (`ColaboracionesTable::add_to_dropped_tables()`); options and roles disappear with the site's own tables, so nothing is written to tables that core has already dropped.
 * **Rewrite rules in switched context:** inside `switch_to_blog()` the plugin deletes the `rewrite_rules` option instead of flushing, so each site regenerates its own rules with its own permalink structure.
 * **Complete Uninstallation ([uninstall.php](file:///c:/radioedu-conecta/uninstall.php)):** Drops `{$wpdb->prefix}radioedu_colaboraciones`, deletes all `radioedu_centro` posts and postmeta, deletes terms across all 5 custom taxonomies, removes options and transients, and revokes all 12 custom capabilities across single-site or entire Multisite networks.

@@ -47,12 +47,10 @@ class DirectorioShortcode {
 	 * Registra los assets de front-end para su posterior encolado condicional.
 	 */
 	public static function register_assets(): void {
-		$css_ver = file_exists( RADIOEDU_CONECTA_DIR . 'assets/css/directorio.css' )
+		$css_ver    = file_exists( RADIOEDU_CONECTA_DIR . 'assets/css/directorio.css' )
 			? (string) filemtime( RADIOEDU_CONECTA_DIR . 'assets/css/directorio.css' )
 			: RADIOEDU_CONECTA_VERSION;
-		$js_ver  = file_exists( RADIOEDU_CONECTA_DIR . 'assets/js/directorio.js' )
-			? (string) filemtime( RADIOEDU_CONECTA_DIR . 'assets/js/directorio.js' )
-			: RADIOEDU_CONECTA_VERSION;
+		$asset_file = RADIOEDU_CONECTA_DIR . 'build/directorio.asset.php';
 
 		wp_register_style(
 			'radioedu-directorio-css',
@@ -80,23 +78,36 @@ class DirectorioShortcode {
 			]
 		);
 
-		// Leaflet no es dependencia: directorio.js comprueba su presencia al activar el mapa,
-		// así la ficha individual no descarga la librería del mapa.
-		wp_register_script(
-			'radioedu-directorio-js',
-			RADIOEDU_CONECTA_URL . 'assets/js/directorio.js',
-			[ 'wp-a11y' ],
-			$js_ver,
-			[
-				'in_footer' => true,
-				'strategy'  => 'defer',
-			]
-		);
+		// The source uses ES imports, so only the compiled bundle can run. Without a build the
+		// script is skipped and the page degrades to static markup instead of a fatal error.
+		if ( is_readable( $asset_file ) ) {
+			$asset = require $asset_file;
+
+			// Leaflet no es dependencia: directorio.js comprueba su presencia al activar el mapa,
+			// así la ficha individual no descarga la librería del mapa.
+			wp_register_script(
+				'radioedu-directorio-js',
+				RADIOEDU_CONECTA_URL . 'build/directorio.js',
+				$asset['dependencies'],
+				$asset['version'],
+				[
+					'in_footer' => true,
+					'strategy'  => 'defer',
+				]
+			);
+			wp_set_script_translations( 'radioedu-directorio-js', 'radioedu-conecta', RADIOEDU_CONECTA_DIR . 'languages' );
+		}
 
 		// Encolar estilos y script del drawer en la página de perfil individual de una emisora.
 		if ( is_singular( CentroPostType::POST_TYPE ) ) {
 			wp_enqueue_style( 'radioedu-directorio-css' );
 			wp_enqueue_script( 'radioedu-directorio-js' );
+		}
+		// Register directory styles before wp_head prints styles.
+		$post = get_post();
+		if ( $post instanceof \WP_Post && has_shortcode( $post->post_content, self::SHORTCODE_TAG ) ) {
+			wp_enqueue_style( 'radioedu-leaflet-css' );
+			wp_enqueue_style( 'radioedu-directorio-css' );
 		}
 	}
 
@@ -142,27 +153,7 @@ class DirectorioShortcode {
 					'lng'  => (float) Settings::get( 'default_lng', '-6.3708' ),
 					'zoom' => (int) Settings::get( 'default_zoom', 8 ),
 				],
-				'i18n'           => [
-					/* translators: %s: Number of schools found. */
-					'resultsCount'     => __( 'Resultados (%s centros)', 'radioedu-conecta' ),
-					'noResults'        => __( 'No se encontraron centros con los filtros seleccionados.', 'radioedu-conecta' ),
-					'loading'          => __( 'Cargando centros...', 'radioedu-conecta' ),
-					'viewProfile'      => __( 'Ver perfil', 'radioedu-conecta' ),
-					'proposeMatch'     => __( 'Proponer match', 'radioedu-conecta' ),
-					'submitProposal'   => __( 'Enviar propuesta', 'radioedu-conecta' ),
-					'unavailable'      => __( 'No disponible', 'radioedu-conecta' ),
-					'favorite'         => __( 'Añadir a favoritos', 'radioedu-conecta' ),
-					'unfavorite'       => __( 'Quitar de favoritos', 'radioedu-conecta' ),
-					'defaultLocation'  => __( 'Extremadura', 'radioedu-conecta' ),
-					'sending'          => __( 'Enviando propuesta...', 'radioedu-conecta' ),
-					'sendSuccess'      => __( '¡Propuesta enviada con éxito!', 'radioedu-conecta' ),
-					'loginRequired'    => __( 'Debes iniciar sesión con tu cuenta de coordinador de centro para enviar propuestas de colaboración.', 'radioedu-conecta' ),
-					'noPermission'     => __( 'Tu cuenta actual no dispone de permisos de coordinador para proponer colaboraciones.', 'radioedu-conecta' ),
-					'selectYourCenter' => __( 'Por favor, selecciona tu centro escolar.', 'radioedu-conecta' ),
-					'errorOccurred'    => __( 'Ha ocurrido un error al procesar la solicitud.', 'radioedu-conecta' ),
-					'logIn'            => __( 'Iniciar sesión', 'radioedu-conecta' ),
-					'mapAttribution'   => __( 'Colaboradores de OpenStreetMap', 'radioedu-conecta' ),
-				],
+
 			];
 
 			wp_add_inline_script(
@@ -212,7 +203,7 @@ class DirectorioShortcode {
 		}
 
 		$post_id = (int) get_the_ID();
-		if ( $post_id <= 0 ) {
+		if ( $post_id <= 0 || post_password_required( $post_id ) ) {
 			return $content;
 		}
 
@@ -340,7 +331,7 @@ class DirectorioShortcode {
 	 * @param array<string, mixed>|string $atts Atributos del shortcode.
 	 * @return string Salida HTML del directorio.
 	 */
-	public static function render_shortcode( $atts = [] ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+	public static function render_shortcode( array|string $atts = [] ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- WordPress supplies shortcode attributes.
 		if ( ! wp_style_is( 'radioedu-directorio-css', 'registered' ) ) {
 			self::register_assets();
 		}

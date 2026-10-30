@@ -1,3 +1,6 @@
+import { __ } from '@wordpress/i18n';
+import { speak } from '@wordpress/a11y';
+
 /**
  * Lógica interactiva en el frontal de RadioEdu Conecta - Traspasando Fronteras.
  * Cero innerHTML y cero concatenación HTML para prevención estricta de XSS.
@@ -20,7 +23,48 @@
 		const config = window.radioeduConectaData || {};
 		const restUrl = config.restUrl || '/wp-json/radioedu-conecta/v1/';
 		const restNonce = config.restNonce || '';
-		const i18n = config.i18n || {};
+		const i18n = {
+			/* translators: %s: Number of schools found. */
+			resultsCount: __( 'Resultados (%s centros)', 'radioedu-conecta' ),
+			noResults: __(
+				'No se encontraron centros con los filtros seleccionados.',
+				'radioedu-conecta'
+			),
+			loading: __( 'Cargando centros…', 'radioedu-conecta' ),
+			viewProfile: __( 'Ver perfil', 'radioedu-conecta' ),
+			proposeMatch: __( 'Proponer match', 'radioedu-conecta' ),
+			submitProposal: __( 'Enviar propuesta', 'radioedu-conecta' ),
+			unavailable: __( 'No disponible', 'radioedu-conecta' ),
+			favorite: __( 'Añadir a favoritos', 'radioedu-conecta' ),
+			unfavorite: __( 'Quitar de favoritos', 'radioedu-conecta' ),
+			defaultLocation: __( 'Extremadura', 'radioedu-conecta' ),
+			sending: __( 'Enviando propuesta…', 'radioedu-conecta' ),
+			sendSuccess: __(
+				'¡Propuesta enviada con éxito!',
+				'radioedu-conecta'
+			),
+			loginRequired: __(
+				'Debes iniciar sesión con tu cuenta de coordinador de centro para enviar propuestas de colaboración.',
+				'radioedu-conecta'
+			),
+			noPermission: __(
+				'Tu cuenta actual no dispone de permisos de coordinador para proponer colaboraciones.',
+				'radioedu-conecta'
+			),
+			selectYourCenter: __(
+				'Por favor, selecciona tu centro escolar.',
+				'radioedu-conecta'
+			),
+			errorOccurred: __(
+				'Ha ocurrido un error al procesar la solicitud.',
+				'radioedu-conecta'
+			),
+			logIn: __( 'Iniciar sesión', 'radioedu-conecta' ),
+			mapAttribution: __(
+				'Colaboradores de OpenStreetMap',
+				'radioedu-conecta'
+			),
+		};
 
 		// Elementos del DOM.
 		const cardsContainer = document.getElementById(
@@ -101,6 +145,8 @@
 		let currentCentros = [];
 		let currentPage = 1;
 		let totalPages = 1;
+		let directoryRequest = null;
+		let submitting = false;
 
 		try {
 			hasMapConsent =
@@ -140,16 +186,8 @@
 		 * @param {string} politeness 'polite' o 'assertive'.
 		 */
 		function announce( message, politeness ) {
-			if (
-				message &&
-				window.wp &&
-				window.wp.a11y &&
-				typeof window.wp.a11y.speak === 'function'
-			) {
-				window.wp.a11y.speak(
-					String( message ),
-					politeness || 'polite'
-				);
+			if ( message ) {
+				speak( String( message ), politeness || 'polite' );
 			}
 		}
 
@@ -185,6 +223,21 @@
 		// Consulta a la REST API con los filtros activos.
 		function fetchCentros( appendPage ) {
 			const isAppend = Boolean( appendPage );
+			if ( directoryRequest ) {
+				directoryRequest.abort();
+			}
+			const request = new AbortController();
+			directoryRequest = request;
+			const requestedPage = isAppend ? currentPage + 1 : 1;
+			if ( btnLoadMore ) {
+				btnLoadMore.disabled = true;
+			}
+			const errorState = document.getElementById(
+				'radioedu-directory-error'
+			);
+			if ( errorState ) {
+				errorState.hidden = true;
+			}
 			if ( ! isAppend ) {
 				currentPage = 1;
 				cardsContainer.style.display = 'none';
@@ -196,14 +249,13 @@
 			loadingState.style.display = 'block';
 
 			const params = new URLSearchParams( {
-				page: String( currentPage ),
+				page: String( requestedPage ),
 				per_page: '24',
 				orden: sortSelect ? sortSelect.value : 'afines',
 			} );
 
-			if ( config.userCenterId ) {
-				params.append( 'afines_a', String( config.userCenterId ) );
-			}
+			// No afines_a: the endpoint picks the user's own centro itself, and skips it for global
+			// managers, whose first "managed" centro (userCenterId) is an arbitrary one.
 			if ( filterUbicacion && filterUbicacion.value ) {
 				params.append( 'ubicacion', filterUbicacion.value );
 			}
@@ -233,8 +285,16 @@
 				fetchHeaders[ 'X-WP-Nonce' ] = restNonce.trim();
 			}
 
-			fetch( restUrl + 'centros?' + params.toString(), {
+			const endpoint = new URL(
+				restUrl + 'centros',
+				window.location.href
+			);
+			params.forEach( ( value, key ) =>
+				endpoint.searchParams.set( key, value )
+			);
+			fetch( endpoint.href, {
 				headers: fetchHeaders,
+				signal: request.signal,
 			} )
 				.then( function ( response ) {
 					if ( ! response.ok ) {
@@ -243,6 +303,10 @@
 					return response.json();
 				} )
 				.then( function ( data ) {
+					if ( request.signal.aborted ) {
+						return;
+					}
+					currentPage = requestedPage;
 					loadingState.style.display = 'none';
 					const fetched = Array.isArray( data.centros )
 						? data.centros
@@ -296,11 +360,21 @@
 					}
 				} )
 				.catch( function ( err ) {
-					// eslint-disable-next-line no-console
-					console.error( 'RadioEdu Conecta API error:', err );
+					if ( err.name === 'AbortError' ) {
+						return;
+					}
 					loadingState.style.display = 'none';
-					if ( ! isAppend ) {
-						noResultsState.style.display = 'block';
+					if ( errorState ) {
+						errorState.hidden = false;
+					}
+					announce( i18n.errorOccurred, 'assertive' );
+				} )
+				.finally( function () {
+					if ( directoryRequest === request ) {
+						directoryRequest = null;
+						if ( btnLoadMore ) {
+							btnLoadMore.disabled = false;
+						}
 					}
 				} );
 		}
@@ -635,6 +709,7 @@
 		 * @param {boolean} sending Si la petición está en curso.
 		 */
 		function setSubmitState( sending ) {
+			submitting = sending;
 			if ( ! btnSubmitMatch ) {
 				return;
 			}
@@ -652,8 +727,31 @@
 
 		// Envío asíncrono del formulario de Match.
 		if ( matchForm ) {
+			matchForm.addEventListener( 'input', function ( event ) {
+				event.target.removeAttribute( 'aria-invalid' );
+				event.target.removeAttribute( 'aria-describedby' );
+			} );
+			matchForm.addEventListener(
+				'invalid',
+				function ( event ) {
+					event.target.setAttribute( 'aria-invalid', 'true' );
+					event.target.setAttribute(
+						'aria-describedby',
+						'radioedu-drawer-feedback'
+					);
+					showDrawerFeedback( event.target.validationMessage, false );
+				},
+				true
+			);
 			matchForm.addEventListener( 'submit', function ( e ) {
 				e.preventDefault();
+				if (
+					submitting ||
+					! config.isLoggedIn ||
+					! config.canPropose
+				) {
+					return;
+				}
 
 				const emisorId = matchEmisorId
 					? matchEmisorId.value
@@ -720,8 +818,34 @@
 							if ( matchReceptorTxt ) {
 								matchReceptorTxt.value = receptorLabel;
 							}
-							setTimeout( closeMatchDrawer, 3000 );
 						} else {
+							const errors =
+								payload.result.data &&
+								payload.result.data.params;
+							if ( errors ) {
+								Object.keys( errors ).forEach(
+									function ( name ) {
+										const field =
+											matchForm.elements.namedItem(
+												name
+											);
+										if (
+											field &&
+											typeof field.setAttribute ===
+												'function'
+										) {
+											field.setAttribute(
+												'aria-invalid',
+												'true'
+											);
+											field.setAttribute(
+												'aria-describedby',
+												'radioedu-drawer-feedback'
+											);
+										}
+									}
+								);
+							}
 							showDrawerFeedback(
 								payload.result.message ||
 									i18n.errorOccurred ||
@@ -806,21 +930,32 @@
 				lng: -6.3708,
 				zoom: 8,
 			};
-			leafletMap = L.map( 'radioedu-leaflet-map' ).setView(
+			leafletMap = L.map( 'radioedu-leaflet-map', {
+				attributionControl: false,
+			} ).setView(
 				[ mapSettings.lat, mapSettings.lng ],
 				mapSettings.zoom
 			);
 
-			// Leaflet inserta la atribución como HTML: el texto traducido se escapa vía textContent.
-			const attributionText = document.createElement( 'span' );
-			attributionText.textContent =
-				i18n.mapAttribution || 'OpenStreetMap';
+			// Build attribution with DOM nodes, including translated text.
+			const attribution = L.control( { position: 'bottomright' } );
+			attribution.onAdd = function () {
+				const container = document.createElement( 'div' );
+				container.className = 'leaflet-control-attribution';
+				const link = document.createElement( 'a' );
+				link.href = 'https://www.openstreetmap.org/copyright';
+				link.target = '_blank';
+				link.rel = 'noopener noreferrer';
+				link.textContent = i18n.mapAttribution;
+				container.append(
+					document.createTextNode( 'Leaflet | © ' ),
+					link
+				);
+				return container;
+			};
+			attribution.addTo( leafletMap );
 			L.tileLayer( 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 				maxZoom: 18,
-				attribution:
-					'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">' +
-					attributionText.innerHTML +
-					'</a>',
 			} ).addTo( leafletMap );
 		}
 
@@ -838,7 +973,12 @@
 					const latNum = parseFloat( centro.lat );
 					const lngNum = parseFloat( centro.lng );
 
-					if ( ! isNaN( latNum ) && ! isNaN( lngNum ) ) {
+					if (
+						Number.isFinite( latNum ) &&
+						Number.isFinite( lngNum ) &&
+						Math.abs( latNum ) <= 90 &&
+						Math.abs( lngNum ) <= 180
+					) {
 						const marker = L.marker( [ latNum, lngNum ] ).addTo(
 							leafletMap
 						);
@@ -888,7 +1028,6 @@
 		if ( btnLoadMore ) {
 			btnLoadMore.addEventListener( 'click', function () {
 				if ( currentPage < totalPages ) {
-					currentPage += 1;
 					fetchCentros( true );
 				}
 			} );

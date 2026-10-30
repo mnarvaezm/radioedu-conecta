@@ -58,6 +58,8 @@ final class Plugin {
 	 * Inicializa los hooks principales del ciclo de vida de WordPress.
 	 */
 	public function init(): void {
+		// Provision every site before frontend or REST use, including large networks.
+		add_action( 'init', [ $this, 'maybe_update_db_schema' ], 1 );
 		// 1. Traducciones: WordPress las carga bajo demanda (just-in-time) desde los paquetes de idioma.
 
 		// 2. Registrar CPT y Taxonomías en init.
@@ -73,7 +75,6 @@ final class Plugin {
 			ColaboracionesAdminPage::register();
 			Settings::register();
 			DemoDataImporter::register();
-			add_action( 'admin_init', [ $this, 'maybe_update_db_schema' ] );
 		}
 
 		// 5. Registrar endpoints de la REST API.
@@ -126,8 +127,11 @@ final class Plugin {
 		}
 
 		switch_to_blog( (int) $new_site->blog_id );
-		self::activate_single_site( false );
-		restore_current_blog();
+		try {
+			self::activate_single_site();
+		} finally {
+			restore_current_blog();
+		}
 	}
 
 	/**
@@ -147,20 +151,23 @@ final class Plugin {
 			// Los sitios que superen el lote se aprovisionan de forma diferida en maybe_update_db_schema().
 			foreach ( $site_ids as $site_id ) {
 				switch_to_blog( (int) $site_id );
-				self::activate_single_site( false );
-				restore_current_blog();
+				try {
+					self::activate_single_site();
+				} finally {
+					restore_current_blog();
+				}
 			}
 		} else {
-			self::activate_single_site( true );
+			self::activate_single_site();
 		}
 	}
 
 	/**
 	 * Activación para un sitio individual.
 	 *
-	 * @param bool $seed_demo Si se deben importar las emisoras demo cuando el sitio no tiene centros.
+	 * Demo content is imported only by an explicit administrator request.
 	 */
-	private static function activate_single_site( bool $seed_demo = true ): void {
+	private static function activate_single_site(): void {
 		// Crear tabla de colaboraciones con dbDelta.
 		ColaboracionesTable::create_table();
 
@@ -170,15 +177,6 @@ final class Plugin {
 		// Registrar tipos de contenido y taxonomías antes del flush.
 		CentroPostType::register();
 		TaxonomiesRegistrar::register_all();
-
-		// Cargar automáticamente las 6 emisoras de ejemplo sólo en activación individual si aún no existen centros.
-		if ( $seed_demo ) {
-			$existing_count = wp_count_posts( CentroPostType::POST_TYPE );
-			$published      = isset( $existing_count->publish ) ? (int) $existing_count->publish : 0;
-			if ( 0 === $published ) {
-				DemoDataImporter::import_demo_centers();
-			}
-		}
 
 		self::reset_rewrite_rules();
 	}
@@ -210,18 +208,28 @@ final class Plugin {
 	 */
 	public static function deactivate( bool $network_wide = false ): void {
 		if ( is_multisite() && $network_wide ) {
-			$site_ids = get_sites(
-				[
-					'fields' => 'ids',
-					'number' => 500,
-				]
-			);
-
-			foreach ( $site_ids as $site_id ) {
-				switch_to_blog( (int) $site_id );
-				delete_option( 'rewrite_rules' );
-				restore_current_blog();
-			}
+			$offset = 0;
+			do {
+				$site_ids = get_sites(
+					[
+						'fields'  => 'ids',
+						'number'  => 100,
+						'offset'  => $offset,
+						'orderby' => 'id',
+						'order'   => 'ASC',
+					]
+				);
+				foreach ( $site_ids as $site_id ) {
+					switch_to_blog( (int) $site_id );
+					try {
+						delete_option( 'rewrite_rules' );
+					} finally {
+						restore_current_blog();
+					}
+				}
+				$offset  += 100;
+				$has_more = count( $site_ids ) === 100;
+			} while ( $has_more );
 		} else {
 			delete_option( 'rewrite_rules' );
 		}

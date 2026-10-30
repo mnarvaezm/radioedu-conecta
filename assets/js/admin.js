@@ -1,3 +1,5 @@
+import { __ } from '@wordpress/i18n';
+
 /**
  * Scripts para los metaboxes de RadioEdu Conecta en el panel de administración.
  */
@@ -5,7 +7,18 @@
 	'use strict';
 
 	function init() {
-		const i18n = window.radioeduAdminI18n || {};
+		const i18n = {
+			selectLogo: __(
+				'Seleccionar logo de la radio',
+				'radioedu-conecta'
+			),
+			useLogo: __( 'Usar este logo', 'radioedu-conecta' ),
+			logoAlt: __( 'Logo de la radio', 'radioedu-conecta' ),
+			noLogo: __(
+				'No hay logo asignado. Se mostrará un icono por defecto.',
+				'radioedu-conecta'
+			),
+		};
 		const logoIdInput = document.getElementById( 'radioedu_logo_id' );
 		const previewBox = document.getElementById( 'radioedu-logo-preview' );
 		const removeBtn = document.getElementById( 'radioedu_logo_remove' );

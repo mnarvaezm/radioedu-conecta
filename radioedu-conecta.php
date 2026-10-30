@@ -4,7 +4,7 @@
  * Plugin URI:        https://radioedu.educarex.es/conecta
  * Description:       Directorio interactivo y sistema colaborativo ("Traspasando Fronteras") para la red de radios escolares de Extremadura y del mundo.
  * Version:           1.0.0
- * Requires at least: 6.5
+ * Requires at least: 7.0
  * Requires PHP:      8.1
  * Author:            RadioEdu - Consejería de Educación, Ciencia y Formación Profesional (Junta de Extremadura)
  * Author URI:        https://radioedu.educarex.es
@@ -16,11 +16,13 @@
  * @package RadioEdu\Conecta
  */
 
+declare( strict_types=1 );
+
 defined( 'ABSPATH' ) || exit;
 
 // Plugin constants.
 define( 'RADIOEDU_CONECTA_VERSION', '1.0.0' );
-define( 'RADIOEDU_CONECTA_MIN_WP', '6.5' );
+define( 'RADIOEDU_CONECTA_MIN_WP', '7.0' );
 define( 'RADIOEDU_CONECTA_MIN_PHP', '8.1' );
 define( 'RADIOEDU_CONECTA_FILE', __FILE__ );
 define( 'RADIOEDU_CONECTA_DIR', plugin_dir_path( __FILE__ ) );
@@ -146,6 +148,10 @@ add_action( 'plugins_loaded', 'radioedu_conecta_bootstrap' );
  * @return array<string, string> Updated links array.
  */
 function radioedu_conecta_action_links( array $links ): array {
+	if ( ! current_user_can( 'manage_radioedu' ) ) {
+		return $links;
+	}
+
 	$settings_url  = admin_url( 'edit.php?post_type=radioedu_centro&page=radioedu-conecta-settings' );
 	$settings_link = sprintf(
 		'<a href="%s">%s</a>',

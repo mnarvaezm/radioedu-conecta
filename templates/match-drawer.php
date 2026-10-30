@@ -9,6 +9,8 @@
  * @var string                                     $drawer_receptor_label Nombre y ubicación del centro receptor preseleccionado.
  */
 
+declare( strict_types=1 );
+
 defined( 'ABSPATH' ) || exit;
 ?>
 <div id="radioedu-drawer-overlay" class="radioedu-drawer-overlay" aria-hidden="true"></div>

@@ -6,6 +6,9 @@
  * @package RadioEdu\Conecta
  */
 
+declare( strict_types=1 );
+
+defined( 'ABSPATH' ) || exit;
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 /**
@@ -88,8 +91,14 @@ function radioedu_conecta_uninstall_single_site(): void {
 	}
 
 	// 4. Eliminar opciones del plugin.
+	$page_id = (int) get_option( 'radioedu_conecta_directory_page_id', 0 );
+	if ( $page_id > 0 && 'page' === get_post_type( $page_id ) && '1' === get_post_meta( $page_id, '_radioedu_conecta_demo', true ) ) {
+		wp_delete_post( $page_id, true );
+	}
+	delete_option( 'radioedu_conecta_directory_page_id' );
 	delete_option( 'radioedu_conecta_settings' );
 	delete_option( 'radioedu_conecta_db_version' );
+	delete_option( 'rewrite_rules' );
 
 	// 5. Eliminar transients de rate-limiting (radioedu_rate_{user_id}).
 	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Transients with dynamic keys cannot be enumerated through the Options API.
@@ -136,18 +145,28 @@ function radioedu_conecta_uninstall(): void {
 		return;
 	}
 
-	$site_ids = get_sites(
-		[
-			'fields' => 'ids',
-			'number' => 0,
-		]
-	);
-
-	foreach ( $site_ids as $site_id ) {
-		switch_to_blog( (int) $site_id );
-		radioedu_conecta_uninstall_single_site();
-		restore_current_blog();
-	}
+	$offset = 0;
+	do {
+		$site_ids = get_sites(
+			[
+				'fields'  => 'ids',
+				'number'  => 100,
+				'offset'  => $offset,
+				'orderby' => 'id',
+				'order'   => 'ASC',
+			]
+		);
+		foreach ( $site_ids as $site_id ) {
+			switch_to_blog( (int) $site_id );
+			try {
+				radioedu_conecta_uninstall_single_site();
+			} finally {
+				restore_current_blog();
+			}
+		}
+		$offset  += 100;
+		$has_more = count( $site_ids ) === 100;
+	} while ( $has_more );
 }
 
 radioedu_conecta_uninstall();

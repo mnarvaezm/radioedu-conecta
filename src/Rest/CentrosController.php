@@ -78,9 +78,9 @@ class CentrosController extends WP_REST_Controller {
 	 * Recupera los centros aplicando filtros facetados y paginación.
 	 *
 	 * @param WP_REST_Request $request Objeto de la petición.
-	 * @return WP_REST_Response|WP_Error Respuesta REST con los centros.
+	 * @return WP_REST_Response Public directory response.
 	 */
-	public function get_items( $request ) {
+	public function get_items( $request ): WP_REST_Response {
 		$page     = max( 1, (int) $request->get_param( 'page' ) );
 		$per_page = min( 100, max( 1, (int) $request->get_param( 'per_page' ) ) );
 		$search   = (string) $request->get_param( 'search' );
@@ -90,6 +90,7 @@ class CentrosController extends WP_REST_Controller {
 		$args = [
 			'post_type'      => CentroPostType::POST_TYPE,
 			'post_status'    => 'publish',
+			'has_password'   => false,
 			'paged'          => $page,
 			'posts_per_page' => $per_page,
 		];
@@ -141,58 +142,50 @@ class CentrosController extends WP_REST_Controller {
 			$args['tax_query'] = $tax_queries;
 		}
 
-		$query = new WP_Query( $args );
+		$affinity_filter = null;
+		if ( 'afines' === $orden ) {
+			// Default to the user's own centro so it sinks to the end. Global managers "manage" every
+			// centro, so their first one would be an arbitrary pick: leave them without a self centro.
+			$is_global_manager = current_user_can( 'manage_radioedu' ) || current_user_can( 'edit_others_radioedu_centros' );
+			if ( 0 === $afines_a && get_current_user_id() > 0 && ! $is_global_manager ) {
+				$managed  = ColaboracionesController::get_user_managed_center_ids( get_current_user_id() );
+				$afines_a = $managed[0] ?? 0;
+			}
+			$term_ids                          = $this->get_reference_center_term_ids( $afines_a );
+			$args['radioedu_conecta_affinity'] = true;
+			$affinity_filter                   = static function ( array $clauses, WP_Query $query ) use ( $afines_a, $term_ids ): array {
+				if ( ! $query->get( 'radioedu_conecta_affinity' ) ) {
+					return $clauses;
+				}
+				global $wpdb;
+				$order = [
+					$wpdb->prepare( 'CASE WHEN EXISTS (SELECT 1 FROM %i AS availability WHERE availability.post_id = %i.ID AND availability.meta_key = %s AND availability.meta_value = %s) THEN 0 ELSE 1 END DESC', $wpdb->postmeta, $wpdb->posts, '_radioedu_disponible_colaborar', '0' ),
+					$wpdb->prepare( '(%i.ID = %d) ASC', $wpdb->posts, $afines_a ),
+				];
+				if ( ! empty( $term_ids ) ) {
+					$placeholders = implode( ',', array_fill( 0, count( $term_ids ), '%d' ) );
+					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- The dynamic list contains only %d placeholders; every ID is bound by prepare().
+					$order[] = $wpdb->prepare( "(SELECT COUNT(*) FROM %i AS affinity WHERE affinity.object_id = %i.ID AND affinity.term_taxonomy_id IN ({$placeholders})) DESC", array_merge( [ $wpdb->term_relationships, $wpdb->posts ], $term_ids ) );
+				}
+				$order[]            = $wpdb->prepare( '%i.post_title ASC, %i.ID ASC', $wpdb->posts, $wpdb->posts );
+				$clauses['orderby'] = implode( ', ', $order );
+				return $clauses;
+			};
+			add_filter( 'posts_clauses', $affinity_filter, 10, 2 );
+		}
+		try {
+			$query = new WP_Query( $args );
+		} finally {
+			if ( null !== $affinity_filter ) {
+				remove_filter( 'posts_clauses', $affinity_filter, 10 );
+			}
+		}
 		$items = [];
 
 		foreach ( $query->posts as $centro ) {
 			if ( $centro instanceof \WP_Post ) {
 				$items[] = $this->prepare_centro_data( $centro->ID );
 			}
-		}
-
-		// Si el orden es 'afines', ordenar priorizando centros disponibles y con mayor coincidencia de etiquetas/taxonomías.
-		if ( 'afines' === $orden && count( $items ) > 1 ) {
-			$ref_slugs = $this->get_reference_center_term_slugs( $afines_a );
-			usort(
-				$items,
-				static function ( array $a, array $b ) use ( $ref_slugs, $afines_a ): int {
-					// Priorizar centros disponibles para colaborar.
-					$disp_a = ! empty( $a['disponible'] ) ? 1 : 0;
-					$disp_b = ! empty( $b['disponible'] ) ? 1 : 0;
-					if ( $disp_a !== $disp_b ) {
-						return $disp_b <=> $disp_a;
-					}
-
-					// Si hay centro de referencia del usuario, calcular coincidencias de tags y colocar el propio centro al final.
-					if ( $afines_a > 0 ) {
-						$is_self_a = ( (int) $a['id'] === $afines_a ) ? 1 : 0;
-						$is_self_b = ( (int) $b['id'] === $afines_a ) ? 1 : 0;
-						if ( $is_self_a !== $is_self_b ) {
-							return $is_self_a <=> $is_self_b;
-						}
-					}
-
-					if ( ! empty( $ref_slugs ) ) {
-						$score_a = 0;
-						foreach ( $a['tags'] as $tag ) {
-							if ( in_array( $tag['slug'], $ref_slugs, true ) ) {
-								++$score_a;
-							}
-						}
-						$score_b = 0;
-						foreach ( $b['tags'] as $tag ) {
-							if ( in_array( $tag['slug'], $ref_slugs, true ) ) {
-								++$score_b;
-							}
-						}
-						if ( $score_a !== $score_b ) {
-							return $score_b <=> $score_a;
-						}
-					}
-
-					return strcasecmp( (string) $a['nombre'], (string) $b['nombre'] );
-				}
-			);
 		}
 
 		$response = rest_ensure_response(
@@ -215,9 +208,9 @@ class CentrosController extends WP_REST_Controller {
 	 * Obtiene los slugs de taxonomías del centro de referencia del usuario para calcular afinidad.
 	 *
 	 * @param int $center_id ID del centro de referencia.
-	 * @return array<int, string>
+	 * @return array<int, int>
 	 */
-	private function get_reference_center_term_slugs( int $center_id ): array {
+	private function get_reference_center_term_ids( int $center_id ): array {
 		if ( $center_id <= 0 ) {
 			$user_id = get_current_user_id();
 			if ( $user_id > 0 ) {
@@ -229,7 +222,7 @@ class CentrosController extends WP_REST_Controller {
 		}
 
 		// Sólo centros publicados: evita revelar términos de borradores o centros privados a través de 'afines_a'.
-		if ( $center_id <= 0 || CentroPostType::POST_TYPE !== get_post_type( $center_id ) || 'publish' !== get_post_status( $center_id ) ) {
+		if ( $center_id <= 0 || CentroPostType::POST_TYPE !== get_post_type( $center_id ) || 'publish' !== get_post_status( $center_id ) || '' !== get_post_field( 'post_password', $center_id ) ) {
 			return [];
 		}
 
@@ -240,12 +233,12 @@ class CentrosController extends WP_REST_Controller {
 			TaxonomiesRegistrar::TAX_FORMATO,
 		];
 
-		$terms = wp_get_object_terms( $center_id, $taxonomies, [ 'fields' => 'slugs' ] );
+		$terms = wp_get_object_terms( $center_id, $taxonomies, [ 'fields' => 'tt_ids' ] );
 		if ( is_wp_error( $terms ) || ! is_array( $terms ) ) {
 			return [];
 		}
 
-		return array_map( 'strval', $terms );
+		return array_map( 'intval', $terms );
 	}
 
 	/**
@@ -436,7 +429,7 @@ class CentrosController extends WP_REST_Controller {
 	 * @param mixed $value Valor recibido.
 	 * @return string Slug sanitizado.
 	 */
-	public function sanitize_slug_param( $value ): string {
+	public function sanitize_slug_param( mixed $value ): string {
 		return is_scalar( $value ) ? sanitize_title( (string) $value ) : '';
 	}
 }

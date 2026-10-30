@@ -7,7 +7,7 @@ Este protocolo describe paso a paso las pruebas funcionales, de seguridad, de ba
 ## 1. Entorno de Pruebas (Docker)
 
 El archivo [docker-compose.test.yml](file:///c:/radioedu-conecta/docker-compose.test.yml) está preconfigurado con:
-* **WordPress**: 6.7 sobre PHP 8.2 (Apache).
+* **WordPress**: 7.1 sobre PHP 8.2 (Apache). El plugin exige WordPress 7.0 o superior.
 * **Base de Datos**: MariaDB 10.11.
 * **Puerto asignado**: `8090` (`http://localhost:8090`).
 * **Modo Depuración Activo**: `WP_DEBUG=true`, `WP_DEBUG_LOG=true`, `SCRIPT_DEBUG=true`.
@@ -25,8 +25,8 @@ docker compose -f docker-compose.test.yml up -d
 ### Paso 1.2: Activar el plugin y sincronizar las 6 emisoras de demostración
 1. Accede a `http://localhost:8090/wp-admin` e inicia sesión.
 2. En **Plugins → Plugins instalados**, activa **RadioEdu Conecta**.
-3. Al activarlo en un sitio individual sin centros previos, se crean automáticamente las **6 emisoras de demostración** con sus imágenes de cabecera y logotipos, además de la página `/traspasando-fronteras/` con el shortcode `[radioedu_directorio]`.
-4. También puedes volver a sincronizarlas en cualquier momento desde **RadioEdu Centros → Ajustes → "Sincronizar / Cargar las 6 emisoras de ejemplo"**.
+3. La activación no crea contenido. Carga las **6 emisoras de demostración** (con sus imágenes de cabecera y logotipos) y la página `/traspasando-fronteras/` con el shortcode `[radioedu_directorio]` desde **RadioEdu Centros → Ajustes → "Sincronizar / Cargar las 6 emisoras de ejemplo"**.
+4. Puedes repetir la sincronización cuando quieras: solo actualiza los centros de demostración y nunca sobrescribe un centro real aunque comparta el slug.
 
 ### Paso 1.3: Verificar Tabla Personalizada y Logs
 ```powershell
@@ -42,7 +42,7 @@ docker exec radioedu-wordpress wp db query "DESCRIBE wp_radioedu_colaboraciones;
 | :--- | :--- | :--- | :--- |
 | **TC-01** | **Carga inicial del directorio** | Abrir `http://localhost:8090/traspasando-fronteras/`. | Se muestran el banner Hero, la barra de filtros, el contador de centros y la cuadrícula de tarjetas con cabeceras, logos circulares, banderas e insignias de colores. |
 | **TC-02** | **Filtros facetados y búsqueda** | Filtrar por ubicación, idioma, etapa, temática, formato o texto libre. | La cuadrícula se actualiza asíncronamente vía `GET /wp-json/radioedu-conecta/v1/centros` sin recargar la página. |
-| **TC-03** | **Ordenación por Afinidad** | Seleccionar *"Más afines"* en "Ordenar por". | Prioriza los centros disponibles y ordena según coincidencias de taxonomías con el centro del usuario conectado. |
+| **TC-03** | **Ordenación por Afinidad** | Seleccionar *"Más afines"* en "Ordenar por". | Prioriza los centros disponibles y ordena según coincidencias de taxonomías con el centro del usuario conectado, que aparece el último. Un administrador no tiene centro propio, así que ningún centro se manda al final. |
 | **TC-04** | **Vista de Mapa y Consentimiento RGPD** | Pulsar **"Vista de mapa"**. | Antes de conectar con `tile.openstreetmap.org`, se muestra el aviso RGPD. Al pulsar *"Aceptar y mostrar el mapa interactivo"*, se carga el mapa Leaflet con los marcadores y popups construidos con nodos DOM seguros. |
 | **TC-05** | **Ficha de Perfil Individual** | Pulsar **"Ver perfil"** en cualquier tarjeta (ej. `/centro-radioedu/ceip-san-jose/`). | Se muestra la ficha con imagen de cabecera arriba, insignia de disponibilidad, logo circular, nombre, bandera, ubicación, etiquetas de colores, edades, idiomas, botones de acción a la izquierda y descripción debajo. |
 | **TC-06** | **Solicitud de Match desde el Perfil** | Pulsar **"✈️ Proponer match"** dentro de la página de perfil individual de la emisora. | Se despliega directamente el panel lateral *"Solicitud de match"* en esa misma pantalla sin necesidad de volver al directorio. |
@@ -73,6 +73,8 @@ docker exec radioedu-wordpress wp db query "DESCRIBE wp_radioedu_colaboraciones;
 
 ## 6. Fase 5: Calidad automática (DoD)
 
+> Las pruebas que escriben o borran datos (PHPUnit, Plugin Check, desinstalación) deben ejecutarse en una pila Docker desechable, no en el contenedor `radioedu-wordpress` del puerto 8090, que monta el repositorio en vivo y conserva datos de trabajo.
+
 ```bash
 composer install            # dependencias de desarrollo (PHPCS/WPCS, PHPStan, PHPUnit)
 composer lint:php           # PHPCS: WordPress, WordPress-Extra, WordPress-Docs y PHPCompatibilityWP
@@ -81,7 +83,8 @@ bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 latest
 vendor/bin/phpunit                    # sitio individual
 WP_MULTISITE=1 vendor/bin/phpunit     # multisite
 npm ci && npm run lint:js && npm run lint:css
+npm run build && git diff --exit-code -- build/   # build/ versionado y al día
 npm audit --audit-level=high && composer audit
 ```
 
-Plugin Check debe ejecutarse sobre la copia distribuible (respetando `.distignore`), no sobre el repositorio completo: `wp plugin check radioedu-conecta`.
+Plugin Check debe ejecutarse sobre la copia distribuible (respetando `.distignore`), no sobre el repositorio completo: `wp plugin check radioedu-conecta`. Comprueba también que, sin la carpeta `build/`, el directorio y el editor de centros cargan sin errores fatales (solo pierden la interactividad).

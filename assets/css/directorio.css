@@ -8,7 +8,7 @@
 	--radioedu-teal-primary: #00838f;
 	--radioedu-teal-light: #e0f7fa;
 	--radioedu-teal-hover: #004d40;
-	--radioedu-coral: #e91e63;
+	--radioedu-coral: #ad1457;
 	--radioedu-coral-bg: #fce4ec;
 	--radioedu-mint: #00796b;
 	--radioedu-mint-bg: #e0f2f1;
@@ -39,6 +39,16 @@
 
 .radioedu-app-container * {
 	box-sizing: border-box;
+}
+
+.radioedu-app-container :focus-visible,
+.radioedu-single-profile :focus-visible {
+	outline: 3px solid #006978;
+	outline-offset: 3px;
+}
+
+.radioedu-drawer-form [aria-invalid="true"] {
+	border: 2px solid #b71c1c;
 }
 
 /* 1. HERO BANNER */
@@ -158,7 +168,7 @@
 .radioedu-filter-select:focus,
 .radioedu-filter-input:focus {
 	border-color: var(--radioedu-teal-primary);
-	outline: none;
+	outline: 2px solid var(--radioedu-teal-dark);
 	box-shadow: 0 0 0 3px rgba(0, 131, 143, 0.15);
 }
 
@@ -571,7 +581,7 @@
 .radioedu-form-select:focus,
 .radioedu-form-textarea:focus {
 	border-color: var(--radioedu-teal-primary);
-	outline: none;
+	outline: 2px solid var(--radioedu-teal-dark);
 	box-shadow: 0 0 0 3px rgba(0, 131, 143, 0.15);
 }
 

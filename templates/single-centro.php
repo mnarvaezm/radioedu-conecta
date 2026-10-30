@@ -23,6 +23,8 @@
  * @var string                   $drawer_receptor_label
  */
 
+declare( strict_types=1 );
+
 defined( 'ABSPATH' ) || exit;
 ?>
 

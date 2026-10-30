@@ -94,6 +94,10 @@ class DemoDataImporter {
 	 * @return int Número de emisoras creadas o actualizadas.
 	 */
 	public static function import_demo_centers(): int {
+		if ( ! current_user_can( 'manage_radioedu' ) ) {
+			return 0;
+		}
+
 		$plugin_url = RADIOEDU_CONECTA_URL;
 
 		$centros = [
@@ -207,6 +211,10 @@ class DemoDataImporter {
 			// Comprobar si ya existe por slug.
 			$existing = get_page_by_path( $data['slug'], OBJECT, CentroPostType::POST_TYPE );
 			$post_id  = $existing ? $existing->ID : 0;
+			// A matching slug does not establish ownership of existing content.
+			if ( $post_id > 0 && ! self::is_demo_centro( $post_id, $data['podcast_url'] ) ) {
+				continue;
+			}
 
 			$post_args = [
 				'post_title'   => $data['nombre'],
@@ -219,14 +227,15 @@ class DemoDataImporter {
 
 			if ( $post_id > 0 ) {
 				$post_args['ID'] = $post_id;
-				wp_update_post( $post_args );
+				$post_id         = wp_update_post( $post_args, true );
 			} else {
-				$post_id = wp_insert_post( $post_args );
+				$post_id = wp_insert_post( $post_args, true );
 			}
 
-			if ( ! $post_id ) {
+			if ( is_wp_error( $post_id ) ) {
 				continue;
 			}
+			update_post_meta( $post_id, '_radioedu_conecta_demo', '1' );
 
 			update_post_meta( $post_id, '_radioedu_bandera', $data['bandera'] );
 			update_post_meta( $post_id, '_radioedu_lat', $data['lat'] );
@@ -248,19 +257,49 @@ class DemoDataImporter {
 		}
 
 		// Asegurar que existe una página con el shortcode [radioedu_directorio].
+		$page_content  = '<!-- wp:shortcode -->[radioedu_directorio]<!-- /wp:shortcode -->';
 		$existing_page = get_page_by_path( 'traspasando-fronteras' );
 		if ( ! $existing_page ) {
-			wp_insert_post(
+			$page_id = wp_insert_post(
 				[
 					'post_title'   => 'Traspasando Fronteras',
 					'post_name'    => 'traspasando-fronteras',
-					'post_content' => '<!-- wp:shortcode -->[radioedu_directorio]<!-- /wp:shortcode -->',
+					'post_content' => $page_content,
 					'post_status'  => 'publish',
 					'post_type'    => 'page',
-				]
+				],
+				true
 			);
+			if ( ! is_wp_error( $page_id ) ) {
+				update_post_meta( $page_id, '_radioedu_conecta_demo', '1' );
+				update_option( 'radioedu_conecta_directory_page_id', $page_id, false );
+			}
+		} elseif ( '1' !== get_post_meta( $existing_page->ID, '_radioedu_conecta_demo', true ) && trim( $existing_page->post_content ) === $page_content ) {
+			// Adopt the page created before the demo marker existed, so uninstall can remove it.
+			update_post_meta( $existing_page->ID, '_radioedu_conecta_demo', '1' );
+			update_option( 'radioedu_conecta_directory_page_id', $existing_page->ID, false );
 		}
 
 		return $count;
+	}
+
+	/**
+	 * Tells whether an existing centro was created by this importer.
+	 *
+	 * Centros imported before the `_radioedu_conecta_demo` marker existed are recognised by the
+	 * demo podcast URL, which only this importer writes; a slug match alone is not enough.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int    $post_id          Existing centro ID.
+	 * @param string $demo_podcast_url Podcast URL that the importer assigns to this demo centro.
+	 * @return bool True when the importer may overwrite the centro.
+	 */
+	private static function is_demo_centro( int $post_id, string $demo_podcast_url ): bool {
+		if ( '1' === get_post_meta( $post_id, '_radioedu_conecta_demo', true ) ) {
+			return true;
+		}
+
+		return (string) get_post_meta( $post_id, '_radioedu_podcast_url', true ) === $demo_podcast_url;
 	}
 }

@@ -1,7 +1,7 @@
 === RadioEdu Conecta ===
 Contributors: radioedu
 Tags: school radio, podcast, education, directory, collaboration
-Requires at least: 6.5
+Requires at least: 7.0
 Tested up to: 7.1
 Requires PHP: 8.1
 Stable tag: 1.0.0
@@ -40,6 +40,10 @@ The plugin contains no telemetry and makes no other calls to external services.
 == Third-party libraries ==
 
 * **Leaflet 1.9.4** (`assets/js/leaflet.js`, `assets/css/leaflet.css`, `assets/css/images/`), bundled locally. BSD-2-Clause license, GPL-compatible. Unminified source: https://github.com/Leaflet/Leaflet/tree/v1.9.4
+
+== Source code ==
+
+The minified scripts in `build/` are compiled from the human-readable sources shipped in `assets/js/admin.js` and `assets/js/directorio.js` with `@wordpress/scripts` (version 37), using its default webpack configuration: `npx wp-scripts build assets/js/admin.js assets/js/directorio.js`. The `@wordpress/i18n` and `@wordpress/a11y` packages are not bundled; they are loaded from WordPress core as script dependencies.
 
 == Installation ==
 

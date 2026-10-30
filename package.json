@@ -5,7 +5,8 @@
   "description": "Frontend assets and lint scripts for RadioEdu Conecta WordPress plugin.",
   "scripts": {
     "lint:js": "wp-scripts lint-js assets/js --ignore-pattern assets/js/leaflet.js",
-    "lint:css": "wp-scripts lint-style \"assets/css/**/*.css\" --ignore-pattern assets/css/leaflet.css"
+    "lint:css": "wp-scripts lint-style \"assets/css/**/*.css\" --ignore-pattern assets/css/leaflet.css",
+    "build": "wp-scripts build assets/js/admin.js assets/js/directorio.js"
   },
   "keywords": [
     "wordpress",
@@ -17,9 +18,24 @@
   "author": "RadioEdu - Junta de Extremadura",
   "license": "GPL-2.0-or-later",
   "devDependencies": {
+    "@wordpress/e2e-test-utils-playwright": "^3.1.0",
     "@wordpress/scripts": "^37.0.0"
   },
   "overrides": {
-    "serialize-javascript": "^7.1.4"
+    "serialize-javascript": "^7.1.4",
+    "markdownlint-cli": {
+      "js-yaml": "^5.5.0",
+      "smol-toml": "^1.9.1"
+    },
+    "micromark-extension-math": {
+      "katex": "^0.19.1"
+    }
+  },
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  },
+  "dependencies": {
+    "@wordpress/a11y": "^5.0.0",
+    "@wordpress/i18n": "^7.0.0"
   }
 }

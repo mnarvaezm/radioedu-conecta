@@ -57,7 +57,7 @@ class ColaboracionesAdminPage {
 
 		check_admin_referer( self::NONCE_ACTION, self::NONCE_NAME );
 
-		$colab_id  = isset( $_POST['colaboracion_id'] ) ? absint( $_POST['colaboracion_id'] ) : 0;
+		$colab_id  = isset( $_POST['colaboracion_id'] ) && is_scalar( $_POST['colaboracion_id'] ) ? absint( wp_unslash( $_POST['colaboracion_id'] ) ) : 0;
 		$estado    = isset( $_POST['estado'] ) ? sanitize_key( wp_unslash( $_POST['estado'] ) ) : '';
 		$respuesta = isset( $_POST['respuesta_mensaje'] ) ? sanitize_textarea_field( wp_unslash( $_POST['respuesta_mensaje'] ) ) : '';
 		$respuesta = mb_substr( $respuesta, 0, ColaboracionesTable::MAX_RESPUESTA_LENGTH );
@@ -73,7 +73,8 @@ class ColaboracionesAdminPage {
 
 		$result = ColaboracionesController::respond_to_proposal( $colab_id, $estado, $respuesta );
 		if ( null !== $result ) {
-			wp_die( esc_html( $result->get_error_message() ), '', [ 'response' => 409 ] );
+			$error_data = $result->get_error_data();
+			wp_die( esc_html( $result->get_error_message() ), '', [ 'response' => is_array( $error_data ) ? (int) $error_data['status'] : 500 ] );
 		}
 
 		$redirect_url = add_query_arg(

@@ -14,7 +14,7 @@ services:
       - radioedu-net
 
   wordpress:
-    image: wordpress:6.7-php8.2-apache
+    image: wordpress:7.1-php8.2-apache
     container_name: radioedu-wordpress
     restart: unless-stopped
     depends_on:
