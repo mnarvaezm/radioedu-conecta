@@ -9,6 +9,7 @@ declare( strict_types=1 );
 
 namespace RadioEdu\Conecta\Frontend;
 
+use RadioEdu\Conecta\Admin\DemoDataImporter;
 use RadioEdu\Conecta\Admin\Settings;
 use RadioEdu\Conecta\PostTypes\CentroPostType;
 use RadioEdu\Conecta\Rest\ColaboracionesController;
@@ -79,10 +80,12 @@ class DirectorioShortcode {
 			]
 		);
 
+		// Leaflet no es dependencia: directorio.js comprueba su presencia al activar el mapa,
+		// así la ficha individual no descarga la librería del mapa.
 		wp_register_script(
 			'radioedu-directorio-js',
 			RADIOEDU_CONECTA_URL . 'assets/js/directorio.js',
-			[ 'radioedu-leaflet-js' ],
+			[ 'wp-a11y' ],
 			$js_ver,
 			[
 				'in_footer' => true,
@@ -100,7 +103,7 @@ class DirectorioShortcode {
 	/**
 	 * Obtiene los centros gestionados por el usuario actual y construye el payload para JS.
 	 *
-	 * @return array{user_center_id: int, user_center_name: string, user_centers_list: array<int, array{id: int, nombre: string}>, js_data: array<string, mixed>}
+	 * @return array{user_center_id: int, user_center_name: string, user_centers_list: array<int, array{id: int, nombre: string}>}
 	 */
 	private static function build_user_context_and_js_data(): array {
 		$current_user_id   = get_current_user_id();
@@ -124,38 +127,44 @@ class DirectorioShortcode {
 			}
 		}
 
-		$js_data = [
-			'restUrl'        => esc_url_raw( rest_url( 'radioedu-conecta/v1/' ) ),
-			'restNonce'      => is_user_logged_in() ? wp_create_nonce( 'wp_rest' ) : '',
-			'isLoggedIn'     => is_user_logged_in(),
-			'loginUrl'       => esc_url_raw( wp_login_url( (string) get_permalink() ) ),
-			'canPropose'     => current_user_can( 'propose_radioedu_colaboracion' ),
-			'userCenterId'   => $user_center_id,
-			'userCenterName' => $user_center_name,
-			'userCenters'    => $user_centers_list,
-			'mapCenter'      => [
-				'lat'  => (float) Settings::get( 'default_lat', '39.4699' ),
-				'lng'  => (float) Settings::get( 'default_lng', '-6.3708' ),
-				'zoom' => (int) Settings::get( 'default_zoom', 8 ),
-			],
-			'i18n'           => [
-				'resultsCount'     => __( 'Resultados (%s centros)', 'radioedu-conecta' ),
-				'noResults'        => __( 'No se encontraron centros con los filtros seleccionados.', 'radioedu-conecta' ),
-				'loading'          => __( 'Cargando centros...', 'radioedu-conecta' ),
-				'viewProfile'      => __( 'Ver perfil', 'radioedu-conecta' ),
-				'proposeMatch'     => __( 'Proponer match', 'radioedu-conecta' ),
-				'unavailable'      => __( 'No disponible', 'radioedu-conecta' ),
-				'favorite'         => __( 'Añadir a favoritos', 'radioedu-conecta' ),
-				'sending'          => __( 'Enviando propuesta...', 'radioedu-conecta' ),
-				'sendSuccess'      => __( '¡Propuesta enviada con éxito!', 'radioedu-conecta' ),
-				'loginRequired'    => __( 'Debes iniciar sesión con tu cuenta de coordinador de centro para enviar propuestas de colaboración.', 'radioedu-conecta' ),
-				'noPermission'     => __( 'Tu cuenta actual no dispone de permisos de coordinador para proponer colaboraciones.', 'radioedu-conecta' ),
-				'selectYourCenter' => __( 'Por favor, selecciona tu centro escolar.', 'radioedu-conecta' ),
-				'errorOccurred'    => __( 'Ha ocurrido un error al procesar la solicitud.', 'radioedu-conecta' ),
-			],
-		];
-
 		if ( ! self::$inline_data_added ) {
+			$js_data = [
+				'restUrl'        => esc_url_raw( rest_url( 'radioedu-conecta/v1/' ) ),
+				'restNonce'      => is_user_logged_in() ? wp_create_nonce( 'wp_rest' ) : '',
+				'isLoggedIn'     => is_user_logged_in(),
+				'loginUrl'       => esc_url_raw( wp_login_url( (string) get_permalink() ) ),
+				'canPropose'     => current_user_can( 'propose_radioedu_colaboracion' ),
+				'userCenterId'   => $user_center_id,
+				'userCenterName' => $user_center_name,
+				'userCenters'    => $user_centers_list,
+				'mapCenter'      => [
+					'lat'  => (float) Settings::get( 'default_lat', '39.4699' ),
+					'lng'  => (float) Settings::get( 'default_lng', '-6.3708' ),
+					'zoom' => (int) Settings::get( 'default_zoom', 8 ),
+				],
+				'i18n'           => [
+					/* translators: %s: Number of schools found. */
+					'resultsCount'     => __( 'Resultados (%s centros)', 'radioedu-conecta' ),
+					'noResults'        => __( 'No se encontraron centros con los filtros seleccionados.', 'radioedu-conecta' ),
+					'loading'          => __( 'Cargando centros...', 'radioedu-conecta' ),
+					'viewProfile'      => __( 'Ver perfil', 'radioedu-conecta' ),
+					'proposeMatch'     => __( 'Proponer match', 'radioedu-conecta' ),
+					'submitProposal'   => __( 'Enviar propuesta', 'radioedu-conecta' ),
+					'unavailable'      => __( 'No disponible', 'radioedu-conecta' ),
+					'favorite'         => __( 'Añadir a favoritos', 'radioedu-conecta' ),
+					'unfavorite'       => __( 'Quitar de favoritos', 'radioedu-conecta' ),
+					'defaultLocation'  => __( 'Extremadura', 'radioedu-conecta' ),
+					'sending'          => __( 'Enviando propuesta...', 'radioedu-conecta' ),
+					'sendSuccess'      => __( '¡Propuesta enviada con éxito!', 'radioedu-conecta' ),
+					'loginRequired'    => __( 'Debes iniciar sesión con tu cuenta de coordinador de centro para enviar propuestas de colaboración.', 'radioedu-conecta' ),
+					'noPermission'     => __( 'Tu cuenta actual no dispone de permisos de coordinador para proponer colaboraciones.', 'radioedu-conecta' ),
+					'selectYourCenter' => __( 'Por favor, selecciona tu centro escolar.', 'radioedu-conecta' ),
+					'errorOccurred'    => __( 'Ha ocurrido un error al procesar la solicitud.', 'radioedu-conecta' ),
+					'logIn'            => __( 'Iniciar sesión', 'radioedu-conecta' ),
+					'mapAttribution'   => __( 'Colaboradores de OpenStreetMap', 'radioedu-conecta' ),
+				],
+			];
+
 			wp_add_inline_script(
 				'radioedu-directorio-js',
 				'window.radioeduConectaData = ' . wp_json_encode( $js_data ) . ';',
@@ -168,8 +177,27 @@ class DirectorioShortcode {
 			'user_center_id'    => $user_center_id,
 			'user_center_name'  => $user_center_name,
 			'user_centers_list' => $user_centers_list,
-			'js_data'           => $js_data,
 		];
+	}
+
+	/**
+	 * Prepara una URL para insertarla dentro de `url('...')` en un atributo style.
+	 *
+	 * La función esc_url() conserva comillas simples y paréntesis, y el navegador decodifica las
+	 * entidades del atributo antes de interpretar el CSS; por eso se codifican aquí para
+	 * impedir que una URL manipulada cierre `url()` e inyecte reglas CSS.
+	 *
+	 * @param string $url URL de la imagen.
+	 * @return string URL http(s) segura para contexto CSS o cadena vacía.
+	 */
+	private static function css_safe_url( string $url ): string {
+		$url = esc_url_raw( $url, [ 'http', 'https' ] );
+
+		return str_replace(
+			[ '"', "'", '(', ')', '\\', ' ' ],
+			[ '%22', '%27', '%28', '%29', '%5C', '%20' ],
+			$url
+		);
 	}
 
 	/**
@@ -200,46 +228,23 @@ class DirectorioShortcode {
 		$title     = get_the_title( $post_id );
 		$logo_id   = (int) get_post_meta( $post_id, '_radioedu_logo_id', true );
 		$logo_url  = $logo_id ? (string) wp_get_attachment_image_url( $logo_id, 'medium' ) : (string) get_post_meta( $post_id, '_radioedu_logo_url', true );
-		$cover_url = get_the_post_thumbnail_url( $post_id, 'large' ) ?: (string) get_post_meta( $post_id, '_radioedu_cover_url', true );
+		$cover_url = (string) get_the_post_thumbnail_url( $post_id, 'large' );
+		if ( '' === $cover_url ) {
+			$cover_url = (string) get_post_meta( $post_id, '_radioedu_cover_url', true );
+		}
 
 		// Fallback para centros de ejemplo si no tienen imagen personalizada asignada.
 		$post_name = (string) get_post_field( 'post_name', $post_id );
-		if ( empty( $cover_url ) ) {
-			$demo_covers = [
-				'sierra-de-gata' => 'header-sierra-gata.jpg',
-				'montjuic'       => 'header-montjuic.jpg',
-				'la-mar'         => 'header-la-mar.jpg',
-				'san-jose'       => 'header-san-jose.jpg',
-				'valle-de-tena'  => 'header-valle-tena.jpg',
-				'san-patricio'   => 'header-san-patricio.jpg',
-			];
-			foreach ( $demo_covers as $slug_part => $img_file ) {
-				if ( false !== strpos( $post_name, $slug_part ) && file_exists( RADIOEDU_CONECTA_DIR . 'assets/images/demo/' . $img_file ) ) {
-					$cover_url = RADIOEDU_CONECTA_URL . 'assets/images/demo/' . $img_file;
-					break;
-				}
-			}
+		if ( '' === $cover_url ) {
+			$cover_url = DemoDataImporter::get_demo_image_url( $post_name, 'header' );
 		}
-
-		if ( empty( $logo_url ) ) {
-			$demo_logos = [
-				'sierra-de-gata' => 'logo-sierra-gata.jpg',
-				'montjuic'       => 'logo-montjuic.jpg',
-				'la-mar'         => 'logo-la-mar.jpg',
-				'san-jose'       => 'logo-san-jose.jpg',
-				'valle-de-tena'  => 'logo-valle-tena.jpg',
-				'san-patricio'   => 'logo-san-patricio.jpg',
-			];
-			foreach ( $demo_logos as $slug_part => $img_file ) {
-				if ( false !== strpos( $post_name, $slug_part ) && file_exists( RADIOEDU_CONECTA_DIR . 'assets/images/demo/' . $img_file ) ) {
-					$logo_url = RADIOEDU_CONECTA_URL . 'assets/images/demo/' . $img_file;
-					break;
-				}
-			}
+		if ( '' === $logo_url ) {
+			$logo_url = DemoDataImporter::get_demo_image_url( $post_name, 'logo' );
 		}
+		$cover_url = self::css_safe_url( $cover_url );
 
-		$bandera     = (string) get_post_meta( $post_id, '_radioedu_bandera', true ) ?: 'es-ex';
-		$flag_emoji  = self::get_flag_emoji( $bandera );
+		$bandera     = (string) get_post_meta( $post_id, '_radioedu_bandera', true );
+		$flag_emoji  = self::get_flag_emoji( '' !== $bandera ? $bandera : 'es-ex' );
 		$podcast_url = (string) get_post_meta( $post_id, '_radioedu_podcast_url', true );
 		$web_centro  = (string) get_post_meta( $post_id, '_radioedu_web_centro', true );
 		$edades      = (string) get_post_meta( $post_id, '_radioedu_edades', true );
@@ -261,34 +266,21 @@ class DirectorioShortcode {
 		}
 
 		// Etiquetas (Formatos, Temáticas, Etapas) idénticas a la tarjeta.
-		$tags = [];
-
-		$formatos = get_the_terms( $post_id, TaxonomiesRegistrar::TAX_FORMATO );
-		if ( ! empty( $formatos ) && ! is_wp_error( $formatos ) ) {
-			foreach ( $formatos as $term ) {
-				$tags[] = [
-					'name'  => $term->name,
-					'color' => 'mint',
-				];
+		$tags           = [];
+		$tag_taxonomies = [
+			TaxonomiesRegistrar::TAX_FORMATO  => 'mint',
+			TaxonomiesRegistrar::TAX_TEMATICA => 'coral',
+			TaxonomiesRegistrar::TAX_ETAPA    => 'blue',
+		];
+		foreach ( $tag_taxonomies as $taxonomy => $color ) {
+			$terms = get_the_terms( $post_id, $taxonomy );
+			if ( empty( $terms ) || is_wp_error( $terms ) ) {
+				continue;
 			}
-		}
-
-		$tematicas = get_the_terms( $post_id, TaxonomiesRegistrar::TAX_TEMATICA );
-		if ( ! empty( $tematicas ) && ! is_wp_error( $tematicas ) ) {
-			foreach ( $tematicas as $term ) {
+			foreach ( $terms as $term ) {
 				$tags[] = [
 					'name'  => $term->name,
-					'color' => 'coral',
-				];
-			}
-		}
-
-		$etapas = get_the_terms( $post_id, TaxonomiesRegistrar::TAX_ETAPA );
-		if ( ! empty( $etapas ) && ! is_wp_error( $etapas ) ) {
-			foreach ( $etapas as $term ) {
-				$tags[] = [
-					'name'  => $term->name,
-					'color' => 'blue',
+					'color' => $color,
 				];
 			}
 		}
@@ -298,6 +290,10 @@ class DirectorioShortcode {
 		$directorio_url  = $directorio_page ? (string) get_permalink( $directorio_page->ID ) : home_url( '/' );
 
 		$raw_description_html = $content;
+
+		// Datos del panel lateral de propuesta (receptor preseleccionado: el centro del perfil).
+		$drawer_receptor_id    = $post_id;
+		$drawer_receptor_label = $title . ( '' !== $ubicacion ? ' (' . $ubicacion . ')' : '' );
 
 		ob_start();
 		include RADIOEDU_CONECTA_DIR . 'templates/single-centro.php';
@@ -391,6 +387,10 @@ class DirectorioShortcode {
 				'hide_empty' => false,
 			]
 		);
+
+		// El receptor del panel lateral se rellena desde JS al pulsar "Proponer match" en una tarjeta.
+		$drawer_receptor_id    = 0;
+		$drawer_receptor_label = '';
 
 		ob_start();
 		include RADIOEDU_CONECTA_DIR . 'templates/directorio.php';

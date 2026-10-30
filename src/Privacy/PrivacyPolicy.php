@@ -37,10 +37,12 @@ class PrivacyPolicy {
 		}
 
 		$content = sprintf(
-			'<h2>%s</h2><p>%s</p><p>%s</p>',
+			'<h2>%s</h2><p>%s</p><p>%s</p><p>%s</p><p>%s</p>',
 			esc_html__( 'RadioEdu Conecta (Traspasando Fronteras)', 'radioedu-conecta' ),
 			esc_html__( 'Este sitio utiliza el plugin RadioEdu Conecta para gestionar el directorio de radios escolares. Los datos de contacto del docente coordinador (nombre y correo electrónico profesional) se almacenan de forma interna y nunca se exponen públicamente en el directorio web ni en las respuestas públicas de la API REST.', 'radioedu-conecta' ),
-			esc_html__( 'Al activar voluntariamente la vista de mapa interactivo, el navegador del usuario se conecta con los servidores de OpenStreetMap Foundation para descargar la cartografía.', 'radioedu-conecta' )
+			esc_html__( 'Las propuestas de colaboración guardan la cuenta de usuario que las envía, los centros implicados y el texto del proyecto. El correo de contacto del centro receptor solo se comparte con el centro emisor cuando la propuesta es aceptada.', 'radioedu-conecta' ),
+			esc_html__( 'Al activar voluntariamente la vista de mapa interactivo, el navegador del usuario se conecta con los servidores de OpenStreetMap Foundation para descargar la cartografía.', 'radioedu-conecta' ),
+			esc_html__( 'Los centros marcados como favoritos y la aceptación del mapa se guardan únicamente en el almacenamiento local del navegador del visitante y no se envían al servidor.', 'radioedu-conecta' )
 		);
 
 		wp_add_privacy_policy_content( 'RadioEdu Conecta', wp_kses_post( $content ) );
@@ -227,4 +229,3 @@ class PrivacyPolicy {
 		];
 	}
 }
-

@@ -47,7 +47,7 @@
 ## Preguntas Frecuentes (FAQ)
 
 ### ¿Es compatible con WordPress Multisite?
-Sí. Soporta tanto activación individual en un sitio concreto como activación para toda la red (*Network Activate*), aprovisionamiento automático de nuevos sitios (`wp_initialize_site`), limpieza al borrar sitios (`wp_uninitialize_site`) y desinstalación completa en toda la red mediante `uninstall.php`.
+Sí. Soporta tanto activación individual en un sitio concreto como activación para toda la red (*Network Activate*), aprovisionamiento automático de nuevos sitios (`wp_initialize_site`), limpieza al borrar sitios (filtro `wpmu_drop_tables`) y desinstalación completa en toda la red mediante `uninstall.php`.
 
 ### ¿Se publican los correos electrónicos de los docentes en la web?
 No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se exponen en el DOM ni en el endpoint público `/wp-json/radioedu-conecta/v1/centros`. Las notificaciones se gestionan internamente en el servidor mediante `wp_mail()` y solo se comparten los datos de contacto cuando un centro acepta formalmente un match.

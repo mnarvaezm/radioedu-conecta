@@ -41,3 +41,4 @@ if ( file_exists( "{$_tests_dir}/includes/functions.php" ) ) {
 		define( 'HOUR_IN_SECONDS', 3600 );
 	}
 }
+

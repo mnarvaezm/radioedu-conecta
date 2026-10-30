@@ -58,8 +58,7 @@ final class Plugin {
 	 * Inicializa los hooks principales del ciclo de vida de WordPress.
 	 */
 	public function init(): void {
-		// 1. Cargar traducciones (i18n).
-		add_action( 'init', [ $this, 'load_textdomain' ], 1 );
+		// 1. Traducciones: WordPress las carga bajo demanda (just-in-time) desde los paquetes de idioma.
 
 		// 2. Registrar CPT y Taxonomías en init.
 		add_action( 'init', [ CentroPostType::class, 'register' ], 5 );
@@ -83,10 +82,10 @@ final class Plugin {
 		// 6. Registrar Shortcodes y Assets del Front-end.
 		DirectorioShortcode::register();
 
-		// 7. Ciclo de vida Multisite (aprovisionamiento y limpieza de nuevos sitios en la red).
+		// 7. Ciclo de vida Multisite: aprovisionar sitios nuevos y borrar la tabla propia al eliminar un sitio.
 		if ( is_multisite() ) {
 			add_action( 'wp_initialize_site', [ $this, 'on_initialize_site' ], 20, 1 );
-			add_action( 'wp_uninitialize_site', [ $this, 'on_uninitialize_site' ], 20, 1 );
+			add_filter( 'wpmu_drop_tables', [ ColaboracionesTable::class, 'add_to_dropped_tables' ] );
 		}
 	}
 
@@ -99,17 +98,6 @@ final class Plugin {
 
 		$colaboraciones_controller = new ColaboracionesController();
 		$colaboraciones_controller->register_routes();
-	}
-
-	/**
-	 * Carga el dominio de traducción del plugin.
-	 */
-	public function load_textdomain(): void {
-		load_plugin_textdomain(
-			'radioedu-conecta',
-			false,
-			dirname( RADIOEDU_CONECTA_BASENAME ) . '/languages'
-		);
 	}
 
 	/**
@@ -129,21 +117,16 @@ final class Plugin {
 	 * @param WP_Site $new_site Objeto del nuevo sitio.
 	 */
 	public function on_initialize_site( WP_Site $new_site ): void {
+		// Sólo si el plugin está activado en red; si está activo en un único sitio no debe tocar los nuevos.
+		if ( ! function_exists( 'is_plugin_active_for_network' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+		if ( ! is_plugin_active_for_network( RADIOEDU_CONECTA_BASENAME ) ) {
+			return;
+		}
+
 		switch_to_blog( (int) $new_site->blog_id );
 		self::activate_single_site( false );
-		restore_current_blog();
-	}
-
-	/**
-	 * Limpia la tabla personalizada y capacidades cuando se elimina un sitio en Multisite.
-	 *
-	 * @param WP_Site $old_site Objeto del sitio eliminado.
-	 */
-	public function on_uninitialize_site( WP_Site $old_site ): void {
-		switch_to_blog( (int) $old_site->blog_id );
-		ColaboracionesTable::drop_table();
-		RoleCapabilities::remove_capabilities();
-		delete_option( 'radioedu_conecta_settings' );
 		restore_current_blog();
 	}
 
@@ -161,6 +144,7 @@ final class Plugin {
 				]
 			);
 
+			// Los sitios que superen el lote se aprovisionan de forma diferida en maybe_update_db_schema().
 			foreach ( $site_ids as $site_id ) {
 				switch_to_blog( (int) $site_id );
 				self::activate_single_site( false );
@@ -196,12 +180,31 @@ final class Plugin {
 			}
 		}
 
-		// Regenerar reglas de reescritura.
+		self::reset_rewrite_rules();
+	}
+
+	/**
+	 * Regenera las reglas de reescritura del sitio actual.
+	 *
+	 * Dentro de switch_to_blog() el objeto global $wp_rewrite conserva la estructura de enlaces
+	 * del sitio original, por lo que se borra la opción para que cada sitio la regenere en su
+	 * siguiente carga en lugar de escribir reglas incorrectas.
+	 */
+	private static function reset_rewrite_rules(): void {
+		if ( is_multisite() && ms_is_switched() ) {
+			delete_option( 'rewrite_rules' );
+			return;
+		}
+
 		flush_rewrite_rules( false );
 	}
 
 	/**
 	 * Lógica ejecutada en la desactivación del plugin.
+	 *
+	 * Durante esta petición el CPT sigue registrado, así que un flush mantendría sus reglas:
+	 * se borra la opción para que WordPress las regenere ya sin el plugin en la siguiente carga.
+	 * Desactivar no elimina datos (eso se hace exclusivamente en uninstall.php).
 	 *
 	 * @param bool $network_wide Si la desactivación es a nivel de red multisite.
 	 */
@@ -216,11 +219,11 @@ final class Plugin {
 
 			foreach ( $site_ids as $site_id ) {
 				switch_to_blog( (int) $site_id );
-				flush_rewrite_rules( false );
+				delete_option( 'rewrite_rules' );
 				restore_current_blog();
 			}
 		} else {
-			flush_rewrite_rules( false );
+			delete_option( 'rewrite_rules' );
 		}
 	}
 }

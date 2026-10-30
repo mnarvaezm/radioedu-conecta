@@ -23,6 +23,40 @@ class DemoDataImporter {
 	public const NONCE_NAME   = 'radioedu_import_demo_nonce';
 
 	/**
+	 * Imágenes de ejemplo empaquetadas: fragmento del slug del centro => sufijo del fichero.
+	 */
+	private const DEMO_IMAGES = [
+		'sierra-de-gata' => 'sierra-gata',
+		'montjuic'       => 'montjuic',
+		'la-mar'         => 'la-mar',
+		'san-jose'       => 'san-jose',
+		'valle-de-tena'  => 'valle-tena',
+		'san-patricio'   => 'san-patricio',
+	];
+
+	/**
+	 * Devuelve la URL de la imagen empaquetada de un centro de ejemplo.
+	 *
+	 * @param string $post_name Slug del centro.
+	 * @param string $type      'header' (portada) o 'logo'.
+	 * @return string URL de la imagen o cadena vacía si el centro no es de ejemplo.
+	 */
+	public static function get_demo_image_url( string $post_name, string $type ): string {
+		if ( '' === $post_name || ! in_array( $type, [ 'header', 'logo' ], true ) ) {
+			return '';
+		}
+
+		foreach ( self::DEMO_IMAGES as $slug_part => $file_part ) {
+			if ( str_contains( $post_name, $slug_part ) ) {
+				$relative_path = 'assets/images/demo/' . $type . '-' . $file_part . '.jpg';
+				return file_exists( RADIOEDU_CONECTA_DIR . $relative_path ) ? RADIOEDU_CONECTA_URL . $relative_path : '';
+			}
+		}
+
+		return '';
+	}
+
+	/**
 	 * Registra el hook para procesar la importación manual de datos demo.
 	 */
 	public static function register(): void {
@@ -190,7 +224,7 @@ class DemoDataImporter {
 				$post_id = wp_insert_post( $post_args );
 			}
 
-			if ( ! $post_id || is_wp_error( $post_id ) ) {
+			if ( ! $post_id ) {
 				continue;
 			}
 
@@ -210,7 +244,7 @@ class DemoDataImporter {
 			wp_set_object_terms( $post_id, $data['formatos'], TaxonomiesRegistrar::TAX_FORMATO );
 			wp_set_object_terms( $post_id, [ $data['ubicacion'] ], TaxonomiesRegistrar::TAX_LOCALIZACION );
 
-			$count++;
+			++$count;
 		}
 
 		// Asegurar que existe una página con el shortcode [radioedu_directorio].

@@ -20,6 +20,11 @@ defined( 'ABSPATH' ) || exit;
 class NotificationService {
 
 	/**
+	 * Cabeceras comunes de los correos (texto plano).
+	 */
+	private const HEADERS = [ 'Content-Type: text/plain; charset=UTF-8' ];
+
+	/**
 	 * Obtiene el correo electrónico de contacto de un centro escolar (metadato o autor).
 	 *
 	 * @param int $centro_id ID del post radioedu_centro.
@@ -43,6 +48,16 @@ class NotificationService {
 	}
 
 	/**
+	 * Devuelve el título de un centro como texto plano (sin entidades HTML) para los correos.
+	 *
+	 * @param int $centro_id ID del centro.
+	 * @return string
+	 */
+	private static function get_plain_title( int $centro_id ): string {
+		return html_entity_decode( wp_strip_all_tags( get_the_title( $centro_id ) ), ENT_QUOTES, 'UTF-8' );
+	}
+
+	/**
 	 * Envía notificación al coordinador del centro receptor cuando recibe una propuesta de match.
 	 *
 	 * @param int $colaboracion_id ID del registro de la colaboración.
@@ -54,25 +69,14 @@ class NotificationService {
 			return true;
 		}
 
-		global $wpdb;
-		$table_name = ColaboracionesTable::get_table_name();
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$colab = $wpdb->get_row(
-			$wpdb->prepare(
-				'SELECT * FROM %i WHERE id = %d',
-				$table_name,
-				$colaboracion_id
-			)
-		);
-
-		if ( ! $colab ) {
+		$colab = ColaboracionesTable::get_by_id( $colaboracion_id );
+		if ( null === $colab ) {
 			return false;
 		}
 
-		$centro_emisor   = get_the_title( (int) $colab->centro_emisor_id );
 		$receptor_id     = (int) $colab->centro_receptor_id;
-		$centro_receptor = get_the_title( $receptor_id );
+		$centro_emisor   = self::get_plain_title( (int) $colab->centro_emisor_id );
+		$centro_receptor = self::get_plain_title( $receptor_id );
 
 		$email_dest = self::get_center_contact_email( $receptor_id );
 		if ( '' === $email_dest ) {
@@ -82,25 +86,43 @@ class NotificationService {
 		$panel_url = admin_url( 'edit.php?post_type=radioedu_centro&page=radioedu-conecta-colaboraciones' );
 
 		$subject = sprintf(
-			/* translators: 1: Nombre del centro emisor */
-			__( '[RadioEdu Traspasando Fronteras] ¡Nueva propuesta de match de %1$s!', 'radioedu-conecta' ),
+			/* translators: %s: Name of the sending school. */
+			__( '[RadioEdu Traspasando Fronteras] ¡Nueva propuesta de match de %s!', 'radioedu-conecta' ),
 			$centro_emisor
 		);
 
-		$message = sprintf(
-			/* translators: 1: Centro receptor, 2: Centro emisor, 3: Idea de proyecto, 4: Edades, 5: Fechas, 6: URL del panel */
-			__( "Hola,\n\nEl centro escolar \"%2$s\" ha seleccionado vuestra emisora (\"%1$s\") para proponer un proyecto de colaboración en la red Traspasando Fronteras.\n\nIdea del proyecto propuesta:\n\"%3$s\"\n\nCursos/Edades: %4$s\nFechas previstas: %5$s\n\nPuedes consultar todos los detalles y responder a la propuesta accediendo al panel de RadioEdu:\n%6$s\n\n--\nRadioEdu Conecta - Red de Radios Escolares de Extremadura y del Mundo", 'radioedu-conecta' ),
-			$centro_receptor,
-			$centro_emisor,
-			$colab->idea_proyecto,
-			$colab->curso_edades ?: __( 'No especificado', 'radioedu-conecta' ),
-			$colab->fechas_aprox ?: __( 'Por acordar', 'radioedu-conecta' ),
-			$panel_url
-		);
+		$lines = [
+			__( 'Hola,', 'radioedu-conecta' ),
+			'',
+			sprintf(
+				/* translators: 1: Name of the sending school, 2: Name of the receiving school. */
+				__( 'El centro escolar "%1$s" ha seleccionado vuestra emisora ("%2$s") para proponer un proyecto de colaboración en la red Traspasando Fronteras.', 'radioedu-conecta' ),
+				$centro_emisor,
+				$centro_receptor
+			),
+			'',
+			__( 'Idea del proyecto propuesta:', 'radioedu-conecta' ),
+			'"' . (string) $colab->idea_proyecto . '"',
+			'',
+			sprintf(
+				/* translators: %s: Course or ages of the participating students. */
+				__( 'Cursos/Edades: %s', 'radioedu-conecta' ),
+				'' !== (string) $colab->curso_edades ? (string) $colab->curso_edades : __( 'No especificado', 'radioedu-conecta' )
+			),
+			sprintf(
+				/* translators: %s: Approximate project dates. */
+				__( 'Fechas previstas: %s', 'radioedu-conecta' ),
+				'' !== (string) $colab->fechas_aprox ? (string) $colab->fechas_aprox : __( 'Por acordar', 'radioedu-conecta' )
+			),
+			'',
+			__( 'Puedes consultar todos los detalles y responder a la propuesta accediendo al panel de RadioEdu:', 'radioedu-conecta' ),
+			$panel_url,
+			'',
+			'--',
+			__( 'RadioEdu Conecta - Red de Radios Escolares de Extremadura y del Mundo', 'radioedu-conecta' ),
+		];
 
-		$headers = [ 'Content-Type: text/plain; charset=UTF-8' ];
-
-		return wp_mail( $email_dest, $subject, $message, $headers );
+		return wp_mail( $email_dest, $subject, implode( "\n", $lines ), self::HEADERS );
 	}
 
 	/**
@@ -115,26 +137,15 @@ class NotificationService {
 			return true;
 		}
 
-		global $wpdb;
-		$table_name = ColaboracionesTable::get_table_name();
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$colab = $wpdb->get_row(
-			$wpdb->prepare(
-				'SELECT * FROM %i WHERE id = %d',
-				$table_name,
-				$colaboracion_id
-			)
-		);
-
-		if ( ! $colab ) {
+		$colab = ColaboracionesTable::get_by_id( $colaboracion_id );
+		if ( null === $colab ) {
 			return false;
 		}
 
 		$emisor_id       = (int) $colab->centro_emisor_id;
 		$receptor_id     = (int) $colab->centro_receptor_id;
-		$centro_emisor   = get_the_title( $emisor_id );
-		$centro_receptor = get_the_title( $receptor_id );
+		$centro_emisor   = self::get_plain_title( $emisor_id );
+		$centro_receptor = self::get_plain_title( $receptor_id );
 
 		// Obtener email del centro emisor o del usuario que envió la propuesta.
 		$email_dest  = self::get_center_contact_email( $emisor_id );
@@ -152,38 +163,50 @@ class NotificationService {
 			: __( 'DECLINADA', 'radioedu-conecta' );
 
 		$subject = sprintf(
-			/* translators: 1: Centro receptor, 2: Estado legible */
+			/* translators: 1: Name of the receiving school, 2: New status (accepted/declined). */
 			__( '[RadioEdu Traspasando Fronteras] Tu propuesta a %1$s ha sido %2$s', 'radioedu-conecta' ),
 			$centro_receptor,
 			$estado_legible
 		);
 
-		$contacto_info = '';
+		$respuesta = (string) ( $colab->respuesta_mensaje ?? '' );
+
+		$lines = [
+			__( 'Hola,', 'radioedu-conecta' ),
+			'',
+			sprintf(
+				/* translators: 1: Name of the sending school, 2: Name of the receiving school, 3: New status. */
+				__( 'Te informamos de que la propuesta de colaboración enviada por "%1$s" al centro "%2$s" ha sido marcada como: %3$s.', 'radioedu-conecta' ),
+				$centro_emisor,
+				$centro_receptor,
+				$estado_legible
+			),
+			'',
+			__( 'Mensaje o indicaciones del centro:', 'radioedu-conecta' ),
+			'"' . ( '' !== $respuesta ? $respuesta : __( 'Sin mensaje adicional.', 'radioedu-conecta' ) ) . '"',
+		];
+
+		// Los datos de contacto del coordinador receptor sólo se revelan cuando la propuesta es aceptada.
 		if ( 'aceptada' === $nuevo_estado ) {
 			$coord_receptor_email  = self::get_center_contact_email( $receptor_id );
 			$coord_receptor_nombre = (string) get_post_meta( $receptor_id, '_radioedu_coordinador_nombre', true );
 			if ( '' !== $coord_receptor_email ) {
-				$contacto_info = "\n" . sprintf(
-					/* translators: 1: Nombre del coordinador receptor, 2: Email del coordinador receptor */
+				$lines[] = '';
+				$lines[] = sprintf(
+					/* translators: 1: Coordinator name of the receiving school, 2: Coordinator email of the receiving school. */
 					__( 'Contacto de coordinación de la emisora: %1$s <%2$s>', 'radioedu-conecta' ),
-					$coord_receptor_nombre ?: $centro_receptor,
+					'' !== $coord_receptor_nombre ? $coord_receptor_nombre : $centro_receptor,
 					$coord_receptor_email
-				) . "\n";
+				);
 			}
 		}
 
-		$message = sprintf(
-			/* translators: 1: Centro emisor, 2: Centro receptor, 3: Estado, 4: Respuesta, 5: Datos de contacto si fue aceptada */
-			__( "Hola,\n\nTe informamos de que la propuesta de colaboración enviada por \"%1$s\" al centro \"%2$s\" ha sido marcada como: %3$s.\n\nMensaje o indicaciones del centro:\n\"%4$s\"\n%5$s\nPuedes acceder a la plataforma para coordinar los siguientes pasos con la emisora.\n\n--\nRadioEdu Conecta - Traspasando Fronteras", 'radioedu-conecta' ),
-			$centro_emisor,
-			$centro_receptor,
-			$estado_legible,
-			$colab->respuesta_mensaje ?: __( 'Sin mensaje adicional.', 'radioedu-conecta' ),
-			$contacto_info
-		);
+		$lines[] = '';
+		$lines[] = __( 'Puedes acceder a la plataforma para coordinar los siguientes pasos con la emisora.', 'radioedu-conecta' );
+		$lines[] = '';
+		$lines[] = '--';
+		$lines[] = __( 'RadioEdu Conecta - Traspasando Fronteras', 'radioedu-conecta' );
 
-		$headers = [ 'Content-Type: text/plain; charset=UTF-8' ];
-
-		return wp_mail( $email_dest, $subject, $message, $headers );
+		return wp_mail( $email_dest, $subject, implode( "\n", $lines ), self::HEADERS );
 	}
 }

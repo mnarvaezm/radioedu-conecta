@@ -80,4 +80,4 @@ Filtros desplegables combinables en una barra horizontal:
 ### 3. Seguridad, Privacidad RGPD y Multisite
 - **Anti-IDOR y Permisos**: Todo envío de propuesta verifica `X-WP-Nonce`, capacidad `propose_radioedu_colaboracion`, disponibilidad del centro receptor y autorización real del usuario sobre el centro emisor (`ColaboracionesController::user_can_manage_center()`).
 - **Privacidad Escolar Asimétrica y RGPD**: Cero exposición pública de correos electrónicos de docentes. Integración con los exportadores y borradores de datos personales del Core de WordPress (`PrivacyPolicy`).
-- **Multisite y Desinstalación Limpia**: Soporte para activación individual o en red, hooks `wp_initialize_site` / `wp_uninitialize_site` y borrado completo de tablas, CPTs, términos, opciones, transients y capacidades en `uninstall.php`.
+- **Multisite y Desinstalación Limpia**: Soporte para activación individual o en red, hook `wp_initialize_site`, filtro `wpmu_drop_tables` para borrar la tabla propia al eliminar un sitio y borrado completo de tablas, CPTs, términos, opciones, transients y capacidades en `uninstall.php`.

@@ -47,7 +47,7 @@
 	justify-content: space-between;
 	align-items: center;
 	padding: 36px 40px;
-	background: linear-gradient(135deg, #e0f7fa 0%, #ffffff 50%, #e1f5fe 100%);
+	background: linear-gradient(135deg, #e0f7fa 0%, #fff 50%, #e1f5fe 100%);
 	border-radius: var(--radioedu-radius-lg);
 	border: 1px solid #b2ebf2;
 	margin-bottom: 24px;
@@ -107,7 +107,7 @@
 
 /* 2. FILTERS BAR */
 .radioedu-filters-bar {
-	background: #ffffff;
+	background: #fff;
 	padding: 20px 24px;
 	border-radius: var(--radioedu-radius-lg);
 	border: 1px solid var(--radioedu-border);
@@ -149,7 +149,7 @@
 	border-radius: var(--radioedu-radius-md);
 	padding: 0 12px;
 	font-size: 0.9rem;
-	background-color: #ffffff;
+	background-color: #fff;
 	color: var(--radioedu-text-dark);
 	transition: border-color 0.2s, box-shadow 0.2s;
 	width: 100%;
@@ -168,7 +168,7 @@
 
 .radioedu-btn-primary {
 	background-color: var(--radioedu-teal-primary);
-	color: #ffffff;
+	color: #fff;
 	border: none;
 	border-radius: var(--radioedu-radius-md);
 	padding: 0 24px;
@@ -214,7 +214,7 @@
 }
 
 .radioedu-btn-toggle {
-	background: #ffffff;
+	background: #fff;
 	border: 1px solid var(--radioedu-border);
 	padding: 8px 16px;
 	border-radius: var(--radioedu-radius-md);
@@ -252,7 +252,7 @@
 	border-radius: var(--radioedu-radius-md);
 	padding: 0 10px;
 	font-size: 0.88rem;
-	background: #ffffff;
+	background: #fff;
 }
 
 /* 4. CARDS GRID */
@@ -263,7 +263,7 @@
 }
 
 .radioedu-card {
-	background: #ffffff;
+	background: #fff;
 	border-radius: var(--radioedu-radius-lg);
 	border: 1px solid var(--radioedu-border);
 	box-shadow: var(--radioedu-shadow-sm);
@@ -324,9 +324,9 @@
 	width: 60px;
 	height: 60px;
 	border-radius: 50%;
-	border: 3px solid #ffffff;
+	border: 3px solid #fff;
 	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-	background: #ffffff;
+	background: #fff;
 	object-fit: cover;
 }
 
@@ -406,7 +406,7 @@
 
 .radioedu-btn-secondary {
 	flex: 1;
-	background: #ffffff;
+	background: #fff;
 	border: 1px solid #cbd5e1;
 	border-radius: var(--radioedu-radius-md);
 	padding: 8px 12px;
@@ -427,7 +427,7 @@
 .radioedu-btn-match {
 	flex: 1.4;
 	background: var(--radioedu-teal-primary);
-	color: #ffffff;
+	color: #fff;
 	border: none;
 	border-radius: var(--radioedu-radius-md);
 	padding: 8px 12px;
@@ -472,7 +472,7 @@
 	width: 460px;
 	max-width: 95vw;
 	height: 100%;
-	background: #ffffff;
+	background: #fff;
 	box-shadow: -6px 0 24px rgba(0, 0, 0, 0.15);
 	z-index: 99999;
 	display: flex;
@@ -577,7 +577,7 @@
 
 .radioedu-btn-submit {
 	background: var(--radioedu-teal-primary);
-	color: #ffffff;
+	color: #fff;
 	border: none;
 	border-radius: var(--radioedu-radius-md);
 	padding: 12px 20px;
@@ -665,7 +665,10 @@
 }
 
 @keyframes radioedu-spin {
-	to { transform: rotate(360deg); }
+
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 .radioedu-no-results-icon {
@@ -674,11 +677,13 @@
 }
 
 @media (max-width: 900px) {
+
 	.radioedu-hero-banner {
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 20px;
 	}
+
 	.radioedu-hero-badge {
 		margin-left: 0;
 	}
@@ -733,7 +738,7 @@ body.single-radioedu_centro main > .wp-block-separator {
 }
 
 .radioedu-profile-card {
-	background: #ffffff;
+	background: #fff;
 	border-radius: var(--radioedu-radius-lg);
 	border: 1px solid var(--radioedu-border);
 	box-shadow: var(--radioedu-shadow-lg);
@@ -797,8 +802,8 @@ body.single-radioedu_centro main > .wp-block-separator {
 	width: 104px;
 	height: 104px;
 	border-radius: 50%;
-	border: 4px solid #ffffff;
-	background: #ffffff;
+	border: 4px solid #fff;
+	background: #fff;
 	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
 	object-fit: cover;
 	display: block;
@@ -933,14 +938,17 @@ body.single-radioedu_centro main > .wp-block-separator {
 }
 
 @media (max-width: 680px) {
+
 	.radioedu-profile-cover {
 		height: 200px;
 	}
+
 	.radioedu-profile-header-info,
 	.radioedu-profile-description-section {
 		padding-left: 20px;
 		padding-right: 20px;
 	}
+
 	.radioedu-profile-title {
 		font-size: 1.55rem;
 	}

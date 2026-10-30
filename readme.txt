@@ -1,55 +1,72 @@
 === RadioEdu Conecta ===
 Contributors: radioedu
-Tags: radio-escolar, podcast, educacion, directorio, colaboracion
+Tags: school radio, podcast, education, directory, collaboration
 Requires at least: 6.5
-Tested up to: 6.7
+Tested up to: 7.1
 Requires PHP: 8.1
 Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Directorio interactivo y sistema de colaboraciones ("Traspasando Fronteras") para conectar radios escolares de Extremadura y de todo el mundo.
+Interactive directory and collaboration system ("Traspasando Fronteras") that connects school radio stations from Extremadura and around the world.
 
 == Description ==
 
-**RadioEdu Conecta** es el plugin oficial de la iniciativa **Traspasando Fronteras** de RadioEdu (Consejería de Educación, Ciencia y Formación Profesional de la Junta de Extremadura).
+**RadioEdu Conecta** is the official plugin of the **Traspasando Fronteras** initiative by RadioEdu (Regional Ministry of Education, Science and Vocational Training, Junta de Extremadura, Spain). Its user interface is currently in Spanish.
 
-Permite a los centros educativos con emisoras de radio escolar:
-* Registrar su ficha de emisora con imagen de cabecera, logotipo circular, localización, etapas educativas, idiomas de trabajo, temáticas, formatos de programa y enlaces a su podcast y web oficial.
-* Buscar y filtrar centros afines en tiempo real mediante el directorio facetado interactivo `[radioedu_directorio]` (con algoritmo de afinidad por taxonomías y paginación) y vista en mapa geográfico con Leaflet local.
-* Consultar la página de perfil individual de cada emisora escolar y abrir el panel lateral de propuesta de match directamente desde la ficha del centro o desde el directorio.
-* Enviar y gestionar propuestas formales de colaboración ("Matches") entre coordinadores de radio desde **RadioEdu Centros -> Colaboraciones (Matches)** sin exponer correos electrónicos personales en la web pública.
+It allows schools that run a school radio station to:
+
+* Publish a station profile with cover image, circular logo, location, educational stages, working languages, topics, programme formats and links to their podcast and official website.
+* Search and filter related schools in real time with the interactive faceted directory `[radioedu_directorio]` (taxonomy-based affinity sorting and pagination) and a map view powered by a locally bundled copy of Leaflet.
+* Open the individual profile page of each station and propose a collaboration ("match") directly from the profile or from the directory, through an accessible side panel.
+* Send and manage formal collaboration proposals between radio coordinators from **RadioEdu Centros -> Colaboraciones (Matches)** without exposing personal email addresses on the public site.
 
 == Privacy & GDPR ==
 
-* Los nombres y direcciones de correo electrónico de los docentes coordinadores se almacenan de forma privada y nunca se exponen en el HTML público ni en el endpoint público `/wp-json/radioedu-conecta/v1/centros`.
-* Las notificaciones se envían desde el servidor mediante `wp_mail()` y los datos de contacto solo se comparten entre centros cuando una propuesta es aceptada explícitamente.
-* La librería Leaflet está empaquetada localmente sin depender de CDNs externas. La descarga de cartografía desde OpenStreetMap requiere el consentimiento explícito del usuario antes de conectar con `tile.openstreetmap.org`.
-* El plugin se integra con las herramientas de exportación y borrado de datos personales de WordPress Core (`wp_privacy_personal_data_exporters` y `wp_privacy_personal_data_erasers`).
+* Coordinators' names and email addresses are stored privately and are never exposed in the public HTML or in the public `/wp-json/radioedu-conecta/v1/centros` endpoint.
+* Notifications are sent server-side with `wp_mail()`. The receiving coordinator's contact details are shared with the sending school only after the proposal is explicitly accepted.
+* Collaboration proposals store the sending user account, the schools involved and the project text.
+* Favourite schools and the map consent are stored only in the visitor's browser storage and are never sent to the server.
+* The plugin integrates with the WordPress personal data exporter and eraser tools (`wp_privacy_personal_data_exporters` and `wp_privacy_personal_data_erasers`) and suggests text for the site's privacy policy.
+
+== External services ==
+
+This plugin can connect to one external service, and only after an explicit action by the visitor:
+
+* **OpenStreetMap tile servers** (OpenStreetMap Foundation): when the visitor clicks "Aceptar y mostrar el mapa interactivo" (accept and show the interactive map) in the directory map view, the visitor's browser downloads map images from `https://tile.openstreetmap.org`. The visitor's IP address, user agent and the coordinates/zoom of the requested tiles are sent. No connection is made unless the visitor accepts. Tile usage policy: https://operations.osmfoundation.org/policies/tiles/ - Privacy policy: https://osmfoundation.org/wiki/Privacy_Policy
+
+The plugin contains no telemetry and makes no other calls to external services.
+
+== Third-party libraries ==
+
+* **Leaflet 1.9.4** (`assets/js/leaflet.js`, `assets/css/leaflet.css`, `assets/css/images/`), bundled locally. BSD-2-Clause license, GPL-compatible. Unminified source: https://github.com/Leaflet/Leaflet/tree/v1.9.4
 
 == Installation ==
 
-1. Sube el archivo `radioedu-conecta.zip` desde **Plugins -> Añadir nuevo plugin -> Subir plugin** o copia la carpeta `radioedu-conecta` en `/wp-content/plugins/`.
-2. Activa el plugin a través del menú 'Plugins' en WordPress (o en la Administración de la Red si usas Multisite).
-3. Gestiona las fichas de los centros desde el menú **RadioEdu Centros**, responde a las solicitudes en **Colaboraciones (Matches)** y sincroniza los datos de ejemplo desde **Ajustes**.
-4. Inserta el shortcode `[radioedu_directorio]` en cualquier página para mostrar el buscador interactivo.
+1. Upload `radioedu-conecta.zip` from **Plugins -> Add New Plugin -> Upload Plugin**, or copy the `radioedu-conecta` folder to `/wp-content/plugins/`.
+2. Activate the plugin from the **Plugins** screen (or from Network Admin when using Multisite).
+3. Manage school profiles from **RadioEdu Centros**, answer proposals from **Colaboraciones (Matches)** and configure the map and notifications from **Ajustes** (Settings).
+4. Add the `[radioedu_directorio]` shortcode to any page to display the interactive directory.
 
 == Frequently Asked Questions ==
 
-= ¿Es compatible con WordPress Multisite? =
-Sí. RadioEdu Conecta está diseñado para funcionar en instalaciones individuales y en redes educativas multisite (Educarex), soportando activación individual o en red, aprovisionamiento automático de nuevos sitios (`wp_initialize_site`) y desinstalación limpia (`uninstall.php`).
+= Is it compatible with WordPress Multisite? =
 
-= ¿Se publican los correos electrónicos de los docentes en la web? =
-No. Por privacidad y seguridad (cumplimiento RGPD), las direcciones de email nunca se exponen en el código HTML ni en la API pública. Las propuestas de colaboración se gestionan a través del sistema interno del plugin y notificaciones automáticas por servidor.
+Yes. It supports per-site and network activation, automatic provisioning of new sites while network-active (`wp_initialize_site`), removal of the plugin table when a site is deleted (`wpmu_drop_tables`) and a complete network-wide cleanup in `uninstall.php`.
 
-= ¿Se puede proponer un match directamente desde el perfil de una emisora? =
-Sí. Tanto las tarjetas del directorio como la página de perfil individual de cada emisora cuentan con el botón "Proponer match", que despliega el panel lateral de solicitud en esa misma pantalla.
+= Are teachers' email addresses published on the website? =
+
+No. For privacy and GDPR compliance, email addresses are never exposed in the HTML or in the public API. Collaboration proposals are handled through the plugin's internal system and server-side notifications.
+
+= Can a match be proposed directly from a station profile? =
+
+Yes. Both the directory cards and each station's profile page include the "Proponer match" button, which opens the proposal side panel on the same screen.
 
 == Changelog ==
 
 = 1.0.0 =
-* Directorio interactivo `[radioedu_directorio]` con filtros facetados, ordenación por afinidad real, paginación y mapa Leaflet local con consentimiento RGPD.
-* Plantilla de perfil individual de emisora (`templates/single-centro.php`) con imagen de cabecera, logotipo circular, metadatos, descripción y panel de solicitud de match integrado.
-* Panel de administración **Colaboraciones (Matches)** para consultar, aceptar o declinar propuestas recibidas y enviadas.
-* Controles de seguridad reforzados: validación anti-IDOR del centro emisor, sanitización estricta de URLs y nodos DOM, consultas preparadas con `%i` y mapeo completo de capacidades para coordinadores.
-* Integración completa con los exportadores/borradores RGPD de WordPress y limpieza integral en `uninstall.php`.
+* Interactive `[radioedu_directorio]` directory with faceted filters, affinity sorting, pagination and a locally bundled Leaflet map with prior consent for OpenStreetMap tiles.
+* Individual station profile template with cover image, circular logo, metadata, description and an integrated match proposal panel.
+* **Colaboraciones (Matches)** admin screen to review, accept or decline received and sent proposals; each proposal can be answered only once.
+* Hardened security: anti-IDOR validation of the sending school, strict URL and DOM sanitization, prepared SQL queries with `%i` and full capability mapping for coordinators.
+* Integration with the WordPress personal data exporters/erasers and complete cleanup in `uninstall.php`, including Multisite networks.

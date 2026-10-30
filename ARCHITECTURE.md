@@ -84,8 +84,9 @@ c:\radioedu-conecta\
 │   └── Taxonomies/
 │       └── TaxonomiesRegistrar.php      # 5 faceted taxonomies registration & capability bindings
 ├── templates/
-│   ├── directorio.php                   # Frontend directory view: Banner, Facet Bar, Grid, Map, Drawer modal
-│   └── single-centro.php                # Single station profile view: Cover, Identity, Tags, Metadata, Description & Drawer
+│   ├── directorio.php                   # Frontend directory view: Banner, Facet Bar, Grid, Map
+│   ├── single-centro.php                # Single station profile view: Cover, Identity, Tags, Metadata, Description
+│   └── match-drawer.php                 # Shared "Solicitud de match" drawer (accessible dialog) used by both views
 ├── assets/
 │   ├── css/
 │   │   ├── admin.css                    # Styling for admin metaboxes and media uploader preview
@@ -123,7 +124,7 @@ c:\radioedu-conecta\
 
 ### 3.3 Strict Output Escaping, Zero `innerHTML`, and URL Validation
 * **Server-side (PHP):** Strict "Late Escaping" rule. Variables are escaped at the exact moment of output using `esc_html()`, `esc_attr()`, `esc_url()`, `wp_kses_post()`, or `wp_json_encode()`. All SQL queries use `$wpdb->prepare()` with `%i` identifier placeholders for table names.
-* **Client-side (JavaScript):** `assets/js/directorio.js` prohibits `innerHTML` and HTML string concatenation. All dynamic card nodes, badges, and Leaflet map popups (`marker.bindPopup(popupNode)`) are assembled using `document.createElement()` and `textContent`. All external URLs are validated via `sanitizeHttpUrl()` (`http:` / `https:` whitelist) and escaped before CSS `url(...)` injection.
+* **Client-side (JavaScript):** `assets/js/directorio.js` prohibits `innerHTML` and HTML string concatenation. All dynamic card nodes, badges, and Leaflet map popups (`marker.bindPopup(popupNode)`) are assembled using `document.createElement()` and `textContent`. All external URLs are validated via `sanitizeHttpUrl()` (`http:` / `https:` whitelist) and escaped before CSS `url(...)` injection. Server-side, the profile cover URL is percent-encoded for CSS context (`DirectorioShortcode::css_safe_url()`) because `esc_url()` keeps quotes and parentheses that the browser decodes before parsing CSS.
 
 ---
 
@@ -238,6 +239,7 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
 ### 6.4 `PATCH /wp-json/radioedu-conecta/v1/colaboraciones/{id}`
 * **Permission:** Target station coordinator (`ColaboracionesController::user_can_manage_center( $centro_receptor_id )`) or Admin (`manage_radioedu`).
 * **Result:** Updates table record (`aceptada` or `rechazada`), sets `updated_at`, and triggers `NotificationService::send_status_update_email()`.
+* **Single response:** Only `pendiente` proposals can be answered (`ColaboracionesTable::resolve_pending()` conditions the `UPDATE` on `estado = 'pendiente'`). Unknown IDs return `404 radioedu_not_found`; already answered proposals return `409 radioedu_already_resolved` and no email is re-sent. The admin screen (`admin-post.php?action=radioedu_respond_match`) shares the same logic through `ColaboracionesController::respond_to_proposal()`.
 
 ---
 
@@ -265,5 +267,6 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
 
 * **Single Site Activation:** Creates `{$wpdb->prefix}radioedu_colaboraciones`, assigns role capabilities, registers CPT/taxonomies, seeds the 6 demo stations if 0 stations exist, and flushes rewrite rules.
 * **Network Activation (`$network_wide = true`):** Iterates through sites via `get_sites()` + `switch_to_blog()`, provisioning tables and capabilities without bulk-seeding demo posts to prevent timeouts on large networks.
-* **Dynamic Site Provisioning & Teardown:** Hooks `wp_initialize_site` (`Plugin::on_initialize_site()`) and `wp_uninitialize_site` (`Plugin::on_uninitialize_site()`).
+* **Dynamic Site Provisioning & Teardown:** `wp_initialize_site` (`Plugin::on_initialize_site()`) provisions new sites only when the plugin is network-active. On site deletion the custom table is added to core's drop list through the `wpmu_drop_tables` filter (`ColaboracionesTable::add_to_dropped_tables()`); options and roles disappear with the site's own tables, so nothing is written to tables that core has already dropped.
+* **Rewrite rules in switched context:** inside `switch_to_blog()` the plugin deletes the `rewrite_rules` option instead of flushing, so each site regenerates its own rules with its own permalink structure.
 * **Complete Uninstallation ([uninstall.php](file:///c:/radioedu-conecta/uninstall.php)):** Drops `{$wpdb->prefix}radioedu_colaboraciones`, deletes all `radioedu_centro` posts and postmeta, deletes terms across all 5 custom taxonomies, removes options and transients, and revokes all 12 custom capabilities across single-site or entire Multisite networks.

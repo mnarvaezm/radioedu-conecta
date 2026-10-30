@@ -35,16 +35,16 @@ if ( file_exists( RADIOEDU_CONECTA_DIR . 'vendor/autoload.php' ) ) {
 	require_once RADIOEDU_CONECTA_DIR . 'vendor/autoload.php';
 } else {
 	spl_autoload_register(
-		static function ( string $class ): void {
+		static function ( string $class_name ): void {
 			$prefix   = 'RadioEdu\\Conecta\\';
 			$base_dir = RADIOEDU_CONECTA_DIR . 'src/';
 
 			$len = strlen( $prefix );
-			if ( strncmp( $prefix, $class, $len ) !== 0 ) {
+			if ( strncmp( $prefix, $class_name, $len ) !== 0 ) {
 				return;
 			}
 
-			$relative_class = substr( $class, $len );
+			$relative_class = substr( $class_name, $len );
 			$file           = $base_dir . str_replace( '\\', '/', $relative_class ) . '.php';
 
 			if ( file_exists( $file ) ) {
@@ -146,7 +146,7 @@ add_action( 'plugins_loaded', 'radioedu_conecta_bootstrap' );
  * @return array<string, string> Updated links array.
  */
 function radioedu_conecta_action_links( array $links ): array {
-	$settings_url = admin_url( 'edit.php?post_type=radioedu_centro&page=radioedu-conecta-settings' );
+	$settings_url  = admin_url( 'edit.php?post_type=radioedu_centro&page=radioedu-conecta-settings' );
 	$settings_link = sprintf(
 		'<a href="%s">%s</a>',
 		esc_url( $settings_url ),

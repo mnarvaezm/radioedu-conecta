@@ -1,11 +1,8 @@
-Title: Live Content
-
-Description: Fetched live
-
-Source: https://unpkg.com/leaflet@1.9.4/dist/leaflet.css
-
----
-
+/*!
+ * Leaflet 1.9.4 stylesheet, bundled locally (no CDN). https://leafletjs.com
+ * (c) 2010-2023 Vladimir Agafonkin, (c) 2010-2011 CloudMade
+ * License: BSD-2-Clause. Source: https://github.com/Leaflet/Leaflet/tree/v1.9.4
+ */
 /* required styles */
 
 .leaflet-pane,

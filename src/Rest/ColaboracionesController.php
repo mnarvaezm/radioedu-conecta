@@ -25,7 +25,23 @@ defined( 'ABSPATH' ) || exit;
  */
 class ColaboracionesController extends WP_REST_Controller {
 
+	/**
+	 * Número máximo de propuestas que un usuario puede enviar por hora.
+	 */
+	private const RATE_LIMIT_PER_HOUR = 10;
+
+	/**
+	 * Namespace de la REST API de RadioEdu Conecta.
+	 *
+	 * @var string
+	 */
 	protected $namespace = 'radioedu-conecta/v1';
+
+	/**
+	 * Base de la ruta de colaboraciones.
+	 *
+	 * @var string
+	 */
 	protected $rest_base = 'colaboraciones';
 
 	/**
@@ -47,6 +63,7 @@ class ColaboracionesController extends WP_REST_Controller {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_items' ],
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
+					'args'                => [],
 				],
 			]
 		);
@@ -62,17 +79,28 @@ class ColaboracionesController extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'update_item_permissions_check' ],
 					'args'                => [
 						'id'        => [
-							'validate_callback' => static fn( $param ) => is_numeric( $param ),
+							'description'       => __( 'ID de la propuesta de colaboración.', 'radioedu-conecta' ),
+							'type'              => 'integer',
+							'minimum'           => 1,
+							'required'          => true,
+							'sanitize_callback' => 'absint',
+							'validate_callback' => 'rest_validate_request_arg',
 						],
 						'estado'    => [
-							'required'          => true,
+							'description'       => __( 'Nuevo estado de la propuesta.', 'radioedu-conecta' ),
 							'type'              => 'string',
-							'enum'              => [ 'aceptada', 'rechazada' ],
+							'enum'              => ColaboracionesTable::RESPONSE_STATUSES,
+							'required'          => true,
 							'sanitize_callback' => 'sanitize_key',
+							'validate_callback' => 'rest_validate_request_arg',
 						],
 						'respuesta' => [
+							'description'       => __( 'Mensaje de respuesta para el centro emisor.', 'radioedu-conecta' ),
 							'type'              => 'string',
+							'maxLength'         => ColaboracionesTable::MAX_RESPUESTA_LENGTH,
+							'default'           => '',
 							'sanitize_callback' => 'sanitize_textarea_field',
+							'validate_callback' => 'rest_validate_request_arg',
 						],
 					],
 				],
@@ -81,7 +109,7 @@ class ColaboracionesController extends WP_REST_Controller {
 	}
 
 	/**
-	 * Comprueba si el usuario actual es coordinador o tiene permisos de edición sobre un centro.
+	 * Comprueba si un usuario es coordinador o tiene permisos de edición sobre un centro.
 	 *
 	 * @param int $center_id ID del post radioedu_centro.
 	 * @param int $user_id   ID del usuario (0 para usuario actual).
@@ -92,13 +120,13 @@ class ColaboracionesController extends WP_REST_Controller {
 			return false;
 		}
 
-		if ( current_user_can( 'manage_radioedu' ) || current_user_can( 'edit_post', $center_id ) ) {
-			return true;
-		}
-
 		$uid = $user_id > 0 ? $user_id : get_current_user_id();
 		if ( $uid <= 0 ) {
 			return false;
+		}
+
+		if ( user_can( $uid, 'manage_radioedu' ) || user_can( $uid, 'edit_post', $center_id ) ) {
+			return true;
 		}
 
 		$post_author = (int) get_post_field( 'post_author', $center_id );
@@ -154,20 +182,8 @@ class ColaboracionesController extends WP_REST_Controller {
 			return true;
 		}
 
-		$id = (int) $request->get_param( 'id' );
-		global $wpdb;
-		$table_name = ColaboracionesTable::get_table_name();
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$colab = $wpdb->get_row(
-			$wpdb->prepare(
-				'SELECT centro_receptor_id FROM %i WHERE id = %d',
-				$table_name,
-				$id
-			)
-		);
-
-		if ( ! $colab ) {
+		$colab = ColaboracionesTable::get_by_id( (int) $request->get_param( 'id' ) );
+		if ( null === $colab ) {
 			return false;
 		}
 
@@ -181,65 +197,30 @@ class ColaboracionesController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function get_items( $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass
-		global $wpdb;
-		$table_name = ColaboracionesTable::get_table_name();
-		$user_id    = get_current_user_id();
-
-		if ( current_user_can( 'manage_radioedu' ) ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT * FROM %i ORDER BY created_at DESC LIMIT 100',
-					$table_name
-				)
-			);
-		} else {
-			// Obtener IDs de centros gestionados por el usuario.
-			$user_center_ids = self::get_user_managed_center_ids( $user_id );
-
-			if ( empty( $user_center_ids ) ) {
-				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-				$rows = $wpdb->get_results(
-					$wpdb->prepare(
-						'SELECT * FROM %i WHERE usuario_emisor_id = %d ORDER BY created_at DESC LIMIT 100',
-						$table_name,
-						$user_id
-					)
-				);
-			} else {
-				$placeholders = implode( ',', array_fill( 0, count( $user_center_ids ), '%d' ) );
-				$query_args   = array_merge( [ $table_name, $user_id ], $user_center_ids, $user_center_ids );
-
-				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-				$rows = $wpdb->get_results(
-					$wpdb->prepare(
-						"SELECT * FROM %i WHERE usuario_emisor_id = %d OR centro_emisor_id IN ({$placeholders}) OR centro_receptor_id IN ({$placeholders}) ORDER BY created_at DESC LIMIT 100",
-						...$query_args
-					)
-				);
-				// phpcs:enable
-			}
-		}
+		$user_id = get_current_user_id();
+		$rows    = ColaboracionesTable::get_for_user(
+			$user_id,
+			self::get_user_managed_center_ids( $user_id ),
+			current_user_can( 'manage_radioedu' )
+		);
 
 		$items = [];
-		if ( is_array( $rows ) ) {
-			foreach ( $rows as $row ) {
-				$items[] = [
-					'id'                     => (int) $row->id,
-					'centro_emisor_id'       => (int) $row->centro_emisor_id,
-					'centro_emisor_nombre'   => get_the_title( (int) $row->centro_emisor_id ),
-					'centro_receptor_id'     => (int) $row->centro_receptor_id,
-					'centro_receptor_nombre' => get_the_title( (int) $row->centro_receptor_id ),
-					'idea_proyecto'          => (string) $row->idea_proyecto,
-					'curso_edades'           => (string) $row->curso_edades,
-					'idiomas'                => (string) $row->idiomas,
-					'fechas_aprox'           => (string) $row->fechas_aprox,
-					'estado'                 => (string) $row->estado,
-					'respuesta_mensaje'      => (string) ( $row->respuesta_mensaje ?? '' ),
-					'created_at'             => (string) $row->created_at,
-					'updated_at'             => (string) $row->updated_at,
-				];
-			}
+		foreach ( $rows as $row ) {
+			$items[] = [
+				'id'                     => (int) $row->id,
+				'centro_emisor_id'       => (int) $row->centro_emisor_id,
+				'centro_emisor_nombre'   => get_the_title( (int) $row->centro_emisor_id ),
+				'centro_receptor_id'     => (int) $row->centro_receptor_id,
+				'centro_receptor_nombre' => get_the_title( (int) $row->centro_receptor_id ),
+				'idea_proyecto'          => (string) $row->idea_proyecto,
+				'curso_edades'           => (string) $row->curso_edades,
+				'idiomas'                => (string) $row->idiomas,
+				'fechas_aprox'           => (string) $row->fechas_aprox,
+				'estado'                 => (string) $row->estado,
+				'respuesta_mensaje'      => (string) ( $row->respuesta_mensaje ?? '' ),
+				'created_at'             => (string) $row->created_at,
+				'updated_at'             => (string) $row->updated_at,
+			];
 		}
 
 		return rest_ensure_response( [ 'colaboraciones' => $items ] );
@@ -265,6 +246,7 @@ class ColaboracionesController extends WP_REST_Controller {
 					'fields'         => 'ids',
 					'orderby'        => 'title',
 					'order'          => 'ASC',
+					'no_found_rows'  => true,
 				]
 			);
 			return array_map( 'intval', $all_ids );
@@ -277,6 +259,7 @@ class ColaboracionesController extends WP_REST_Controller {
 				'author'         => $user_id,
 				'posts_per_page' => 50,
 				'fields'         => 'ids',
+				'no_found_rows'  => true,
 			]
 		);
 
@@ -289,7 +272,8 @@ class ColaboracionesController extends WP_REST_Controller {
 					'post_status'    => 'publish',
 					'posts_per_page' => 50,
 					'fields'         => 'ids',
-					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+					'no_found_rows'  => true,
+					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Bounded lookup (max 50) by coordinator email.
 					'meta_query'     => [
 						[
 							'key'   => '_radioedu_coordinador_email',
@@ -312,7 +296,7 @@ class ColaboracionesController extends WP_REST_Controller {
 	public function create_item( $request ) {
 		$user_id = get_current_user_id();
 
-		// Protección Rate Limiting con ventana fija de 1 hora: máximo 10 propuestas por hora por usuario.
+		// Protección Rate Limiting con ventana fija de 1 hora por usuario.
 		$transient_key = 'radioedu_rate_' . $user_id;
 		$rate_data     = get_transient( $transient_key );
 		$now_ts        = time();
@@ -325,7 +309,7 @@ class ColaboracionesController extends WP_REST_Controller {
 			$rate_ttl   = HOUR_IN_SECONDS;
 		}
 
-		if ( $rate_count >= 10 ) {
+		if ( $rate_count >= self::RATE_LIMIT_PER_HOUR ) {
 			return new WP_Error(
 				'radioedu_rate_limit',
 				__( 'Has alcanzado el límite de propuestas por hora. Por favor, inténtalo más tarde.', 'radioedu-conecta' ),
@@ -389,12 +373,11 @@ class ColaboracionesController extends WP_REST_Controller {
 		}
 
 		global $wpdb;
-		$table_name = ColaboracionesTable::get_table_name();
-		$now        = current_time( 'mysql' );
+		$now = current_time( 'mysql' );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table write.
 		$inserted = $wpdb->insert(
-			$table_name,
+			ColaboracionesTable::get_table_name(),
 			[
 				'centro_emisor_id'   => $centro_emisor_id,
 				'centro_receptor_id' => $centro_receptor_id,
@@ -450,44 +433,17 @@ class ColaboracionesController extends WP_REST_Controller {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function update_item( $request ) {
-		$id        = (int) $request->get_param( 'id' );
-		$estado    = sanitize_key( (string) $request->get_param( 'estado' ) );
-		$respuesta = sanitize_textarea_field( (string) $request->get_param( 'respuesta' ) );
-
-		if ( ! in_array( $estado, [ 'aceptada', 'rechazada' ], true ) ) {
-			return new WP_Error(
-				'radioedu_invalid_status',
-				__( 'El estado indicado no es válido.', 'radioedu-conecta' ),
-				[ 'status' => 400 ]
-			);
-		}
-
-		global $wpdb;
-		$table_name = ColaboracionesTable::get_table_name();
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$updated = $wpdb->update(
-			$table_name,
-			[
-				'estado'            => $estado,
-				'respuesta_mensaje' => $respuesta,
-				'updated_at'        => current_time( 'mysql' ),
-			],
-			[ 'id' => $id ],
-			[ '%s', '%s', '%s' ],
-			[ '%d' ]
+		$id     = absint( $request->get_param( 'id' ) );
+		$estado = sanitize_key( (string) $request->get_param( 'estado' ) );
+		$result = self::respond_to_proposal(
+			$id,
+			$estado,
+			sanitize_textarea_field( (string) $request->get_param( 'respuesta' ) )
 		);
 
-		if ( false === $updated ) {
-			return new WP_Error(
-				'radioedu_update_failed',
-				__( 'No se pudo actualizar la propuesta.', 'radioedu-conecta' ),
-				[ 'status' => 500 ]
-			);
+		if ( null !== $result ) {
+			return $result;
 		}
-
-		// Notificar al emisor del cambio de estado.
-		NotificationService::send_status_update_email( $id, $estado );
 
 		return new WP_REST_Response(
 			[
@@ -499,6 +455,48 @@ class ColaboracionesController extends WP_REST_Controller {
 	}
 
 	/**
+	 * Acepta o declina una propuesta pendiente y notifica al centro emisor.
+	 *
+	 * Compartido por la REST API y el panel de administración. La autorización
+	 * (capacidad + gestión del centro receptor) debe comprobarse antes de llamar.
+	 *
+	 * @param int    $id        ID de la colaboración.
+	 * @param string $estado    Nuevo estado: 'aceptada' o 'rechazada'.
+	 * @param string $respuesta Mensaje de respuesta ya sanitizado.
+	 * @return WP_Error|null Null si se resolvió correctamente; WP_Error en caso contrario.
+	 */
+	public static function respond_to_proposal( int $id, string $estado, string $respuesta ): ?WP_Error {
+		if ( ! in_array( $estado, ColaboracionesTable::RESPONSE_STATUSES, true ) ) {
+			return new WP_Error(
+				'radioedu_invalid_status',
+				__( 'El estado indicado no es válido.', 'radioedu-conecta' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		$colab = ColaboracionesTable::get_by_id( $id );
+		if ( null === $colab ) {
+			return new WP_Error(
+				'radioedu_not_found',
+				__( 'La propuesta de colaboración no existe.', 'radioedu-conecta' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		if ( 'pendiente' !== $colab->estado || ! ColaboracionesTable::resolve_pending( $id, $estado, $respuesta ) ) {
+			return new WP_Error(
+				'radioedu_already_resolved',
+				__( 'Esta propuesta ya ha sido respondida y no puede modificarse.', 'radioedu-conecta' ),
+				[ 'status' => 409 ]
+			);
+		}
+
+		NotificationService::send_status_update_email( $id, $estado );
+
+		return null;
+	}
+
+	/**
 	 * Argumentos de validación para la creación de una propuesta.
 	 *
 	 * @return array<string, array<string, mixed>>
@@ -506,35 +504,51 @@ class ColaboracionesController extends WP_REST_Controller {
 	public function get_endpoint_args_for_create(): array {
 		return [
 			'centro_emisor_id'   => [
+				'description'       => __( 'ID del centro que envía la propuesta.', 'radioedu-conecta' ),
 				'required'          => true,
 				'type'              => 'integer',
+				'minimum'           => 1,
 				'sanitize_callback' => 'absint',
 				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'centro_receptor_id' => [
+				'description'       => __( 'ID del centro que recibe la propuesta.', 'radioedu-conecta' ),
 				'required'          => true,
 				'type'              => 'integer',
+				'minimum'           => 1,
 				'sanitize_callback' => 'absint',
 				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'idea_proyecto'      => [
+				'description'       => __( 'Idea del proyecto conjunto.', 'radioedu-conecta' ),
 				'required'          => true,
 				'type'              => 'string',
+				'minLength'         => 1,
+				'maxLength'         => ColaboracionesTable::MAX_IDEA_LENGTH,
 				'sanitize_callback' => 'sanitize_textarea_field',
 				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'curso_edades'       => [
+				'description'       => __( 'Curso o edades del alumnado participante.', 'radioedu-conecta' ),
 				'type'              => 'string',
+				'maxLength'         => ColaboracionesTable::MAX_EDADES_LENGTH,
+				'default'           => '',
 				'sanitize_callback' => 'sanitize_text_field',
 				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'idiomas'            => [
+				'description'       => __( 'Idiomas de trabajo del proyecto.', 'radioedu-conecta' ),
 				'type'              => 'string',
+				'maxLength'         => ColaboracionesTable::MAX_IDIOMAS_LENGTH,
+				'default'           => '',
 				'sanitize_callback' => 'sanitize_text_field',
 				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'fechas_aprox'       => [
+				'description'       => __( 'Fechas aproximadas del proyecto.', 'radioedu-conecta' ),
 				'type'              => 'string',
+				'maxLength'         => ColaboracionesTable::MAX_FECHAS_LENGTH,
+				'default'           => '',
 				'sanitize_callback' => 'sanitize_text_field',
 				'validate_callback' => 'rest_validate_request_arg',
 			],

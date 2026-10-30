@@ -38,6 +38,26 @@
 		</properties>
 	</rule>
 
+	<!-- Custom capabilities registered by RoleCapabilities::add_capabilities(). -->
+	<rule ref="WordPress.WP.Capabilities">
+		<properties>
+			<property name="custom_capabilities" type="array">
+				<element value="manage_radioedu"/>
+				<element value="edit_radioedu_centros"/>
+				<element value="edit_others_radioedu_centros"/>
+				<element value="edit_published_radioedu_centros"/>
+				<element value="edit_private_radioedu_centros"/>
+				<element value="publish_radioedu_centros"/>
+				<element value="read_private_radioedu_centros"/>
+				<element value="delete_radioedu_centros"/>
+				<element value="delete_private_radioedu_centros"/>
+				<element value="delete_published_radioedu_centros"/>
+				<element value="delete_others_radioedu_centros"/>
+				<element value="propose_radioedu_colaboracion"/>
+			</property>
+		</properties>
+	</rule>
+
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
 			<property name="prefixes" type="array">
@@ -47,3 +67,4 @@
 		</properties>
 	</rule>
 </ruleset>
+

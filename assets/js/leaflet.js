@@ -1,11 +1,7 @@
-/*Title: Live Content
-
-Description: Fetched live
-
-Source: https://unpkg.com/leaflet@1.9.4/dist/leaflet.js
-
-*/
-
+/*!
+ * Leaflet 1.9.4, bundled locally (no CDN). License: BSD-2-Clause.
+ * Unminified source: https://github.com/Leaflet/Leaflet/tree/v1.9.4
+ */
 /* @preserve
  * Leaflet 1.9.4, a JS library for interactive maps. https://leafletjs.com
  * (c) 2010-2023 Vladimir Agafonkin, (c) 2010-2011 CloudMade

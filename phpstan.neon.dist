@@ -4,8 +4,8 @@ parameters:
         - radioedu-conecta.php
         - uninstall.php
         - src/
+        - templates/
     bootstrapFiles:
-        - radioedu-conecta.php
-    ignoreErrors:
-        - '#Constant ABSPATH not found\.#'
-        - '#Constant WP_UNINSTALL_PLUGIN not found\.#'
+        - tests/phpstan-bootstrap.php
+    dynamicConstantNames:
+        - RADIOEDU_CONECTA_URL

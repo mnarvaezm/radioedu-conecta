@@ -61,13 +61,30 @@ class SettingsAndMetaSanitizationTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Out-of-range coordinates are clamped and non-numeric values keep the default.
+	 */
+	public function test_sanitize_settings_clamps_coordinates(): void {
+		$sanitized = Settings::sanitize_settings(
+			[
+				'default_lat' => '123.5',
+				'default_lng' => 'not-a-number',
+			]
+		);
+
+		$this->assertSame( '90', $sanitized['default_lat'] );
+		$this->assertSame( '-6.3708', $sanitized['default_lng'] );
+	}
+
+	/**
 	 * Test available country flags whitelist contains Spain and Portugal.
 	 */
 	public function test_available_flags_whitelist(): void {
 		$flags = CentroMetaBoxes::get_available_flags();
 
-		$this->assertArrayHasKey( '🇪🇸', $flags );
-		$this->assertArrayHasKey( '🇵🇹', $flags );
-		$this->assertArrayHasKey( '🇪🇺', $flags );
+		$this->assertArrayHasKey( 'es', $flags );
+		$this->assertArrayHasKey( 'pt', $flags );
+		$this->assertArrayHasKey( 'eu', $flags );
+		$this->assertArrayHasKey( 'es-ex', $flags );
 	}
 }
+

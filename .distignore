@@ -21,3 +21,9 @@ tests
 *.log
 .DS_Store
 Thumbs.db
+bin
+.gitattributes
+README.md
+vendor
+dist
+.phpunit.result.cache

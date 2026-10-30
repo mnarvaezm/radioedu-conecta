@@ -33,14 +33,40 @@ jobs:
       - name: Run PHPStan (Level 6)
         run: composer stan
 
+  js-css-lint:
+    name: JS/CSS lint & npm audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install npm dependencies
+        run: npm ci --no-fund
+
+      - name: Run npm security audit (production + dev)
+        run: npm audit --audit-level=high
+
+      - name: Lint JavaScript
+        run: npm run lint:js
+
+      - name: Lint CSS
+        run: npm run lint:css
+
   phpunit:
-    name: PHPUnit (PHP ${{ matrix.php }} / WP ${{ matrix.wp }})
+    name: PHPUnit (PHP ${{ matrix.php }} / WP ${{ matrix.wp }} / multisite=${{ matrix.multisite }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        php: [ '8.1', '8.2', '8.3' ]
-        wp: [ '6.5', '6.6', 'latest' ]
+        php: [ '8.1', '8.3' ]
+        wp: [ '6.5', 'latest' ]
+        multisite: [ '0', '1' ]
 
     services:
       mysql:
@@ -61,17 +87,19 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: mysqli, mbstring, xml, zip, intl
+          tools: composer
           coverage: none
 
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist
 
       - name: Install WordPress Test Suite
-        run: |
-          bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 ${{ matrix.wp }}
-        continue-on-error: true
+        # The database is already created by the service container (skip-database-creation=true).
+        run: bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 ${{ matrix.wp }} true
 
       - name: Run PHPUnit
+        env:
+          WP_MULTISITE: ${{ matrix.multisite }}
         run: vendor/bin/phpunit
 
   plugin-check:
@@ -81,7 +109,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Build distributable copy (honours .distignore)
+        run: |
+          mkdir -p dist/radioedu-conecta
+          rsync -a --exclude-from=.distignore --exclude=dist ./ dist/radioedu-conecta/
+
       - name: Run WordPress Plugin Check
         uses: wordpress/plugin-check-action@v1
         with:
-          build-dir: .
+          build-dir: ./dist/radioedu-conecta

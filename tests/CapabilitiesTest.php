@@ -74,3 +74,4 @@ class CapabilitiesTest extends WP_UnitTestCase {
 		RoleCapabilities::add_capabilities();
 	}
 }
+

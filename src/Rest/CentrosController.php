@@ -9,6 +9,7 @@ declare( strict_types=1 );
 
 namespace RadioEdu\Conecta\Rest;
 
+use RadioEdu\Conecta\Admin\DemoDataImporter;
 use RadioEdu\Conecta\PostTypes\CentroPostType;
 use RadioEdu\Conecta\Taxonomies\TaxonomiesRegistrar;
 use WP_Error;
@@ -27,11 +28,15 @@ class CentrosController extends WP_REST_Controller {
 
 	/**
 	 * Namespace de la REST API de RadioEdu Conecta.
+	 *
+	 * @var string
 	 */
 	protected $namespace = 'radioedu-conecta/v1';
 
 	/**
 	 * Base de la ruta de centros.
+	 *
+	 * @var string
 	 */
 	protected $rest_base = 'centros';
 
@@ -120,39 +125,29 @@ class CentrosController extends WP_REST_Controller {
 		];
 
 		foreach ( $taxonomy_map as $param_key => $taxonomy_slug ) {
-			$param_val = $request->get_param( $param_key );
-			if ( ! empty( $param_val ) ) {
+			$term_slug = sanitize_title( (string) $request->get_param( $param_key ) );
+			if ( '' !== $term_slug ) {
 				$tax_queries[] = [
 					'taxonomy' => $taxonomy_slug,
 					'field'    => 'slug',
-					'terms'    => sanitize_text_field( (string) $param_val ),
+					'terms'    => $term_slug,
 				];
 			}
 		}
 
 		if ( ! empty( $tax_queries ) ) {
 			$tax_queries['relation'] = 'AND';
-			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Faceted search requires taxonomy filtering; results are paginated.
 			$args['tax_query'] = $tax_queries;
 		}
 
 		$query = new WP_Query( $args );
 		$items = [];
 
-		if ( $query->have_posts() ) {
-			while ( $query->have_posts() ) {
-				$query->the_post();
-				$post_id = get_the_ID();
-				if ( ! $post_id ) {
-					continue;
-				}
-
-				$item = $this->prepare_item_for_response( $post_id, $request );
-				if ( ! is_wp_error( $item ) ) {
-					$items[] = $item;
-				}
+		foreach ( $query->posts as $centro ) {
+			if ( $centro instanceof \WP_Post ) {
+				$items[] = $this->prepare_centro_data( $centro->ID );
 			}
-			wp_reset_postdata();
 		}
 
 		// Si el orden es 'afines', ordenar priorizando centros disponibles y con mayor coincidencia de etiquetas/taxonomías.
@@ -233,7 +228,8 @@ class CentrosController extends WP_REST_Controller {
 			}
 		}
 
-		if ( $center_id <= 0 || CentroPostType::POST_TYPE !== get_post_type( $center_id ) ) {
+		// Sólo centros publicados: evita revelar términos de borradores o centros privados a través de 'afines_a'.
+		if ( $center_id <= 0 || CentroPostType::POST_TYPE !== get_post_type( $center_id ) || 'publish' !== get_post_status( $center_id ) ) {
 			return [];
 		}
 
@@ -253,52 +249,29 @@ class CentrosController extends WP_REST_Controller {
 	}
 
 	/**
-	 * Prepara los datos del centro escolar para la respuesta REST.
+	 * Prepara los datos públicos de un centro escolar para la respuesta REST.
 	 *
-	 * @param int             $post_id ID del centro.
-	 * @param WP_REST_Request $request Petición REST.
+	 * Nunca incluye los metadatos de coordinación (nombre y email del docente).
+	 *
+	 * @param int $post_id ID del centro.
 	 * @return array<string, mixed>
 	 */
-	public function prepare_item_for_response( $post_id, $request ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass
+	private function prepare_centro_data( int $post_id ): array {
 		$title     = get_the_title( $post_id );
 		$logo_id   = (int) get_post_meta( $post_id, '_radioedu_logo_id', true );
-		$logo_url  = $logo_id ? wp_get_attachment_image_url( $logo_id, 'thumbnail' ) : (string) get_post_meta( $post_id, '_radioedu_logo_url', true );
-		$thumb_url = get_the_post_thumbnail_url( $post_id, 'medium_large' ) ?: (string) get_post_meta( $post_id, '_radioedu_cover_url', true );
+		$logo_url  = $logo_id ? (string) wp_get_attachment_image_url( $logo_id, 'thumbnail' ) : (string) get_post_meta( $post_id, '_radioedu_logo_url', true );
+		$thumb_url = (string) get_the_post_thumbnail_url( $post_id, 'medium_large' );
+		if ( '' === $thumb_url ) {
+			$thumb_url = (string) get_post_meta( $post_id, '_radioedu_cover_url', true );
+		}
 
 		// Fallback automático para centros de ejemplo si no tienen imagen personalizada asignada.
 		$post_name = (string) get_post_field( 'post_name', $post_id );
-		if ( empty( $thumb_url ) ) {
-			$demo_covers = [
-				'sierra-de-gata' => 'header-sierra-gata.jpg',
-				'montjuic'       => 'header-montjuic.jpg',
-				'la-mar'         => 'header-la-mar.jpg',
-				'san-jose'       => 'header-san-jose.jpg',
-				'valle-de-tena'  => 'header-valle-tena.jpg',
-				'san-patricio'   => 'header-san-patricio.jpg',
-			];
-			foreach ( $demo_covers as $slug_part => $img_file ) {
-				if ( false !== strpos( $post_name, $slug_part ) && file_exists( RADIOEDU_CONECTA_DIR . 'assets/images/demo/' . $img_file ) ) {
-					$thumb_url = RADIOEDU_CONECTA_URL . 'assets/images/demo/' . $img_file;
-					break;
-				}
-			}
+		if ( '' === $thumb_url ) {
+			$thumb_url = DemoDataImporter::get_demo_image_url( $post_name, 'header' );
 		}
-
-		if ( empty( $logo_url ) ) {
-			$demo_logos = [
-				'sierra-de-gata' => 'logo-sierra-gata.jpg',
-				'montjuic'       => 'logo-montjuic.jpg',
-				'la-mar'         => 'logo-la-mar.jpg',
-				'san-jose'       => 'logo-san-jose.jpg',
-				'valle-de-tena'  => 'logo-valle-tena.jpg',
-				'san-patricio'   => 'logo-san-patricio.jpg',
-			];
-			foreach ( $demo_logos as $slug_part => $img_file ) {
-				if ( false !== strpos( $post_name, $slug_part ) && file_exists( RADIOEDU_CONECTA_DIR . 'assets/images/demo/' . $img_file ) ) {
-					$logo_url = RADIOEDU_CONECTA_URL . 'assets/images/demo/' . $img_file;
-					break;
-				}
-			}
+		if ( '' === $logo_url ) {
+			$logo_url = DemoDataImporter::get_demo_image_url( $post_name, 'logo' );
 		}
 
 		$bandera    = (string) get_post_meta( $post_id, '_radioedu_bandera', true );
@@ -402,6 +375,7 @@ class CentrosController extends WP_REST_Controller {
 			'search'    => [
 				'description'       => __( 'Término de búsqueda por nombre o palabra clave.', 'radioedu-conecta' ),
 				'type'              => 'string',
+				'maxLength'         => 200,
 				'sanitize_callback' => 'sanitize_text_field',
 				'validate_callback' => 'rest_validate_request_arg',
 			],
@@ -423,33 +397,46 @@ class CentrosController extends WP_REST_Controller {
 			'etapa'     => [
 				'description'       => __( 'Slug de etapa educativa.', 'radioedu-conecta' ),
 				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
+				'sanitize_callback' => [ $this, 'sanitize_slug_param' ],
 				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'idioma'    => [
 				'description'       => __( 'Slug de idioma.', 'radioedu-conecta' ),
 				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
+				'sanitize_callback' => [ $this, 'sanitize_slug_param' ],
 				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'tematica'  => [
 				'description'       => __( 'Slug de temática.', 'radioedu-conecta' ),
 				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
+				'sanitize_callback' => [ $this, 'sanitize_slug_param' ],
 				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'formato'   => [
 				'description'       => __( 'Slug de formato de programa.', 'radioedu-conecta' ),
 				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
+				'sanitize_callback' => [ $this, 'sanitize_slug_param' ],
 				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'ubicacion' => [
 				'description'       => __( 'Slug de ubicación geográfica.', 'radioedu-conecta' ),
 				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
+				'sanitize_callback' => [ $this, 'sanitize_slug_param' ],
 				'validate_callback' => 'rest_validate_request_arg',
 			],
 		];
+	}
+
+	/**
+	 * Sanitiza un parámetro de filtro como slug de término.
+	 *
+	 * Envoltorio necesario porque la REST API pasa ($value, $request, $param) al callback
+	 * y sanitize_title() interpretaría $request como título de reserva.
+	 *
+	 * @param mixed $value Valor recibido.
+	 * @return string Slug sanitizado.
+	 */
+	public function sanitize_slug_param( $value ): string {
+		return is_scalar( $value ) ? sanitize_title( (string) $value ) : '';
 	}
 }

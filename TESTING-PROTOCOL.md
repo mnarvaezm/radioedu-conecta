@@ -58,6 +58,8 @@ docker exec radioedu-wordpress wp db query "DESCRIBE wp_radioedu_colaboraciones;
 | **TC-09** | **Gestión en WP Admin** | Ir a **RadioEdu Centros → Colaboraciones (Matches)** y pulsar **Aceptar** o **Declinar** con un mensaje. | El estado pasa a `aceptada` o `rechazada`, se envía el correo de notificación al centro emisor (incluyendo el email de contacto si fue aceptada) y se muestra el enlace `mailto:`. |
 | **TC-10** | **Rate Limiting de Ventana Fija** | Intentar enviar más de 10 propuestas en menos de 1 hora. | El servidor responde con HTTP `429 (Too Many Requests)` sin reiniciar la ventana de expiración de 1 hora. |
 | **TC-11** | **Privacidad RGPD** | Inspeccionar el HTML público y la respuesta JSON de `/wp-json/radioedu-conecta/v1/centros`. | Ningún correo electrónico ni nombre personal de coordinador aparece expuesto públicamente. |
+| **TC-12** | **Respuesta única** | Responder (REST `PATCH` o panel de admin) a una propuesta ya aceptada o declinada. | HTTP `409 (radioedu_already_resolved)`, el estado no cambia y no se reenvía ningún correo. |
+| **TC-13** | **Panel accesible** | Abrir *Proponer match* con teclado, recorrerlo con `Tab` y cerrarlo con `Escape`. | El foco entra en el primer campo, queda atrapado en el diálogo y vuelve al botón que lo abrió. Sin sesión, el panel muestra el aviso y el enlace de inicio de sesión (sin `alert()`). |
 
 ---
 
@@ -65,3 +67,21 @@ docker exec radioedu-wordpress wp db query "DESCRIBE wp_radioedu_colaboraciones;
 
 1. En **Plugins → Plugins instalados**, desactiva **RadioEdu Conecta** y pulsa **Borrar**.
 2. Verifica en la base de datos que se han eliminado la tabla `wp_radioedu_colaboraciones`, los posts `radioedu_centro`, los términos de las 5 taxonomías, las opciones, los transients y las capacidades personalizadas.
+3. En Multisite, al borrar un sitio de la red su tabla `wp_{ID}_radioedu_colaboraciones` se elimina automáticamente (filtro `wpmu_drop_tables`).
+
+---
+
+## 6. Fase 5: Calidad automática (DoD)
+
+```bash
+composer install            # dependencias de desarrollo (PHPCS/WPCS, PHPStan, PHPUnit)
+composer lint:php           # PHPCS: WordPress, WordPress-Extra, WordPress-Docs y PHPCompatibilityWP
+composer stan               # PHPStan nivel 6 con szepeviktor/phpstan-wordpress
+bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 latest
+vendor/bin/phpunit                    # sitio individual
+WP_MULTISITE=1 vendor/bin/phpunit     # multisite
+npm ci && npm run lint:js && npm run lint:css
+npm audit --audit-level=high && composer audit
+```
+
+Plugin Check debe ejecutarse sobre la copia distribuible (respetando `.distignore`), no sobre el repositorio completo: `wp plugin check radioedu-conecta`.

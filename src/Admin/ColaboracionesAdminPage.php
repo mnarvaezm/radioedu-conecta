@@ -60,41 +60,21 @@ class ColaboracionesAdminPage {
 		$colab_id  = isset( $_POST['colaboracion_id'] ) ? absint( $_POST['colaboracion_id'] ) : 0;
 		$estado    = isset( $_POST['estado'] ) ? sanitize_key( wp_unslash( $_POST['estado'] ) ) : '';
 		$respuesta = isset( $_POST['respuesta_mensaje'] ) ? sanitize_textarea_field( wp_unslash( $_POST['respuesta_mensaje'] ) ) : '';
+		$respuesta = mb_substr( $respuesta, 0, ColaboracionesTable::MAX_RESPUESTA_LENGTH );
 
-		if ( $colab_id <= 0 || ! in_array( $estado, [ 'aceptada', 'rechazada' ], true ) ) {
-			wp_die( esc_html__( 'Parámetros de respuesta no válidos.', 'radioedu-conecta' ) );
+		if ( $colab_id <= 0 || ! in_array( $estado, ColaboracionesTable::RESPONSE_STATUSES, true ) ) {
+			wp_die( esc_html__( 'Parámetros de respuesta no válidos.', 'radioedu-conecta' ), '', [ 'response' => 400 ] );
 		}
 
-		global $wpdb;
-		$table_name = ColaboracionesTable::get_table_name();
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$colab = $wpdb->get_row(
-			$wpdb->prepare(
-				'SELECT * FROM %i WHERE id = %d',
-				$table_name,
-				$colab_id
-			)
-		);
-
-		if ( ! $colab || ! ColaboracionesController::user_can_manage_center( (int) $colab->centro_receptor_id ) ) {
-			wp_die( esc_html__( 'No tienes permisos para responder a las propuestas de este centro.', 'radioedu-conecta' ) );
+		$colab = ColaboracionesTable::get_by_id( $colab_id );
+		if ( null === $colab || ! ColaboracionesController::user_can_manage_center( (int) $colab->centro_receptor_id ) ) {
+			wp_die( esc_html__( 'No tienes permisos para responder a las propuestas de este centro.', 'radioedu-conecta' ), '', [ 'response' => 403 ] );
 		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->update(
-			$table_name,
-			[
-				'estado'            => $estado,
-				'respuesta_mensaje' => $respuesta,
-				'updated_at'        => current_time( 'mysql' ),
-			],
-			[ 'id' => $colab_id ],
-			[ '%s', '%s', '%s' ],
-			[ '%d' ]
-		);
-
-		NotificationService::send_status_update_email( $colab_id, $estado );
+		$result = ColaboracionesController::respond_to_proposal( $colab_id, $estado, $respuesta );
+		if ( null !== $result ) {
+			wp_die( esc_html( $result->get_error_message() ), '', [ 'response' => 409 ] );
+		}
 
 		$redirect_url = add_query_arg(
 			[
@@ -117,44 +97,18 @@ class ColaboracionesAdminPage {
 			wp_die( esc_html__( 'No tienes permisos suficientes para acceder a esta página.', 'radioedu-conecta' ) );
 		}
 
-		global $wpdb;
-		$table_name      = ColaboracionesTable::get_table_name();
-		$user_id         = get_current_user_id();
-		$user_center_ids = ColaboracionesController::get_user_managed_center_ids( $user_id );
+		$user_id = get_current_user_id();
+		$rows    = ColaboracionesTable::get_for_user(
+			$user_id,
+			ColaboracionesController::get_user_managed_center_ids( $user_id ),
+			current_user_can( 'manage_radioedu' )
+		);
 
-		if ( current_user_can( 'manage_radioedu' ) ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT * FROM %i ORDER BY created_at DESC LIMIT 100',
-					$table_name
-				)
-			);
-		} elseif ( empty( $user_center_ids ) ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT * FROM %i WHERE usuario_emisor_id = %d ORDER BY created_at DESC LIMIT 100',
-					$table_name,
-					$user_id
-				)
-			);
-		} else {
-			$placeholders = implode( ',', array_fill( 0, count( $user_center_ids ), '%d' ) );
-			$query_args   = array_merge( [ $table_name, $user_id ], $user_center_ids, $user_center_ids );
-
-			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT * FROM %i WHERE usuario_emisor_id = %d OR centro_emisor_id IN ({$placeholders}) OR centro_receptor_id IN ({$placeholders}) ORDER BY created_at DESC LIMIT 100",
-					...$query_args
-				)
-			);
-			// phpcs:enable
-		}
-
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only flag used to display a notice after the nonce-protected redirect.
 		$updated_status = isset( $_GET['match_updated'] ) ? sanitize_key( wp_unslash( $_GET['match_updated'] ) ) : '';
+		if ( ! in_array( $updated_status, ColaboracionesTable::RESPONSE_STATUSES, true ) ) {
+			$updated_status = '';
+		}
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Propuestas de Colaboración (Matches) - Traspasando Fronteras', 'radioedu-conecta' ); ?></h1>
@@ -248,6 +202,7 @@ class ColaboracionesAdminPage {
 											<textarea
 												id="respuesta_mensaje_<?php echo esc_attr( (string) $colab_id ); ?>"
 												name="respuesta_mensaje"
+												maxlength="2000"
 												rows="2"
 												style="width: 100%; margin-bottom: 6px;"
 												placeholder="<?php esc_attr_e( 'Escribe un mensaje para el centro emisor...', 'radioedu-conecta' ); ?>"
