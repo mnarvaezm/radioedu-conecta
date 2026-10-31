@@ -69,6 +69,7 @@ Yes. In **Network Admin -> Settings -> RadioEdu Conecta**, the "Sincronizar fich
 * Data the coordinator completes later is never overwritten, and trashed profiles are left alone.
 * A hand-made profile with the same website is reused instead of duplicated.
 * Profiles whose site no longer exists are kept and listed in the final summary.
+* At the end, a table lists every synced station with a link to its profile, its source site, the result (created, updated, reused or skipped) and whether its coordinator got the Author role.
 
 Only network administrators can run it, and the plugin must be active on the main site.
 

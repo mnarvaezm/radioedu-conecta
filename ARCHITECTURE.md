@@ -301,7 +301,7 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
 * **Arguments:**
   - `offset` (`integer`, minimum 0, default 0, `absint`).
   - `grant_author_role` (`boolean`, `rest_sanitize_boolean`). When omitted, the stored choice is used. The first batch (offset 0) stores it in the network option `radioedu_conecta_sync_grant_author` (default `'1'`), which `uninstall.php` deletes.
-* **Response:** `processed`, `total`, `next_offset`, `done`, `created`, `updated`, `reused`, `skipped`, `authors_added`, `errors[] {blog_id, message}`, `missing[] {id, title, blog_id, edit_url}` (last batch only). See section 8.
+* **Response:** `processed`, `total`, `next_offset`, `done`, `created`, `updated`, `reused`, `skipped`, `authors_added`, `synced[] {id, title, blog_id, site_url, outcome, author_added, edit_url}` (this batch), `errors[] {blog_id, message}`, `missing[] {id, title, blog_id, edit_url}` (last batch only). See section 8.
 
 ## 7. Frontend & Admin Workflows
 
@@ -354,7 +354,7 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
 * **Rewrite rules in switched context:** inside `switch_to_blog()` the plugin deletes the `rewrite_rules` option instead of flushing, so each site regenerates its own rules with its own permalink structure.
 * **Network Sync of Fichas (`NetworkSync`, `NetworkSyncPage`, `NetworkSyncController`):**
   - **Where:** a manual button in **Network Admin → Settings → RadioEdu Conecta** (`manage_network_options`) calls `POST /radioedu-conecta/v1/network-sync`. The endpoint is only available on the main site of a network (404 elsewhere, 401/403 without `manage_network_options`).
-  - **Batches:** each request handles `radioedu_conecta_network_sync_batch_size` sites (filter, default 20, clamped 1–100) and returns `next_offset`/`done`. `build/network-sync.js` loops, updates a `<progress>` and a `role="status"` line, and prints the summary with DOM nodes and `wp.a11y.speak()`.
+  - **Batches:** each request handles `radioedu_conecta_network_sync_batch_size` sites (filter, default 20, clamped 1–100) and returns `next_offset`/`done`. `build/network-sync.js` loops, updates a `<progress>` and a `role="status"` line, and prints the summary with DOM nodes and `wp.a11y.speak()`, followed by a table of every synced station (ficha link, source site, result, Author role added).
   - **Sources and target:** every site except the main one, skipping archived, spam and deleted sites. Fichas are `radioedu_centro` posts on the main site (the directory), linked to their site through the locked meta `_radioedu_source_blog_id`.
   - **Mapping:** `switch_to_blog()` reads each site, with `restore_current_blog()` in `finally`.
     - Refreshed on every sync: `blogname` → title, `home_url('/')` → `_radioedu_web_centro`, `get_site_icon_url(512)` → `_radioedu_logo_url`.

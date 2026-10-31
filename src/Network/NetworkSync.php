@@ -112,7 +112,7 @@ final class NetworkSync {
 	 *
 	 * @param int  $offset            Number of source sites already processed.
 	 * @param bool $grant_author_role Whether ficha authors get the Author role on the main site.
-	 * @return array{processed: int, total: int, next_offset: int, done: bool, created: int, updated: int, reused: int, skipped: int, authors_added: int, errors: list<array{blog_id: int, message: string}>, missing: list<array{id: int, title: string, blog_id: int, edit_url: string}>} Batch result. `missing` is only filled in the last batch.
+	 * @return array{processed: int, total: int, next_offset: int, done: bool, created: int, updated: int, reused: int, skipped: int, authors_added: int, synced: list<array{id: int, title: string, blog_id: int, site_url: string, outcome: string, author_added: bool, edit_url: string}>, errors: list<array{blog_id: int, message: string}>, missing: list<array{id: int, title: string, blog_id: int, edit_url: string}>} Batch result. `synced` lists the fichas of this batch; `missing` is only filled in the last batch.
 	 */
 	public static function sync_batch( int $offset, bool $grant_author_role = true ): array {
 		$size     = self::get_batch_size();
@@ -136,6 +136,7 @@ final class NetworkSync {
 			'skipped' => 0,
 		];
 		$authors_added = 0;
+		$synced        = [];
 		$errors        = [];
 		foreach ( $site_ids as $blog_id ) {
 			$result = self::sync_site( (int) $blog_id, $grant_author_role );
@@ -148,6 +149,15 @@ final class NetworkSync {
 			}
 			++$counts[ $result['outcome'] ];
 			$authors_added += $result['author_added'] ? 1 : 0;
+			$synced[]       = [
+				'id'           => $result['post_id'],
+				'title'        => html_entity_decode( get_the_title( $result['post_id'] ), ENT_QUOTES, 'UTF-8' ),
+				'blog_id'      => (int) $blog_id,
+				'site_url'     => $result['site_url'],
+				'outcome'      => $result['outcome'],
+				'author_added' => $result['author_added'],
+				'edit_url'     => (string) get_edit_post_link( $result['post_id'], 'raw' ),
+			];
 		}
 
 		$total       = self::count_source_sites();
@@ -164,6 +174,7 @@ final class NetworkSync {
 			'reused'        => $counts['reused'],
 			'skipped'       => $counts['skipped'],
 			'authors_added' => $authors_added,
+			'synced'        => $synced,
 			'errors'        => $errors,
 			'missing'       => $done ? self::find_orphaned_fichas() : [],
 		];
@@ -176,7 +187,7 @@ final class NetworkSync {
 	 *
 	 * @param int  $blog_id           Source site ID.
 	 * @param bool $grant_author_role Whether the ficha author gets the Author role on the main site.
-	 * @return array{outcome: 'created'|'updated'|'reused'|'skipped', author_added: bool}|WP_Error What happened to the ficha, and whether its author got the Author role.
+	 * @return array{post_id: int, site_url: string, outcome: 'created'|'updated'|'reused'|'skipped', author_added: bool}|WP_Error The ficha, the site URL, what happened to the ficha, and whether its author got the Author role.
 	 */
 	public static function sync_site( int $blog_id, bool $grant_author_role = true ): array|WP_Error {
 		$data = self::read_site( $blog_id );
@@ -189,6 +200,8 @@ final class NetworkSync {
 		// A ficha an administrator sent to the trash is neither touched nor created again.
 		if ( 'skipped' === $outcome ) {
 			return [
+				'post_id'      => $post_id,
+				'site_url'     => $data['url'],
 				'outcome'      => $outcome,
 				'author_added' => false,
 			];
@@ -231,6 +244,8 @@ final class NetworkSync {
 		update_post_meta( $post_id, '_radioedu_logo_url', $data['icon'] );
 
 		return [
+			'post_id'      => $post_id,
+			'site_url'     => $data['url'],
 			'outcome'      => $outcome,
 			'author_added' => $grant_author_role && self::grant_author_access( (int) get_post_field( 'post_author', $post_id ) ),
 		];

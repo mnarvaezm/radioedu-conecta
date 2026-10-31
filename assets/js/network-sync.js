@@ -42,6 +42,115 @@ function safeUrl( url ) {
 }
 
 /**
+ * Returns a link when the URL is http(s), or plain text otherwise.
+ *
+ * @param {string} url  URL from the server.
+ * @param {string} text Link text.
+ * @return {Node} Link or text node.
+ */
+function linkOrText( url, text ) {
+	const safe = safeUrl( url );
+	if ( ! safe ) {
+		return document.createTextNode( text );
+	}
+	const link = el( 'a', text );
+	link.href = safe;
+	return link;
+}
+
+/**
+ * Builds the table of the stations synced in this run.
+ *
+ * @param {Array} synced Fichas returned by every batch.
+ * @return {HTMLElement} Section with a heading and the table.
+ */
+function buildSyncedTable( synced ) {
+	const outcomes = {
+		created: __( 'Creada', 'radioedu-conecta' ),
+		updated: __( 'Actualizada', 'radioedu-conecta' ),
+		reused: __( 'Reutilizada (ficha hecha a mano)', 'radioedu-conecta' ),
+		skipped: __( 'Omitida (en la papelera)', 'radioedu-conecta' ),
+	};
+
+	const section = el( 'div' );
+	section.className = 'radioedu-network-sync-list';
+	section.append(
+		el(
+			'h2',
+			sprintf(
+				/* translators: %d: number of synced stations. */
+				_n(
+					'%d emisora sincronizada',
+					'%d emisoras sincronizadas',
+					synced.length,
+					'radioedu-conecta'
+				),
+				synced.length
+			)
+		)
+	);
+	if ( ! synced.length ) {
+		return section;
+	}
+
+	const table = el( 'table' );
+	table.className = 'widefat striped';
+	const caption = el(
+		'caption',
+		__( 'Resultado de la sincronización por emisora', 'radioedu-conecta' )
+	);
+	caption.className = 'screen-reader-text';
+	table.append( caption );
+
+	const headRow = el( 'tr' );
+	[
+		__( 'Emisora', 'radioedu-conecta' ),
+		__( 'Sitio de origen', 'radioedu-conecta' ),
+		__( 'Resultado', 'radioedu-conecta' ),
+		__( 'Rol Autor añadido', 'radioedu-conecta' ),
+	].forEach( ( label ) => {
+		const th = el( 'th', label );
+		th.scope = 'col';
+		headRow.append( th );
+	} );
+	const thead = el( 'thead' );
+	thead.append( headRow );
+	table.append( thead );
+
+	const tbody = el( 'tbody' );
+	synced.forEach( ( ficha ) => {
+		const row = el( 'tr' );
+		const name = el( 'td' );
+		name.append(
+			linkOrText(
+				ficha.edit_url,
+				ficha.title ||
+					/* translators: %d: ficha ID. */
+					sprintf( __( 'Ficha %d', 'radioedu-conecta' ), ficha.id )
+			)
+		);
+		const site = el( 'td' );
+		site.append( linkOrText( ficha.site_url, ficha.site_url ) );
+		row.append(
+			name,
+			site,
+			el( 'td', outcomes[ ficha.outcome ] || ficha.outcome ),
+			el(
+				'td',
+				ficha.author_added
+					? __( 'Sí', 'radioedu-conecta' )
+					: __( 'No', 'radioedu-conecta' )
+			)
+		);
+		tbody.append( row );
+	} );
+	table.append( tbody );
+	section.append( table );
+
+	return section;
+}
+
+/**
  * Builds the summary notice.
  *
  * @param {Object} totals  Accumulated counts and errors.
@@ -211,6 +320,7 @@ domReady( () => {
 			reused: 0,
 			skipped: 0,
 			authorsAdded: 0,
+			synced: [],
 			errors: [],
 		};
 		let missing = [];
@@ -229,6 +339,7 @@ domReady( () => {
 				totals.skipped += batch.skipped;
 				totals.authorsAdded += batch.authors_added;
 				totals.errors.push( ...batch.errors );
+				totals.synced.push( ...( batch.synced || [] ) );
 
 				bar.max = Math.max( 1, batch.total );
 				bar.value = Math.min( batch.next_offset, bar.max );
@@ -247,7 +358,10 @@ domReady( () => {
 				offset = batch.next_offset;
 			}
 
-			result.append( buildSummary( totals, missing ) );
+			result.append(
+				buildSummary( totals, missing ),
+				buildSyncedTable( totals.synced )
+			);
 			status.textContent = __(
 				'Sincronización terminada.',
 				'radioedu-conecta'

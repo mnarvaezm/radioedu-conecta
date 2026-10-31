@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-31T14:25:30+00:00\n"
+"POT-Creation-Date: 2026-10-31T15:33:36+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: radioedu-conecta\n"
@@ -435,6 +435,7 @@ msgstr ""
 #: src/Admin/NetworkSyncPage.php:114
 #: src/Admin/NetworkSyncPage.php:115
 #: src/Admin/NetworkSyncPage.php:116
+#: build/network-sync.js:11
 msgid "Sí"
 msgstr ""
 
@@ -790,7 +791,7 @@ msgstr ""
 msgid "Enviar"
 msgstr ""
 
-#: src/Network/NetworkSync.php:302
+#: src/Network/NetworkSync.php:317
 msgid "El sitio no existe."
 msgstr ""
 
@@ -1234,7 +1235,11 @@ msgstr ""
 msgid "Autores de fichas que han recibido el rol Autor en el sitio principal."
 msgstr ""
 
-#: src/Rest/NetworkSyncController.php:169
+#: src/Rest/NetworkSyncController.php:158
+msgid "Fichas sincronizadas en este lote."
+msgstr ""
+
+#: src/Rest/NetworkSyncController.php:195
 msgid "Fichas cuyo sitio de origen ya no existe (solo en el último lote)."
 msgstr ""
 
@@ -1801,7 +1806,7 @@ msgid "Procesados %1$d de %2$d sitios…"
 msgstr ""
 
 #: build/network-sync.js:2
-#: build/network-sync.js:9
+#: build/network-sync.js:11
 msgid "Sincronización terminada."
 msgstr ""
 
@@ -1865,18 +1870,72 @@ msgstr ""
 msgid "(sitio %d)"
 msgstr ""
 
-#. translators: 1: created fichas, 2: updated fichas, 3: problems.
+#: build/network-sync.js:9
+msgid "Creada"
+msgstr ""
+
+#: build/network-sync.js:9
+msgid "Actualizada"
+msgstr ""
+
+#: build/network-sync.js:9
+msgid "Reutilizada (ficha hecha a mano)"
+msgstr ""
+
+#: build/network-sync.js:9
+msgid "Omitida (en la papelera)"
+msgstr ""
+
+#. translators: %d: number of synced stations.
 #: build/network-sync.js:10
+#, js-format
+msgid "%d emisora sincronizada"
+msgid_plural "%d emisoras sincronizadas"
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/network-sync.js:10
+msgid "Resultado de la sincronización por emisora"
+msgstr ""
+
+#: build/network-sync.js:10
+msgid "Emisora"
+msgstr ""
+
+#: build/network-sync.js:10
+msgid "Sitio de origen"
+msgstr ""
+
+#: build/network-sync.js:10
+msgid "Resultado"
+msgstr ""
+
+#: build/network-sync.js:10
+msgid "Rol Autor añadido"
+msgstr ""
+
+#. translators: %d: ficha ID.
+#: build/network-sync.js:11
+#, js-format
+msgid "Ficha %d"
+msgstr ""
+
+#: build/network-sync.js:11
+msgid "No"
+msgstr ""
+
+#. translators: 1: created fichas, 2: updated fichas, 3: problems.
+#: build/network-sync.js:12
 #, js-format
 msgid "Sincronización terminada: %1$d creadas, %2$d actualizadas, %3$d avisos."
 msgstr ""
 
 #. translators: %s: error message.
-#: build/network-sync.js:11
+#: build/network-sync.js:13
 #, js-format
 msgid "La sincronización se ha detenido: %s"
 msgstr ""
 
-#: build/network-sync.js:11
+#: build/network-sync.js:13
 msgid "error desconocido"
 msgstr ""

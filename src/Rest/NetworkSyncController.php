@@ -152,6 +152,32 @@ class NetworkSyncController extends WP_REST_Controller {
 				'reused'        => $count + [ 'description' => __( 'Fichas creadas a mano reutilizadas.', 'radioedu-conecta' ) ],
 				'skipped'       => $count + [ 'description' => __( 'Fichas omitidas porque están en la papelera.', 'radioedu-conecta' ) ],
 				'authors_added' => $count + [ 'description' => __( 'Autores de fichas que han recibido el rol Autor en el sitio principal.', 'radioedu-conecta' ) ],
+				'synced'        => [
+					'type'        => 'array',
+					'readonly'    => true,
+					'description' => __( 'Fichas sincronizadas en este lote.', 'radioedu-conecta' ),
+					'items'       => [
+						'type'       => 'object',
+						'properties' => [
+							'id'           => [ 'type' => 'integer' ],
+							'title'        => [ 'type' => 'string' ],
+							'blog_id'      => [ 'type' => 'integer' ],
+							'site_url'     => [
+								'type'   => 'string',
+								'format' => 'uri',
+							],
+							'outcome'      => [
+								'type' => 'string',
+								'enum' => [ 'created', 'updated', 'reused', 'skipped' ],
+							],
+							'author_added' => [ 'type' => 'boolean' ],
+							'edit_url'     => [
+								'type'   => 'string',
+								'format' => 'uri',
+							],
+						],
+					],
+				],
 				'errors'        => [
 					'type'     => 'array',
 					'readonly' => true,

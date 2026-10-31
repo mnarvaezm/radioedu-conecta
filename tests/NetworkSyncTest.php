@@ -191,6 +191,16 @@ class NetworkSyncTest extends WP_UnitTestCase {
 		$this->assertTrue( user_can( $teacher, 'edit_post', $ficha->ID ) );
 		// The main site itself gets no ficha.
 		$this->assertNull( $this->ficha_of( get_main_site_id() ) );
+
+		// The batch lists the synced station for the final table.
+		$this->assertCount( 1, $result['synced'] );
+		$this->assertSame( $ficha->ID, $result['synced'][0]['id'] );
+		$this->assertSame( 'IES Prueba Radio', $result['synced'][0]['title'] );
+		$this->assertSame( $site, $result['synced'][0]['blog_id'] );
+		$this->assertSame( get_home_url( $site, '/' ), $result['synced'][0]['site_url'] );
+		$this->assertSame( 'created', $result['synced'][0]['outcome'] );
+		$this->assertTrue( $result['synced'][0]['author_added'] );
+		$this->assertStringContainsString( 'post=' . $ficha->ID, $result['synced'][0]['edit_url'] );
 	}
 
 	public function test_resync_refreshes_name_web_and_logo_but_keeps_what_the_coordinator_edited(): void {
@@ -248,6 +258,7 @@ class NetworkSyncTest extends WP_UnitTestCase {
 		$this->assertSame( $manual, $ficha->ID );
 		$this->assertSame( 'Radio Con Ficha', $ficha->post_title );
 		$this->assertSame( $author, (int) $ficha->post_author, 'The hand-made ficha keeps its author.' );
+		$this->assertSame( [ 'reused' ], array_column( $result['synced'], 'outcome' ) );
 	}
 
 	public function test_skips_archived_spam_and_deleted_sites(): void {
@@ -292,6 +303,8 @@ class NetworkSyncTest extends WP_UnitTestCase {
 		$this->assertSame( 1, $result['skipped'] );
 		$this->assertSame( 0, $result['created'] );
 		$this->assertSame( 'trash', get_post_status( $ficha->ID ) );
+		$this->assertSame( [ $ficha->ID ], array_column( $result['synced'], 'id' ) );
+		$this->assertSame( [ 'skipped' ], array_column( $result['synced'], 'outcome' ) );
 	}
 
 	public function test_batches_advance_until_every_site_is_synced(): void {

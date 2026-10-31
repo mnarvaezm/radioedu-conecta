@@ -86,6 +86,7 @@ Sí. En **Administración de la red → Ajustes → RadioEdu Conecta**, el botó
 - **Lo que no toca:** lo que el coordinador complete después (coordenadas, bandera, etapas, idiomas, temas, podcast) no se modifica nunca, y las fichas en la papelera no se tocan.
 - **Fichas existentes:** si ya existe una ficha creada a mano con la misma web, se reutiliza en lugar de duplicarla.
 - **Sitios desaparecidos:** sus fichas no se borran; aparecen en el resumen final con un enlace para editarlas.
+- **Listado final:** al terminar, una tabla muestra cada emisora sincronizada con enlace a su ficha, su sitio de origen, el resultado (creada, actualizada, reutilizada u omitida) y si su coordinador ha recibido el rol Autor.
 
 La sincronización es manual, por lotes con barra de progreso, y solo la puede lanzar un superadministrador. El plugin debe estar activo en el sitio principal; lo recomendable es activarlo en red.
 
