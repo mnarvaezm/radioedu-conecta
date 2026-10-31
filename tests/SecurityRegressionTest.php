@@ -227,16 +227,33 @@ class SecurityRegressionTest extends WP_UnitTestCase {
 		$this->assertGreaterThan( 0, (int) get_option( 'radioedu_conecta_directory_page_id' ) );
 	}
 
-	public function test_demo_import_adopts_centros_and_page_created_before_the_demo_marker(): void {
+	public function test_demo_import_adopts_centros_imported_before_the_demo_marker(): void {
 		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
 		$legacy = $this->center( get_current_user_id(), [ 'post_name' => 'ceip-la-mar', 'post_title' => 'Old demo', 'post_content' => 'Stale demo content' ] );
-		update_post_meta( $legacy, '_radioedu_podcast_url', 'https://radioedu.educarex.es/lamar' );
-		$page = self::factory()->post->create( [ 'post_type' => 'page', 'post_name' => 'traspasando-fronteras', 'post_content' => '<!-- wp:shortcode -->[radioedu_directorio]<!-- /wp:shortcode -->' ] );
+		// 1.0.0 wrote the cover URL with the site's address at the time, which may have changed since.
+		update_post_meta( $legacy, '_radioedu_cover_url', 'http://old-host.example/wp-content/plugins/radioedu-conecta/assets/images/demo/header-la-mar.jpg' );
 		DemoDataImporter::import_demo_centers();
 		$this->assertSame( '1', get_post_meta( $legacy, '_radioedu_conecta_demo', true ) );
 		$this->assertNotSame( 'Stale demo content', get_post_field( 'post_content', $legacy ) );
-		$this->assertSame( '1', get_post_meta( $page, '_radioedu_conecta_demo', true ) );
+	}
+
+	public function test_demo_import_keeps_a_real_centro_with_the_demo_slug_and_podcast_url(): void {
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
+		$real = $this->center( get_current_user_id(), [ 'post_name' => 'ies-sierra-de-gata-radio', 'post_title' => 'Real school', 'post_content' => 'Real content' ] );
+		update_post_meta( $real, '_radioedu_podcast_url', 'https://radioedu.educarex.es/sierradegata' );
+		update_post_meta( $real, '_radioedu_cover_url', 'https://example.org/wp-content/uploads/our-cover.jpg' );
+		DemoDataImporter::import_demo_centers();
+		$this->assertSame( 'Real school', get_post_field( 'post_title', $real ) );
+		$this->assertSame( 'Real content', get_post_field( 'post_content', $real ) );
+		$this->assertSame( '', get_post_meta( $real, '_radioedu_conecta_demo', true ) );
+	}
+
+	public function test_demo_import_records_an_existing_directory_page_without_claiming_it(): void {
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
+		$page = self::factory()->post->create( [ 'post_type' => 'page', 'post_name' => 'traspasando-fronteras', 'post_content' => '<!-- wp:shortcode -->[radioedu_directorio]<!-- /wp:shortcode -->' ] );
+		DemoDataImporter::import_demo_centers();
 		$this->assertSame( $page, (int) get_option( 'radioedu_conecta_directory_page_id' ) );
+		$this->assertSame( '', get_post_meta( $page, '_radioedu_conecta_demo', true ), 'Uninstall deletes marked pages, and this one may be hand-made.' );
 	}
 
 	public function test_demo_images_only_fill_in_for_marked_demo_centros(): void {

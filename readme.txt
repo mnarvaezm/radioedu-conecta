@@ -111,6 +111,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * Admin notices use `wp_admin_notice()`.
 * The full Leaflet license text ships in `assets/leaflet-LICENSE.txt`.
 * The bundled demo images appear only on demo stations, not on real schools whose slug contains "san-jose" or "la-mar".
+* The demo importer only updates the demo stations it created. It no longer takes over a station that shares a slug or podcast URL with a demo station, nor marks an existing directory page for deletion on uninstall.
 
 = 1.0.0 =
 * Interactive `[radioedu_directorio]` directory with faceted filters, affinity sorting, pagination and a locally bundled Leaflet map with prior consent for OpenStreetMap tiles.

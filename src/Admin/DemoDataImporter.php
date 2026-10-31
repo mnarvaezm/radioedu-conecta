@@ -224,7 +224,7 @@ class DemoDataImporter {
 			$existing = get_page_by_path( $data['slug'], OBJECT, CentroPostType::POST_TYPE );
 			$post_id  = $existing ? $existing->ID : 0;
 			// A matching slug does not establish ownership of existing content.
-			if ( $post_id > 0 && ! self::is_demo_centro( $post_id, $data['podcast_url'] ) ) {
+			if ( $post_id > 0 && ! self::is_demo_centro( $post_id, $data['cover'] ) ) {
 				continue;
 			}
 
@@ -247,7 +247,7 @@ class DemoDataImporter {
 			if ( is_wp_error( $post_id ) ) {
 				continue;
 			}
-			update_post_meta( $post_id, '_radioedu_conecta_demo', '1' );
+			update_post_meta( $post_id, self::DEMO_META, '1' );
 
 			update_post_meta( $post_id, '_radioedu_bandera', $data['bandera'] );
 			update_post_meta( $post_id, '_radioedu_lat', $data['lat'] );
@@ -283,12 +283,12 @@ class DemoDataImporter {
 				true
 			);
 			if ( ! is_wp_error( $page_id ) ) {
-				update_post_meta( $page_id, '_radioedu_conecta_demo', '1' );
+				update_post_meta( $page_id, self::DEMO_META, '1' );
 				update_option( 'radioedu_conecta_directory_page_id', $page_id, false );
 			}
-		} elseif ( '1' !== get_post_meta( $existing_page->ID, '_radioedu_conecta_demo', true ) && trim( $existing_page->post_content ) === $page_content ) {
-			// Adopt the page created before the demo marker existed, so uninstall can remove it.
-			update_post_meta( $existing_page->ID, '_radioedu_conecta_demo', '1' );
+		} elseif ( '1' !== get_post_meta( $existing_page->ID, self::DEMO_META, true ) && trim( $existing_page->post_content ) === $page_content ) {
+			// The same slug and content may come from a page made by hand, so it is only recorded as
+			// the directory page. Without the demo marker, uninstall leaves it in place.
 			update_option( 'radioedu_conecta_directory_page_id', $existing_page->ID, false );
 		}
 
@@ -298,20 +298,26 @@ class DemoDataImporter {
 	/**
 	 * Tells whether an existing centro was created by this importer.
 	 *
-	 * Centros imported before the `_radioedu_conecta_demo` marker existed are recognised by the
-	 * demo podcast URL, which only this importer writes; a slug match alone is not enough.
+	 * Centros imported before the demo marker existed are recognised by their internal cover URL,
+	 * which only this importer writes and no user can edit. A slug or podcast URL match is not
+	 * enough: coordinators enter their own podcast URL, and the demo ones point to the real
+	 * radioedu.educarex.es domain.
 	 *
 	 * @since 1.1
 	 *
-	 * @param int    $post_id          Existing centro ID.
-	 * @param string $demo_podcast_url Podcast URL that the importer assigns to this demo centro.
+	 * @param int    $post_id        Existing centro ID.
+	 * @param string $demo_cover_url Cover URL that the importer assigns to this demo centro.
 	 * @return bool True when the importer may overwrite the centro.
 	 */
-	private static function is_demo_centro( int $post_id, string $demo_podcast_url ): bool {
-		if ( '1' === get_post_meta( $post_id, '_radioedu_conecta_demo', true ) ) {
+	private static function is_demo_centro( int $post_id, string $demo_cover_url ): bool {
+		if ( '1' === get_post_meta( $post_id, self::DEMO_META, true ) ) {
 			return true;
 		}
 
-		return (string) get_post_meta( $post_id, '_radioedu_podcast_url', true ) === $demo_podcast_url;
+		// Compare paths only: the site may have moved to another domain since the import.
+		$cover_path = (string) wp_parse_url( (string) get_post_meta( $post_id, '_radioedu_cover_url', true ), PHP_URL_PATH );
+		$demo_file  = '/assets/images/demo/' . basename( (string) wp_parse_url( $demo_cover_url, PHP_URL_PATH ) );
+
+		return str_ends_with( $cover_path, $demo_file );
 	}
 }

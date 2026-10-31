@@ -136,6 +136,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * Avisos de administración con `wp_admin_notice()`.
 * El texto completo de la licencia de Leaflet se incluye en `assets/leaflet-LICENSE.txt`.
 * Las imágenes de ejemplo solo aparecen en las emisoras de demostración, no en centros reales cuyo slug contiene `san-jose` o `la-mar`.
+* El importador de demostración solo actualiza las emisoras que creó. Ya no se apropia de una emisora que comparta slug o URL de podcast con una de ejemplo, ni marca para borrar al desinstalar una página del directorio que ya existía.
 * Pruebas E2E con Playwright y `wp-env` (datos del centro en los paneles del editor de WordPress 7.1, incluido el logo, y bloque del directorio).
 
 ### 1.0.0
