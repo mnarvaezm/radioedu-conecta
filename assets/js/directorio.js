@@ -137,6 +137,9 @@ import { speak } from '@wordpress/a11y';
 			? btnSubmitMatch.querySelector( '.radioedu-btn-label' )
 			: null;
 		let lastFocusedElement = null;
+		// Grows on every opening, so a reply to a proposal sent from an earlier opening is ignored.
+		let drawerSession = 0;
+		let drawerCloseTimer = null;
 
 		// Filtros.
 		const filterUbicacion = document.getElementById(
@@ -582,6 +585,9 @@ import { speak } from '@wordpress/a11y';
 
 		// Gestión del Drawer de Solicitud de Match.
 		function openMatchDrawer( centro, triggerEl ) {
+			++drawerSession;
+			clearTimeout( drawerCloseTimer );
+			setSubmitState( false );
 			if ( matchReceptorTxt ) {
 				matchReceptorTxt.value =
 					centro.nombre +
@@ -637,7 +643,7 @@ import { speak } from '@wordpress/a11y';
 			drawerPanel.classList.remove( 'is-open' );
 			drawerOverlay.classList.remove( 'is-open' );
 			document.removeEventListener( 'keydown', onDrawerKeydown );
-			setTimeout( function () {
+			drawerCloseTimer = setTimeout( function () {
 				drawerPanel.style.display = 'none';
 			}, 350 );
 			if (
@@ -801,6 +807,11 @@ import { speak } from '@wordpress/a11y';
 				}
 
 				setSubmitState( true );
+				// The panel may be closed and opened for another centro before the reply arrives.
+				const session = drawerSession;
+				const receptorLabel = matchReceptorTxt
+					? matchReceptorTxt.value
+					: '';
 
 				fetch( restUrl + 'colaboraciones', {
 					method: 'POST',
@@ -823,6 +834,9 @@ import { speak } from '@wordpress/a11y';
 						} );
 					} )
 					.then( function ( payload ) {
+						if ( session !== drawerSession ) {
+							return;
+						}
 						setSubmitState( false );
 
 						if ( payload.ok && payload.result.success ) {
@@ -832,9 +846,6 @@ import { speak } from '@wordpress/a11y';
 									'',
 								true
 							);
-							const receptorLabel = matchReceptorTxt
-								? matchReceptorTxt.value
-								: '';
 							matchForm.reset();
 							// reset() vacía también el receptor preseleccionado: se restaura.
 							if ( matchReceptorId ) {
@@ -880,6 +891,9 @@ import { speak } from '@wordpress/a11y';
 						}
 					} )
 					.catch( function () {
+						if ( session !== drawerSession ) {
+							return;
+						}
 						setSubmitState( false );
 						showDrawerFeedback( i18n.errorOccurred || '', false );
 					} );
