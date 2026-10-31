@@ -27,6 +27,11 @@ class ColaboracionesAdminPage {
 	public const PAGE_SLUG    = 'radioedu-conecta-colaboraciones';
 
 	/**
+	 * Proposals shown on each page of the listing.
+	 */
+	public const PER_PAGE = 20;
+
+	/**
 	 * Hook suffix of the submenu page, used to load its stylesheet only there.
 	 *
 	 * @var string
@@ -127,12 +132,14 @@ class ColaboracionesAdminPage {
 			wp_die( esc_html__( 'No tienes permisos suficientes para acceder a esta página.', 'radioedu-conecta' ) );
 		}
 
-		$user_id = get_current_user_id();
-		$rows    = ColaboracionesTable::get_for_user(
-			$user_id,
-			ColaboracionesController::get_user_managed_center_ids( $user_id ),
-			current_user_can( 'manage_radioedu' )
-		);
+		$user_id    = get_current_user_id();
+		$center_ids = ColaboracionesController::get_user_managed_center_ids( $user_id );
+		$all        = current_user_can( 'manage_radioedu' );
+		$total      = ColaboracionesTable::count_for_user( $user_id, $center_ids, $all );
+		$pages      = max( 1, (int) ceil( $total / self::PER_PAGE ) );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only page number of the listing.
+		$paged = isset( $_GET['paged'] ) ? min( $pages, max( 1, absint( wp_unslash( $_GET['paged'] ) ) ) ) : 1;
+		$rows  = ColaboracionesTable::get_for_user( $user_id, $center_ids, $all, self::PER_PAGE, ( $paged - 1 ) * self::PER_PAGE );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only flag used to display a notice after the nonce-protected redirect.
 		$updated_status = isset( $_GET['match_updated'] ) ? sanitize_key( wp_unslash( $_GET['match_updated'] ) ) : '';
@@ -256,6 +263,24 @@ class ColaboracionesAdminPage {
 						<?php endforeach; ?>
 					</tbody>
 				</table>
+				<?php if ( $pages > 1 ) : ?>
+					<div class="tablenav bottom">
+						<div class="tablenav-pages">
+							<?php
+							echo wp_kses_post(
+								(string) paginate_links(
+									[
+										'base'    => add_query_arg( 'paged', '%#%', remove_query_arg( 'match_updated' ) ),
+										'format'  => '',
+										'current' => $paged,
+										'total'   => $pages,
+									]
+								)
+							);
+							?>
+						</div>
+					</div>
+				<?php endif; ?>
 			<?php endif; ?>
 		</div>
 		<?php

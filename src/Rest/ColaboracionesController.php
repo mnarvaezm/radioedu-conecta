@@ -67,7 +67,7 @@ class ColaboracionesController extends WP_REST_Controller {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_items' ],
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
-					'args'                => [],
+					'args'                => $this->get_collection_params(),
 				],
 			]
 		);
@@ -200,13 +200,14 @@ class ColaboracionesController extends WP_REST_Controller {
 	 * @param WP_REST_Request $request Objeto de la petición.
 	 * @return WP_REST_Response
 	 */
-	public function get_items( $request ): WP_REST_Response { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass -- WordPress requires this argument.
-		$user_id = get_current_user_id();
-		$rows    = ColaboracionesTable::get_for_user(
-			$user_id,
-			self::get_user_managed_center_ids( $user_id ),
-			current_user_can( 'manage_radioedu' )
-		);
+	public function get_items( $request ): WP_REST_Response {
+		$user_id    = get_current_user_id();
+		$center_ids = self::get_user_managed_center_ids( $user_id );
+		$all        = current_user_can( 'manage_radioedu' );
+		$per_page   = max( 1, min( 100, (int) $request->get_param( 'per_page' ) ) );
+		$page       = max( 1, (int) $request->get_param( 'page' ) );
+		$total      = ColaboracionesTable::count_for_user( $user_id, $center_ids, $all );
+		$rows       = ColaboracionesTable::get_for_user( $user_id, $center_ids, $all, $per_page, ( $page - 1 ) * $per_page );
 
 		$items = [];
 		foreach ( $rows as $row ) {
@@ -227,7 +228,11 @@ class ColaboracionesController extends WP_REST_Controller {
 			];
 		}
 
-		return rest_ensure_response( [ 'colaboraciones' => $items ] );
+		$response = new WP_REST_Response( [ 'colaboraciones' => $items ] );
+		$response->header( 'X-WP-Total', (string) $total );
+		$response->header( 'X-WP-TotalPages', (string) max( 1, (int) ceil( $total / $per_page ) ) );
+
+		return $response;
 	}
 
 	/**
@@ -522,6 +527,37 @@ class ColaboracionesController extends WP_REST_Controller {
 		NotificationService::send_status_update_email( $id, $estado );
 
 		return null;
+	}
+
+	/**
+	 * Pagination arguments of the proposals listing.
+	 *
+	 * The default page size stays at 100, the size of the listing before it was paginated.
+	 *
+	 * @since 1.1
+	 *
+	 * @return array<string, array<string, mixed>>
+	 */
+	public function get_collection_params(): array {
+		return [
+			'page'     => [
+				'description'       => __( 'Número de página de resultados.', 'radioedu-conecta' ),
+				'type'              => 'integer',
+				'default'           => 1,
+				'minimum'           => 1,
+				'sanitize_callback' => 'absint',
+				'validate_callback' => 'rest_validate_request_arg',
+			],
+			'per_page' => [
+				'description'       => __( 'Número de propuestas por página.', 'radioedu-conecta' ),
+				'type'              => 'integer',
+				'default'           => 100,
+				'minimum'           => 1,
+				'maximum'           => 100,
+				'sanitize_callback' => 'absint',
+				'validate_callback' => 'rest_validate_request_arg',
+			],
+		];
 	}
 
 	/**

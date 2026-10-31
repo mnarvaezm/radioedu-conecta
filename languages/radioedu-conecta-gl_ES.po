@@ -304,119 +304,119 @@ msgstr "Estado de colaboración"
 msgid "Disponible para recibir propuestas de match y proyectos conjuntos"
 msgstr "Dispoñible para recibir propostas de match e proxectos conxuntos"
 
-#: src/Admin/ColaboracionesAdminPage.php:71
+#: src/Admin/ColaboracionesAdminPage.php:76
 msgid "Propuestas de Colaboración (Matches)"
 msgstr "Propostas de colaboración (matches)"
 
-#: src/Admin/ColaboracionesAdminPage.php:72
+#: src/Admin/ColaboracionesAdminPage.php:77
 msgid "Colaboraciones (Matches)"
 msgstr "Colaboracións (matches)"
 
-#: src/Admin/ColaboracionesAdminPage.php:84
+#: src/Admin/ColaboracionesAdminPage.php:89
 #: src/Admin/DemoDataImporter.php:83
-#: src/Rest/ColaboracionesController.php:298
-#: src/Rest/ColaboracionesController.php:476
+#: src/Rest/ColaboracionesController.php:307
+#: src/Rest/ColaboracionesController.php:485
 msgid "No tienes permisos para realizar esta acción."
 msgstr "Non tes permisos para realizar esta acción."
 
-#: src/Admin/ColaboracionesAdminPage.php:95
+#: src/Admin/ColaboracionesAdminPage.php:100
 msgid "Parámetros de respuesta no válidos."
 msgstr "Os parámetros de resposta non son válidos."
 
-#: src/Admin/ColaboracionesAdminPage.php:100
-#: src/Rest/ColaboracionesController.php:497
+#: src/Admin/ColaboracionesAdminPage.php:105
+#: src/Rest/ColaboracionesController.php:506
 msgid "No tienes permisos para responder a las propuestas de este centro."
 msgstr "Non tes permisos para responder ás propostas deste centro."
 
-#: src/Admin/ColaboracionesAdminPage.php:127
+#: src/Admin/ColaboracionesAdminPage.php:132
 #: src/Admin/NetworkSyncPage.php:109
 #: src/Admin/Settings.php:282
 msgid "No tienes permisos suficientes para acceder a esta página."
 msgstr "Non tes permisos suficientes para acceder a esta páxina."
 
-#: src/Admin/ColaboracionesAdminPage.php:144
+#: src/Admin/ColaboracionesAdminPage.php:151
 msgid "Propuestas de Colaboración (Matches) - Traspasando Fronteras"
 msgstr "Propostas de colaboración (matches) - Traspasando Fronteras"
 
-#: src/Admin/ColaboracionesAdminPage.php:146
+#: src/Admin/ColaboracionesAdminPage.php:153
 msgid "Consulta las solicitudes de hermanamiento recibidas o enviadas por tu emisora escolar y coordina proyectos conjuntos."
 msgstr "Consulta as solicitudes de irmandamento recibidas ou enviadas pola túa emisora escolar e coordina proxectos conxuntos."
 
-#: src/Admin/ColaboracionesAdminPage.php:152
+#: src/Admin/ColaboracionesAdminPage.php:159
 msgid "La respuesta a la propuesta de colaboración se ha guardado correctamente y se ha notificado al centro emisor."
 msgstr "A resposta á proposta de colaboración gardouse correctamente e notificouse ao centro emisor."
 
-#: src/Admin/ColaboracionesAdminPage.php:163
+#: src/Admin/ColaboracionesAdminPage.php:170
 msgid "Todavía no hay propuestas de colaboración registradas para tus centros escolares."
 msgstr "Aínda non hai propostas de colaboración rexistradas para os teus centros escolares."
 
-#: src/Admin/ColaboracionesAdminPage.php:169
+#: src/Admin/ColaboracionesAdminPage.php:176
 #: src/Privacy/PrivacyPolicy.php:195
 msgid "Fecha"
 msgstr "Data"
 
-#: src/Admin/ColaboracionesAdminPage.php:170
+#: src/Admin/ColaboracionesAdminPage.php:177
 msgid "Centro Emisor"
 msgstr "Centro emisor"
 
-#: src/Admin/ColaboracionesAdminPage.php:171
+#: src/Admin/ColaboracionesAdminPage.php:178
 msgid "Centro Receptor"
 msgstr "Centro receptor"
 
-#: src/Admin/ColaboracionesAdminPage.php:172
+#: src/Admin/ColaboracionesAdminPage.php:179
 msgid "Idea del Proyecto y Detalles"
 msgstr "Idea do proxecto e detalles"
 
-#: src/Admin/ColaboracionesAdminPage.php:173
+#: src/Admin/ColaboracionesAdminPage.php:180
 #: src/Privacy/PrivacyPolicy.php:203
 msgid "Estado"
 msgstr "Estado"
 
-#: src/Admin/ColaboracionesAdminPage.php:174
+#: src/Admin/ColaboracionesAdminPage.php:181
 msgid "Respuesta / Acciones"
 msgstr "Resposta / accións"
 
-#: src/Admin/ColaboracionesAdminPage.php:205
+#: src/Admin/ColaboracionesAdminPage.php:212
 msgid "Edades:"
 msgstr "Idades:"
 
-#: src/Admin/ColaboracionesAdminPage.php:208
+#: src/Admin/ColaboracionesAdminPage.php:215
 msgid "Idiomas:"
 msgstr "Idiomas:"
 
-#: src/Admin/ColaboracionesAdminPage.php:211
+#: src/Admin/ColaboracionesAdminPage.php:218
 msgid "Fechas:"
 msgstr "Datas:"
 
-#: src/Admin/ColaboracionesAdminPage.php:216
+#: src/Admin/ColaboracionesAdminPage.php:223
 msgid "Aceptada"
 msgstr "Aceptada"
 
-#: src/Admin/ColaboracionesAdminPage.php:218
+#: src/Admin/ColaboracionesAdminPage.php:225
 msgid "Declinada"
 msgstr "Rexeitada"
 
-#: src/Admin/ColaboracionesAdminPage.php:220
+#: src/Admin/ColaboracionesAdminPage.php:227
 msgid "Pendiente"
 msgstr "Pendente"
 
-#: src/Admin/ColaboracionesAdminPage.php:234
+#: src/Admin/ColaboracionesAdminPage.php:241
 msgid "Mensaje de respuesta"
 msgstr "Mensaxe de resposta"
 
-#: src/Admin/ColaboracionesAdminPage.php:242
+#: src/Admin/ColaboracionesAdminPage.php:249
 msgid "Escribe un mensaje para el centro emisor..."
 msgstr "Escribe unha mensaxe para o centro emisor..."
 
-#: src/Admin/ColaboracionesAdminPage.php:245
+#: src/Admin/ColaboracionesAdminPage.php:252
 msgid "Aceptar"
 msgstr "Aceptar"
 
-#: src/Admin/ColaboracionesAdminPage.php:248
+#: src/Admin/ColaboracionesAdminPage.php:255
 msgid "Declinar"
 msgstr "Rexeitar"
 
-#: src/Admin/ColaboracionesAdminPage.php:252
+#: src/Admin/ColaboracionesAdminPage.php:259
 msgid "En espera de respuesta del centro receptor."
 msgstr "Á espera da resposta do centro receptor."
 
@@ -624,12 +624,12 @@ msgstr "O instalador inclúe 6 emisoras de exemplo completas con fotografías de
 msgid "Sincronizar / Cargar las 6 emisoras de ejemplo"
 msgstr "Sincronizar / Cargar as 6 emisoras de exemplo"
 
-#: src/Capabilities/CentroLimit.php:132
+#: src/Capabilities/CentroLimit.php:195
 msgid "Las radios las da de alta un administrador. Puedes editar las que tengas asignadas."
 msgstr "As radios dáas de alta un administrador. Podes editar as que teñas asignadas."
 
 #. translators: %d: maximum number of radios per user.
-#: src/Capabilities/CentroLimit.php:135
+#: src/Capabilities/CentroLimit.php:200
 #, php-format
 msgid "Has alcanzado el máximo de %d radio por usuario. Para dar de alta otra, contacta con un administrador."
 msgid_plural "Has alcanzado el máximo de %d radios por usuario. Para dar de alta otra, contacta con un administrador."
@@ -1052,6 +1052,7 @@ msgid "No se han podido eliminar todos los datos. Reintente la solicitud de borr
 msgstr "Non se puideron eliminar todos os datos. Volva facer a solicitude de borrado."
 
 #: src/Rest/CentrosController.php:351
+#: src/Rest/ColaboracionesController.php:544
 msgid "Número de página de resultados."
 msgstr "Número de páxina de resultados."
 
@@ -1091,91 +1092,91 @@ msgstr "Slug de formato de programa."
 msgid "Slug de ubicación geográfica."
 msgstr "Slug de localización xeográfica."
 
-#: src/Rest/ColaboracionesController.php:82
+#: src/Rest/ColaboracionesController.php:86
 msgid "ID de la propuesta de colaboración."
 msgstr "ID da proposta de colaboración."
 
-#: src/Rest/ColaboracionesController.php:90
+#: src/Rest/ColaboracionesController.php:94
 msgid "Nuevo estado de la propuesta."
 msgstr "Novo estado da proposta."
 
-#: src/Rest/ColaboracionesController.php:98
+#: src/Rest/ColaboracionesController.php:102
 msgid "Mensaje de respuesta para el centro emisor."
 msgstr "Mensaxe de resposta para o centro emisor."
 
-#: src/Rest/ColaboracionesController.php:319
+#: src/Rest/ColaboracionesController.php:328
 msgid "Has alcanzado el límite de propuestas por hora. Por favor, inténtalo más tarde."
 msgstr "Alcanzaches o límite de propostas por hora. Téntao de novo máis tarde."
 
-#: src/Rest/ColaboracionesController.php:334
+#: src/Rest/ColaboracionesController.php:343
 msgid "No puedes enviar una propuesta de colaboración a tu propio centro escolar."
 msgstr "Non podes enviar unha proposta de colaboración ao teu propio centro escolar."
 
-#: src/Rest/ColaboracionesController.php:342
+#: src/Rest/ColaboracionesController.php:351
 msgid "Por favor, describe brevemente la idea del proyecto conjunto."
 msgstr "Describe brevemente a idea do proxecto conxunto."
 
-#: src/Rest/ColaboracionesController.php:358
+#: src/Rest/ColaboracionesController.php:367
 msgid "Uno de los centros especificados no es válido o no está publicado."
 msgstr "Un dos centros indicados non é válido ou non está publicado."
 
-#: src/Rest/ColaboracionesController.php:367
+#: src/Rest/ColaboracionesController.php:376
 msgid "No tienes permisos para enviar propuestas en nombre del centro emisor seleccionado."
 msgstr "Non tes permisos para enviar propostas en nome do centro emisor seleccionado."
 
-#: src/Rest/ColaboracionesController.php:376
+#: src/Rest/ColaboracionesController.php:385
 msgid "Este centro escolar no está disponible actualmente para recibir nuevas propuestas de colaboración."
 msgstr "Este centro escolar non está dispoñible actualmente para recibir novas propostas de colaboración."
 
-#: src/Rest/ColaboracionesController.php:405
+#: src/Rest/ColaboracionesController.php:414
 msgid "No se pudo registrar la propuesta en la base de datos."
 msgstr "Non se puido rexistrar a proposta na base de datos."
 
-#: src/Rest/ColaboracionesController.php:428
+#: src/Rest/ColaboracionesController.php:437
 msgid "¡Propuesta de match enviada con éxito! La emisora receptora recibirá una notificación para comenzar a coordinar el proyecto."
 msgstr "Enviouse a proposta de match! A emisora receptora recibirá unha notificación para comezar a coordinar o proxecto."
 
-#: src/Rest/ColaboracionesController.php:457
+#: src/Rest/ColaboracionesController.php:466
 msgid "Estado de la colaboración actualizado correctamente."
 msgstr "Actualizouse correctamente o estado da colaboración."
 
-#: src/Rest/ColaboracionesController.php:482
+#: src/Rest/ColaboracionesController.php:491
 msgid "El estado indicado no es válido."
 msgstr "O estado indicado non é válido."
 
-#: src/Rest/ColaboracionesController.php:491
+#: src/Rest/ColaboracionesController.php:500
 msgid "La propuesta de colaboración no existe."
 msgstr "A proposta de colaboración non existe."
 
-#: src/Rest/ColaboracionesController.php:502
+#: src/Rest/ColaboracionesController.php:511
 msgid "El mensaje de respuesta es demasiado largo."
 msgstr "A mensaxe de resposta é demasiado longa."
 
-#: src/Rest/ColaboracionesController.php:513
+#: src/Rest/ColaboracionesController.php:522
 msgid "Esta propuesta ya ha sido respondida y no puede modificarse."
 msgstr "Esta proposta xa foi respondida e non se pode modificar."
 
-#: src/Rest/ColaboracionesController.php:531
+#: src/Rest/ColaboracionesController.php:571
 msgid "ID del centro que envía la propuesta."
 msgstr "ID do centro que envía a proposta."
 
-#: src/Rest/ColaboracionesController.php:539
+#: src/Rest/ColaboracionesController.php:579
 msgid "ID del centro que recibe la propuesta."
 msgstr "ID do centro que recibe a proposta."
 
-#: src/Rest/ColaboracionesController.php:547
+#: src/Rest/ColaboracionesController.php:587
 msgid "Idea del proyecto conjunto."
 msgstr "Idea do proxecto conxunto."
 
-#: src/Rest/ColaboracionesController.php:556
+#: src/Rest/ColaboracionesController.php:596
 msgid "Curso o edades del alumnado participante."
 msgstr "Curso ou idades do alumnado participante."
 
-#: src/Rest/ColaboracionesController.php:564
+#: src/Rest/ColaboracionesController.php:604
 msgid "Idiomas de trabajo del proyecto."
 msgstr "Idiomas de traballo do proxecto."
 
-#: src/Rest/ColaboracionesController.php:572
+#: src/Rest/ColaboracionesController.php:612
 msgid "Fechas aproximadas del proyecto."
 msgstr "Datas aproximadas do proxecto."
 
@@ -1948,10 +1949,14 @@ msgid_plural "Se conservan %d respuestas anteriores a la versión 1.1 en propues
 msgstr[0] "Consérvase %d resposta anterior á versión 1.1 en propostas recibidas polos centros desta persoa, porque non rexistra quen a escribiu. Revísea en Colaboracións (matches) por se contén datos persoais."
 msgstr[1] "Consérvanse %d respostas anteriores á versión 1.1 en propostas recibidas polos centros desta persoa, porque non rexistran quen as escribiu. Revíseas en Colaboracións (matches) por se conteñen datos persoais."
 
-#: src/Rest/ColaboracionesController.php:508
+#: src/Rest/ColaboracionesController.php:517
 msgid "No se pudo guardar la respuesta. Inténtalo de nuevo."
 msgstr "Non se puido gardar a resposta. Téntao de novo."
 
 #: src/Privacy/PrivacyPolicy.php:47
 msgid "Las propuestas no caducan: se conservan como historial compartido hasta que se atiende una solicitud de borrado de datos personales, que anonimiza la parte de la persona solicitante, o hasta que se desinstala el plugin."
 msgstr "As propostas non caducan: consérvanse como historial compartido ata que se atende unha solicitude de borrado de datos persoais, que anonimiza a parte da persoa solicitante, ou ata que se desinstala o plugin."
+
+#: src/Rest/ColaboracionesController.php:552
+msgid "Número de propuestas por página."
+msgstr "Número de propostas por páxina."

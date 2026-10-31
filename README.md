@@ -144,6 +144,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * En el directorio, la respuesta tardía a una propuesta enviada antes de cerrar el panel ya no cambia el panel abierto para otra emisora.
 * El límite de *Radios por usuario* también se aplica cuando un coordinador restaura una emisora desde la papelera o guarda una segunda pestaña de *Añadir nuevo* abierta antes de llegar al límite.
 * Cada coordinador puede enviar hasta 20 propuestas por hora en lugar de 10. Es un límite contra el spam: varias peticiones simultáneas pueden superarlo en alguna.
+* El listado de propuestas tiene paginación: el endpoint REST acepta `page` y `per_page` y devuelve `X-WP-Total`, y la pantalla de administración muestra 20 propuestas por página. Antes, las propuestas posteriores a las 100 más recientes no se podían ver ni responder.
 * Pruebas E2E con Playwright y `wp-env` (datos del centro en los paneles del editor de WordPress 7.1, incluido el logo, y bloque del directorio).
 
 ### 1.0.0

@@ -119,6 +119,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * In the directory, a late reply to a proposal sent before closing the panel no longer changes the panel opened for another station.
 * The "Radios por usuario" limit also applies when a coordinator restores a station from the trash or saves a second "Add New" tab opened before reaching the limit.
 * Coordinators can send up to 20 proposals per hour instead of 10. The limit is meant against spam: simultaneous requests may exceed it by a few.
+* The proposals listing is paginated: the REST endpoint accepts `page` and `per_page` and returns `X-WP-Total`, and the admin screen shows 20 proposals per page. Before, proposals beyond the newest 100 could not be seen or answered.
 
 = 1.0.0 =
 * Interactive `[radioedu_directorio]` directory with faceted filters, affinity sorting, pagination and a locally bundled Leaflet map with prior consent for OpenStreetMap tiles.

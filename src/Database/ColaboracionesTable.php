@@ -190,39 +190,71 @@ class ColaboracionesTable {
 	/**
 	 * Lista las propuestas visibles para un usuario: las que envió y las de los centros que gestiona.
 	 *
+	 * @since 1.1 Pages through the results with $offset, newest first with a stable order.
+	 *
 	 * @param int             $user_id    ID del usuario.
 	 * @param array<int, int> $center_ids IDs de los centros que gestiona el usuario.
 	 * @param bool            $all        Si es true devuelve todas las propuestas (gestores del plugin).
 	 * @param int             $limit      Número máximo de filas.
+	 * @param int             $offset     Rows to skip, for pagination.
 	 * @return array<int, object>
 	 */
-	public static function get_for_user( int $user_id, array $center_ids, bool $all = false, int $limit = 100 ): array {
+	public static function get_for_user( int $user_id, array $center_ids, bool $all = false, int $limit = 100, int $offset = 0 ): array {
 		global $wpdb;
-		$table_name = self::get_table_name();
-		$limit      = max( 1, min( 500, $limit ) );
+		[ $where, $args ] = self::user_scope( $user_id, $center_ids, $all );
+		$query_args       = array_merge( [ self::get_table_name() ], $args, [ max( 1, min( 500, $limit ) ), max( 0, $offset ) ] );
 
-		if ( $all ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table; listing must reflect the latest state.
-			$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i ORDER BY created_at DESC LIMIT %d', $table_name, $limit ) );
-		} elseif ( empty( $center_ids ) ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table; listing must reflect the latest state.
-			$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE usuario_emisor_id = %d ORDER BY created_at DESC LIMIT %d', $table_name, $user_id, $limit ) );
-		} else {
-			$center_ids   = array_map( 'absint', $center_ids );
-			$placeholders = implode( ',', array_fill( 0, count( $center_ids ), '%d' ) );
-			$query_args   = array_merge( [ $table_name, $user_id ], $center_ids, $center_ids, [ $limit ] );
-
-			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $placeholders only contains "%d" tokens built above; every value goes through prepare().
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT * FROM %i WHERE usuario_emisor_id = %d OR centro_emisor_id IN ({$placeholders}) OR centro_receptor_id IN ({$placeholders}) ORDER BY created_at DESC LIMIT %d",
-					...$query_args
-				)
-			);
-			// phpcs:enable
-		}
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where only holds placeholders built in user_scope(); every value goes through prepare(). Listings must reflect the latest state.
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM %i WHERE {$where} ORDER BY created_at DESC, id DESC LIMIT %d OFFSET %d", ...$query_args ) );
+		// phpcs:enable
 
 		return is_array( $rows ) ? array_values( array_filter( $rows, 'is_object' ) ) : [];
+	}
+
+	/**
+	 * Counts the proposals that get_for_user() can list for a user.
+	 *
+	 * @since 1.1
+	 *
+	 * @param int             $user_id    ID del usuario.
+	 * @param array<int, int> $center_ids IDs de los centros que gestiona el usuario.
+	 * @param bool            $all        Si es true cuenta todas las propuestas (gestores del plugin).
+	 * @return int Number of proposals.
+	 */
+	public static function count_for_user( int $user_id, array $center_ids, bool $all = false ): int {
+		global $wpdb;
+		[ $where, $args ] = self::user_scope( $user_id, $center_ids, $all );
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where only holds placeholders built in user_scope(); every value goes through prepare(). The count must match the listing.
+		$count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM %i WHERE {$where}", ...array_merge( [ self::get_table_name() ], $args ) ) );
+		// phpcs:enable
+
+		return (int) $count;
+	}
+
+	/**
+	 * Builds the WHERE clause that limits proposals to those a user may see.
+	 *
+	 * @param int             $user_id    ID del usuario.
+	 * @param array<int, int> $center_ids IDs de los centros que gestiona el usuario.
+	 * @param bool            $all        Whether the user sees every proposal.
+	 * @return array{0: string, 1: array<int, int>} Clause with placeholders only, and its values.
+	 */
+	private static function user_scope( int $user_id, array $center_ids, bool $all ): array {
+		if ( $all ) {
+			return [ '1 = 1', [] ];
+		}
+		if ( empty( $center_ids ) ) {
+			return [ 'usuario_emisor_id = %d', [ $user_id ] ];
+		}
+
+		$center_ids   = array_map( 'absint', array_values( $center_ids ) );
+		$placeholders = implode( ',', array_fill( 0, count( $center_ids ), '%d' ) );
+
+		return [
+			"usuario_emisor_id = %d OR centro_emisor_id IN ({$placeholders}) OR centro_receptor_id IN ({$placeholders})",
+			array_merge( [ $user_id ], $center_ids, $center_ids ),
+		];
 	}
 
 	/**

@@ -298,6 +298,7 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
 ### 6.2 `GET /wp-json/radioedu-conecta/v1/colaboraciones`
 * **Permission:** Authenticated user with `propose_radioedu_colaboracion` or `manage_radioedu`.
 * **Behavior:** Returns collaboration proposals where the current user is the sender (`usuario_emisor_id`) or manages either the sending (`centro_emisor_id`) or receiving (`centro_receptor_id`) center (or all records if `manage_radioedu`).
+* **Pagination:** `page` (default 1) and `per_page` (1–100, default 100), newest first with `created_at DESC, id DESC` so pages never overlap. The `X-WP-Total` and `X-WP-TotalPages` headers give the count with the same visibility rule. The **Colaboraciones (Matches)** admin screen shows 20 proposals per page.
 
 ### 6.3 `POST /wp-json/radioedu-conecta/v1/colaboraciones`
 * **Permission:** Authenticated user with `current_user_can('propose_radioedu_colaboracion')`.
