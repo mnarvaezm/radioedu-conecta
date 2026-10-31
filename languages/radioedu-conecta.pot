@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-31T15:33:36+00:00\n"
+"POT-Creation-Date: 2026-10-31T23:12:36+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: radioedu-conecta\n"
@@ -53,7 +53,7 @@ msgstr ""
 msgid "RadioEdu Conecta requires WordPress %1$s or higher. You are using WordPress %2$s."
 msgstr ""
 
-#: radioedu-conecta.php:176
+#: radioedu-conecta.php:190
 #: src/Admin/Settings.php:52
 msgid "Ajustes"
 msgstr ""
@@ -313,7 +313,7 @@ msgid "Colaboraciones (Matches)"
 msgstr ""
 
 #: src/Admin/ColaboracionesAdminPage.php:84
-#: src/Admin/DemoDataImporter.php:72
+#: src/Admin/DemoDataImporter.php:83
 #: src/Rest/ColaboracionesController.php:298
 #: src/Rest/ColaboracionesController.php:476
 msgid "No tienes permisos para realizar esta acción."
@@ -351,7 +351,7 @@ msgid "Todavía no hay propuestas de colaboración registradas para tus centros 
 msgstr ""
 
 #: src/Admin/ColaboracionesAdminPage.php:169
-#: src/Privacy/PrivacyPolicy.php:193
+#: src/Privacy/PrivacyPolicy.php:194
 msgid "Fecha"
 msgstr ""
 
@@ -368,7 +368,7 @@ msgid "Idea del Proyecto y Detalles"
 msgstr ""
 
 #: src/Admin/ColaboracionesAdminPage.php:173
-#: src/Privacy/PrivacyPolicy.php:201
+#: src/Privacy/PrivacyPolicy.php:202
 msgid "Estado"
 msgstr ""
 
@@ -727,31 +727,31 @@ msgstr ""
 msgid "RadioEdu Conecta - Traspasando Fronteras"
 msgstr ""
 
-#: src/Frontend/DirectorioShortcode.php:84
+#: src/Frontend/DirectorioShortcode.php:85
 msgid "Ficha de centro de radio"
 msgstr ""
 
-#: src/Frontend/DirectorioShortcode.php:85
+#: src/Frontend/DirectorioShortcode.php:86
 msgid "Perfil público de un centro: cabecera y pie del tema alrededor de la ficha, sin repetir su título, autor, fecha ni imagen de cabecera."
 msgstr ""
 
-#: src/Frontend/DirectorioShortcode.php:181
+#: src/Frontend/DirectorioShortcode.php:234
 msgid "Directorio Traspasando Fronteras"
 msgstr ""
 
-#: src/Frontend/DirectorioShortcode.php:182
+#: src/Frontend/DirectorioShortcode.php:235
 msgid "Directorio interactivo de radios escolares con filtros, mapa y propuestas de colaboración."
 msgstr ""
 
-#: src/Frontend/DirectorioShortcode.php:186
+#: src/Frontend/DirectorioShortcode.php:239
 msgid "radio escolar"
 msgstr ""
 
-#: src/Frontend/DirectorioShortcode.php:187
+#: src/Frontend/DirectorioShortcode.php:240
 msgid "directorio"
 msgstr ""
 
-#: src/Frontend/DirectorioShortcode.php:188
+#: src/Frontend/DirectorioShortcode.php:241
 msgid "colaboración"
 msgstr ""
 
@@ -979,7 +979,7 @@ msgid "Este sitio utiliza el plugin RadioEdu Conecta para gestionar el directori
 msgstr ""
 
 #: src/Privacy/PrivacyPolicy.php:46
-msgid "Las propuestas de colaboración guardan la cuenta de usuario que las envía, los centros implicados y el texto del proyecto. El correo de contacto del centro receptor solo se comparte con el centro emisor cuando la propuesta es aceptada."
+msgid "Las propuestas de colaboración guardan la cuenta de usuario que las envía, los centros implicados, el texto del proyecto y la respuesta, junto con la cuenta que la escribe. El correo de contacto del centro receptor solo se comparte con el centro emisor cuando la propuesta es aceptada."
 msgstr ""
 
 #: src/Privacy/PrivacyPolicy.php:47
@@ -1011,87 +1011,95 @@ msgstr ""
 msgid "Email de coordinación"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:165
+#: src/Privacy/PrivacyPolicy.php:166
 msgid "RadioEdu Conecta - Propuestas de Colaboración"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:169
+#: src/Privacy/PrivacyPolicy.php:170
 msgid "Centro emisor"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:173
+#: src/Privacy/PrivacyPolicy.php:174
 msgid "Centro receptor"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:177
+#: src/Privacy/PrivacyPolicy.php:178
 #: templates/single-centro.php:96
 msgid "Cursos / Edades"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:181
+#: src/Privacy/PrivacyPolicy.php:182
 #: src/Taxonomies/TaxonomiesRegistrar.php:102
 msgid "Idiomas"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:185
+#: src/Privacy/PrivacyPolicy.php:186
 #: templates/match-drawer.php:89
 msgid "Fechas aproximadas"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:189
+#: src/Privacy/PrivacyPolicy.php:190
 msgid "Respuesta"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:197
+#: src/Privacy/PrivacyPolicy.php:198
 #: templates/match-drawer.php:65
 msgid "Idea de proyecto"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:288
+#. translators: %d: number of replies kept.
+#: src/Privacy/PrivacyPolicy.php:250
+#, php-format
+msgid "Se conserva %d respuesta anterior a la versión 1.1 en propuestas recibidas por los centros de esta persona, porque no registra quién la escribió. Revísela en Colaboraciones (Matches) por si contiene datos personales."
+msgid_plural "Se conservan %d respuestas anteriores a la versión 1.1 en propuestas recibidas por los centros de esta persona, porque no registran quién las escribió. Revíselas en Colaboraciones (Matches) por si contienen datos personales."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Privacy/PrivacyPolicy.php:326
 msgid "Se han eliminado los textos enviados y la vinculación con la cuenta. Los centros, las fechas, el estado y las respuestas de otros participantes se conservan como historial compartido; revise esas respuestas si contienen datos personales de la persona solicitante."
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:301
+#: src/Privacy/PrivacyPolicy.php:339
 msgid "No se han podido eliminar todos los datos. Reintente la solicitud de borrado."
 msgstr ""
 
-#: src/Rest/CentrosController.php:352
+#: src/Rest/CentrosController.php:351
 msgid "Número de página de resultados."
 msgstr ""
 
-#: src/Rest/CentrosController.php:360
+#: src/Rest/CentrosController.php:359
 msgid "Número de centros por página."
 msgstr ""
 
-#: src/Rest/CentrosController.php:369
+#: src/Rest/CentrosController.php:368
 msgid "Término de búsqueda por nombre o palabra clave."
 msgstr ""
 
-#: src/Rest/CentrosController.php:376
+#: src/Rest/CentrosController.php:375
 msgid "Criterio de ordenación."
 msgstr ""
 
-#: src/Rest/CentrosController.php:384
+#: src/Rest/CentrosController.php:383
 msgid "ID del centro de referencia para calcular afinidad."
 msgstr ""
 
-#: src/Rest/CentrosController.php:391
+#: src/Rest/CentrosController.php:390
 msgid "Slug de etapa educativa."
 msgstr ""
 
-#: src/Rest/CentrosController.php:397
+#: src/Rest/CentrosController.php:396
 msgid "Slug de idioma."
 msgstr ""
 
-#: src/Rest/CentrosController.php:403
+#: src/Rest/CentrosController.php:402
 msgid "Slug de temática."
 msgstr ""
 
-#: src/Rest/CentrosController.php:409
+#: src/Rest/CentrosController.php:408
 msgid "Slug de formato de programa."
 msgstr ""
 
-#: src/Rest/CentrosController.php:415
+#: src/Rest/CentrosController.php:414
 msgid "Slug de ubicación geográfica."
 msgstr ""
 
@@ -1518,65 +1526,65 @@ msgid "Buscar centros"
 msgstr ""
 
 #. translators: %s: Number of schools found.
-#: templates/directorio.php:158
+#: templates/directorio.php:159
 #: build/directorio.js:3
 #, php-format,js-format
 msgid "Resultados (%s centros)"
 msgstr ""
 
-#: templates/directorio.php:169
+#: templates/directorio.php:170
 msgid "Vista de mapa"
 msgstr ""
 
-#: templates/directorio.php:174
+#: templates/directorio.php:175
 msgid "Ordenar por"
 msgstr ""
 
-#: templates/directorio.php:176
+#: templates/directorio.php:177
 msgid "Más afines"
 msgstr ""
 
-#: templates/directorio.php:177
+#: templates/directorio.php:178
 msgid "Más recientes"
 msgstr ""
 
-#: templates/directorio.php:178
+#: templates/directorio.php:179
 msgid "Alfabético (A-Z)"
 msgstr ""
 
-#: templates/directorio.php:186
+#: templates/directorio.php:187
 msgid "No se han podido cargar los centros. Vuelve a pulsar Buscar centros para reintentar."
 msgstr ""
 
-#: templates/directorio.php:192
+#: templates/directorio.php:193
 msgid "Mapa geográfico interactivo (OpenStreetMap)"
 msgstr ""
 
-#: templates/directorio.php:193
+#: templates/directorio.php:194
 msgid "Al cargar el mapa cartográfico se establecerá conexión con los servidores externos de OpenStreetMap Foundation para descargar las imágenes del mapa."
 msgstr ""
 
-#: templates/directorio.php:195
+#: templates/directorio.php:196
 msgid "Aceptar y mostrar el mapa interactivo"
 msgstr ""
 
-#: templates/directorio.php:209
+#: templates/directorio.php:210
 msgid "Cargar más centros"
 msgstr ""
 
-#: templates/directorio.php:216
+#: templates/directorio.php:217
 msgid "Buscando centros afines en la red..."
 msgstr ""
 
-#: templates/directorio.php:222
+#: templates/directorio.php:223
 msgid "No se han encontrado emisoras con estos filtros"
 msgstr ""
 
-#: templates/directorio.php:223
+#: templates/directorio.php:224
 msgid "Prueba a seleccionar otros temas, idiomas o restablecer la búsqueda."
 msgstr ""
 
-#: templates/directorio.php:225
+#: templates/directorio.php:226
 msgid "Limpiar todos los filtros"
 msgstr ""
 

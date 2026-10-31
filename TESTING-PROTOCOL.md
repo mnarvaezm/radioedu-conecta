@@ -32,7 +32,7 @@ docker compose -f docker-compose.test.yml up -d
 ```powershell
 docker exec radioedu-wordpress wp db query "DESCRIBE wp_radioedu_colaboraciones;" --allow-root
 ```
-*Criterio de éxito*: Deben figurar `id`, `centro_emisor_id`, `centro_receptor_id`, `usuario_emisor_id`, `idea_proyecto`, `curso_edades`, `idiomas`, `fechas_aprox`, `estado`, `respuesta_mensaje`, `created_at`, `updated_at`.
+*Criterio de éxito*: Deben figurar `id`, `centro_emisor_id`, `centro_receptor_id`, `usuario_emisor_id`, `idea_proyecto`, `curso_edades`, `idiomas`, `fechas_aprox`, `estado`, `respuesta_mensaje`, `usuario_respuesta_id`, `created_at`, `updated_at`; y `wp option get radioedu_conecta_db_version` debe devolver `1.0.3`.
 
 ---
 
@@ -66,6 +66,7 @@ docker exec radioedu-wordpress wp db query "DESCRIBE wp_radioedu_colaboraciones;
 | **TC-10** | **Rate Limiting de Ventana Fija** | Intentar enviar más de 10 propuestas en menos de 1 hora. | El servidor responde con HTTP `429 (Too Many Requests)` sin reiniciar la ventana de expiración de 1 hora. |
 | **TC-11** | **Privacidad RGPD** | Inspeccionar el HTML público y la respuesta JSON de `/wp-json/radioedu-conecta/v1/centros`. | Ningún correo electrónico ni nombre personal de coordinador aparece expuesto públicamente. |
 | **TC-12** | **Respuesta única** | Responder (REST `PATCH` o panel de admin) a una propuesta ya aceptada o declinada. | HTTP `409 (radioedu_already_resolved)`, el estado no cambia y no se reenvía ningún correo. |
+| **TC-12b** | **Respuesta y datos personales del receptor** | Como coordinador receptor, aceptar una propuesta con un mensaje. En **Herramientas → Exportar datos personales**, exportar sus datos; después, en **Borrar datos personales**, borrarlos. | La exportación incluye la propuesta con su respuesta. Tras el borrado, la respuesta queda vacía y la propuesta conserva centros, fechas y estado. Si hay respuestas anteriores a la versión 1.1 en sus centros, el borrado las conserva y lo indica en un aviso. |
 | **TC-13b** | **Landmarks y contraste** | Con un tema de bloques (Twenty Twenty-Five) y con temas clásicos (Twenty Twenty, Twenty Twenty-One, YOOtheme), abrir el directorio y una ficha. Pasar axe (por ejemplo, la extensión axe DevTools) y revisar los landmarks con el lector de pantalla. | Un único `main` por página. En el directorio, las regiones «Filtros del directorio» y «Resultados (N centros)»; ningún `banner` añadido por el plugin. El enlace «Saltar al contenido» del tema lleva a la ficha. axe no muestra violaciones en elementos del plugin (`landmark-*`, `color-contrast`). |
 | **TC-13** | **Panel accesible** | Abrir *Proponer match* con teclado, recorrerlo con `Tab` y cerrarlo con `Escape`. | El foco entra en el primer campo, queda atrapado en el diálogo y vuelve al botón que lo abrió. Sin sesión, el panel muestra el aviso y el enlace de inicio de sesión (sin `alert()`). |
 

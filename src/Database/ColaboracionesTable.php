@@ -19,7 +19,7 @@ class ColaboracionesTable {
 	/**
 	 * Versión del esquema de base de datos y capacidades.
 	 */
-	public const DB_VERSION = '1.0.2';
+	public const DB_VERSION = '1.0.3';
 
 	/**
 	 * Nombre base de la tabla (sin prefijo de WP).
@@ -54,6 +54,7 @@ class ColaboracionesTable {
 		'fechas_aprox',
 		'estado',
 		'respuesta_mensaje',
+		'usuario_respuesta_id',
 		'created_at',
 		'updated_at',
 	];
@@ -96,12 +97,14 @@ class ColaboracionesTable {
 			fechas_aprox varchar(150) NOT NULL DEFAULT '',
 			estado varchar(20) NOT NULL DEFAULT 'pendiente',
 			respuesta_mensaje text DEFAULT NULL,
+			usuario_respuesta_id bigint(20) unsigned NOT NULL DEFAULT 0,
 			created_at datetime NOT NULL,
 			updated_at datetime NOT NULL,
 			PRIMARY KEY  (id),
 			KEY centro_emisor_id (centro_emisor_id),
 			KEY centro_receptor_id (centro_receptor_id),
 			KEY usuario_emisor_id (usuario_emisor_id),
+			KEY usuario_respuesta_id (usuario_respuesta_id),
 			KEY estado (estado)
 		) {$charset_collate};";
 
@@ -228,27 +231,31 @@ class ColaboracionesTable {
 	 * La condición `estado = 'pendiente'` en el WHERE garantiza que una propuesta ya respondida
 	 * no puede volver a modificarse (ni reenviar notificaciones), incluso con peticiones concurrentes.
 	 *
+	 * @since 1.1 Records who answers.
+	 *
 	 * @param int    $id        ID de la colaboración.
 	 * @param string $estado    Nuevo estado: 'aceptada' o 'rechazada'.
 	 * @param string $respuesta Mensaje de respuesta ya sanitizado.
+	 * @param int    $user_id   User who answers, so their reply can be exported and erased.
 	 * @return bool True si se actualizó una propuesta pendiente.
 	 */
-	public static function resolve_pending( int $id, string $estado, string $respuesta ): bool {
+	public static function resolve_pending( int $id, string $estado, string $respuesta, int $user_id ): bool {
 		global $wpdb;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table write.
 		$updated = $wpdb->update(
 			self::get_table_name(),
 			[
-				'estado'            => $estado,
-				'respuesta_mensaje' => $respuesta,
-				'updated_at'        => current_time( 'mysql' ),
+				'estado'               => $estado,
+				'respuesta_mensaje'    => $respuesta,
+				'usuario_respuesta_id' => $user_id,
+				'updated_at'           => current_time( 'mysql' ),
 			],
 			[
 				'id'     => $id,
 				'estado' => 'pendiente',
 			],
-			[ '%s', '%s', '%s' ],
+			[ '%s', '%s', '%d', '%s' ],
 			[ '%d', '%s' ]
 		);
 

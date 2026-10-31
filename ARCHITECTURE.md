@@ -10,7 +10,7 @@
 system_id: radioedu-conecta
 display_name: RadioEdu Conecta (Traspasando Fronteras)
 version: "1.1"
-db_schema_version: 1.0.2
+db_schema_version: 1.0.3
 php_version_requirement: ">=8.1"
 wp_version_requirement: ">=7.1"
 tested_up_to: "7.1"
@@ -149,7 +149,7 @@ c:\radioedu-conecta\
   - `CentrosController::prepare_item_for_response()` **explicitly omits** these fields from public REST API payloads.
   - In the core `/wp/v2/centros` endpoint, the centro meta exists only in the `edit` context (which requires editing rights), and `CentroMeta::hide_private_meta()` strips it from `edit` responses of centros the user cannot edit, so a coordinator listing every centro with `context=edit` never sees other coordinators' data.
   - External coordinators interact with other schools exclusively through the platform's proposal system. The plugin dispatches transactional emails on the server side (`NotificationService`), revealing the receiving coordinator's contact details (`Nombre <email>`) only once a proposal is explicitly **accepted** (`estado === 'aceptada'`).
-  - `PrivacyPolicy.php` integrates with WordPress Core's GDPR subsystem (`wp_add_privacy_policy_content`, `wp_privacy_personal_data_exporters`, `wp_privacy_personal_data_erasers`) to export or erase/anonymize coordinator data upon request.
+  - `PrivacyPolicy.php` integrates with WordPress Core's GDPR subsystem (`wp_add_privacy_policy_content`, `wp_privacy_personal_data_exporters`, `wp_privacy_personal_data_erasers`) to export or erase/anonymize coordinator data upon request. Proposals are matched by the account that sent them (`usuario_emisor_id`) and by the account that answered them (`usuario_respuesta_id`). Replies written before 1.1 have no author: the eraser leaves them, reports them as retained and asks the administrator to review them, instead of attributing them to whoever coordinates the centro now.
 
 ### 3.3 Strict Output Escaping, Zero `innerHTML`, and URL Validation
 * **Server-side (PHP):** Strict "Late Escaping" rule. Variables are escaped at the exact moment of output using `esc_html()`, `esc_attr()`, `esc_url()`, `wp_kses_post()`, or `wp_json_encode()`. All SQL queries use `$wpdb->prepare()` with `%i` identifier placeholders for table names.
@@ -229,16 +229,19 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
     fechas_aprox varchar(150) NOT NULL DEFAULT '',
     estado varchar(20) NOT NULL DEFAULT 'pendiente',
     respuesta_mensaje text DEFAULT NULL,
+    usuario_respuesta_id bigint(20) unsigned NOT NULL DEFAULT 0,
     created_at datetime NOT NULL,
     updated_at datetime NOT NULL,
     PRIMARY KEY  (id),
     KEY centro_emisor_id (centro_emisor_id),
     KEY centro_receptor_id (centro_receptor_id),
     KEY usuario_emisor_id (usuario_emisor_id),
+    KEY usuario_respuesta_id (usuario_respuesta_id),
     KEY estado (estado)
 ) {$charset_collate};
 ```
 * **Schema updates:** `create_table()` saves `radioedu_conecta_db_version` only after `SHOW COLUMNS` confirms every column the plugin uses. If the database refuses the DDL, the version stays behind and `Plugin::maybe_update_db_schema()` retries on a later request, at most every 5 minutes (`radioedu_conecta_schema_retry` transient).
+* **Who answered:** `usuario_respuesta_id` (since schema 1.0.3) records the account that accepted or declined the proposal, so the reply can be exported and erased for that person. Older replies keep 0.
 
 ---
 

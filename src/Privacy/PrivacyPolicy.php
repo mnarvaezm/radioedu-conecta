@@ -43,7 +43,7 @@ class PrivacyPolicy {
 			'<h2>%s</h2><p>%s</p><p>%s</p><p>%s</p><p>%s</p>',
 			esc_html__( 'RadioEdu Conecta (Traspasando Fronteras)', 'radioedu-conecta' ),
 			esc_html__( 'Este sitio utiliza el plugin RadioEdu Conecta para gestionar el directorio de radios escolares. Los datos de contacto del docente coordinador (nombre y correo electrónico profesional) se almacenan de forma interna y nunca se exponen públicamente en el directorio web ni en las respuestas públicas de la API REST.', 'radioedu-conecta' ),
-			esc_html__( 'Las propuestas de colaboración guardan la cuenta de usuario que las envía, los centros implicados y el texto del proyecto. El correo de contacto del centro receptor solo se comparte con el centro emisor cuando la propuesta es aceptada.', 'radioedu-conecta' ),
+			esc_html__( 'Las propuestas de colaboración guardan la cuenta de usuario que las envía, los centros implicados, el texto del proyecto y la respuesta, junto con la cuenta que la escribe. El correo de contacto del centro receptor solo se comparte con el centro emisor cuando la propuesta es aceptada.', 'radioedu-conecta' ),
 			esc_html__( 'Al activar voluntariamente la vista de mapa interactivo, el navegador del usuario se conecta con los servidores de OpenStreetMap Foundation para descargar la cartografía.', 'radioedu-conecta' ),
 			esc_html__( 'Los centros marcados como favoritos y la aceptación del mapa se guardan únicamente en el almacenamiento local del navegador del visitante y no se envían al servidor.', 'radioedu-conecta' )
 		);
@@ -140,7 +140,7 @@ class PrivacyPolicy {
 			];
 		}
 
-		// 2. Propuestas de colaboración enviadas por el usuario con ese email.
+		// 2. Propuestas de colaboración que el usuario con ese email envió o respondió.
 		$user = get_user_by( 'email', $email_address );
 		if ( $user ) {
 			global $wpdb;
@@ -149,8 +149,9 @@ class PrivacyPolicy {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Paginated export from the plugin table; personal data is not cached.
 			$colabs = $wpdb->get_results(
 				$wpdb->prepare(
-					'SELECT * FROM %i WHERE usuario_emisor_id = %d ORDER BY id ASC LIMIT %d OFFSET %d',
+					'SELECT * FROM %i WHERE usuario_emisor_id = %d OR usuario_respuesta_id = %d ORDER BY id ASC LIMIT %d OFFSET %d',
 					$table_name,
+					(int) $user->ID,
 					(int) $user->ID,
 					self::BATCH_SIZE,
 					( $page - 1 ) * self::BATCH_SIZE
@@ -216,11 +217,13 @@ class PrivacyPolicy {
 	/**
 	 * Elimina o anonimiza los datos personales asociados a un correo electrónico.
 	 *
+	 * Every page processes the first remaining batch, because erasure changes the query result.
+	 *
 	 * @param string $email_address Dirección de correo del usuario.
 	 * @param int    $page          Página de lotes.
 	 * @return array{items_removed: bool, items_retained: bool, messages: array<int, string>, done: bool}
 	 */
-	public static function erase_personal_data( string $email_address, int $page = 1 ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- Always process the first remaining batch because erasure changes the query result.
+	public static function erase_personal_data( string $email_address, int $page = 1 ): array {
 		$items_removed  = false;
 		$items_retained = false;
 		$messages       = [];
@@ -234,7 +237,25 @@ class PrivacyPolicy {
 			];
 		}
 		$colabs_count    = 0;
+		$replies_count   = 0;
 		$centros_removed = 0;
+		$user            = get_user_by( 'email', $email_address );
+
+		// Count on the first page only, before the coordinator email that links the centros is erased.
+		$unattributed = 1 === $page ? self::count_unattributed_replies( $user ? (int) $user->ID : 0, $email_address ) : 0;
+		if ( $unattributed > 0 ) {
+			$items_retained = true;
+			$messages[]     = sprintf(
+				/* translators: %d: number of replies kept. */
+				_n(
+					'Se conserva %d respuesta anterior a la versión 1.1 en propuestas recibidas por los centros de esta persona, porque no registra quién la escribió. Revísela en Colaboraciones (Matches) por si contiene datos personales.',
+					'Se conservan %d respuestas anteriores a la versión 1.1 en propuestas recibidas por los centros de esta persona, porque no registran quién las escribió. Revíselas en Colaboraciones (Matches) por si contienen datos personales.',
+					$unattributed,
+					'radioedu-conecta'
+				),
+				$unattributed
+			);
+		}
 
 		$centros = get_posts(
 			[
@@ -264,10 +285,27 @@ class PrivacyPolicy {
 			}
 		}
 
-		$user = get_user_by( 'email', $email_address );
 		if ( $user ) {
 			global $wpdb;
 			$table_name = ColaboracionesTable::get_table_name();
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded erasure of the requester's replies and their account linkage in the custom table.
+			$replies = $wpdb->query(
+				$wpdb->prepare(
+					"UPDATE %i SET usuario_respuesta_id = 0, respuesta_mensaje = '' WHERE usuario_respuesta_id = %d ORDER BY id ASC LIMIT %d",
+					$table_name,
+					(int) $user->ID,
+					self::BATCH_SIZE
+				)
+			);
+
+			$replies_count = (int) $replies;
+			if ( false === $replies ) {
+				$items_retained = true;
+			}
+			if ( $replies > 0 ) {
+				$items_removed = true;
+			}
 
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Bounded erasure of requester-authored text and account linkage in the custom table.
 			$updated = $wpdb->query(
@@ -292,8 +330,8 @@ class PrivacyPolicy {
 
 		// Every batch re-reads the first remaining rows, so a batch that removed nothing would be
 		// returned again forever: stop and report the retained items instead of looping.
-		$has_more_batches = count( $centros ) >= self::BATCH_SIZE || $colabs_count >= self::BATCH_SIZE;
-		$made_progress    = $centros_removed > 0 || $colabs_count > 0;
+		$has_more_batches = count( $centros ) >= self::BATCH_SIZE || $colabs_count >= self::BATCH_SIZE || $replies_count >= self::BATCH_SIZE;
+		$made_progress    = $centros_removed > 0 || $colabs_count > 0 || $replies_count > 0;
 
 		return [
 			'items_removed'  => $items_removed,
@@ -301,5 +339,37 @@ class PrivacyPolicy {
 			'messages'       => $items_retained && empty( $messages ) ? [ __( 'No se han podido eliminar todos los datos. Reintente la solicitud de borrado.', 'radioedu-conecta' ) ] : $messages,
 			'done'           => ! $has_more_batches || ! $made_progress,
 		];
+	}
+
+	/**
+	 * Counts the replies to proposals received by the person's centros that do not record who wrote them.
+	 *
+	 * Replies written before 1.1 have no author, so they cannot be erased as the person's own.
+	 * They are reported as retained instead of being attributed to whoever coordinates the centro now.
+	 *
+	 * @since 1.1
+	 *
+	 * @param int    $user_id       Account with the requester's email, or 0.
+	 * @param string $email_address Requester's email, matched against the coordinator email of the centros.
+	 * @return int Number of unattributed replies.
+	 */
+	private static function count_unattributed_replies( int $user_id, string $email_address ): int {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- One count per erasure request; personal data is not cached.
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(*) FROM %i AS c INNER JOIN %i AS p ON p.ID = c.centro_receptor_id
+				WHERE c.usuario_respuesta_id = 0 AND c.estado <> 'pendiente' AND c.respuesta_mensaje <> ''
+				AND ( ( %d > 0 AND p.post_author = %d )
+					OR EXISTS ( SELECT 1 FROM %i AS m WHERE m.post_id = p.ID AND m.meta_key = '_radioedu_coordinador_email' AND m.meta_value = %s ) )",
+				ColaboracionesTable::get_table_name(),
+				$wpdb->posts,
+				$user_id,
+				$user_id,
+				$wpdb->postmeta,
+				$email_address
+			)
+		);
 	}
 }

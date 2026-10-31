@@ -502,7 +502,7 @@ class ColaboracionesController extends WP_REST_Controller {
 			return new WP_Error( 'radioedu_invalid_response', __( 'El mensaje de respuesta es demasiado largo.', 'radioedu-conecta' ), [ 'status' => 400 ] );
 		}
 
-		if ( 'pendiente' !== $colab->estado || ! ColaboracionesTable::resolve_pending( $id, $estado, $respuesta ) ) {
+		if ( 'pendiente' !== $colab->estado || ! ColaboracionesTable::resolve_pending( $id, $estado, $respuesta, get_current_user_id() ) ) {
 			return new WP_Error(
 				'radioedu_already_resolved',
 				__( 'Esta propuesta ya ha sido respondida y no puede modificarse.', 'radioedu-conecta' ),

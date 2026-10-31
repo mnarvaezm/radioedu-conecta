@@ -25,7 +25,7 @@ It allows schools that run a school radio station to:
 
 * Coordinators' names and email addresses are stored privately and are never exposed in the public HTML or in the public `/wp-json/radioedu-conecta/v1/centros` endpoint. The core `/wp/v2/centros` endpoint returns them only in the edit context, and only to users who can edit that school, so the block editor can show them.
 * Notifications are sent server-side with `wp_mail()`. The receiving coordinator's contact details are shared with the sending school only after the proposal is explicitly accepted.
-* Collaboration proposals store the sending user account, the schools involved and the project text.
+* Collaboration proposals store the sending user account, the schools involved, the project text and the reply, with the account that wrote it.
 * Favourite schools and the map consent are stored only in the visitor's browser storage and are never sent to the server.
 * The plugin integrates with the WordPress personal data exporter and eraser tools (`wp_privacy_personal_data_exporters` and `wp_privacy_personal_data_erasers`) and suggests text for the site's privacy policy.
 
@@ -113,6 +113,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * The bundled demo images appear only on demo stations, not on real schools whose slug contains "san-jose" or "la-mar".
 * The demo importer only updates the demo stations it created. It no longer takes over a station that shares a slug or podcast URL with a demo station, nor marks an existing directory page for deletion on uninstall.
 * A database update that fails is retried later instead of being recorded as done.
+* Privacy: the reply to a proposal now records who wrote it (database schema 1.0.3), so it is exported and erased for that person. Replies written before 1.1 have no author: erasure keeps them and says so.
 
 = 1.0.0 =
 * Interactive `[radioedu_directorio]` directory with faceted filters, affinity sorting, pagination and a locally bundled Leaflet map with prior consent for OpenStreetMap tiles.

@@ -1,6 +1,3 @@
-# Basque translation of RadioEdu Conecta.
-# Copyright (C) 2026 RadioEdu - Consejería de Educación, Ciencia y Formación Profesional (Junta de Extremadura)
-# This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
 "Project-Id-Version: RadioEdu Conecta 1.1\n"
@@ -11,10 +8,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2026-10-31T15:33:36+00:00\n"
-"PO-Revision-Date: 2026-10-31 17:59+0000\n"
+"PO-Revision-Date: 2026-11-01 00:30+0100\n"
+"Language: eu\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: radioedu-conecta\n"
-"Language: eu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Plugin Name of the plugin
@@ -56,7 +53,7 @@ msgstr "RadioEdu Conectak PHP %1$s edo berriagoa behar du. Zure zerbitzariak PHP
 msgid "RadioEdu Conecta requires WordPress %1$s or higher. You are using WordPress %2$s."
 msgstr "RadioEdu Conectak WordPress %1$s edo berriagoa behar du. WordPress %2$s erabiltzen ari zara."
 
-#: radioedu-conecta.php:176
+#: radioedu-conecta.php:190
 #: src/Admin/Settings.php:52
 msgid "Ajustes"
 msgstr "Ezarpenak"
@@ -316,7 +313,7 @@ msgid "Colaboraciones (Matches)"
 msgstr "Lankidetzak (matchak)"
 
 #: src/Admin/ColaboracionesAdminPage.php:84
-#: src/Admin/DemoDataImporter.php:72
+#: src/Admin/DemoDataImporter.php:83
 #: src/Rest/ColaboracionesController.php:298
 #: src/Rest/ColaboracionesController.php:476
 msgid "No tienes permisos para realizar esta acción."
@@ -354,7 +351,7 @@ msgid "Todavía no hay propuestas de colaboración registradas para tus centros 
 msgstr "Oraindik ez dago lankidetza-proposamenik erregistratuta zure ikastetxeentzat."
 
 #: src/Admin/ColaboracionesAdminPage.php:169
-#: src/Privacy/PrivacyPolicy.php:193
+#: src/Privacy/PrivacyPolicy.php:194
 msgid "Fecha"
 msgstr "Data"
 
@@ -371,7 +368,7 @@ msgid "Idea del Proyecto y Detalles"
 msgstr "Proiektuaren ideia eta xehetasunak"
 
 #: src/Admin/ColaboracionesAdminPage.php:173
-#: src/Privacy/PrivacyPolicy.php:201
+#: src/Privacy/PrivacyPolicy.php:202
 msgid "Estado"
 msgstr "Egoera"
 
@@ -730,31 +727,31 @@ msgstr "Plataformara sar zaitezke, irratiarekin hurrengo urratsak koordinatzeko.
 msgid "RadioEdu Conecta - Traspasando Fronteras"
 msgstr "RadioEdu Conecta - Traspasando Fronteras"
 
-#: src/Frontend/DirectorioShortcode.php:84
+#: src/Frontend/DirectorioShortcode.php:85
 msgid "Ficha de centro de radio"
 msgstr "Irrati-ikastetxearen fitxa"
 
-#: src/Frontend/DirectorioShortcode.php:85
+#: src/Frontend/DirectorioShortcode.php:86
 msgid "Perfil público de un centro: cabecera y pie del tema alrededor de la ficha, sin repetir su título, autor, fecha ni imagen de cabecera."
 msgstr "Ikastetxe baten profil publikoa: gaiaren goiburua eta orri-oina fitxaren inguruan, haren izenburua, egilea, data eta goiburuko irudia errepikatu gabe."
 
-#: src/Frontend/DirectorioShortcode.php:181
+#: src/Frontend/DirectorioShortcode.php:234
 msgid "Directorio Traspasando Fronteras"
 msgstr "Traspasando Fronteras direktorioa"
 
-#: src/Frontend/DirectorioShortcode.php:182
+#: src/Frontend/DirectorioShortcode.php:235
 msgid "Directorio interactivo de radios escolares con filtros, mapa y propuestas de colaboración."
 msgstr "Eskola-irratien direktorio interaktiboa, iragazkiekin, maparekin eta lankidetza-proposamenekin."
 
-#: src/Frontend/DirectorioShortcode.php:186
+#: src/Frontend/DirectorioShortcode.php:239
 msgid "radio escolar"
 msgstr "eskola-irratia"
 
-#: src/Frontend/DirectorioShortcode.php:187
+#: src/Frontend/DirectorioShortcode.php:240
 msgid "directorio"
 msgstr "direktorioa"
 
-#: src/Frontend/DirectorioShortcode.php:188
+#: src/Frontend/DirectorioShortcode.php:241
 msgid "colaboración"
 msgstr "lankidetza"
 
@@ -981,10 +978,6 @@ msgstr "RadioEdu Conecta (Traspasando Fronteras)"
 msgid "Este sitio utiliza el plugin RadioEdu Conecta para gestionar el directorio de radios escolares. Los datos de contacto del docente coordinador (nombre y correo electrónico profesional) se almacenan de forma interna y nunca se exponen públicamente en el directorio web ni en las respuestas públicas de la API REST."
 msgstr "Gune honek RadioEdu Conecta plugina erabiltzen du eskola-irratien direktorioa kudeatzeko. Irakasle koordinatzailearen harremanetarako datuak (izena eta laneko helbide elektronikoa) barnean gordetzen dira, eta ez dira inoiz publikoki erakusten web-direktorioan, ezta REST APIaren erantzun publikoetan ere."
 
-#: src/Privacy/PrivacyPolicy.php:46
-msgid "Las propuestas de colaboración guardan la cuenta de usuario que las envía, los centros implicados y el texto del proyecto. El correo de contacto del centro receptor solo se comparte con el centro emisor cuando la propuesta es aceptada."
-msgstr "Lankidetza-proposamenek bidaltzen dituen erabiltzaile-kontua, inplikatutako ikastetxeak eta proiektuaren testua gordetzen dituzte. Ikastetxe hartzailearen harremanetarako helbide elektronikoa proposamena onartzen denean soilik partekatzen da ikastetxe igorlearekin."
-
 #: src/Privacy/PrivacyPolicy.php:47
 msgid "Al activar voluntariamente la vista de mapa interactivo, el navegador del usuario se conecta con los servidores de OpenStreetMap Foundation para descargar la cartografía."
 msgstr "Mapa interaktiboaren ikuspegia borondatez aktibatzean, erabiltzailearen nabigatzailea OpenStreetMap Foundation-en zerbitzariekin konektatzen da kartografia deskargatzeko."
@@ -1014,87 +1007,87 @@ msgstr "Koordinatzailearen izena"
 msgid "Email de coordinación"
 msgstr "Koordinazioko helbide elektronikoa"
 
-#: src/Privacy/PrivacyPolicy.php:165
+#: src/Privacy/PrivacyPolicy.php:166
 msgid "RadioEdu Conecta - Propuestas de Colaboración"
 msgstr "RadioEdu Conecta - Lankidetza-proposamenak"
 
-#: src/Privacy/PrivacyPolicy.php:169
+#: src/Privacy/PrivacyPolicy.php:170
 msgid "Centro emisor"
 msgstr "Ikastetxe igorlea"
 
-#: src/Privacy/PrivacyPolicy.php:173
+#: src/Privacy/PrivacyPolicy.php:174
 msgid "Centro receptor"
 msgstr "Ikastetxe hartzailea"
 
-#: src/Privacy/PrivacyPolicy.php:177
+#: src/Privacy/PrivacyPolicy.php:178
 #: templates/single-centro.php:96
 msgid "Cursos / Edades"
 msgstr "Mailak / adinak"
 
-#: src/Privacy/PrivacyPolicy.php:181
+#: src/Privacy/PrivacyPolicy.php:182
 #: src/Taxonomies/TaxonomiesRegistrar.php:102
 msgid "Idiomas"
 msgstr "Hizkuntzak"
 
-#: src/Privacy/PrivacyPolicy.php:185
+#: src/Privacy/PrivacyPolicy.php:186
 #: templates/match-drawer.php:89
 msgid "Fechas aproximadas"
 msgstr "Gutxi gorabeherako datak"
 
-#: src/Privacy/PrivacyPolicy.php:189
+#: src/Privacy/PrivacyPolicy.php:190
 msgid "Respuesta"
 msgstr "Erantzuna"
 
-#: src/Privacy/PrivacyPolicy.php:197
+#: src/Privacy/PrivacyPolicy.php:198
 #: templates/match-drawer.php:65
 msgid "Idea de proyecto"
 msgstr "Proiektuaren ideia"
 
-#: src/Privacy/PrivacyPolicy.php:288
+#: src/Privacy/PrivacyPolicy.php:326
 msgid "Se han eliminado los textos enviados y la vinculación con la cuenta. Los centros, las fechas, el estado y las respuestas de otros participantes se conservan como historial compartido; revise esas respuestas si contienen datos personales de la persona solicitante."
 msgstr "Bidalitako testuak eta kontuarekiko lotura ezabatu dira. Ikastetxeak, datak, egoera eta beste parte-hartzaile batzuen erantzunak historia partekatu gisa gordetzen dira; berrikusi erantzun horiek, eskatzailearen datu pertsonalik ba ote duten jakiteko."
 
-#: src/Privacy/PrivacyPolicy.php:301
+#: src/Privacy/PrivacyPolicy.php:339
 msgid "No se han podido eliminar todos los datos. Reintente la solicitud de borrado."
 msgstr "Ezin izan dira datu guztiak ezabatu. Egin berriro ezabatze-eskaera."
 
-#: src/Rest/CentrosController.php:352
+#: src/Rest/CentrosController.php:351
 msgid "Número de página de resultados."
 msgstr "Emaitzen orri-zenbakia."
 
-#: src/Rest/CentrosController.php:360
+#: src/Rest/CentrosController.php:359
 msgid "Número de centros por página."
 msgstr "Orri bakoitzeko ikastetxe kopurua."
 
-#: src/Rest/CentrosController.php:369
+#: src/Rest/CentrosController.php:368
 msgid "Término de búsqueda por nombre o palabra clave."
 msgstr "Izenaren edo gako-hitzaren araberako bilaketa-terminoa."
 
-#: src/Rest/CentrosController.php:376
+#: src/Rest/CentrosController.php:375
 msgid "Criterio de ordenación."
 msgstr "Ordenatzeko irizpidea."
 
-#: src/Rest/CentrosController.php:384
+#: src/Rest/CentrosController.php:383
 msgid "ID del centro de referencia para calcular afinidad."
 msgstr "Afinitatea kalkulatzeko erreferentziako ikastetxearen IDa."
 
-#: src/Rest/CentrosController.php:391
+#: src/Rest/CentrosController.php:390
 msgid "Slug de etapa educativa."
 msgstr "Hezkuntza-etaparen slug-a."
 
-#: src/Rest/CentrosController.php:397
+#: src/Rest/CentrosController.php:396
 msgid "Slug de idioma."
 msgstr "Hizkuntzaren slug-a."
 
-#: src/Rest/CentrosController.php:403
+#: src/Rest/CentrosController.php:402
 msgid "Slug de temática."
 msgstr "Gaiaren slug-a."
 
-#: src/Rest/CentrosController.php:409
+#: src/Rest/CentrosController.php:408
 msgid "Slug de formato de programa."
 msgstr "Programa-formatuaren slug-a."
 
-#: src/Rest/CentrosController.php:415
+#: src/Rest/CentrosController.php:414
 msgid "Slug de ubicación geográfica."
 msgstr "Kokapen geografikoaren slug-a."
 
@@ -1521,65 +1514,65 @@ msgid "Buscar centros"
 msgstr "Bilatu ikastetxeak"
 
 #. translators: %s: Number of schools found.
-#: templates/directorio.php:158
+#: templates/directorio.php:159
 #: build/directorio.js:3
 #, php-format,js-format
 msgid "Resultados (%s centros)"
 msgstr "Emaitzak (%s ikastetxe)"
 
-#: templates/directorio.php:169
+#: templates/directorio.php:170
 msgid "Vista de mapa"
 msgstr "Mapa-ikuspegia"
 
-#: templates/directorio.php:174
+#: templates/directorio.php:175
 msgid "Ordenar por"
 msgstr "Ordenatu honen arabera"
 
-#: templates/directorio.php:176
+#: templates/directorio.php:177
 msgid "Más afines"
 msgstr "Antzekoenak"
 
-#: templates/directorio.php:177
+#: templates/directorio.php:178
 msgid "Más recientes"
 msgstr "Berrienak"
 
-#: templates/directorio.php:178
+#: templates/directorio.php:179
 msgid "Alfabético (A-Z)"
 msgstr "Alfabetikoki (A-Z)"
 
-#: templates/directorio.php:186
+#: templates/directorio.php:187
 msgid "No se han podido cargar los centros. Vuelve a pulsar Buscar centros para reintentar."
 msgstr "Ezin izan dira ikastetxeak kargatu. Sakatu berriro Bilatu ikastetxeak berriro saiatzeko."
 
-#: templates/directorio.php:192
+#: templates/directorio.php:193
 msgid "Mapa geográfico interactivo (OpenStreetMap)"
 msgstr "Mapa geografiko interaktiboa (OpenStreetMap)"
 
-#: templates/directorio.php:193
+#: templates/directorio.php:194
 msgid "Al cargar el mapa cartográfico se establecerá conexión con los servidores externos de OpenStreetMap Foundation para descargar las imágenes del mapa."
 msgstr "Mapa kartografikoa kargatzean, OpenStreetMap Foundation-en kanpoko zerbitzariekin konexioa ezarriko da maparen irudiak deskargatzeko."
 
-#: templates/directorio.php:195
+#: templates/directorio.php:196
 msgid "Aceptar y mostrar el mapa interactivo"
 msgstr "Onartu eta erakutsi mapa interaktiboa"
 
-#: templates/directorio.php:209
+#: templates/directorio.php:210
 msgid "Cargar más centros"
 msgstr "Kargatu ikastetxe gehiago"
 
-#: templates/directorio.php:216
+#: templates/directorio.php:217
 msgid "Buscando centros afines en la red..."
 msgstr "Antzeko ikastetxeak bilatzen sarean..."
 
-#: templates/directorio.php:222
+#: templates/directorio.php:223
 msgid "No se han encontrado emisoras con estos filtros"
 msgstr "Ez da irratirik aurkitu iragazki hauekin"
 
-#: templates/directorio.php:223
+#: templates/directorio.php:224
 msgid "Prueba a seleccionar otros temas, idiomas o restablecer la búsqueda."
 msgstr "Saiatu beste gai edo hizkuntza batzuk hautatzen, edo berrezarri bilaketa."
 
-#: templates/directorio.php:225
+#: templates/directorio.php:226
 msgid "Limpiar todos los filtros"
 msgstr "Garbitu iragazki guztiak"
 
@@ -1942,3 +1935,15 @@ msgstr "Sinkronizazioa gelditu egin da: %s"
 #: build/network-sync.js:13
 msgid "error desconocido"
 msgstr "errore ezezaguna"
+
+#: src/Privacy/PrivacyPolicy.php:46
+msgid "Las propuestas de colaboración guardan la cuenta de usuario que las envía, los centros implicados, el texto del proyecto y la respuesta, junto con la cuenta que la escribe. El correo de contacto del centro receptor solo se comparte con el centro emisor cuando la propuesta es aceptada."
+msgstr "Lankidetza-proposamenek bidaltzen dituen erabiltzaile-kontua, inplikatutako ikastetxeak, proiektuaren testua eta erantzuna gordetzen dituzte, erantzuna idazten duen kontuarekin batera. Ikastetxe hartzailearen harremanetarako helbide elektronikoa proposamena onartzen denean soilik partekatzen da ikastetxe igorlearekin."
+
+#. translators: %d: number of replies kept.
+#: src/Privacy/PrivacyPolicy.php:250
+#, php-format
+msgid "Se conserva %d respuesta anterior a la versión 1.1 en propuestas recibidas por los centros de esta persona, porque no registra quién la escribió. Revísela en Colaboraciones (Matches) por si contiene datos personales."
+msgid_plural "Se conservan %d respuestas anteriores a la versión 1.1 en propuestas recibidas por los centros de esta persona, porque no registran quién las escribió. Revíselas en Colaboraciones (Matches) por si contienen datos personales."
+msgstr[0] "1.1 bertsioa baino lehenagoko %d erantzun gordetzen da pertsona honen ikastetxeek jasotako proposamenetan, ez baita erregistratzen nork idatzi zuen. Berrikusi Lankidetzak (matchak) atalean, datu pertsonalik ba ote duen jakiteko."
+msgstr[1] "1.1 bertsioa baino lehenagoko %d erantzun gordetzen dira pertsona honen ikastetxeek jasotako proposamenetan, ez baita erregistratzen nork idatzi zituen. Berrikusi Lankidetzak (matchak) atalean, datu pertsonalik ba ote duten jakiteko."
