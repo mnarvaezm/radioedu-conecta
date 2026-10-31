@@ -58,7 +58,7 @@ class DirectorioShortcode {
 	 * con ServerSideRender, así que el bloque y el shortcode comparten el mismo renderizado.
 	 * El directorio usa IDs fijos en su marcado, por eso solo se permite una instancia por entrada.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 */
 	public static function register_block(): void {
 		register_block_type(
@@ -90,7 +90,7 @@ class DirectorioShortcode {
 	/**
 	 * Renderiza el bloque del directorio reutilizando la salida del shortcode.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 *
 	 * @return string Salida HTML del bloque.
 	 */
@@ -104,7 +104,7 @@ class DirectorioShortcode {
 	 * Los renderizadores también encolan sus assets, pero hacerlo aquí evita que la página se
 	 * pinte sin estilos en los temas clásicos, que procesan el contenido después de wp_head.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 */
 	public static function enqueue_assets(): void {
 		if ( is_singular( CentroPostType::POST_TYPE ) ) {

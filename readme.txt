@@ -4,7 +4,7 @@ Tags: school radio, podcast, education, directory, collaboration
 Requires at least: 7.1
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.0
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -48,7 +48,7 @@ The minified scripts in `build/` are compiled from the human-readable sources sh
 
 == Installation ==
 
-1. Upload `radioedu-conecta.zip` from **Plugins -> Add New Plugin -> Upload Plugin**, or copy the `radioedu-conecta` folder to `/wp-content/plugins/`.
+1. Upload `radioedu-conecta_1.1.zip` from **Plugins -> Add New Plugin -> Upload Plugin**, or copy the `radioedu-conecta` folder to `/wp-content/plugins/`.
 2. Activate the plugin from the **Plugins** screen (or from Network Admin when using Multisite).
 3. Manage school profiles from **RadioEdu Centros**, answer proposals from **Colaboraciones (Matches)** and configure the map and notifications from **Ajustes** (Settings).
 4. Insert the "Directorio Traspasando Fronteras" block (Widgets category) or the `[radioedu_directorio]` shortcode in any page to display the interactive directory. Only one directory per page is supported.
@@ -69,13 +69,27 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 
 == Changelog ==
 
-= 1.0.0 =
-* Interactive `[radioedu_directorio]` directory with faceted filters, affinity sorting, pagination and a locally bundled Leaflet map with prior consent for OpenStreetMap tiles.
-* Requires WordPress 7.1. New "Directorio Traspasando Fronteras" block, registered in PHP only (`supports.autoRegister`) and equivalent to the shortcode.
+= 1.1 =
+* Requires WordPress 7.1.
+* New "Directorio Traspasando Fronteras" block, registered in PHP only (`supports.autoRegister`) and equivalent to the `[radioedu_directorio]` shortcode.
 * Interface icons use the WordPress 7.1 Icons API (core collection plus a `radioedu-conecta` collection) instead of emoji.
 * School meta fields are registered with `register_post_meta()`, sanitized on every write and neither readable nor writable through the core REST API.
+* Activation no longer creates demo content: the demo stations and the directory page are imported from **RadioEdu Centros -> Ajustes** only, and never overwrite a real school.
+* Security: proposals require a RadioEdu capability, only the receiving school can answer them, and password-protected schools are excluded from the directory and from proposals.
+* The directory sorts by affinity before paginating, cancels outdated searches, announces loading errors with a retry option and works with plain permalinks.
+* Personal data export and erasure run in batches, and network-wide tasks process sites in batches of 100.
+* Scripts are compiled with `@wordpress/scripts` and translated with `wp_set_script_translations()`. Without `build/`, pages still load, without interactivity.
+* Accessibility: visible focus outlines, AA contrast for the accent and status colours, and the "Subir / Elegir Logo" button keeps its own text as its accessible name.
 * Admin notices use `wp_admin_notice()`.
+
+= 1.0.0 =
+* Interactive `[radioedu_directorio]` directory with faceted filters, affinity sorting, pagination and a locally bundled Leaflet map with prior consent for OpenStreetMap tiles.
 * Individual station profile template with cover image, circular logo, metadata, description and an integrated match proposal panel.
 * **Colaboraciones (Matches)** admin screen to review, accept or decline received and sent proposals; each proposal can be answered only once.
 * Hardened security: anti-IDOR validation of the sending school, strict URL and DOM sanitization, prepared SQL queries with `%i` and full capability mapping for coordinators.
 * Integration with the WordPress personal data exporters/erasers and complete cleanup in `uninstall.php`, including Multisite networks.
+
+== Upgrade Notice ==
+
+= 1.1 =
+Requires WordPress 7.1. Adds the directory block and SVG icons. Demo content is no longer created on activation; import it from RadioEdu Centros -> Ajustes.

@@ -28,7 +28,7 @@ class CentroMeta {
 	/**
 	 * Registers the meta keys.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 */
 	public static function register(): void {
 		foreach ( self::get_definitions() as $meta_key => $definition ) {
@@ -50,7 +50,7 @@ class CentroMeta {
 	/**
 	 * Returns the meta key definitions.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 *
 	 * @return array<string, array{type: string, description: string, sanitize: callable}>
 	 */
@@ -130,7 +130,7 @@ class CentroMeta {
 	 * Whether the current user may use that image is checked by the meta box, which knows who
 	 * is saving; this callback only guarantees that the stored ID points to an image.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 *
 	 * @param mixed $value Raw value.
 	 * @return int Attachment ID, or 0 when it is not an image.
@@ -144,7 +144,7 @@ class CentroMeta {
 	/**
 	 * Accepts only http(s) URLs.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 *
 	 * @param mixed $value Raw value.
 	 * @return string Sanitized URL or empty string.
@@ -156,7 +156,7 @@ class CentroMeta {
 	/**
 	 * Accepts only a flag code from the whitelist.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 *
 	 * @param mixed $value Raw value.
 	 * @return string Flag code or empty string.
@@ -170,7 +170,7 @@ class CentroMeta {
 	/**
 	 * Normalizes a latitude to the [-90, 90] range.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 *
 	 * @param mixed $value Raw value.
 	 * @return string Decimal latitude or empty string.
@@ -182,7 +182,7 @@ class CentroMeta {
 	/**
 	 * Normalizes a longitude to the [-180, 180] range.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 *
 	 * @param mixed $value Raw value.
 	 * @return string Decimal longitude or empty string.
@@ -194,7 +194,7 @@ class CentroMeta {
 	/**
 	 * Sanitizes a single line of plain text.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 *
 	 * @param mixed $value Raw value.
 	 * @return string Plain text.
@@ -206,7 +206,7 @@ class CentroMeta {
 	/**
 	 * Sanitizes an email address.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 *
 	 * @param mixed $value Raw value.
 	 * @return string Email address or empty string.
@@ -218,7 +218,7 @@ class CentroMeta {
 	/**
 	 * Stores availability as "1" or "0".
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 *
 	 * @param mixed $value Raw value.
 	 * @return string "1" when available, "0" otherwise.
@@ -230,7 +230,7 @@ class CentroMeta {
 	/**
 	 * Stores the demo marker as "1" or an empty string.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 *
 	 * @param mixed $value Raw value.
 	 * @return string "1" or empty string.

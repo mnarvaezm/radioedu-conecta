@@ -289,7 +289,7 @@ class DemoDataImporter {
 	 * Centros imported before the `_radioedu_conecta_demo` marker existed are recognised by the
 	 * demo podcast URL, which only this importer writes; a slug match alone is not enough.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 *
 	 * @param int    $post_id          Existing centro ID.
 	 * @param string $demo_podcast_url Podcast URL that the importer assigns to this demo centro.

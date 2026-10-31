@@ -7,7 +7,7 @@
 - **Versión mínima de WordPress:** 7.1
 - **Probado hasta:** 7.1
 - **Versión mínima de PHP:** 8.1
-- **Versión estable:** 1.0.0
+- **Versión estable:** 1.1
 - **Licencia:** GPL-2.0-or-later
 - **URI de licencia:** [GNU General Public License v2](https://www.gnu.org/licenses/gpl-2.0.html)
 
@@ -39,7 +39,7 @@
 
 ## Instalación
 
-1. Sube el archivo `radioedu-conecta.zip` desde **Plugins → Añadir nuevo plugin → Subir plugin** en WordPress, o descomprime la carpeta `radioedu-conecta` en `/wp-content/plugins/`.
+1. Sube el archivo `radioedu-conecta_1.1.zip` desde **Plugins → Añadir nuevo plugin → Subir plugin** en WordPress, o descomprime la carpeta `radioedu-conecta` en `/wp-content/plugins/`.
 2. Activa el plugin desde el menú **Plugins**. La activación no publica contenido: si quieres las 6 emisoras de demostración y la página `/traspasando-fronteras/` con el shortcode `[radioedu_directorio]`, cárgalas desde **RadioEdu Centros → Ajustes**.
 3. Para mostrar el directorio en cualquier otra página, inserta el bloque **Directorio Traspasando Fronteras** (categoría *Widgets*) o el shortcode `[radioedu_directorio]`. Solo puede haber un directorio por página.
 4. Gestiona los centros desde **RadioEdu Centros**, responde a propuestas desde **RadioEdu Centros → Colaboraciones (Matches)** y configura el mapa o las notificaciones en **RadioEdu Centros → Ajustes**.
@@ -83,14 +83,22 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 
 ## Changelog
 
-### 1.0.0
-* Lanzamiento completo del directorio interactivo `[radioedu_directorio]`, CPT `radioedu_centro` y 5 taxonomías facetadas con mapeo completo de capacidades.
-* Requiere WordPress 7.1. Nuevo bloque **Directorio Traspasando Fronteras** registrado solo con PHP (`supports.autoRegister`), equivalente al shortcode.
+### 1.1
+* Requiere WordPress 7.1.
+* Nuevo bloque **Directorio Traspasando Fronteras** registrado solo con PHP (`supports.autoRegister`), equivalente al shortcode `[radioedu_directorio]`.
 * Iconos SVG de la API de iconos de WordPress 7.1 en lugar de emojis en el directorio, la ficha, el panel lateral y la pantalla de Colaboraciones.
 * Metadatos del centro registrados con `register_post_meta()`: se sanean en cualquier escritura y no se pueden leer ni modificar desde la REST API del core.
+* La activación ya no crea contenido de demostración: las emisoras de ejemplo y la página del directorio se importan solo desde **RadioEdu Centros → Ajustes** y nunca sobrescriben un centro real.
+* Seguridad: las propuestas exigen una capacidad de RadioEdu, solo el centro receptor puede responderlas y los centros protegidos con contraseña quedan fuera del directorio y de las propuestas.
+* El directorio ordena por afinidad antes de paginar, cancela las búsquedas obsoletas, anuncia los errores de carga con opción de reintentar y funciona con enlaces permanentes simples.
+* La exportación y el borrado de datos personales se hacen por lotes, y las tareas de red recorren los sitios en lotes de 100.
+* Scripts compilados con `@wordpress/scripts` y traducidos con `wp_set_script_translations()`. Sin `build/`, las páginas cargan igualmente, sin interactividad.
+* Accesibilidad: foco visible, contraste AA en el color de acento y en los estados, y el botón *Subir / Elegir Logo* conserva su texto como nombre accesible (WCAG 2.5.3).
 * Avisos de administración con `wp_admin_notice()`.
-* Accesibilidad: el botón *Subir / Elegir Logo* conserva su texto como nombre accesible (WCAG 2.5.3) y el estado *Pendiente* tiene contraste AA.
 * Pruebas E2E con Playwright y `wp-env` (selección del logo en el editor con lienzo en iframe de WordPress 7.1 y bloque del directorio).
+
+### 1.0.0
+* Lanzamiento completo del directorio interactivo `[radioedu_directorio]`, CPT `radioedu_centro` y 5 taxonomías facetadas con mapeo completo de capacidades.
 * Nueva plantilla dedicada para el perfil individual de emisoras escolares (`templates/single-centro.php`) con envío directo de propuestas de match.
 * Nuevo panel de administración **Colaboraciones (Matches)** (`ColaboracionesAdminPage`) para consultar, aceptar y declinar propuestas.
 * Refuerzo integral de seguridad: mitigación anti-IDOR en `POST /colaboraciones`, validación estricta de URLs y nodos DOM en `directorio.js`, consultas SQL preparadas con `%i` y consentimiento previo RGPD para teselas de OpenStreetMap.

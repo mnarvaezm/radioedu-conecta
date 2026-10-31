@@ -30,7 +30,7 @@ final class Icons {
 	 *
 	 * The SVG files are read lazily by the core registry, only when an icon is rendered.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 */
 	public static function register(): void {
 		wp_register_icon_collection(
@@ -55,7 +55,7 @@ final class Icons {
 	/**
 	 * Returns the labels of the icons registered by the plugin, keyed by slug.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 *
 	 * @return array<string, string>
 	 */
@@ -78,7 +78,7 @@ final class Icons {
 	 * Every icon gets the classes `radioedu-svg-icon` and `radioedu-svg-icon--{slug}`, which the
 	 * front-end script uses to clone icons from the server-rendered <template>.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 *
 	 * @param string                                                 $name Namespaced icon name, e.g. `core/search`.
 	 * @param array{size?: int|null, class?: string, label?: string} $args Arguments for wp_get_icon().
@@ -94,7 +94,7 @@ final class Icons {
 	/**
 	 * Prints an icon, escaped with the SVG allowlist.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 *
 	 * @param string                                                 $name Namespaced icon name, e.g. `core/search`.
 	 * @param array{size?: int|null, class?: string, label?: string} $args Arguments for wp_get_icon().
@@ -108,7 +108,7 @@ final class Icons {
 	 *
 	 * It mirrors the core icon sanitizer plus the accessibility attributes wp_get_icon() adds.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 *
 	 * @return array<string, array<string, bool>>
 	 */

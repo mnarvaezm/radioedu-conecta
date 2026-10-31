@@ -9,8 +9,8 @@
 ```yaml
 system_id: radioedu-conecta
 display_name: RadioEdu Conecta (Traspasando Fronteras)
-version: 1.0.0
-db_schema_version: 1.0.1
+version: "1.1"
+db_schema_version: 1.0.2
 php_version_requirement: ">=8.1"
 wp_version_requirement: ">=7.1"
 tested_up_to: "7.1"
@@ -60,7 +60,7 @@ c:\radioedu-conecta\
 ├── .distignore                          # Build exclusion rules for release distribution
 ├── .gitignore                           # Git repository exclusions
 ├── docker-compose.test.yml              # Local testing environment on port 8090 (WP 7.1 + MariaDB 10.11)
-├── radioedu-conecta.zip                 # Production release archive (POSIX paths, ~9.35 MB with demo media)
+├── radioedu-conecta_1.1.zip             # Release archive, always named radioedu-conecta_{version}.zip (POSIX paths, top folder radioedu-conecta/, ~9.4 MB with demo media; not in git)
 ├── src/
 │   ├── Plugin.php                       # Core singleton orchestrator (lifecycle, hooks, Multisite, DB schema check)
 │   ├── Icons.php                        # WordPress 7.1 Icons API: plugin icon collection + escaped wp_get_icon() output

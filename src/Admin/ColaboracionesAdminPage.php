@@ -45,7 +45,7 @@ class ColaboracionesAdminPage {
 	/**
 	 * Loads the admin stylesheet (status icons) only on the Colaboraciones screen.
 	 *
-	 * @since 1.0.0
+	 * @since 1.1
 	 *
 	 * @param string $hook_suffix Current admin screen.
 	 */
