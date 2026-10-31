@@ -50,7 +50,7 @@ The minified scripts in `build/` are compiled from the human-readable sources sh
 
 1. Upload `radioedu-conecta_1.1.zip` from **Plugins -> Add New Plugin -> Upload Plugin**, or copy the `radioedu-conecta` folder to `/wp-content/plugins/`.
 2. Activate the plugin from the **Plugins** screen (or from Network Admin when using Multisite).
-3. Manage school profiles from **RadioEdu Centros** (each station's data is in the editor sidebar, "Centro de Radio" tab), answer proposals from **Colaboraciones (Matches)** and configure the map and notifications from **Ajustes** (Settings).
+3. Manage school profiles from **RadioEdu Centros** (each station's data is in the editor sidebar, "Centro de Radio" tab), answer proposals from **Colaboraciones (Matches)** and configure the map, notifications and the number of stations per user from **Ajustes** (Settings).
 4. Insert the "Directorio Traspasando Fronteras" block (Widgets category) or the `[radioedu_directorio]` shortcode in any page to display the interactive directory. Only one directory per page is supported.
 
 == Frequently Asked Questions ==
@@ -63,6 +63,10 @@ Yes. It supports per-site and network activation, automatic provisioning of new 
 
 No. For privacy and GDPR compliance, email addresses are never exposed in the HTML or in the public API. Collaboration proposals are handled through the plugin's internal system and server-side notifications.
 
+= Can I limit how many stations each coordinator creates? =
+
+Yes. In **RadioEdu Centros -> Ajustes -> Coordinadores**, set "Radios por usuario". Leave it empty (the default) for no limit, or set 0 so coordinators only edit the stations an administrator assigns to them. Administrators and editors have no limit, and trashed stations do not count.
+
 = Can a match be proposed directly from a station profile? =
 
 Yes. Both the directory cards and each station's profile page include the "Proponer match" button, which opens the proposal side panel on the same screen.
@@ -73,6 +77,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * Requires WordPress 7.1.
 * New "Directorio Traspasando Fronteras" block, registered in PHP only (`supports.autoRegister`) and equivalent to the `[radioedu_directorio]` shortcode.
 * Interface icons use the WordPress 7.1 Icons API (core collection plus a `radioedu-conecta` collection) instead of emoji.
+* New "Radios por usuario" setting (Ajustes -> Coordinadores) limits how many stations each coordinator (Author role) can create. Empty, the default, means no limit; 0 lets coordinators only edit stations assigned by an administrator. Administrators and editors have no limit.
 * The public school page no longer repeats the theme's title, author/date and featured image above the profile. The plugin provides the page template: a block template (editable in the Site Editor) for block themes, or the theme header and footer around the profile for classic themes. Themes can override it.
 * School data moves from the meta box, collapsed below the editor, to three sidebar panels ("Datos de la emisora", "Ubicación en el mapa" and "Coordinación"). The meta box remains for the classic editor.
 * School meta fields are registered with `register_post_meta()` and sanitized on every write. The core REST API shows them only in the edit context to users who can edit the school, never in public responses, and XML-RPC cannot change them.

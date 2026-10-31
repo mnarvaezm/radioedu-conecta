@@ -72,6 +72,7 @@ c:\radioedu-conecta\
 │   │   ├── DemoDataImporter.php         # Demo stations importer & synchronizer (6 sample stations + images)
 │   │   └── Settings.php                 # WordPress Settings API options (map defaults, notification flags, demo sync)
 │   ├── Capabilities/
+│   │   ├── CentroLimit.php              # "Radios por usuario" limit: grants create_radioedu_centros on the fly
 │   │   └── RoleCapabilities.php         # Custom capabilities management for admin, editor, and author roles
 │   ├── Database/
 │   │   └── ColaboracionesTable.php      # Custom table DDL via dbDelta() and DB lifecycle management
@@ -237,6 +238,21 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
 | `edit_others_radioedu_centros` | ✅ | ✅ | ❌ | ❌ |
 | `delete_others_radioedu_centros` | ✅ | ❌ | ❌ | ❌ |
 | `propose_radioedu_colaboracion` | ✅ | ✅ | ✅ | ❌ |
+| `create_radioedu_centros` (dynamic, see 5.2) | ✅ | ✅ | ✅ up to the limit | ❌ |
+
+### 5.2 Radios per User Limit (`CentroLimit`)
+* **Setting:** `max_centros_per_user` in `radioedu_conecta_settings` (**Ajustes → Coordinadores → Radios por usuario**).
+  - Empty (the default) means no limit. A whole number of 0 or more is the maximum, and 0 means coordinators create none.
+  - `Settings::sanitize_settings()` keeps the previous value and shows a settings error on invalid input, so a typo never removes the limit.
+  - It is a per-site setting in Multisite.
+* **Enforcement:** the post type maps `create_posts` to `create_radioedu_centros`, which no role stores.
+  - `CentroLimit::grant_create_cap()` (`user_has_cap`) grants it to users with `edit_radioedu_centros` who either manage every centro (`edit_others_radioedu_centros` / `manage_radioedu`) or are under the limit. It reads the other capabilities from `$allcaps` to avoid recursion.
+  - Being a capability, it hides **Añadir nuevo** (menu, list, admin bar) and blocks `post-new.php`, REST `POST /wp/v2/centros` (403) and XML-RPC.
+* **Counting:**
+  - Counted: centros authored by the user in `publish`, `future`, `draft`, `pending` or `private`. Trash and `auto-draft` (created when opening the editor) do not count.
+  - The query stops at the limit (`posts_per_page`). Results are cached per request and flushed on `clean_post_cache` for centros.
+* **Exception:** administrators and editors may still assign more centros to a coordinator by setting them as author. The limit only stops self-service creation.
+* **Notice:** coordinators at the limit see an info notice on the centros list (`admin_notices`).
 
 ---
 

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-31T03:04:58+00:00\n"
+"POT-Creation-Date: 2026-10-31T13:38:13+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: radioedu-conecta\n"
@@ -53,7 +53,7 @@ msgid "RadioEdu Conecta requires WordPress %1$s or higher. You are using WordPre
 msgstr ""
 
 #: radioedu-conecta.php:176
-#: src/Admin/Settings.php:51
+#: src/Admin/Settings.php:52
 msgid "Ajustes"
 msgstr ""
 
@@ -328,7 +328,7 @@ msgid "No tienes permisos para responder a las propuestas de este centro."
 msgstr ""
 
 #: src/Admin/ColaboracionesAdminPage.php:127
-#: src/Admin/Settings.php:230
+#: src/Admin/Settings.php:282
 msgid "No tienes permisos suficientes para acceder a esta página."
 msgstr ""
 
@@ -418,79 +418,111 @@ msgstr ""
 msgid "En espera de respuesta del centro receptor."
 msgstr ""
 
-#: src/Admin/Settings.php:50
+#: src/Admin/Settings.php:51
 msgid "Ajustes de RadioEdu Conecta"
 msgstr ""
 
-#: src/Admin/Settings.php:75
+#: src/Admin/Settings.php:76
 msgid "Configuración del Mapa Interactivo"
 msgstr ""
 
-#: src/Admin/Settings.php:77
+#: src/Admin/Settings.php:78
 msgid "Define el centro geográfico y nivel de zoom inicial al abrir la vista de mapa en el directorio."
 msgstr ""
 
-#: src/Admin/Settings.php:84
+#: src/Admin/Settings.php:85
 msgid "Centro del mapa (Latitud / Longitud)"
 msgstr ""
 
-#: src/Admin/Settings.php:93
+#: src/Admin/Settings.php:94
 msgid "Notificaciones por Correo Electrónico"
 msgstr ""
 
-#: src/Admin/Settings.php:95
+#: src/Admin/Settings.php:96
 msgid "Gestiona las notificaciones automáticas enviadas a los docentes coordinadores de las emisoras."
 msgstr ""
 
-#: src/Admin/Settings.php:102
+#: src/Admin/Settings.php:103
 msgid "Avisos automáticos"
 msgstr ""
 
-#: src/Admin/Settings.php:191
+#: src/Admin/Settings.php:112
+msgid "Coordinadores"
+msgstr ""
+
+#: src/Admin/Settings.php:114
+msgid "Controla cuántas radios puede dar de alta cada coordinador (rol Autor). Los administradores y editores no tienen límite."
+msgstr ""
+
+#: src/Admin/Settings.php:121
+msgid "Radios por usuario"
+msgstr ""
+
+#: src/Admin/Settings.php:212
+msgid "El número de radios por usuario debe ser un número entero igual o mayor que 0, o quedar vacío. Se mantiene el valor anterior."
+msgstr ""
+
+#: src/Admin/Settings.php:228
 msgid "Lat:"
 msgstr ""
 
-#: src/Admin/Settings.php:194
+#: src/Admin/Settings.php:231
 msgid "Lng:"
 msgstr ""
 
-#: src/Admin/Settings.php:197
+#: src/Admin/Settings.php:234
 msgid "Zoom inicial (1-18):"
 msgstr ""
 
-#: src/Admin/Settings.php:200
+#: src/Admin/Settings.php:237
 msgid "Por defecto centrado en Extremadura (39.4699, -6.3708, zoom 8)."
 msgstr ""
 
-#: src/Admin/Settings.php:214
+#: src/Admin/Settings.php:251
 msgid "Notificar por correo al coordinador del centro receptor cuando reciba una nueva propuesta de colaboración."
 msgstr ""
 
-#: src/Admin/Settings.php:219
+#: src/Admin/Settings.php:256
 msgid "Notificar por correo al coordinador emisor cuando su propuesta sea aceptada o rechazada."
 msgstr ""
 
-#: src/Admin/Settings.php:236
+#: src/Admin/Settings.php:272
+msgid "Número máximo de radios que puede crear cada coordinador. Déjalo vacío para no poner límite. Con 0 no pueden crear ninguna y solo editan las que les asigne un administrador. Las radios en la papelera no cuentan."
+msgstr ""
+
+#: src/Admin/Settings.php:288
 msgid "Configuración global del directorio de radios escolares Traspasando Fronteras."
 msgstr ""
 
 #. translators: %d: number of imported centers
-#: src/Admin/Settings.php:248
+#: src/Admin/Settings.php:300
 #, php-format
 msgid "¡Se han cargado o sincronizado con éxito %d emisoras de ejemplo con sus imágenes, taxonomías y coordenadas en el mapa!"
 msgstr ""
 
-#: src/Admin/Settings.php:271
+#: src/Admin/Settings.php:323
 msgid "Emisoras de Demostración (Traspasando Fronteras)"
 msgstr ""
 
-#: src/Admin/Settings.php:273
+#: src/Admin/Settings.php:325
 msgid "El instalador incluye 6 emisoras completas de ejemplo con fotografías de cabecera, logotipos, edades, formatos, idiomas y coordenadas geográficas. Puedes volver a generarlas o sincronizarlas en cualquier momento con este botón:"
 msgstr ""
 
-#: src/Admin/Settings.php:278
+#: src/Admin/Settings.php:330
 msgid "Sincronizar / Cargar las 6 emisoras de ejemplo"
 msgstr ""
+
+#: src/Capabilities/CentroLimit.php:132
+msgid "Las radios las da de alta un administrador. Puedes editar las que tengas asignadas."
+msgstr ""
+
+#. translators: %d: maximum number of radios per user.
+#: src/Capabilities/CentroLimit.php:135
+#, php-format
+msgid "Has alcanzado el máximo de %d radio por usuario. Para dar de alta otra, contacta con un administrador."
+msgid_plural "Has alcanzado el máximo de %d radios por usuario. Para dar de alta otra, contacta con un administrador."
+msgstr[0] ""
+msgstr[1] ""
 
 #. translators: %s: Name of the sending school.
 #: src/Emails/NotificationService.php:90
@@ -703,117 +735,117 @@ msgstr ""
 msgid "El logo debe ser una imagen de la biblioteca de medios a la que tengas acceso."
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:29
+#: src/PostTypes/CentroPostType.php:31
 msgctxt "Post type general name"
 msgid "Centros y Radios"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:30
+#: src/PostTypes/CentroPostType.php:32
 msgctxt "Post type singular name"
 msgid "Centro de Radio"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:31
+#: src/PostTypes/CentroPostType.php:33
 msgctxt "Admin Menu text"
 msgid "RadioEdu Centros"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:32
+#: src/PostTypes/CentroPostType.php:34
 msgctxt "Add New on Toolbar"
 msgid "Centro de Radio"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:33
+#: src/PostTypes/CentroPostType.php:35
 msgid "Añadir nuevo centro"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:34
+#: src/PostTypes/CentroPostType.php:36
 msgid "Añadir nuevo centro de radio"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:35
+#: src/PostTypes/CentroPostType.php:37
 msgid "Nuevo centro"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:36
+#: src/PostTypes/CentroPostType.php:38
 msgid "Editar centro de radio"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:37
+#: src/PostTypes/CentroPostType.php:39
 msgid "Ver ficha de centro"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:38
+#: src/PostTypes/CentroPostType.php:40
 msgid "Todos los centros"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:39
+#: src/PostTypes/CentroPostType.php:41
 msgid "Buscar centros de radio"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:40
+#: src/PostTypes/CentroPostType.php:42
 msgid "Centro superior:"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:41
+#: src/PostTypes/CentroPostType.php:43
 msgid "No se encontraron centros."
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:42
+#: src/PostTypes/CentroPostType.php:44
 msgid "No hay centros en la papelera."
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:43
+#: src/PostTypes/CentroPostType.php:45
 msgctxt "Overrides the \"Featured Image\" phrase"
 msgid "Foto de cabecera / Fachada del centro"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:44
+#: src/PostTypes/CentroPostType.php:46
 msgctxt "Overrides the \"Set featured image\" phrase"
 msgid "Asignar foto de cabecera"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:45
+#: src/PostTypes/CentroPostType.php:47
 msgctxt "Overrides the \"Remove featured image\" phrase"
 msgid "Quitar foto de cabecera"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:46
+#: src/PostTypes/CentroPostType.php:48
 msgctxt "Overrides the \"Use as featured image\" phrase"
 msgid "Usar como foto de cabecera"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:47
+#: src/PostTypes/CentroPostType.php:49
 msgctxt "The post type archive label"
 msgid "Directorio de radios escolares"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:48
+#: src/PostTypes/CentroPostType.php:50
 msgctxt "The post type attributes label"
 msgid "Atributos de centro"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:49
+#: src/PostTypes/CentroPostType.php:51
 msgctxt "Overrides the \"Insert into post\" phrase"
 msgid "Insertar en la ficha de centro"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:50
+#: src/PostTypes/CentroPostType.php:52
 msgctxt "Overrides the \"Uploaded to this post\" phrase"
 msgid "Subido a este centro"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:51
+#: src/PostTypes/CentroPostType.php:53
 msgctxt "Screen reader text for the filter links"
 msgid "Filtrar lista de centros"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:52
+#: src/PostTypes/CentroPostType.php:54
 msgctxt "Screen reader text for the pagination"
 msgid "Navegación de lista de centros"
 msgstr ""
 
-#: src/PostTypes/CentroPostType.php:53
+#: src/PostTypes/CentroPostType.php:55
 msgctxt "Screen reader text for the items list"
 msgid "Lista de centros"
 msgstr ""

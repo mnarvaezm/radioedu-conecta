@@ -14,6 +14,7 @@ use RadioEdu\Conecta\Admin\CentroMetaBoxes;
 use RadioEdu\Conecta\Admin\ColaboracionesAdminPage;
 use RadioEdu\Conecta\Admin\DemoDataImporter;
 use RadioEdu\Conecta\Admin\Settings;
+use RadioEdu\Conecta\Capabilities\CentroLimit;
 use RadioEdu\Conecta\Capabilities\RoleCapabilities;
 use RadioEdu\Conecta\Database\ColaboracionesTable;
 use RadioEdu\Conecta\Frontend\DirectorioShortcode;
@@ -75,6 +76,9 @@ final class Plugin {
 
 		// 3. Registrar herramientas de Privacidad / RGPD.
 		PrivacyPolicy::register();
+
+		// Limit on the radios each coordinator can create; capability checks also run in REST requests.
+		CentroLimit::register();
 
 		// 4. Registrar Meta Boxes, Gestión de Colaboraciones y Ajustes del panel de administración.
 		if ( is_admin() ) {

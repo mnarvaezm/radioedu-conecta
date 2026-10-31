@@ -45,7 +45,7 @@
 1. Sube el archivo `radioedu-conecta_1.1.zip` desde **Plugins → Añadir nuevo plugin → Subir plugin** en WordPress, o descomprime la carpeta `radioedu-conecta` en `/wp-content/plugins/`.
 2. Activa el plugin desde el menú **Plugins**. La activación no publica contenido: si quieres las 6 emisoras de demostración y la página `/traspasando-fronteras/` con el shortcode `[radioedu_directorio]`, cárgalas desde **RadioEdu Centros → Ajustes**.
 3. Para mostrar el directorio en cualquier otra página, inserta el bloque **Directorio Traspasando Fronteras** (categoría *Widgets*) o el shortcode `[radioedu_directorio]`. Solo puede haber un directorio por página.
-4. Gestiona los centros desde **RadioEdu Centros** (los datos de cada emisora están en la barra lateral del editor, pestaña **Centro de Radio**), responde a propuestas desde **RadioEdu Centros → Colaboraciones (Matches)** y configura el mapa o las notificaciones en **RadioEdu Centros → Ajustes**.
+4. Gestiona los centros desde **RadioEdu Centros** (los datos de cada emisora están en la barra lateral del editor, pestaña **Centro de Radio**), responde a propuestas desde **RadioEdu Centros → Colaboraciones (Matches)** y configura el mapa, las notificaciones o el número de radios por usuario en **RadioEdu Centros → Ajustes**.
 
 ---
 
@@ -90,6 +90,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * Requiere WordPress 7.1.
 * Nuevo bloque **Directorio Traspasando Fronteras** registrado solo con PHP (`supports.autoRegister`), equivalente al shortcode `[radioedu_directorio]`.
 * Iconos SVG de la API de iconos de WordPress 7.1 en lugar de emojis en el directorio, la ficha, el panel lateral y la pantalla de Colaboraciones.
+* Nuevo ajuste **Radios por usuario** (**Ajustes → Coordinadores**): limita cuántas radios puede crear cada coordinador (rol Autor). Vacío, el valor por defecto, significa sin límite; con 0 solo editan las que les asigne un administrador. Administradores y editores no tienen límite. El límite se aplica en el menú, en la pantalla de creación y en la REST.
 * La página pública de cada centro ya no repite encima de la ficha el título, el autor y la fecha ni la imagen destacada del tema: el plugin aporta su plantilla (una plantilla de bloques editable en el Editor del sitio, o una plantilla PHP con la cabecera y el pie del tema en los temas clásicos), que el tema puede sustituir.
 * Los datos del centro pasan de la caja meta, plegada al pie del editor, a tres paneles de la barra lateral (**Datos de la emisora**, **Ubicación en el mapa** y **Coordinación**). La caja meta solo aparece con el Editor Clásico.
 * Metadatos del centro registrados con `register_post_meta()`: se sanean en cualquier escritura. La REST del core solo los muestra en modo edición a quien puede editar el centro (nunca en las respuestas públicas) y XML-RPC no puede modificarlos.
