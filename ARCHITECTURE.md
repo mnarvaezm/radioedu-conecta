@@ -68,6 +68,7 @@ c:\radioedu-conecta\
 │   ├── Admin/
 │   │   ├── CentroEditorPanel.php        # Loads the centro sidebar panels of the block editor (build/centro-panel.js)
 │   │   ├── CentroMetaBoxes.php          # Classic-editor meta box for the same fields (__back_compat_meta_box)
+│   │   ├── NetworkSyncPage.php          # Network Admin → Settings → RadioEdu Conecta (sync button, build/network-sync.js)
 │   │   ├── ColaboracionesAdminPage.php  # Admin panel to view, accept, or decline match proposals
 │   │   ├── DemoDataImporter.php         # Demo stations importer & synchronizer (6 sample stations + images)
 │   │   └── Settings.php                 # WordPress Settings API options (map defaults, notification flags, demo sync)
@@ -85,9 +86,14 @@ c:\radioedu-conecta\
 │   │   └── CentroMeta.php               # register_post_meta() for every `_radioedu_*` key (type, sanitizer, edit-context REST, auth)
 │   ├── Privacy/
 │   │   └── PrivacyPolicy.php            # RGPD/GDPR personal data exporter, eraser, and policy notice
+│   ├── Network/
+│   │   └── NetworkSync.php              # Multisite: one ficha on the main site per network site (create/update/reuse)
 │   ├── Rest/
 │   │   ├── CentrosController.php        # REST Controller (`GET /radioedu-conecta/v1/centros`)
-│   │   └── ColaboracionesController.php # REST Controller (`POST|PATCH|GET /radioedu-conecta/v1/colaboraciones`)
+│   │   ├── ColaboracionesController.php # REST Controller (`POST|PATCH|GET /radioedu-conecta/v1/colaboraciones`)
+│   │   └── NetworkSyncController.php    # REST Controller (`POST /radioedu-conecta/v1/network-sync`, Multisite only)
+│   ├── Support/
+│   │   └── BlockMarkup.php              # Serialized Paragraph blocks for content the plugin creates
 │   └── Taxonomies/
 │       └── TaxonomiesRegistrar.php      # 5 faceted taxonomies registration & capability bindings
 ├── templates/
@@ -107,11 +113,13 @@ c:\radioedu-conecta\
 │       ├── admin.js                     # Source: WP Media Uploader connector for the classic meta box logo
 │       ├── centro-panel.js              # Source: block editor sidebar panels of the centro fields (registerPlugin)
 │       ├── directorio.js                # Source: frontend reactive controller (DOM builder, Leaflet manager, Drawer)
+│       ├── network-sync.js              # Source: network admin sync button (batched apiFetch loop, progress, summary)
 │       └── leaflet.js                   # Self-contained Leaflet 1.9.4 JavaScript runtime (zero CDN)
 ├── build/                               # Committed `npm run build` output (@wordpress/scripts); the only JS the plugin loads
 │   ├── admin.js / admin.asset.php       # Compiled admin.js + generated dependencies (wp-i18n) and version hash
 │   ├── centro-panel.js / centro-panel.asset.php # Compiled panels + dependencies (wp-editor, wp-plugins, wp-components…)
-│   └── directorio.js / directorio.asset.php # Compiled directorio.js + dependencies (wp-a11y, wp-i18n)
+│   ├── directorio.js / directorio.asset.php # Compiled directorio.js + dependencies (wp-a11y, wp-i18n)
+│   └── network-sync.js / network-sync.asset.php # Compiled network sync + dependencies (wp-api-fetch, wp-a11y, wp-dom-ready, wp-i18n)
 ├── languages/
 │   └── radioedu-conecta.pot             # GNU gettext internationalization template
 ├── tests/                               # PHPUnit (single site + Multisite) and tests/e2e Playwright specs (not shipped)
@@ -288,6 +296,13 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
 
 ---
 
+### 6.5 `POST /wp-json/radioedu-conecta/v1/network-sync` (Multisite only)
+* **Permission:** main site of a network only, otherwise `404 radioedu_conecta_not_main_site`. Requires `current_user_can( 'manage_network_options' )`, otherwise 401 when logged out or 403. The REST nonce is sent by `wp.apiFetch`.
+* **Arguments:**
+  - `offset` (`integer`, minimum 0, default 0, `absint`).
+  - `grant_author_role` (`boolean`, `rest_sanitize_boolean`). When omitted, the stored choice is used. The first batch (offset 0) stores it in the network option `radioedu_conecta_sync_grant_author` (default `'1'`), which `uninstall.php` deletes.
+* **Response:** `processed`, `total`, `next_offset`, `done`, `created`, `updated`, `reused`, `skipped`, `authors_added`, `errors[] {blog_id, message}`, `missing[] {id, title, blog_id, edit_url}` (last batch only). See section 8.
+
 ## 7. Frontend & Admin Workflows
 
 ### 7.1 Drawer Offcanvas Workflow (Directory & Single Station Profile)
@@ -337,4 +352,16 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
 * **Network Activation (`$network_wide = true`):** Iterates through sites via `get_sites()` + `switch_to_blog()`, provisioning tables and capabilities without seeding demo posts.
 * **Dynamic Site Provisioning & Teardown:** `wp_initialize_site` (`Plugin::on_initialize_site()`) provisions new sites only when the plugin is network-active. On site deletion the custom table is added to core's drop list through the `wpmu_drop_tables` filter (`ColaboracionesTable::add_to_dropped_tables()`); options and roles disappear with the site's own tables, so nothing is written to tables that core has already dropped.
 * **Rewrite rules in switched context:** inside `switch_to_blog()` the plugin deletes the `rewrite_rules` option instead of flushing, so each site regenerates its own rules with its own permalink structure.
+* **Network Sync of Fichas (`NetworkSync`, `NetworkSyncPage`, `NetworkSyncController`):**
+  - **Where:** a manual button in **Network Admin → Settings → RadioEdu Conecta** (`manage_network_options`) calls `POST /radioedu-conecta/v1/network-sync`. The endpoint is only available on the main site of a network (404 elsewhere, 401/403 without `manage_network_options`).
+  - **Batches:** each request handles `radioedu_conecta_network_sync_batch_size` sites (filter, default 20, clamped 1–100) and returns `next_offset`/`done`. `build/network-sync.js` loops, updates a `<progress>` and a `role="status"` line, and prints the summary with DOM nodes and `wp.a11y.speak()`.
+  - **Sources and target:** every site except the main one, skipping archived, spam and deleted sites. Fichas are `radioedu_centro` posts on the main site (the directory), linked to their site through the locked meta `_radioedu_source_blog_id`.
+  - **Mapping:** `switch_to_blog()` reads each site, with `restore_current_blog()` in `finally`.
+    - Refreshed on every sync: `blogname` → title, `home_url('/')` → `_radioedu_web_centro`, `get_site_icon_url(512)` → `_radioedu_logo_url`.
+    - On creation only: tagline → excerpt and a Paragraph block, `admin_email` → `_radioedu_coordinador_email`, and the site administrator (matching the admin email, else the first administrator) → post author.
+  - **Author role (checkbox, checked by default):** on every sync, the current author of each synced ficha is added to the main site as Author when not a member, or receives the Author role when they are a member without `edit_radioedu_centros`. Author, Editor and Administrator are left as they are, and existing roles are kept. Unchecked, no role or membership is added. `authors_added` counts the users who got the role.
+  - **Never touched:** coordinator-edited data (coordinates, flag, taxonomies, podcast). Trashed fichas are reported as skipped and never recreated.
+  - **Reuse:** a ficha without the source meta whose website matches the site URL (http/https, with or without trailing slash) is adopted.
+  - **Orphans:** in the last batch, fichas whose source site is gone, archived, spam or deleted are listed (title, site ID, edit link) and kept.
+  - The "Radios por usuario" limit does not apply: the sync creates fichas directly as a network administrator.
 * **Complete Uninstallation ([uninstall.php](file:///c:/radioedu-conecta/uninstall.php)):** Drops `{$wpdb->prefix}radioedu_colaboraciones`, deletes all `radioedu_centro` posts and postmeta, deletes terms across all 5 custom taxonomies, removes options and transients, and revokes all 12 custom capabilities across single-site or entire Multisite networks.

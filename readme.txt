@@ -59,6 +59,19 @@ The minified scripts in `build/` are compiled from the human-readable sources sh
 
 Yes. It supports per-site and network activation, automatic provisioning of new sites while network-active (`wp_initialize_site`), removal of the plugin table when a site is deleted (`wpmu_drop_tables`) and a complete network-wide cleanup in `uninstall.php`.
 
+= Can the station profiles be created from the sites of the network? =
+
+Yes. In **Network Admin -> Settings -> RadioEdu Conecta**, the "Sincronizar fichas con los sitios de la red" button creates one profile per network site in the directory of the main site, or updates the existing one. The main site and archived, spam or deleted sites are skipped.
+
+* The site name, URL and icon are refreshed on every sync.
+* The tagline, admin email and site administrator are only used when the profile is created. They become the description, the coordinator email and the profile author.
+* With the "Dar el rol Autor…" checkbox (checked by default), each profile author gets the Author role on the main site, unless they already have it or a higher role, so they can edit their profile. Unchecked, no role is added. The page remembers the last choice.
+* Data the coordinator completes later is never overwritten, and trashed profiles are left alone.
+* A hand-made profile with the same website is reused instead of duplicated.
+* Profiles whose site no longer exists are kept and listed in the final summary.
+
+Only network administrators can run it, and the plugin must be active on the main site.
+
 = Are teachers' email addresses published on the website? =
 
 No. For privacy and GDPR compliance, email addresses are never exposed in the HTML or in the public API. Collaboration proposals are handled through the plugin's internal system and server-side notifications.
@@ -77,6 +90,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * Requires WordPress 7.1.
 * New "Directorio Traspasando Fronteras" block, registered in PHP only (`supports.autoRegister`) and equivalent to the `[radioedu_directorio]` shortcode.
 * Interface icons use the WordPress 7.1 Icons API (core collection plus a `radioedu-conecta` collection) instead of emoji.
+* Multisite: new network admin button that creates or updates one station profile per network site in the main site's directory. It reuses hand-made profiles with the same website and lists the profiles of sites that no longer exist. A checkbox, checked by default, gives coordinators the Author role on the main site.
 * New "Radios por usuario" setting (Ajustes -> Coordinadores) limits how many stations each coordinator (Author role) can create. Empty, the default, means no limit; 0 lets coordinators only edit stations assigned by an administrator. Administrators and editors have no limit.
 * The public school page no longer repeats the theme's title, author/date and featured image above the profile. The plugin provides the page template: a block template (editable in the Site Editor) for block themes, or the theme header and footer around the profile for classic themes. Themes can override it.
 * School data moves from the meta box, collapsed below the editor, to three sidebar panels ("Datos de la emisora", "Ubicación en el mapa" and "Coordinación"). The meta box remains for the classic editor.

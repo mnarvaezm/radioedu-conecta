@@ -9,13 +9,14 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-31T13:38:13+00:00\n"
+"POT-Creation-Date: 2026-10-31T14:25:30+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: radioedu-conecta\n"
 
 #. Plugin Name of the plugin
 #: radioedu-conecta.php
+#: src/Admin/NetworkSyncPage.php:58
 #: src/Icons.php:39
 msgid "RadioEdu Conecta"
 msgstr ""
@@ -312,7 +313,7 @@ msgid "Colaboraciones (Matches)"
 msgstr ""
 
 #: src/Admin/ColaboracionesAdminPage.php:84
-#: src/Admin/DemoDataImporter.php:71
+#: src/Admin/DemoDataImporter.php:72
 #: src/Rest/ColaboracionesController.php:298
 #: src/Rest/ColaboracionesController.php:476
 msgid "No tienes permisos para realizar esta acción."
@@ -328,6 +329,7 @@ msgid "No tienes permisos para responder a las propuestas de este centro."
 msgstr ""
 
 #: src/Admin/ColaboracionesAdminPage.php:127
+#: src/Admin/NetworkSyncPage.php:109
 #: src/Admin/Settings.php:282
 msgid "No tienes permisos suficientes para acceder a esta página."
 msgstr ""
@@ -416,6 +418,115 @@ msgstr ""
 
 #: src/Admin/ColaboracionesAdminPage.php:252
 msgid "En espera de respuesta del centro receptor."
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:57
+msgid "RadioEdu Conecta: fichas de la red"
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:114
+msgid "Nombre del sitio"
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:114
+msgid "Nombre del centro"
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:114
+#: src/Admin/NetworkSyncPage.php:115
+#: src/Admin/NetworkSyncPage.php:116
+msgid "Sí"
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:115
+msgid "URL del sitio"
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:115
+msgid "Web oficial"
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:116
+msgid "Icono del sitio"
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:116
+msgid "Logo"
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:117
+msgid "Descripción corta"
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:117
+msgid "Descripción"
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:117
+#: src/Admin/NetworkSyncPage.php:118
+#: src/Admin/NetworkSyncPage.php:119
+msgid "Solo al crearla"
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:118
+msgid "Email de administración"
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:118
+#: build/centro-panel.js:1
+msgid "Email del coordinador/a"
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:119
+msgid "Administrador del sitio"
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:119
+msgid "Autor de la ficha"
+msgstr ""
+
+#. translators: %d: number of network sites (the main site excluded).
+#: src/Admin/NetworkSyncPage.php:129
+#, php-format
+msgid "Crea en el directorio del sitio principal una ficha de radio para el %d sitio de la red, o actualiza la que ya tiene."
+msgid_plural "Crea en el directorio del sitio principal una ficha de radio por cada uno de los %d sitios de la red, o actualiza la que ya tienen."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Admin/NetworkSyncPage.php:142
+msgid "Datos que la sincronización toma de cada sitio"
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:145
+msgid "Del sitio"
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:146
+msgid "A la ficha"
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:147
+msgid "¿Se actualiza al volver a sincronizar?"
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:162
+msgid "Lo que el coordinador complete después (coordenadas, bandera, etapas, idiomas, temas y podcast) no se modifica nunca. Si ya existe una ficha creada a mano con la misma web, se reutiliza. Las fichas en la papelera no se tocan. Las fichas de sitios que ya no existen no se borran: aparecen en el resumen."
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:168
+msgid "Dar el rol Autor en el sitio principal a los autores de las fichas que no lo tengan, ni tengan otro superior, para que puedan editar su ficha."
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:174
+msgid "Sincronizar fichas con los sitios de la red"
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:178
+msgid "La sincronización necesita JavaScript."
+msgstr ""
+
+#: src/Admin/NetworkSyncPage.php:182
+msgid "Progreso de la sincronización"
 msgstr ""
 
 #: src/Admin/Settings.php:51
@@ -679,6 +790,10 @@ msgstr ""
 msgid "Enviar"
 msgstr ""
 
+#: src/Network/NetworkSync.php:302
+msgid "El sitio no existe."
+msgstr ""
+
 #: src/PostTypes/CentroMeta.php:81
 msgid "ID del adjunto de imagen usado como logo de la emisora."
 msgstr ""
@@ -731,7 +846,11 @@ msgstr ""
 msgid "Marca los contenidos creados por el importador de demostración."
 msgstr ""
 
-#: src/PostTypes/CentroMeta.php:235
+#: src/PostTypes/CentroMeta.php:159
+msgid "ID del sitio de la red del que la sincronización de red tomó los datos de la ficha."
+msgstr ""
+
+#: src/PostTypes/CentroMeta.php:241
 msgid "El logo debe ser una imagen de la biblioteca de medios a la que tengas acceso."
 msgstr ""
 
@@ -1061,6 +1180,62 @@ msgstr ""
 
 #: src/Rest/ColaboracionesController.php:567
 msgid "Fechas aproximadas del proyecto."
+msgstr ""
+
+#: src/Rest/NetworkSyncController.php:59
+msgid "Número de sitios ya procesados."
+msgstr ""
+
+#: src/Rest/NetworkSyncController.php:68
+msgid "Si los autores de las fichas reciben el rol Autor en el sitio principal. Si se omite, se usa la última elección."
+msgstr ""
+
+#: src/Rest/NetworkSyncController.php:91
+msgid "La sincronización de red solo funciona en el sitio principal de una red multisitio."
+msgstr ""
+
+#: src/Rest/NetworkSyncController.php:94
+msgid "No tienes permiso para sincronizar las fichas de la red."
+msgstr ""
+
+#: src/Rest/NetworkSyncController.php:142
+msgid "Sitios procesados en este lote."
+msgstr ""
+
+#: src/Rest/NetworkSyncController.php:143
+msgid "Sitios de la red que se sincronizan."
+msgstr ""
+
+#: src/Rest/NetworkSyncController.php:144
+msgid "Valor de offset del siguiente lote."
+msgstr ""
+
+#: src/Rest/NetworkSyncController.php:148
+msgid "Si este es el último lote."
+msgstr ""
+
+#: src/Rest/NetworkSyncController.php:150
+msgid "Fichas creadas."
+msgstr ""
+
+#: src/Rest/NetworkSyncController.php:151
+msgid "Fichas actualizadas."
+msgstr ""
+
+#: src/Rest/NetworkSyncController.php:152
+msgid "Fichas creadas a mano reutilizadas."
+msgstr ""
+
+#: src/Rest/NetworkSyncController.php:153
+msgid "Fichas omitidas porque están en la papelera."
+msgstr ""
+
+#: src/Rest/NetworkSyncController.php:154
+msgid "Autores de fichas que han recibido el rol Autor en el sitio principal."
+msgstr ""
+
+#: src/Rest/NetworkSyncController.php:169
+msgid "Fichas cuyo sitio de origen ya no existe (solo en el último lote)."
 msgstr ""
 
 #: src/Taxonomies/TaxonomiesRegistrar.php:59
@@ -1563,10 +1738,6 @@ msgstr ""
 msgid "Coordinación"
 msgstr ""
 
-#: build/centro-panel.js:1
-msgid "Email del coordinador/a"
-msgstr ""
-
 #: build/directorio.js:3
 msgid "No se encontraron centros con los filtros seleccionados."
 msgstr ""
@@ -1617,4 +1788,95 @@ msgstr ""
 
 #: build/directorio.js:3
 msgid "Colaboradores de OpenStreetMap"
+msgstr ""
+
+#: build/network-sync.js:1
+msgid "Sincronizando…"
+msgstr ""
+
+#. translators: 1: processed sites, 2: total sites.
+#: build/network-sync.js:2
+#, js-format
+msgid "Procesados %1$d de %2$d sitios…"
+msgstr ""
+
+#: build/network-sync.js:2
+#: build/network-sync.js:9
+msgid "Sincronización terminada."
+msgstr ""
+
+#. translators: %d: number of fichas.
+#: build/network-sync.js:3
+#, js-format
+msgid "%d ficha creada."
+msgid_plural "%d fichas creadas."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of fichas.
+#: build/network-sync.js:4
+#, js-format
+msgid "%d ficha actualizada."
+msgid_plural "%d fichas actualizadas."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of fichas.
+#: build/network-sync.js:5
+#, js-format
+msgid "%d ficha creada a mano reutilizada."
+msgid_plural "%d fichas creadas a mano reutilizadas."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of fichas.
+#: build/network-sync.js:6
+#, js-format
+msgid "%d ficha omitida porque está en la papelera."
+msgid_plural "%d fichas omitidas porque están en la papelera."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of coordinators.
+#: build/network-sync.js:7
+#, js-format
+msgid "%d coordinador ha recibido el rol Autor en el sitio principal."
+msgid_plural "%d coordinadores han recibido el rol Autor en el sitio principal."
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/network-sync.js:7
+msgid "Sitios que no se han podido sincronizar:"
+msgstr ""
+
+#. translators: 1: site ID, 2: error message.
+#: build/network-sync.js:8
+#, js-format
+msgid "Sitio %1$d: %2$s"
+msgstr ""
+
+#: build/network-sync.js:8
+msgid "Fichas cuyo sitio ya no existe (no se han borrado):"
+msgstr ""
+
+#. translators: %d: ID of the site that no longer exists.
+#: build/network-sync.js:9
+#, js-format
+msgid "(sitio %d)"
+msgstr ""
+
+#. translators: 1: created fichas, 2: updated fichas, 3: problems.
+#: build/network-sync.js:10
+#, js-format
+msgid "Sincronización terminada: %1$d creadas, %2$d actualizadas, %3$d avisos."
+msgstr ""
+
+#. translators: %s: error message.
+#: build/network-sync.js:11
+#, js-format
+msgid "La sincronización se ha detenido: %s"
+msgstr ""
+
+#: build/network-sync.js:11
+msgid "error desconocido"
 msgstr ""

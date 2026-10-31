@@ -13,6 +13,7 @@ use RadioEdu\Conecta\Admin\CentroEditorPanel;
 use RadioEdu\Conecta\Admin\CentroMetaBoxes;
 use RadioEdu\Conecta\Admin\ColaboracionesAdminPage;
 use RadioEdu\Conecta\Admin\DemoDataImporter;
+use RadioEdu\Conecta\Admin\NetworkSyncPage;
 use RadioEdu\Conecta\Admin\Settings;
 use RadioEdu\Conecta\Capabilities\CentroLimit;
 use RadioEdu\Conecta\Capabilities\RoleCapabilities;
@@ -23,6 +24,7 @@ use RadioEdu\Conecta\PostTypes\CentroPostType;
 use RadioEdu\Conecta\Privacy\PrivacyPolicy;
 use RadioEdu\Conecta\Rest\CentrosController;
 use RadioEdu\Conecta\Rest\ColaboracionesController;
+use RadioEdu\Conecta\Rest\NetworkSyncController;
 use RadioEdu\Conecta\Taxonomies\TaxonomiesRegistrar;
 use WP_Site;
 
@@ -87,6 +89,9 @@ final class Plugin {
 			ColaboracionesAdminPage::register();
 			Settings::register();
 			DemoDataImporter::register();
+			if ( is_multisite() ) {
+				NetworkSyncPage::register();
+			}
 		}
 
 		// 5. Registrar endpoints de la REST API.
@@ -111,6 +116,11 @@ final class Plugin {
 
 		$colaboraciones_controller = new ColaboracionesController();
 		$colaboraciones_controller->register_routes();
+
+		if ( is_multisite() ) {
+			$network_sync_controller = new NetworkSyncController();
+			$network_sync_controller->register_routes();
+		}
 	}
 
 	/**

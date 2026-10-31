@@ -10,10 +10,12 @@ module.exports = [
 	{
 		settings: {
 			'import/core-modules': [
+				'@wordpress/api-fetch',
 				'@wordpress/block-editor',
 				'@wordpress/components',
 				'@wordpress/core-data',
 				'@wordpress/data',
+				'@wordpress/dom-ready',
 				'@wordpress/editor',
 				'@wordpress/element',
 				'@wordpress/plugins',

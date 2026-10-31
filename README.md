@@ -79,6 +79,16 @@ Las pruebas completas están en [TESTING-PROTOCOL.md](TESTING-PROTOCOL.md).
 ### ¿Es compatible con WordPress Multisite?
 Sí. Soporta tanto activación individual en un sitio concreto como activación para toda la red (*Network Activate*), aprovisionamiento automático de nuevos sitios (`wp_initialize_site`), limpieza al borrar sitios (filtro `wpmu_drop_tables`) y desinstalación completa en toda la red mediante `uninstall.php`.
 
+### ¿Se pueden crear las fichas a partir de los sitios de la red?
+Sí. En **Administración de la red → Ajustes → RadioEdu Conecta**, el botón **Sincronizar fichas con los sitios de la red** crea en el directorio del sitio principal una ficha por cada sitio de la red (salvo el principal y los archivados, marcados como spam o borrados), o actualiza la que ya tiene.
+- **Datos que toma:** el nombre, la URL y el icono del sitio se actualizan en cada sincronización. El lema, el email de administración y el administrador del sitio solo se usan al crear la ficha: pasan a ser la descripción, el email del coordinador y el autor de la ficha.
+- **Rol Autor en el portal principal:** con la casilla **Dar el rol Autor…** (marcada por defecto), el autor de cada ficha recibe el rol Autor en el sitio principal si no lo tiene ni tiene otro superior, para que pueda editar su ficha. Desmarcada, no se añade ningún rol. La pantalla recuerda la última elección y el resumen indica a cuántos coordinadores se ha dado el rol.
+- **Lo que no toca:** lo que el coordinador complete después (coordenadas, bandera, etapas, idiomas, temas, podcast) no se modifica nunca, y las fichas en la papelera no se tocan.
+- **Fichas existentes:** si ya existe una ficha creada a mano con la misma web, se reutiliza en lugar de duplicarla.
+- **Sitios desaparecidos:** sus fichas no se borran; aparecen en el resumen final con un enlace para editarlas.
+
+La sincronización es manual, por lotes con barra de progreso, y solo la puede lanzar un superadministrador. El plugin debe estar activo en el sitio principal; lo recomendable es activarlo en red.
+
 ### ¿Se publican los correos electrónicos de los docentes en la web?
 No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se exponen en el DOM ni en el endpoint público `/wp-json/radioedu-conecta/v1/centros`. Las notificaciones se gestionan internamente en el servidor mediante `wp_mail()` y solo se comparten los datos de contacto cuando un centro acepta formalmente un match.
 
@@ -90,6 +100,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * Requiere WordPress 7.1.
 * Nuevo bloque **Directorio Traspasando Fronteras** registrado solo con PHP (`supports.autoRegister`), equivalente al shortcode `[radioedu_directorio]`.
 * Iconos SVG de la API de iconos de WordPress 7.1 en lugar de emojis en el directorio, la ficha, el panel lateral y la pantalla de Colaboraciones.
+* Multisite: botón de red **Sincronizar fichas con los sitios de la red** (**Administración de la red → Ajustes → RadioEdu Conecta**), que crea o actualiza en el sitio principal una ficha por cada sitio de la red, reutiliza las fichas hechas a mano con la misma web y lista en un resumen las fichas de sitios que ya no existen. Una casilla, marcada por defecto, da a los coordinadores el rol Autor en el portal principal.
 * Nuevo ajuste **Radios por usuario** (**Ajustes → Coordinadores**): limita cuántas radios puede crear cada coordinador (rol Autor). Vacío, el valor por defecto, significa sin límite; con 0 solo editan las que les asigne un administrador. Administradores y editores no tienen límite. El límite se aplica en el menú, en la pantalla de creación y en la REST.
 * La página pública de cada centro ya no repite encima de la ficha el título, el autor y la fecha ni la imagen destacada del tema: el plugin aporta su plantilla (una plantilla de bloques editable en el Editor del sitio, o una plantilla PHP con la cabecera y el pie del tema en los temas clásicos), que el tema puede sustituir.
 * Los datos del centro pasan de la caja meta, plegada al pie del editor, a tres paneles de la barra lateral (**Datos de la emisora**, **Ubicación en el mapa** y **Coordinación**). La caja meta solo aparece con el Editor Clásico.

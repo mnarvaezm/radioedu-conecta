@@ -22,7 +22,7 @@ use WP_UnitTestCase;
  */
 class CentroMetaTest extends WP_UnitTestCase {
 
-	private const LOCKED_KEYS = [ '_radioedu_logo_url', '_radioedu_cover_url', '_radioedu_conecta_demo' ];
+	private const LOCKED_KEYS = [ '_radioedu_logo_url', '_radioedu_cover_url', '_radioedu_conecta_demo', '_radioedu_source_blog_id' ];
 
 	public function set_up(): void {
 		parent::set_up();

@@ -154,6 +154,12 @@ class CentroMeta {
 				'sanitize'    => [ self::class, 'sanitize_demo_marker' ],
 				'editable'    => false,
 			],
+			'_radioedu_source_blog_id'       => [
+				'type'        => 'integer',
+				'description' => __( 'ID del sitio de la red del que la sincronización de red tomó los datos de la ficha.', 'radioedu-conecta' ),
+				'sanitize'    => [ self::class, 'sanitize_id' ],
+				'editable'    => false,
+			],
 		];
 	}
 
@@ -341,6 +347,18 @@ class CentroMeta {
 	 */
 	public static function sanitize_availability( mixed $value ): string {
 		return is_scalar( $value ) && in_array( (string) $value, [ '1', '' ], true ) ? '1' : '0';
+	}
+
+	/**
+	 * Keeps a non-negative integer ID.
+	 *
+	 * @since 1.1
+	 *
+	 * @param mixed $value Raw value.
+	 * @return int ID, or 0 when the value is not a valid ID.
+	 */
+	public static function sanitize_id( mixed $value ): int {
+		return is_scalar( $value ) ? absint( $value ) : 0;
 	}
 
 	/**

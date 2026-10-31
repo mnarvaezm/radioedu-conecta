@@ -167,6 +167,9 @@ function radioedu_conecta_uninstall(): void {
 		$offset  += 100;
 		$has_more = count( $site_ids ) === 100;
 	} while ( $has_more );
+
+	// Network option of the network sync ("give the Author role" choice).
+	delete_site_option( 'radioedu_conecta_sync_grant_author' );
 }
 
 radioedu_conecta_uninstall();

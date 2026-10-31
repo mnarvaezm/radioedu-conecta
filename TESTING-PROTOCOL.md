@@ -75,6 +75,18 @@ docker exec radioedu-wordpress wp db query "DESCRIBE wp_radioedu_colaboraciones;
 2. Verifica en la base de datos que se han eliminado la tabla `wp_radioedu_colaboraciones`, los posts `radioedu_centro`, los términos de las 5 taxonomías, las opciones, los transients y las capacidades personalizadas.
 3. En Multisite, al borrar un sitio de la red su tabla `wp_{ID}_radioedu_colaboraciones` se elimina automáticamente (filtro `wpmu_drop_tables`).
 
+### Sincronización de fichas de la red (Multisite)
+
+Hazla en una red desechable. WordPress no admite redes multisitio en puertos que no sean el 80 o el 443. Para probarla en el puerto 8091, instala la red con un dominio ficticio (por ejemplo `radioedu.test`) y arranca el navegador con `--host-resolver-rules="MAP radioedu.test 127.0.0.1:8091"`.
+
+| ID | Prueba | Pasos | Resultado esperado |
+| :--- | :--- | :--- | :--- |
+| **TC-MS-01** | **Primera sincronización** | Crea varios sitios (uno con lema e icono y otro archivado) y una ficha manual con la web de uno de ellos. En **Administración de la red → Ajustes → RadioEdu Conecta**, pulsa el botón. | Barra de progreso y resumen en verde: una ficha por sitio, salvo el principal y el archivado, y la ficha manual reutilizada en lugar de duplicada. Cada ficha tiene el nombre, la web, el logo (icono), la descripción (lema) y el email del coordinador de su sitio, y su autor es el administrador del sitio, ahora con rol Autor en el sitio principal. |
+| **TC-MS-02** | **Volver a sincronizar** | Cambia el nombre de un sitio y edita las coordenadas de su ficha. Sincroniza de nuevo. | Todas las fichas se cuentan como actualizadas. El nombre cambia y las coordenadas se conservan. |
+| **TC-MS-03** | **Sitio borrado** | Borra un sitio y sincroniza. | Resumen en amarillo con la ficha del sitio borrado y un enlace para editarla. La ficha no se borra. |
+| **TC-MS-05** | **Casilla del rol Autor** | Crea un sitio cuyo administrador no pertenece al portal principal y otro cuyo administrador es Suscriptor en él. Sincroniza con la casilla desmarcada, recarga la página, márcala y sincroniza otra vez. | Primera vez: fichas creadas y «0 coordinadores han recibido el rol Autor». Sin cambios de roles. Al recargar, la casilla sigue desmarcada. Segunda vez: «2 coordinadores…». El primero entra en el portal como Autor y el Suscriptor queda como Suscriptor y Autor. Un Editor o Administrador del portal no cambia. |
+| **TC-MS-04** | **Permisos** | Llama a `POST /wp-json/radioedu-conecta/v1/network-sync` como administrador de un sitio (no superadministrador), sin sesión y desde un subsitio. | 403, 401 y 404, respectivamente. |
+
 ---
 
 ## 6. Fase 5: Calidad automática (DoD)
