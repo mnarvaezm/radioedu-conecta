@@ -11,6 +11,7 @@ namespace RadioEdu\Conecta\Tests;
 
 use RadioEdu\Conecta\Frontend\DirectorioShortcode;
 use WP_Block_Type_Registry;
+use WP_HTML_Tag_Processor;
 use WP_UnitTestCase;
 
 /**
@@ -36,6 +37,35 @@ class DirectorioBlockTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( 'alignwide', $html );
 		$this->assertStringContainsString( 'id="radioedu-conecta-app"', $html );
 		$this->assertTrue( wp_style_is( 'radioedu-directorio-css', 'enqueued' ) );
+	}
+
+	public function test_directory_adds_no_page_landmarks_inside_the_theme_content(): void {
+		$html = do_blocks( '<!-- wp:radioedu-conecta/directorio /-->' );
+		$tags = new WP_HTML_Tag_Processor( $html );
+
+		$found          = [];
+		$results_region = false;
+		$heading_tag    = '';
+		while ( $tags->next_tag() ) {
+			$found[] = $tags->get_tag();
+			if ( 'SECTION' === $tags->get_tag() && 'radioedu-results-heading' === $tags->get_attribute( 'aria-labelledby' ) ) {
+				$results_region = true;
+			}
+			if ( 'radioedu-results-heading' === $tags->get_attribute( 'id' ) ) {
+				$heading_tag = $tags->get_tag();
+			}
+		}
+
+		// The theme already wraps the page content in <main>; a second one, or a <header> outside it, adds duplicate landmarks.
+		$this->assertNotContains( 'MAIN', $found );
+		$this->assertNotContains( 'HEADER', $found );
+		$this->assertTrue( $results_region, 'The results are a region named by their heading.' );
+		$this->assertSame( 'H2', $heading_tag );
+
+		$region_start = strpos( $html, '<section class="radioedu-results"' );
+		$grid         = strpos( $html, 'id="radioedu-cards-container"' );
+		$this->assertGreaterThan( $region_start, $grid );
+		$this->assertGreaterThan( $grid, strrpos( $html, '</section>' ) );
 	}
 
 	public function test_styles_are_enqueued_early_for_pages_with_the_block(): void {

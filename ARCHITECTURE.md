@@ -153,6 +153,13 @@ c:\radioedu-conecta\
 * **Server-side (PHP):** Strict "Late Escaping" rule. Variables are escaped at the exact moment of output using `esc_html()`, `esc_attr()`, `esc_url()`, `wp_kses_post()`, or `wp_json_encode()`. All SQL queries use `$wpdb->prepare()` with `%i` identifier placeholders for table names.
 * **Client-side (JavaScript):** `assets/js/directorio.js` (compiled to `build/directorio.js`) prohibits `innerHTML` and HTML string concatenation. All dynamic card nodes, badges, and Leaflet map popups (`marker.bindPopup(popupNode)`) are assembled using `document.createElement()` and `textContent`. All external URLs are validated via `sanitizeHttpUrl()` (`http:` / `https:` whitelist) and escaped before CSS `url(...)` injection. Icons the script needs (favourite stars, send) are server-rendered SVGs inside `<template id="radioedu-icon-templates">` that the script clones with `cloneNode()`. Server-side, the profile cover URL is percent-encoded for CSS context (`DirectorioShortcode::css_safe_url()`) because `esc_url()` keeps quotes and parentheses that the browser decodes before parsing CSS.
 
+
+### 3.4 Landmarks
+The directory and the profile render inside the theme's page, so they never add page-level landmarks of their own:
+* **Directory:** no `<main>` and no `<header>`. Its two named regions are `<section aria-label="Filtros del directorio">` and `<section aria-labelledby="radioedu-results-heading">` ("Resultados (N centros)").
+* **Profile:** the profile is an `<article>`. The page's single `<main>` comes from the block template, the theme, or the classic template when the theme's header left none open (section 4.1).
+* **Text colours** that sit on the theme background rather than on a white card ("Ordenar por") use `#475569`, which keeps 4.5:1 on tinted backgrounds such as Twenty Twenty's beige.
+
 ---
 
 ## 4. Data Models & Database Schemas
@@ -164,6 +171,8 @@ c:\radioedu-conecta\
 * **Profile Page Template (no theme duplicates):** the profile already shows the title, the featured image (as cover) and the station data, so the page around it only keeps the theme header and footer.
   - **Block themes:** `DirectorioShortcode::register_profile_block_template()` registers `radioedu-conecta//single-radioedu_centro` with `register_block_template()`. It contains the header part, `core/post-content` in a `<main>` group (980px) and the footer part, with no post title, date, author or featured image. It is the most specific template of the hierarchy; a theme template with the same slug or a Site Editor customization takes precedence.
   - **Classic themes:** `DirectorioShortcode::use_profile_page_template()` (`template_include`) swaps only the generic `single.php` / `singular.php` / `index.php` for [templates/theme-single-centro.php](file:///c:/radioedu-conecta/templates/theme-single-centro.php) (`get_header()`, the profile, `get_footer()`). A theme or page-builder template made for centros is kept, and themes can override the file with `radioedu-conecta/single-radioedu_centro.php`.
+    - **Main landmark:** most classic themes open `<main>` in the single template that this file replaces (Twenty Twenty), and a few open it in `header.php` (Twenty Twenty-One, YOOtheme). The template buffers `get_header()` and passes it to `DirectorioShortcode::profile_main_landmark()`, which reads it with `WP_HTML_Tag_Processor`. The profile goes in `<main>` only when the header left none open, so the page always has exactly one.
+    - **Skip link:** when the theme's skip link (`a.skip-link`) points to an id the header does not contain, that `<main>` takes the id (`#site-content` in Twenty Twenty).
   - **Fallback:** on the profile page, the `has_post_thumbnail` and `post_thumbnail_html` filters hide the featured image from the theme for the queried centro only. They do not run inside `wp_head`, so Open Graph and SEO tags keep the image. The profile reads its cover with `get_the_post_thumbnail_url()`, which the filters do not affect.
 
 #### Meta Keys Schema (`wp_postmeta`)

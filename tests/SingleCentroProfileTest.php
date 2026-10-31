@@ -89,6 +89,41 @@ class SingleCentroProfileTest extends WP_UnitTestCase {
 
 		$this->assertStringContainsString( 'class="radioedu-single-profile"', $html );
 		$this->assertStringNotContainsString( 'wp-post-image', $html );
+		// One main landmark, whether the theme's header opened it or the template did.
+		$this->assertSame( 1, preg_match_all( '/<main[\s>]/', $html ) );
+		$this->assertSame( 1, substr_count( $html, '</main>' ) );
+	}
+
+	/**
+	 * @return array<string, array{string, bool, string}>
+	 */
+	public static function data_theme_headers(): array {
+		return [
+			// Twenty Twenty: main and its skip link target are in singular.php, which the template replaces.
+			'main in the single template' => [ '<a class="skip-link screen-reader-text" href="#site-content">Skip</a><header id="site-header"></header>', true, 'site-content' ],
+			// Twenty Twenty-One: header.php opens the main element and the skip link target.
+			'main opened in header.php'   => [ '<a class="skip-link screen-reader-text" href="#content">Skip</a><header id="masthead"></header><div id="content"><div id="primary"><main id="main" class="site-main">', false, '' ],
+			// Astra and similar: the skip link target is a wrapper opened in header.php.
+			'skip target in the header'   => [ '<a class="screen-reader-text skip-link" href="#content">Skip</a><header></header><div id="content">', true, '' ],
+			'no skip link'                => [ '<header class="site-header"><nav><ul><li><main-menu></main-menu></li></ul></nav></header><main></main>', true, '' ],
+		];
+	}
+
+	/**
+	 * @dataProvider data_theme_headers
+	 *
+	 * @param string $header Markup printed by get_header().
+	 * @param bool   $main   Whether the template must open <main>.
+	 * @param string $id     Expected id of that <main>.
+	 */
+	public function test_the_classic_template_adds_main_only_when_the_header_left_none_open( string $header, bool $main, string $id ): void {
+		$this->assertSame(
+			[
+				'main' => $main,
+				'id'   => $id,
+			],
+			DirectorioShortcode::profile_main_landmark( $header )
+		);
 	}
 
 	public function test_block_themes_get_a_profile_template_without_title_meta_or_image(): void {

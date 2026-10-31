@@ -132,6 +132,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * Scripts compilados con `@wordpress/scripts` y traducidos con `wp_set_script_translations()`. Sin `build/`, las páginas cargan igualmente, sin interactividad.
 * Traducciones incluidas al catalán, valenciano, gallego y euskera, para PHP y para los scripts. Los paquetes de idioma oficiales, si existen, tienen prioridad.
 * Accesibilidad: foco visible, contraste AA en el color de acento y en los estados, y el botón *Subir / Elegir Logo* conserva su texto como nombre accesible (WCAG 2.5.3).
+* Accesibilidad de la estructura: cada página tiene un único `main`. El directorio ya no añade un segundo `<main>` ni un `<header>` dentro del contenido; sus resultados forman una región con nombre. En temas clásicos, la ficha aporta el `<main>` y el destino del enlace «Saltar al contenido» solo cuando la cabecera del tema no los tiene (probado con Twenty Twenty, Twenty Twenty-One y YOOtheme). «Ordenar por» y «Volver al directorio» alcanzan el contraste AA sobre cualquier fondo claro.
 * Avisos de administración con `wp_admin_notice()`.
 * Pruebas E2E con Playwright y `wp-env` (datos del centro en los paneles del editor de WordPress 7.1, incluido el logo, y bloque del directorio).
 

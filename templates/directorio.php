@@ -25,8 +25,8 @@ defined( 'ABSPATH' ) || exit;
 
 <div id="radioedu-conecta-app" class="radioedu-app-container">
 
-	<!-- 1. HERO / BANNER PRINCIPAL -->
-	<header class="radioedu-hero-banner">
+	<!-- 1. HERO / BANNER PRINCIPAL (a div, not <header>: outside the theme's <main> a header would become a second banner landmark) -->
+	<div class="radioedu-hero-banner">
 		<div class="radioedu-hero-content">
 			<h2 class="radioedu-hero-title"><?php esc_html_e( 'Traspasando Fronteras', 'radioedu-conecta' ); ?></h2>
 			<p class="radioedu-hero-subtitle">
@@ -39,7 +39,7 @@ defined( 'ABSPATH' ) || exit;
 				<span class="radioedu-note-caption"><?php esc_html_e( 'RADIOS ESCOLARES QUE HACEN UN MUNDO MÁS GRANDE 🌍', 'radioedu-conecta' ); ?></span>
 			</div>
 		</div>
-	</header>
+	</div>
 
 	<!-- 2. BARRA HORIZONTAL DE FILTROS FACETADOS -->
 	<section class="radioedu-filters-bar" aria-label="<?php esc_attr_e( 'Filtros del directorio', 'radioedu-conecta' ); ?>">
@@ -148,85 +148,87 @@ defined( 'ABSPATH' ) || exit;
 		</form>
 	</section>
 
-	<!-- 3. BARRA DE RESULTADOS Y CONTROLES -->
-	<div class="radioedu-results-controls-bar">
-		<div class="radioedu-results-count">
-			<h2 id="radioedu-results-heading" class="radioedu-heading-count">
-				<?php
-				printf(
-					/* translators: %s: Number of schools found. */
-					esc_html__( 'Resultados (%s centros)', 'radioedu-conecta' ),
-					'<span id="radioedu-count-number">0</span>'
-				);
-				?>
-			</h2>
-		</div>
+	<!-- 3. RESULTADOS: region named by its heading. The theme already wraps the page content in its <main>. -->
+	<section class="radioedu-results" aria-labelledby="radioedu-results-heading">
+		<div class="radioedu-results-controls-bar">
+			<div class="radioedu-results-count">
+				<h2 id="radioedu-results-heading" class="radioedu-heading-count">
+					<?php
+					printf(
+						/* translators: %s: Number of schools found. */
+						esc_html__( 'Resultados (%s centros)', 'radioedu-conecta' ),
+						'<span id="radioedu-count-number">0</span>'
+					);
+					?>
+				</h2>
+			</div>
 
-		<div class="radioedu-controls-right">
-			<!-- Toggle Vista de Mapa -->
-			<button type="button" id="radioedu-btn-toggle-map" class="radioedu-btn-toggle" aria-pressed="false">
-				<?php Icons::render( 'radioedu-conecta/map' ); ?>
-				<span id="radioedu-toggle-map-text"><?php esc_html_e( 'Vista de mapa', 'radioedu-conecta' ); ?></span>
-			</button>
+			<div class="radioedu-controls-right">
+				<!-- Toggle Vista de Mapa -->
+				<button type="button" id="radioedu-btn-toggle-map" class="radioedu-btn-toggle" aria-pressed="false">
+					<?php Icons::render( 'radioedu-conecta/map' ); ?>
+					<span id="radioedu-toggle-map-text"><?php esc_html_e( 'Vista de mapa', 'radioedu-conecta' ); ?></span>
+				</button>
 
-			<!-- Selector Ordenar por -->
-			<div class="radioedu-sort-wrapper">
-				<label for="radioedu-sort-select" class="radioedu-sort-label"><?php esc_html_e( 'Ordenar por', 'radioedu-conecta' ); ?></label>
-				<select id="radioedu-sort-select" class="radioedu-sort-select">
-					<option value="afines"><?php esc_html_e( 'Más afines', 'radioedu-conecta' ); ?></option>
-					<option value="recientes"><?php esc_html_e( 'Más recientes', 'radioedu-conecta' ); ?></option>
-					<option value="alfa"><?php esc_html_e( 'Alfabético (A-Z)', 'radioedu-conecta' ); ?></option>
-				</select>
+				<!-- Selector Ordenar por -->
+				<div class="radioedu-sort-wrapper">
+					<label for="radioedu-sort-select" class="radioedu-sort-label"><?php esc_html_e( 'Ordenar por', 'radioedu-conecta' ); ?></label>
+					<select id="radioedu-sort-select" class="radioedu-sort-select">
+						<option value="afines"><?php esc_html_e( 'Más afines', 'radioedu-conecta' ); ?></option>
+						<option value="recientes"><?php esc_html_e( 'Más recientes', 'radioedu-conecta' ); ?></option>
+						<option value="alfa"><?php esc_html_e( 'Alfabético (A-Z)', 'radioedu-conecta' ); ?></option>
+					</select>
+				</div>
 			</div>
 		</div>
-	</div>
 
-	<!-- 4. CONTENIDO PRINCIPAL: CUADRÍCULA DE TARJETAS Y MAPA -->
-	<main class="radioedu-main-layout">
-		<p id="radioedu-directory-error" role="alert" hidden><?php esc_html_e( 'No se han podido cargar los centros. Vuelve a pulsar Buscar centros para reintentar.', 'radioedu-conecta' ); ?></p>
+		<!-- 4. CONTENIDO PRINCIPAL: CUADRÍCULA DE TARJETAS Y MAPA -->
+		<div class="radioedu-main-layout">
+			<p id="radioedu-directory-error" role="alert" hidden><?php esc_html_e( 'No se han podido cargar los centros. Vuelve a pulsar Buscar centros para reintentar.', 'radioedu-conecta' ); ?></p>
 
-		<!-- Vista Mapa Interactivo (oculta por defecto, con aviso RGPD previo a cargar teselas de OpenStreetMap) -->
-		<div id="radioedu-map-view" class="radioedu-map-view" style="display: none;" aria-hidden="true">
-			<div id="radioedu-map-consent" class="radioedu-no-results-state" style="padding: 32px; text-align: center;">
-				<div class="radioedu-no-results-icon"><?php Icons::render( 'radioedu-conecta/map' ); ?></div>
-				<h3><?php esc_html_e( 'Mapa geográfico interactivo (OpenStreetMap)', 'radioedu-conecta' ); ?></h3>
-				<p><?php esc_html_e( 'Al cargar el mapa cartográfico se establecerá conexión con los servidores externos de OpenStreetMap Foundation para descargar las imágenes del mapa.', 'radioedu-conecta' ); ?></p>
-				<button type="button" id="radioedu-btn-accept-map" class="radioedu-btn-primary">
-					<?php esc_html_e( 'Aceptar y mostrar el mapa interactivo', 'radioedu-conecta' ); ?>
+			<!-- Vista Mapa Interactivo (oculta por defecto, con aviso RGPD previo a cargar teselas de OpenStreetMap) -->
+			<div id="radioedu-map-view" class="radioedu-map-view" style="display: none;" aria-hidden="true">
+				<div id="radioedu-map-consent" class="radioedu-no-results-state" style="padding: 32px; text-align: center;">
+					<div class="radioedu-no-results-icon"><?php Icons::render( 'radioedu-conecta/map' ); ?></div>
+					<h3><?php esc_html_e( 'Mapa geográfico interactivo (OpenStreetMap)', 'radioedu-conecta' ); ?></h3>
+					<p><?php esc_html_e( 'Al cargar el mapa cartográfico se establecerá conexión con los servidores externos de OpenStreetMap Foundation para descargar las imágenes del mapa.', 'radioedu-conecta' ); ?></p>
+					<button type="button" id="radioedu-btn-accept-map" class="radioedu-btn-primary">
+						<?php esc_html_e( 'Aceptar y mostrar el mapa interactivo', 'radioedu-conecta' ); ?>
+					</button>
+				</div>
+				<div id="radioedu-leaflet-map" style="display: none; height: 520px; width: 100%; border-radius: 16px;"></div>
+			</div>
+
+			<!-- Cuadrícula de Tarjetas -->
+			<div id="radioedu-cards-container" class="radioedu-cards-grid">
+				<!-- Cargado dinámicamente vía REST API en directorio.js -->
+			</div>
+
+			<!-- Paginación: Cargar más -->
+			<div id="radioedu-pagination-wrap" style="display: none; text-align: center; margin-top: 28px;">
+				<button type="button" id="radioedu-btn-load-more" class="radioedu-btn-secondary">
+					<?php esc_html_e( 'Cargar más centros', 'radioedu-conecta' ); ?>
 				</button>
 			</div>
-			<div id="radioedu-leaflet-map" style="display: none; height: 520px; width: 100%; border-radius: 16px;"></div>
-		</div>
 
-		<!-- Cuadrícula de Tarjetas -->
-		<div id="radioedu-cards-container" class="radioedu-cards-grid">
-			<!-- Cargado dinámicamente vía REST API en directorio.js -->
-		</div>
+			<!-- Estado de Carga (Spinner) -->
+			<div id="radioedu-loading" class="radioedu-loading-state" style="display: none;" role="status">
+				<div class="radioedu-spinner" aria-hidden="true"></div>
+				<p><?php esc_html_e( 'Buscando centros afines en la red...', 'radioedu-conecta' ); ?></p>
+			</div>
 
-		<!-- Paginación: Cargar más -->
-		<div id="radioedu-pagination-wrap" style="display: none; text-align: center; margin-top: 28px;">
-			<button type="button" id="radioedu-btn-load-more" class="radioedu-btn-secondary">
-				<?php esc_html_e( 'Cargar más centros', 'radioedu-conecta' ); ?>
-			</button>
-		</div>
+			<!-- Estado Sin Resultados -->
+			<div id="radioedu-no-results" class="radioedu-no-results-state" style="display: none;">
+				<div class="radioedu-no-results-icon"><?php Icons::render( 'core/rss' ); ?></div>
+				<h3><?php esc_html_e( 'No se han encontrado emisoras con estos filtros', 'radioedu-conecta' ); ?></h3>
+				<p><?php esc_html_e( 'Prueba a seleccionar otros temas, idiomas o restablecer la búsqueda.', 'radioedu-conecta' ); ?></p>
+				<button type="button" id="radioedu-btn-reset" class="radioedu-btn-secondary">
+					<?php esc_html_e( 'Limpiar todos los filtros', 'radioedu-conecta' ); ?>
+				</button>
+			</div>
 
-		<!-- Estado de Carga (Spinner) -->
-		<div id="radioedu-loading" class="radioedu-loading-state" style="display: none;" role="status">
-			<div class="radioedu-spinner" aria-hidden="true"></div>
-			<p><?php esc_html_e( 'Buscando centros afines en la red...', 'radioedu-conecta' ); ?></p>
 		</div>
-
-		<!-- Estado Sin Resultados -->
-		<div id="radioedu-no-results" class="radioedu-no-results-state" style="display: none;">
-			<div class="radioedu-no-results-icon"><?php Icons::render( 'core/rss' ); ?></div>
-			<h3><?php esc_html_e( 'No se han encontrado emisoras con estos filtros', 'radioedu-conecta' ); ?></h3>
-			<p><?php esc_html_e( 'Prueba a seleccionar otros temas, idiomas o restablecer la búsqueda.', 'radioedu-conecta' ); ?></p>
-			<button type="button" id="radioedu-btn-reset" class="radioedu-btn-secondary">
-				<?php esc_html_e( 'Limpiar todos los filtros', 'radioedu-conecta' ); ?>
-			</button>
-		</div>
-
-	</main>
+	</section>
 
 	<!-- Iconos que directorio.js clona al construir las tarjetas, sin usar innerHTML. -->
 	<template id="radioedu-icon-templates">

@@ -107,6 +107,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * Scripts are compiled with `@wordpress/scripts` and translated with `wp_set_script_translations()`. Without `build/`, pages still load, without interactivity.
 * Bundled Catalan, Valencian, Galician and Basque translations for PHP and scripts. Official language packs, when available, take priority.
 * Accessibility: visible focus outlines, AA contrast for the accent and status colours, and the "Subir / Elegir Logo" button keeps its own text as its accessible name.
+* Accessibility: every page has a single main landmark. The directory no longer adds a nested `<main>` or a `<header>` inside the content, and its results are a named region. With classic themes, the profile page provides `<main>` and the skip link target only when the theme's header does not.
 * Admin notices use `wp_admin_notice()`.
 
 = 1.0.0 =

@@ -14,6 +14,7 @@ use RadioEdu\Conecta\Admin\Settings;
 use RadioEdu\Conecta\PostTypes\CentroPostType;
 use RadioEdu\Conecta\Rest\ColaboracionesController;
 use RadioEdu\Conecta\Taxonomies\TaxonomiesRegistrar;
+use WP_HTML_Tag_Processor;
 use WP_Post;
 
 defined( 'ABSPATH' ) || exit;
@@ -113,6 +114,58 @@ class DirectorioShortcode {
 		$theme_override = locate_template( 'radioedu-conecta/single-' . CentroPostType::POST_TYPE . '.php' );
 
 		return '' !== $theme_override ? $theme_override : RADIOEDU_CONECTA_DIR . 'templates/theme-single-centro.php';
+	}
+
+	/**
+	 * Works out the <main> landmark the classic profile template must provide.
+	 *
+	 * The template replaces the theme's single template, which is where most classic themes open
+	 * <main> (Twenty Twenty, for example); a few open it in header.php (Twenty Twenty-One). The
+	 * template opens <main> only when the header left none open, and gives it the target of the
+	 * theme's skip link when the header does not contain that target.
+	 *
+	 * @since 1.1
+	 *
+	 * @param string $header_html Markup printed by the theme's get_header().
+	 * @return array{main: bool, id: string} Whether to open <main>, and its id ('' for none).
+	 */
+	public static function profile_main_landmark( string $header_html ): array {
+		$tags        = new WP_HTML_Tag_Processor( $header_html );
+		$open_main   = 0;
+		$ids         = [];
+		$skip_target = '';
+
+		while ( $tags->next_tag( [ 'tag_closers' => 'visit' ] ) ) {
+			if ( 'MAIN' === $tags->get_tag() ) {
+				$open_main += $tags->is_tag_closer() ? -1 : 1;
+				continue;
+			}
+			if ( $tags->is_tag_closer() ) {
+				continue;
+			}
+
+			$id = $tags->get_attribute( 'id' );
+			if ( is_string( $id ) ) {
+				$ids[ $id ] = true;
+			}
+
+			$href = $tags->get_attribute( 'href' );
+			if ( '' === $skip_target && 'A' === $tags->get_tag() && $tags->has_class( 'skip-link' ) && is_string( $href ) && str_starts_with( $href, '#' ) ) {
+				$skip_target = substr( $href, 1 );
+			}
+		}
+
+		if ( $open_main > 0 ) {
+			return [
+				'main' => false,
+				'id'   => '',
+			];
+		}
+
+		return [
+			'main' => true,
+			'id'   => '' !== $skip_target && ! isset( $ids[ $skip_target ] ) ? $skip_target : '',
+		];
 	}
 
 	/**
