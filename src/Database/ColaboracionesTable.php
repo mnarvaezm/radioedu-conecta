@@ -41,6 +41,24 @@ class ColaboracionesTable {
 	public const MAX_FECHAS_LENGTH    = 150;
 
 	/**
+	 * Columns the plugin reads or writes. The schema version is saved only when all of them exist.
+	 */
+	private const REQUIRED_COLUMNS = [
+		'id',
+		'centro_emisor_id',
+		'centro_receptor_id',
+		'usuario_emisor_id',
+		'idea_proyecto',
+		'curso_edades',
+		'idiomas',
+		'fechas_aprox',
+		'estado',
+		'respuesta_mensaje',
+		'created_at',
+		'updated_at',
+	];
+
+	/**
 	 * Obtiene el nombre completo de la tabla con el prefijo de la BD actual.
 	 *
 	 * @return string Nombre con prefijo.
@@ -52,8 +70,12 @@ class ColaboracionesTable {
 
 	/**
 	 * Crea o migra la tabla personalizada utilizando dbDelta().
+	 *
+	 * @since 1.1 Returns whether the schema is complete, and only then saves its version.
+	 *
+	 * @return bool True when the table has every column the plugin uses.
 	 */
-	public static function create_table(): void {
+	public static function create_table(): bool {
 		global $wpdb;
 
 		$table_name      = self::get_table_name();
@@ -86,7 +108,39 @@ class ColaboracionesTable {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 
+		// dbDelta() reports nothing when the database refuses the DDL (for example, without the
+		// CREATE or ALTER privilege). Saving the version anyway would stop every later retry.
+		if ( ! self::has_current_schema() ) {
+			if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Only with WP_DEBUG_LOG enabled; it names the table and holds no personal data.
+				error_log( sprintf( 'RadioEdu Conecta: the %s table could not be created or updated.', $table_name ) );
+			}
+			return false;
+		}
+
 		update_option( 'radioedu_conecta_db_version', self::DB_VERSION );
+		return true;
+	}
+
+	/**
+	 * Tells whether the table exists with every column the plugin uses.
+	 *
+	 * Uses SHOW COLUMNS rather than SHOW TABLES, which does not list temporary tables.
+	 *
+	 * @since 1.1
+	 *
+	 * @return bool True when no required column is missing.
+	 */
+	public static function has_current_schema(): bool {
+		global $wpdb;
+
+		// A missing table is an expected answer here, not an error to print.
+		$suppress = $wpdb->suppress_errors();
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Schema check right after dbDelta(); a cached answer would hide the failure.
+		$columns = $wpdb->get_col( $wpdb->prepare( 'SHOW COLUMNS FROM %i', self::get_table_name() ) );
+		$wpdb->suppress_errors( $suppress );
+
+		return [] === array_diff( self::REQUIRED_COLUMNS, $columns );
 	}
 
 	/**

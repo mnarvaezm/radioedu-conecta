@@ -212,6 +212,42 @@ class SecurityRegressionTest extends WP_UnitTestCase {
 		$this->assertSame( '0', $result['notify_on_status'] );
 	}
 
+	public function test_a_failed_schema_update_is_not_recorded_and_is_retried(): void {
+		$table   = ColaboracionesTable::get_table_name();
+		$queries = 0;
+		// A database without the CREATE privilege: the DDL fails and the table never appears.
+		$refuse = static function ( string $query ) use ( $table, &$queries ): string {
+			if ( str_contains( $query, $table ) && preg_match( '/^\s*(CREATE|ALTER|DESCRIBE|SHOW COLUMNS)\b/i', $query ) ) {
+				++$queries;
+				return '';
+			}
+			return $query;
+		};
+		update_option( 'radioedu_conecta_db_version', '1.0.0' );
+		delete_transient( Plugin::SCHEMA_RETRY_TRANSIENT );
+
+		add_filter( 'query', $refuse );
+		try {
+			Plugin::instance()->maybe_update_db_schema();
+			$this->assertGreaterThan( 0, $queries );
+			$this->assertFalse( ColaboracionesTable::has_current_schema() );
+			$this->assertSame( '1.0.0', get_option( 'radioedu_conecta_db_version' ) );
+			$this->assertNotFalse( get_transient( Plugin::SCHEMA_RETRY_TRANSIENT ) );
+
+			// Within the retry delay, requests leave the schema alone.
+			$queries = 0;
+			Plugin::instance()->maybe_update_db_schema();
+			$this->assertSame( 0, $queries );
+		} finally {
+			remove_filter( 'query', $refuse );
+		}
+
+		delete_transient( Plugin::SCHEMA_RETRY_TRANSIENT );
+		Plugin::instance()->maybe_update_db_schema();
+		$this->assertTrue( ColaboracionesTable::has_current_schema() );
+		$this->assertSame( ColaboracionesTable::DB_VERSION, get_option( 'radioedu_conecta_db_version' ) );
+	}
+
 	public function test_activation_does_not_publish_demo_content(): void {
 		$before = wp_count_posts( CentroPostType::POST_TYPE )->publish;
 		Plugin::activate( false );

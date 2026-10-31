@@ -36,6 +36,11 @@ defined( 'ABSPATH' ) || exit;
 final class Plugin {
 
 	/**
+	 * Transient that delays the next schema update attempt after a failed one.
+	 */
+	public const SCHEMA_RETRY_TRANSIENT = 'radioedu_conecta_schema_retry';
+
+	/**
 	 * Instancia única (Singleton).
 	 *
 	 * @var self|null
@@ -128,9 +133,12 @@ final class Plugin {
 	 */
 	public function maybe_update_db_schema(): void {
 		$installed_ver = get_option( 'radioedu_conecta_db_version', '0' );
-		if ( version_compare( (string) $installed_ver, ColaboracionesTable::DB_VERSION, '<' ) ) {
+		if ( version_compare( (string) $installed_ver, ColaboracionesTable::DB_VERSION, '<' ) && false === get_transient( self::SCHEMA_RETRY_TRANSIENT ) ) {
 			RoleCapabilities::add_capabilities();
-			ColaboracionesTable::create_table();
+			if ( ! ColaboracionesTable::create_table() ) {
+				// While the database refuses the change, retry every few minutes instead of on every request.
+				set_transient( self::SCHEMA_RETRY_TRANSIENT, 1, 5 * MINUTE_IN_SECONDS );
+			}
 		}
 	}
 

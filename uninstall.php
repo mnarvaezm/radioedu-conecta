@@ -100,7 +100,7 @@ function radioedu_conecta_uninstall_single_site(): void {
 	delete_option( 'radioedu_conecta_db_version' );
 	delete_option( 'rewrite_rules' );
 
-	// 5. Eliminar transients de rate-limiting (radioedu_rate_{user_id}).
+	// 5. Eliminar los transients del plugin (radioedu_rate_{user_id} y radioedu_conecta_schema_retry).
 	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Transients with dynamic keys cannot be enumerated through the Options API.
 	$wpdb->query(
 		$wpdb->prepare(

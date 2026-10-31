@@ -238,6 +238,7 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
     KEY estado (estado)
 ) {$charset_collate};
 ```
+* **Schema updates:** `create_table()` saves `radioedu_conecta_db_version` only after `SHOW COLUMNS` confirms every column the plugin uses. If the database refuses the DDL, the version stays behind and `Plugin::maybe_update_db_schema()` retries on a later request, at most every 5 minutes (`radioedu_conecta_schema_retry` transient).
 
 ---
 
