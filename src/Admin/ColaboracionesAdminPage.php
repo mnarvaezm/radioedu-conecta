@@ -132,14 +132,13 @@ class ColaboracionesAdminPage {
 			wp_die( esc_html__( 'No tienes permisos suficientes para acceder a esta página.', 'radioedu-conecta' ) );
 		}
 
-		$user_id    = get_current_user_id();
-		$center_ids = ColaboracionesController::get_user_managed_center_ids( $user_id );
-		$all        = current_user_can( 'manage_radioedu' );
-		$total      = ColaboracionesTable::count_for_user( $user_id, $center_ids, $all );
-		$pages      = max( 1, (int) ceil( $total / self::PER_PAGE ) );
+		$user_id = get_current_user_id();
+		$all     = ColaboracionesController::user_manages_all_centers( $user_id );
+		$total   = ColaboracionesTable::count_for_user( $user_id, $all );
+		$pages   = max( 1, (int) ceil( $total / self::PER_PAGE ) );
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only page number of the listing.
 		$paged = isset( $_GET['paged'] ) ? min( $pages, max( 1, absint( wp_unslash( $_GET['paged'] ) ) ) ) : 1;
-		$rows  = ColaboracionesTable::get_for_user( $user_id, $center_ids, $all, self::PER_PAGE, ( $paged - 1 ) * self::PER_PAGE );
+		$rows  = ColaboracionesTable::get_for_user( $user_id, $all, self::PER_PAGE, ( $paged - 1 ) * self::PER_PAGE );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only flag used to display a notice after the nonce-protected redirect.
 		$updated_status = isset( $_GET['match_updated'] ) ? sanitize_key( wp_unslash( $_GET['match_updated'] ) ) : '';

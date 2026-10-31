@@ -35,6 +35,11 @@ class ColaboracionesController extends WP_REST_Controller {
 	public const RATE_LIMIT_PER_HOUR = 20;
 
 	/**
+	 * Most centros listed for one user in the match panel's sender selector.
+	 */
+	public const MAX_MANAGED_CENTERS = 500;
+
+	/**
 	 * Namespace de la REST API de RadioEdu Conecta.
 	 *
 	 * @var string
@@ -201,13 +206,12 @@ class ColaboracionesController extends WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function get_items( $request ): WP_REST_Response {
-		$user_id    = get_current_user_id();
-		$center_ids = self::get_user_managed_center_ids( $user_id );
-		$all        = current_user_can( 'manage_radioedu' );
-		$per_page   = max( 1, min( 100, (int) $request->get_param( 'per_page' ) ) );
-		$page       = max( 1, (int) $request->get_param( 'page' ) );
-		$total      = ColaboracionesTable::count_for_user( $user_id, $center_ids, $all );
-		$rows       = ColaboracionesTable::get_for_user( $user_id, $center_ids, $all, $per_page, ( $page - 1 ) * $per_page );
+		$user_id  = get_current_user_id();
+		$all      = self::user_manages_all_centers( $user_id );
+		$per_page = max( 1, min( 100, (int) $request->get_param( 'per_page' ) ) );
+		$page     = max( 1, (int) $request->get_param( 'page' ) );
+		$total    = ColaboracionesTable::count_for_user( $user_id, $all );
+		$rows     = ColaboracionesTable::get_for_user( $user_id, $all, $per_page, ( $page - 1 ) * $per_page );
 
 		$items = [];
 		foreach ( $rows as $row ) {
@@ -236,7 +240,27 @@ class ColaboracionesController extends WP_REST_Controller {
 	}
 
 	/**
-	 * Devuelve los IDs de los centros que un usuario coordina o puede editar.
+	 * Tells whether a user manages every centro, and so sees and answers every proposal.
+	 *
+	 * Matches user_can_manage_center(): `manage_radioedu`, or editing any centro.
+	 *
+	 * @since 1.1
+	 *
+	 * @param int $user_id ID del usuario.
+	 * @return bool True for plugin managers and editors.
+	 */
+	public static function user_manages_all_centers( int $user_id ): bool {
+		return $user_id > 0 && ( user_can( $user_id, 'manage_radioedu' ) || user_can( $user_id, 'edit_others_radioedu_centros' ) );
+	}
+
+	/**
+	 * Devuelve los IDs de los centros publicados que un usuario coordina o puede editar.
+	 *
+	 * Feeds the sender selector of the match panel and the default affinity reference, sorted by
+	 * title. MAX_MANAGED_CENTERS is a safety ceiling, well above any real coordinator; the
+	 * proposal listings do not depend on this list.
+	 *
+	 * @since 1.1 Up to MAX_MANAGED_CENTERS centros instead of 50 or 100, sorted by title.
 	 *
 	 * @param int $user_id ID del usuario.
 	 * @return array<int, int> Lista de IDs de centros.
@@ -246,54 +270,49 @@ class ColaboracionesController extends WP_REST_Controller {
 			return [];
 		}
 
-		if ( user_can( $user_id, 'manage_radioedu' ) || user_can( $user_id, 'edit_others_radioedu_centros' ) ) {
-			$all_ids = get_posts(
-				[
-					'post_type'      => CentroPostType::POST_TYPE,
-					'post_status'    => 'publish',
-					'posts_per_page' => 100,
-					'fields'         => 'ids',
-					'orderby'        => 'title',
-					'order'          => 'ASC',
-					'no_found_rows'  => true,
-				]
-			);
-			return array_map( 'intval', $all_ids );
+		// Full posts, so the callers' get_the_title() calls hit the cache.
+		$query = [
+			'post_type'              => CentroPostType::POST_TYPE,
+			'post_status'            => 'publish',
+			'posts_per_page'         => self::MAX_MANAGED_CENTERS,
+			'orderby'                => 'title',
+			'order'                  => 'ASC',
+			'no_found_rows'          => true,
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+		];
+
+		if ( self::user_manages_all_centers( $user_id ) ) {
+			return array_map( 'intval', wp_list_pluck( get_posts( $query ), 'ID' ) );
 		}
 
-		$by_author = get_posts(
-			[
-				'post_type'      => CentroPostType::POST_TYPE,
-				'post_status'    => 'publish',
-				'author'         => $user_id,
-				'posts_per_page' => 50,
-				'fields'         => 'ids',
-				'no_found_rows'  => true,
-			]
-		);
-
-		$by_email = [];
-		$user     = get_userdata( $user_id );
+		$centros = get_posts( array_merge( $query, [ 'author' => $user_id ] ) );
+		$user    = get_userdata( $user_id );
 		if ( $user && ! empty( $user->user_email ) ) {
-			$by_email = get_posts(
-				[
-					'post_type'      => CentroPostType::POST_TYPE,
-					'post_status'    => 'publish',
-					'posts_per_page' => 50,
-					'fields'         => 'ids',
-					'no_found_rows'  => true,
-					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Bounded lookup (max 50) by coordinator email.
-					'meta_query'     => [
-						[
-							'key'   => '_radioedu_coordinador_email',
-							'value' => $user->user_email,
+			$coordinated = get_posts(
+				array_merge(
+					$query,
+					[
+						// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Bounded lookup (MAX_MANAGED_CENTERS) by coordinator email.
+						'meta_query' => [
+							[
+								'key'   => '_radioedu_coordinador_email',
+								'value' => $user->user_email,
+							],
 						],
-					],
-				]
+					]
+				)
 			);
+			$centros     = array_merge( $centros, $coordinated );
 		}
 
-		return array_values( array_unique( array_map( 'intval', array_merge( $by_author, $by_email ) ) ) );
+		$titles = [];
+		foreach ( $centros as $centro ) {
+			$titles[ (int) $centro->ID ] = $centro->post_title;
+		}
+		asort( $titles, SORT_NATURAL | SORT_FLAG_CASE );
+
+		return array_slice( array_keys( $titles ), 0, self::MAX_MANAGED_CENTERS );
 	}
 
 	/**

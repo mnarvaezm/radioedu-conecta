@@ -9,6 +9,8 @@ declare( strict_types=1 );
 
 namespace RadioEdu\Conecta\Database;
 
+use RadioEdu\Conecta\PostTypes\CentroPostType;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -190,18 +192,18 @@ class ColaboracionesTable {
 	/**
 	 * Lista las propuestas visibles para un usuario: las que envió y las de los centros que gestiona.
 	 *
-	 * @since 1.1 Pages through the results with $offset, newest first with a stable order.
+	 * @since 1.1 Pages through the results with $offset, newest first with a stable order, and finds
+	 *            the user's centros in SQL instead of taking a capped list of IDs.
 	 *
-	 * @param int             $user_id    ID del usuario.
-	 * @param array<int, int> $center_ids IDs de los centros que gestiona el usuario.
-	 * @param bool            $all        Si es true devuelve todas las propuestas (gestores del plugin).
-	 * @param int             $limit      Número máximo de filas.
-	 * @param int             $offset     Rows to skip, for pagination.
+	 * @param int  $user_id ID del usuario.
+	 * @param bool $all     Si es true devuelve todas las propuestas (gestores de todos los centros).
+	 * @param int  $limit   Número máximo de filas.
+	 * @param int  $offset  Rows to skip, for pagination.
 	 * @return array<int, object>
 	 */
-	public static function get_for_user( int $user_id, array $center_ids, bool $all = false, int $limit = 100, int $offset = 0 ): array {
+	public static function get_for_user( int $user_id, bool $all = false, int $limit = 100, int $offset = 0 ): array {
 		global $wpdb;
-		[ $where, $args ] = self::user_scope( $user_id, $center_ids, $all );
+		[ $where, $args ] = self::user_scope( $user_id, $all );
 		$query_args       = array_merge( [ self::get_table_name() ], $args, [ max( 1, min( 500, $limit ) ), max( 0, $offset ) ] );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where only holds placeholders built in user_scope(); every value goes through prepare(). Listings must reflect the latest state.
@@ -216,14 +218,13 @@ class ColaboracionesTable {
 	 *
 	 * @since 1.1
 	 *
-	 * @param int             $user_id    ID del usuario.
-	 * @param array<int, int> $center_ids IDs de los centros que gestiona el usuario.
-	 * @param bool            $all        Si es true cuenta todas las propuestas (gestores del plugin).
+	 * @param int  $user_id ID del usuario.
+	 * @param bool $all     Si es true cuenta todas las propuestas (gestores de todos los centros).
 	 * @return int Number of proposals.
 	 */
-	public static function count_for_user( int $user_id, array $center_ids, bool $all = false ): int {
+	public static function count_for_user( int $user_id, bool $all = false ): int {
 		global $wpdb;
-		[ $where, $args ] = self::user_scope( $user_id, $center_ids, $all );
+		[ $where, $args ] = self::user_scope( $user_id, $all );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where only holds placeholders built in user_scope(); every value goes through prepare(). The count must match the listing.
 		$count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM %i WHERE {$where}", ...array_merge( [ self::get_table_name() ], $args ) ) );
@@ -235,26 +236,33 @@ class ColaboracionesTable {
 	/**
 	 * Builds the WHERE clause that limits proposals to those a user may see.
 	 *
-	 * @param int             $user_id    ID del usuario.
-	 * @param array<int, int> $center_ids IDs de los centros que gestiona el usuario.
-	 * @param bool            $all        Whether the user sees every proposal.
-	 * @return array{0: string, 1: array<int, int>} Clause with placeholders only, and its values.
+	 * Matches ColaboracionesController::user_can_manage_center(): the proposals the user sent and
+	 * those of every centro they author or coordinate (by email, compared without case by the
+	 * column collation), whatever its status.
+	 *
+	 * @param int  $user_id ID del usuario.
+	 * @param bool $all     Whether the user sees every proposal.
+	 * @return array{0: string, 1: array<int, int|string>} Clause with placeholders only, and its values.
 	 */
-	private static function user_scope( int $user_id, array $center_ids, bool $all ): array {
+	private static function user_scope( int $user_id, bool $all ): array {
+		global $wpdb;
+
 		if ( $all ) {
 			return [ '1 = 1', [] ];
 		}
-		if ( empty( $center_ids ) ) {
-			return [ 'usuario_emisor_id = %d', [ $user_id ] ];
+
+		$authored = 'SELECT ID FROM %i WHERE post_type = %s AND post_author = %d';
+		$where    = "usuario_emisor_id = %d OR centro_emisor_id IN ({$authored}) OR centro_receptor_id IN ({$authored})";
+		$args     = [ $user_id, $wpdb->posts, CentroPostType::POST_TYPE, $user_id, $wpdb->posts, CentroPostType::POST_TYPE, $user_id ];
+
+		$user = $user_id > 0 ? get_userdata( $user_id ) : false;
+		if ( $user && '' !== $user->user_email ) {
+			$coordinated = "SELECT post_id FROM %i WHERE meta_key = '_radioedu_coordinador_email' AND meta_value = %s";
+			$where      .= " OR centro_emisor_id IN ({$coordinated}) OR centro_receptor_id IN ({$coordinated})";
+			array_push( $args, $wpdb->postmeta, $user->user_email, $wpdb->postmeta, $user->user_email );
 		}
 
-		$center_ids   = array_map( 'absint', array_values( $center_ids ) );
-		$placeholders = implode( ',', array_fill( 0, count( $center_ids ), '%d' ) );
-
-		return [
-			"usuario_emisor_id = %d OR centro_emisor_id IN ({$placeholders}) OR centro_receptor_id IN ({$placeholders})",
-			array_merge( [ $user_id ], $center_ids, $center_ids ),
-		];
+		return [ $where, $args ];
 	}
 
 	/**
