@@ -1151,31 +1151,31 @@ msgstr "Lankidetza-proposamena ez da existitzen."
 msgid "El mensaje de respuesta es demasiado largo."
 msgstr "Erantzun-mezua luzeegia da."
 
-#: src/Rest/ColaboracionesController.php:508
+#: src/Rest/ColaboracionesController.php:513
 msgid "Esta propuesta ya ha sido respondida y no puede modificarse."
 msgstr "Proposamen honi dagoeneko erantzun zaio, eta ezin da aldatu."
 
-#: src/Rest/ColaboracionesController.php:526
+#: src/Rest/ColaboracionesController.php:531
 msgid "ID del centro que envía la propuesta."
 msgstr "Proposamena bidaltzen duen ikastetxearen IDa."
 
-#: src/Rest/ColaboracionesController.php:534
+#: src/Rest/ColaboracionesController.php:539
 msgid "ID del centro que recibe la propuesta."
 msgstr "Proposamena jasotzen duen ikastetxearen IDa."
 
-#: src/Rest/ColaboracionesController.php:542
+#: src/Rest/ColaboracionesController.php:547
 msgid "Idea del proyecto conjunto."
 msgstr "Proiektu bateratuaren ideia."
 
-#: src/Rest/ColaboracionesController.php:551
+#: src/Rest/ColaboracionesController.php:556
 msgid "Curso o edades del alumnado participante."
 msgstr "Parte hartzen duten ikasleen maila edo adinak."
 
-#: src/Rest/ColaboracionesController.php:559
+#: src/Rest/ColaboracionesController.php:564
 msgid "Idiomas de trabajo del proyecto."
 msgstr "Proiektuaren lan-hizkuntzak."
 
-#: src/Rest/ColaboracionesController.php:567
+#: src/Rest/ColaboracionesController.php:572
 msgid "Fechas aproximadas del proyecto."
 msgstr "Proiektuaren gutxi gorabeherako datak."
 
@@ -1947,3 +1947,7 @@ msgid "Se conserva %d respuesta anterior a la versión 1.1 en propuestas recibid
 msgid_plural "Se conservan %d respuestas anteriores a la versión 1.1 en propuestas recibidas por los centros de esta persona, porque no registran quién las escribió. Revíselas en Colaboraciones (Matches) por si contienen datos personales."
 msgstr[0] "1.1 bertsioa baino lehenagoko %d erantzun gordetzen da pertsona honen ikastetxeek jasotako proposamenetan, ez baita erregistratzen nork idatzi zuen. Berrikusi Lankidetzak (matchak) atalean, datu pertsonalik ba ote duen jakiteko."
 msgstr[1] "1.1 bertsioa baino lehenagoko %d erantzun gordetzen dira pertsona honen ikastetxeek jasotako proposamenetan, ez baita erregistratzen nork idatzi zituen. Berrikusi Lankidetzak (matchak) atalean, datu pertsonalik ba ote duten jakiteko."
+
+#: src/Rest/ColaboracionesController.php:508
+msgid "No se pudo guardar la respuesta. Inténtalo de nuevo."
+msgstr "Ezin izan da erantzuna gorde. Saiatu berriro."

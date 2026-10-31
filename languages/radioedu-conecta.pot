@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-31T23:12:36+00:00\n"
+"POT-Creation-Date: 2026-10-31T23:16:00+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: radioedu-conecta\n"
@@ -1164,30 +1164,34 @@ msgid "El mensaje de respuesta es demasiado largo."
 msgstr ""
 
 #: src/Rest/ColaboracionesController.php:508
+msgid "No se pudo guardar la respuesta. Inténtalo de nuevo."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:513
 msgid "Esta propuesta ya ha sido respondida y no puede modificarse."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:526
+#: src/Rest/ColaboracionesController.php:531
 msgid "ID del centro que envía la propuesta."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:534
+#: src/Rest/ColaboracionesController.php:539
 msgid "ID del centro que recibe la propuesta."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:542
+#: src/Rest/ColaboracionesController.php:547
 msgid "Idea del proyecto conjunto."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:551
+#: src/Rest/ColaboracionesController.php:556
 msgid "Curso o edades del alumnado participante."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:559
+#: src/Rest/ColaboracionesController.php:564
 msgid "Idiomas de trabajo del proyecto."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:567
+#: src/Rest/ColaboracionesController.php:572
 msgid "Fechas aproximadas del proyecto."
 msgstr ""
 

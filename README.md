@@ -139,6 +139,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * El importador de demostración solo actualiza las emisoras que creó. Ya no se apropia de una emisora que comparta slug o URL de podcast con una de ejemplo, ni marca para borrar al desinstalar una página del directorio que ya existía.
 * Una actualización de la base de datos que falla se reintenta más tarde en lugar de darse por hecha.
 * Privacidad: la respuesta a una propuesta registra quién la escribe (esquema 1.0.3), así que se exporta y se borra para esa persona. Las respuestas anteriores a la 1.1 no tienen autor: el borrado las conserva y lo indica.
+* Un error de base de datos al responder una propuesta devuelve un error reintentable en lugar de «ya respondida».
 * Pruebas E2E con Playwright y `wp-env` (datos del centro en los paneles del editor de WordPress 7.1, incluido el logo, y bloque del directorio).
 
 ### 1.0.0

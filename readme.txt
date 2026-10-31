@@ -114,6 +114,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * The demo importer only updates the demo stations it created. It no longer takes over a station that shares a slug or podcast URL with a demo station, nor marks an existing directory page for deletion on uninstall.
 * A database update that fails is retried later instead of being recorded as done.
 * Privacy: the reply to a proposal now records who wrote it (database schema 1.0.3), so it is exported and erased for that person. Replies written before 1.1 have no author: erasure keeps them and says so.
+* A database error while answering a proposal returns a retryable error instead of "already answered".
 
 = 1.0.0 =
 * Interactive `[radioedu_directorio]` directory with faceted filters, affinity sorting, pagination and a locally bundled Leaflet map with prior consent for OpenStreetMap tiles.

@@ -231,15 +231,17 @@ class ColaboracionesTable {
 	 * La condición `estado = 'pendiente'` en el WHERE garantiza que una propuesta ya respondida
 	 * no puede volver a modificarse (ni reenviar notificaciones), incluso con peticiones concurrentes.
 	 *
-	 * @since 1.1 Records who answers.
+	 * @since 1.1 Records who answers, and tells a database error apart from a proposal that was
+	 *            no longer pending.
 	 *
 	 * @param int    $id        ID de la colaboración.
 	 * @param string $estado    Nuevo estado: 'aceptada' o 'rechazada'.
 	 * @param string $respuesta Mensaje de respuesta ya sanitizado.
 	 * @param int    $user_id   User who answers, so their reply can be exported and erased.
-	 * @return bool True si se actualizó una propuesta pendiente.
+	 * @return int|false 1 when the proposal was answered, 0 when it was no longer pending, or
+	 *                   false on a database error.
 	 */
-	public static function resolve_pending( int $id, string $estado, string $respuesta, int $user_id ): bool {
+	public static function resolve_pending( int $id, string $estado, string $respuesta, int $user_id ): int|false {
 		global $wpdb;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table write.
@@ -259,6 +261,6 @@ class ColaboracionesTable {
 			[ '%d', '%s' ]
 		);
 
-		return 1 === $updated;
+		return false === $updated ? false : min( 1, (int) $updated );
 	}
 }

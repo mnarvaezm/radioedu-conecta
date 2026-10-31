@@ -227,6 +227,52 @@ class RestSecurityAndPermissionsTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A database error while answering is a retryable 500, not "already answered".
+	 */
+	public function test_a_storage_error_while_answering_is_not_reported_as_already_answered(): void {
+		global $wpdb;
+		$coord  = self::factory()->user->create( [ 'role' => 'author' ] );
+		$center = self::factory()->post->create(
+			[
+				'post_type'   => CentroPostType::POST_TYPE,
+				'post_status' => 'publish',
+				'post_author' => $coord,
+			]
+		);
+		$wpdb->insert(
+			ColaboracionesTable::get_table_name(),
+			[
+				'centro_emisor_id'   => 1,
+				'centro_receptor_id' => $center,
+				'usuario_emisor_id'  => 1,
+				'idea_proyecto'      => 'Test',
+				'created_at'         => current_time( 'mysql' ),
+				'updated_at'         => current_time( 'mysql' ),
+			]
+		);
+		$colab_id = (int) $wpdb->insert_id;
+		$table    = ColaboracionesTable::get_table_name();
+		$refuse   = static function ( string $query ) use ( $table ): string {
+			return str_starts_with( ltrim( $query ), 'UPDATE `' . $table . '`' ) ? '' : $query;
+		};
+
+		wp_set_current_user( $coord );
+		add_filter( 'query', $refuse );
+		try {
+			$result = ColaboracionesController::respond_to_proposal( $colab_id, 'aceptada', '' );
+		} finally {
+			remove_filter( 'query', $refuse );
+		}
+		$this->assertWPError( $result );
+		$this->assertSame( 'radioedu_db_error', $result->get_error_code() );
+		$this->assertSame( 500, $result->get_error_data()['status'] );
+		$this->assertSame( 'pendiente', ColaboracionesTable::get_by_id( $colab_id )->estado );
+
+		$this->assertNull( ColaboracionesController::respond_to_proposal( $colab_id, 'aceptada', '' ) );
+		$this->assertSame( 'aceptada', ColaboracionesTable::get_by_id( $colab_id )->estado );
+	}
+
+	/**
 	 * Answering a non-existent proposal returns 404 instead of silently succeeding.
 	 */
 	public function test_answering_missing_proposal_returns_not_found(): void {
