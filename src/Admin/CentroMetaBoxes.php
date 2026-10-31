@@ -166,9 +166,8 @@ class CentroMetaBoxes {
 				<tbody>
 					<!-- 1. Logo de la radio escolar -->
 					<tr>
-						<th scope="row">
-							<label for="radioedu_logo_button"><?php esc_html_e( 'Logo de la Radio Escolar', 'radioedu-conecta' ); ?></label>
-						</th>
+						<?php // No <label for>: it would replace the button's own text as its accessible name (WCAG 2.5.3). ?>
+						<th scope="row"><?php esc_html_e( 'Logo de la Radio Escolar', 'radioedu-conecta' ); ?></th>
 						<td>
 							<input type="hidden" id="radioedu_logo_id" name="radioedu_logo_id" value="<?php echo esc_attr( (string) $logo_id ); ?>" />
 							<div id="radioedu-logo-preview" class="radioedu-logo-preview-box">
@@ -334,25 +333,13 @@ class CentroMetaBoxes {
 			}
 		}
 
-		// Coordenadas (validación de rangos geográficos [-90, 90] y [-180, 180]).
+		// Coordenadas: el sanitizador registrado en CentroMeta las limita a [-90, 90] y [-180, 180].
 		if ( isset( $_POST['radioedu_lat'] ) ) {
-			$lat_raw = sanitize_text_field( wp_unslash( $_POST['radioedu_lat'] ) );
-			if ( '' !== $lat_raw && is_numeric( $lat_raw ) ) {
-				$lat_float = max( -90.0, min( 90.0, (float) $lat_raw ) );
-				update_post_meta( $post_id, '_radioedu_lat', (string) $lat_float );
-			} else {
-				update_post_meta( $post_id, '_radioedu_lat', '' );
-			}
+			update_post_meta( $post_id, '_radioedu_lat', sanitize_text_field( wp_unslash( $_POST['radioedu_lat'] ) ) );
 		}
 
 		if ( isset( $_POST['radioedu_lng'] ) ) {
-			$lng_raw = sanitize_text_field( wp_unslash( $_POST['radioedu_lng'] ) );
-			if ( '' !== $lng_raw && is_numeric( $lng_raw ) ) {
-				$lng_float = max( -180.0, min( 180.0, (float) $lng_raw ) );
-				update_post_meta( $post_id, '_radioedu_lng', (string) $lng_float );
-			} else {
-				update_post_meta( $post_id, '_radioedu_lng', '' );
-			}
+			update_post_meta( $post_id, '_radioedu_lng', sanitize_text_field( wp_unslash( $_POST['radioedu_lng'] ) ) );
 		}
 
 		// Podcast URL.

@@ -11,6 +11,7 @@ namespace RadioEdu\Conecta\Admin;
 
 use RadioEdu\Conecta\Database\ColaboracionesTable;
 use RadioEdu\Conecta\Emails\NotificationService;
+use RadioEdu\Conecta\Icons;
 use RadioEdu\Conecta\PostTypes\CentroPostType;
 use RadioEdu\Conecta\Rest\ColaboracionesController;
 
@@ -26,18 +27,46 @@ class ColaboracionesAdminPage {
 	public const PAGE_SLUG    = 'radioedu-conecta-colaboraciones';
 
 	/**
+	 * Hook suffix of the submenu page, used to load its stylesheet only there.
+	 *
+	 * @var string
+	 */
+	private static string $hook_suffix = '';
+
+	/**
 	 * Registra los hooks del submenú y procesamiento de respuestas.
 	 */
 	public static function register(): void {
 		add_action( 'admin_menu', [ self::class, 'add_submenu_page' ] );
 		add_action( 'admin_post_radioedu_respond_match', [ self::class, 'handle_respond_match' ] );
+		add_action( 'admin_enqueue_scripts', [ self::class, 'enqueue_assets' ] );
+	}
+
+	/**
+	 * Loads the admin stylesheet (status icons) only on the Colaboraciones screen.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $hook_suffix Current admin screen.
+	 */
+	public static function enqueue_assets( string $hook_suffix ): void {
+		if ( '' === self::$hook_suffix || self::$hook_suffix !== $hook_suffix ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'radioedu-conecta-admin-css',
+			RADIOEDU_CONECTA_URL . 'assets/css/admin.css',
+			[],
+			RADIOEDU_CONECTA_VERSION
+		);
 	}
 
 	/**
 	 * Añade el submenú 'Colaboraciones (Matches)' dentro de 'RadioEdu Centros'.
 	 */
 	public static function add_submenu_page(): void {
-		add_submenu_page(
+		self::$hook_suffix = (string) add_submenu_page(
 			'edit.php?post_type=' . CentroPostType::POST_TYPE,
 			__( 'Propuestas de Colaboración (Matches)', 'radioedu-conecta' ),
 			__( 'Colaboraciones (Matches)', 'radioedu-conecta' ),
@@ -117,13 +146,17 @@ class ColaboracionesAdminPage {
 				<?php esc_html_e( 'Consulta las solicitudes de hermanamiento recibidas o enviadas por tu emisora escolar y coordina proyectos conjuntos.', 'radioedu-conecta' ); ?>
 			</p>
 
-			<?php if ( '' !== $updated_status ) : ?>
-				<div class="notice notice-success is-dismissible" style="margin-top: 15px;">
-					<p>
-						<?php esc_html_e( 'La respuesta a la propuesta de colaboración se ha guardado correctamente y se ha notificado al centro emisor.', 'radioedu-conecta' ); ?>
-					</p>
-				</div>
-			<?php endif; ?>
+			<?php
+			if ( '' !== $updated_status ) {
+				wp_admin_notice(
+					esc_html__( 'La respuesta a la propuesta de colaboración se ha guardado correctamente y se ha notificado al centro emisor.', 'radioedu-conecta' ),
+					[
+						'type'        => 'success',
+						'dismissible' => true,
+					]
+				);
+			}
+			?>
 
 			<?php if ( empty( $rows ) ) : ?>
 				<div class="card" style="max-width: 720px; margin-top: 20px; padding: 20px;">
@@ -180,11 +213,11 @@ class ColaboracionesAdminPage {
 								</td>
 								<td>
 									<?php if ( 'aceptada' === $estado ) : ?>
-										<span style="color: #1b5e20; font-weight: 600;">✔ <?php esc_html_e( 'Aceptada', 'radioedu-conecta' ); ?></span>
+										<span class="radioedu-status radioedu-status--aceptada"><?php Icons::render( 'core/check' ); ?> <?php esc_html_e( 'Aceptada', 'radioedu-conecta' ); ?></span>
 									<?php elseif ( 'rechazada' === $estado ) : ?>
-										<span style="color: #b71c1c; font-weight: 600;">✖ <?php esc_html_e( 'Declinada', 'radioedu-conecta' ); ?></span>
+										<span class="radioedu-status radioedu-status--rechazada"><?php Icons::render( 'radioedu-conecta/close' ); ?> <?php esc_html_e( 'Declinada', 'radioedu-conecta' ); ?></span>
 									<?php else : ?>
-										<span style="color: #e65100; font-weight: 600;">⏳ <?php esc_html_e( 'Pendiente', 'radioedu-conecta' ); ?></span>
+										<span class="radioedu-status radioedu-status--pendiente"><?php Icons::render( 'core/scheduled' ); ?> <?php esc_html_e( 'Pendiente', 'radioedu-conecta' ); ?></span>
 									<?php endif; ?>
 								</td>
 								<td>

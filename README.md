@@ -4,7 +4,7 @@
 
 - **Contribuidores:** radioedu (Consejería de Educación, Ciencia y Formación Profesional - Junta de Extremadura)
 - **Etiquetas:** radio-escolar, podcast, educacion, directorio, colaboracion, multisite, rgpd
-- **Versión mínima de WordPress:** 7.0
+- **Versión mínima de WordPress:** 7.1
 - **Probado hasta:** 7.1
 - **Versión mínima de PHP:** 8.1
 - **Versión estable:** 1.0.0
@@ -17,10 +17,11 @@
 
 **RadioEdu Conecta** es el plugin oficial de la iniciativa **Traspasando Fronteras** de RadioEdu (Junta de Extremadura). Permite a los centros educativos con emisoras de radio escolar:
 
-1. **Directorio Facetado Interactivo (`[radioedu_directorio]`)**:
+1. **Directorio Facetado Interactivo (bloque *Directorio Traspasando Fronteras* o shortcode `[radioedu_directorio]`)**:
    - Búsqueda instantánea combinando **Ubicación**, **Idioma**, **Etapa educativa**, **Temas de interés**, **Formato de programa** y texto libre.
    - Ordenación inteligente por **Más afines** (priorizando emisoras disponibles y coincidencia de etiquetas con el centro del usuario), **Más recientes** o **Alfabético (A-Z)**, con paginación dinámica (*"Cargar más centros"*).
-   - Sistema de favoritos persistente en el navegador (`❤️`).
+   - Sistema de favoritos persistente en el navegador (icono de estrella).
+   - Iconos SVG de la API de iconos de WordPress 7.1 (colección `core` y colección propia `radioedu-conecta`), que heredan el color del tema y se ocultan a los lectores de pantalla cuando son decorativos.
 2. **Mapa Geográfico Interactivo (Leaflet Local + RGPD)**:
    - Librería Leaflet 1.9.4 empaquetada localmente (cero CDNs externas) y carga de cartografía de OpenStreetMap bajo consentimiento explícito del usuario.
    - Marcadores geolocalizados con popups construidos mediante nodos DOM seguros (`createElement` / `textContent`).
@@ -40,7 +41,8 @@
 
 1. Sube el archivo `radioedu-conecta.zip` desde **Plugins → Añadir nuevo plugin → Subir plugin** en WordPress, o descomprime la carpeta `radioedu-conecta` en `/wp-content/plugins/`.
 2. Activa el plugin desde el menú **Plugins**. La activación no publica contenido: si quieres las 6 emisoras de demostración y la página `/traspasando-fronteras/` con el shortcode `[radioedu_directorio]`, cárgalas desde **RadioEdu Centros → Ajustes**.
-3. Gestiona los centros desde **RadioEdu Centros**, responde a propuestas desde **RadioEdu Centros → Colaboraciones (Matches)** y configura el mapa o las notificaciones en **RadioEdu Centros → Ajustes**.
+3. Para mostrar el directorio en cualquier otra página, inserta el bloque **Directorio Traspasando Fronteras** (categoría *Widgets*) o el shortcode `[radioedu_directorio]`. Solo puede haber un directorio por página.
+4. Gestiona los centros desde **RadioEdu Centros**, responde a propuestas desde **RadioEdu Centros → Colaboraciones (Matches)** y configura el mapa o las notificaciones en **RadioEdu Centros → Ajustes**.
 
 ---
 
@@ -53,7 +55,19 @@ npm ci
 npm run build    # regenera build/*.js y build/*.asset.php; haz commit del resultado
 ```
 
-Si falta `build/`, el plugin no falla: el directorio y el editor de centros se muestran sin la parte interactiva. Las pruebas completas están en [TESTING-PROTOCOL.md](TESTING-PROTOCOL.md).
+Si falta `build/`, el plugin no falla: el directorio y el editor de centros se muestran sin la parte interactiva.
+
+El bloque del directorio no necesita JavaScript de editor: se registra solo con PHP (`supports.autoRegister`) y WordPress lo previsualiza en el editor con ServerSideRender.
+
+Pruebas de extremo a extremo (Playwright) en un sitio desechable con [`wp-env`](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-env/) (requiere Docker):
+
+```bash
+npx playwright install chromium
+npm run wp-env start   # sitio de pruebas en http://localhost:8889 (admin / password)
+npm run test:e2e
+```
+
+Las pruebas completas están en [TESTING-PROTOCOL.md](TESTING-PROTOCOL.md).
 
 ---
 
@@ -71,6 +85,12 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 
 ### 1.0.0
 * Lanzamiento completo del directorio interactivo `[radioedu_directorio]`, CPT `radioedu_centro` y 5 taxonomías facetadas con mapeo completo de capacidades.
+* Requiere WordPress 7.1. Nuevo bloque **Directorio Traspasando Fronteras** registrado solo con PHP (`supports.autoRegister`), equivalente al shortcode.
+* Iconos SVG de la API de iconos de WordPress 7.1 en lugar de emojis en el directorio, la ficha, el panel lateral y la pantalla de Colaboraciones.
+* Metadatos del centro registrados con `register_post_meta()`: se sanean en cualquier escritura y no se pueden leer ni modificar desde la REST API del core.
+* Avisos de administración con `wp_admin_notice()`.
+* Accesibilidad: el botón *Subir / Elegir Logo* conserva su texto como nombre accesible (WCAG 2.5.3) y el estado *Pendiente* tiene contraste AA.
+* Pruebas E2E con Playwright y `wp-env` (selección del logo en el editor con lienzo en iframe de WordPress 7.1 y bloque del directorio).
 * Nueva plantilla dedicada para el perfil individual de emisoras escolares (`templates/single-centro.php`) con envío directo de propuestas de match.
 * Nuevo panel de administración **Colaboraciones (Matches)** (`ColaboracionesAdminPage`) para consultar, aceptar y declinar propuestas.
 * Refuerzo integral de seguridad: mitigación anti-IDOR en `POST /colaboraciones`, validación estricta de URLs y nodos DOM en `directorio.js`, consultas SQL preparadas con `%i` y consentimiento previo RGPD para teselas de OpenStreetMap.

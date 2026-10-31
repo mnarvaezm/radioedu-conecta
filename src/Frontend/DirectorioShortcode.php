@@ -28,6 +28,11 @@ class DirectorioShortcode {
 	public const SHORTCODE_TAG = 'radioedu_directorio';
 
 	/**
+	 * Name of the directory block, an editor-friendly equivalent of the shortcode.
+	 */
+	public const BLOCK_NAME = 'radioedu-conecta/directorio';
+
+	/**
 	 * Controla que window.radioeduConectaData no se inyecte más de una vez por petición.
 	 *
 	 * @var bool
@@ -35,12 +40,83 @@ class DirectorioShortcode {
 	private static bool $inline_data_added = false;
 
 	/**
-	 * Registra el shortcode y el filtro de perfil individual en WordPress.
+	 * Registra el shortcode, el bloque y el filtro de perfil individual en WordPress.
 	 */
 	public static function register(): void {
 		add_shortcode( self::SHORTCODE_TAG, [ self::class, 'render_shortcode' ] );
-		add_action( 'wp_enqueue_scripts', [ self::class, 'register_assets' ] );
+		// Assets are registered on init so the block can declare its stylesheet for the editor.
+		add_action( 'init', [ self::class, 'register_assets' ] );
+		add_action( 'init', [ self::class, 'register_block' ] );
+		add_action( 'wp_enqueue_scripts', [ self::class, 'enqueue_assets' ] );
 		add_filter( 'the_content', [ self::class, 'render_single_centro_profile' ], 20 );
+	}
+
+	/**
+	 * Registra el bloque del directorio solo con PHP (sin JavaScript de editor propio).
+	 *
+	 * Con `autoRegister` (WordPress 7.0+) el editor lo registra por su cuenta y lo previsualiza
+	 * con ServerSideRender, así que el bloque y el shortcode comparten el mismo renderizado.
+	 * El directorio usa IDs fijos en su marcado, por eso solo se permite una instancia por entrada.
+	 *
+	 * @since 1.0.0
+	 */
+	public static function register_block(): void {
+		register_block_type(
+			self::BLOCK_NAME,
+			[
+				'title'           => __( 'Directorio Traspasando Fronteras', 'radioedu-conecta' ),
+				'description'     => __( 'Directorio interactivo de radios escolares con filtros, mapa y propuestas de colaboración.', 'radioedu-conecta' ),
+				'category'        => 'widgets',
+				'icon'            => 'microphone',
+				'keywords'        => [
+					__( 'radio escolar', 'radioedu-conecta' ),
+					__( 'directorio', 'radioedu-conecta' ),
+					__( 'colaboración', 'radioedu-conecta' ),
+					'podcast',
+				],
+				'attributes'      => [],
+				'supports'        => [
+					'autoRegister' => true,
+					'html'         => false,
+					'multiple'     => false,
+					'align'        => [ 'wide', 'full' ],
+				],
+				'style_handles'   => [ 'radioedu-directorio-css' ],
+				'render_callback' => [ self::class, 'render_block' ],
+			]
+		);
+	}
+
+	/**
+	 * Renderiza el bloque del directorio reutilizando la salida del shortcode.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string Salida HTML del bloque.
+	 */
+	public static function render_block(): string {
+		return sprintf( '<div %s>%s</div>', get_block_wrapper_attributes(), self::render_shortcode() );
+	}
+
+	/**
+	 * Encola en el <head> los estilos de las páginas que muestran el directorio o una ficha.
+	 *
+	 * Los renderizadores también encolan sus assets, pero hacerlo aquí evita que la página se
+	 * pinte sin estilos en los temas clásicos, que procesan el contenido después de wp_head.
+	 *
+	 * @since 1.0.0
+	 */
+	public static function enqueue_assets(): void {
+		if ( is_singular( CentroPostType::POST_TYPE ) ) {
+			wp_enqueue_style( 'radioedu-directorio-css' );
+			wp_enqueue_script( 'radioedu-directorio-js' );
+		}
+
+		$post = get_post();
+		if ( $post instanceof \WP_Post && ( has_shortcode( $post->post_content, self::SHORTCODE_TAG ) || has_block( self::BLOCK_NAME, $post ) ) ) {
+			wp_enqueue_style( 'radioedu-leaflet-css' );
+			wp_enqueue_style( 'radioedu-directorio-css' );
+		}
 	}
 
 	/**
@@ -96,18 +172,6 @@ class DirectorioShortcode {
 				]
 			);
 			wp_set_script_translations( 'radioedu-directorio-js', 'radioedu-conecta', RADIOEDU_CONECTA_DIR . 'languages' );
-		}
-
-		// Encolar estilos y script del drawer en la página de perfil individual de una emisora.
-		if ( is_singular( CentroPostType::POST_TYPE ) ) {
-			wp_enqueue_style( 'radioedu-directorio-css' );
-			wp_enqueue_script( 'radioedu-directorio-js' );
-		}
-		// Register directory styles before wp_head prints styles.
-		$post = get_post();
-		if ( $post instanceof \WP_Post && has_shortcode( $post->post_content, self::SHORTCODE_TAG ) ) {
-			wp_enqueue_style( 'radioedu-leaflet-css' );
-			wp_enqueue_style( 'radioedu-directorio-css' );
 		}
 	}
 

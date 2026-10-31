@@ -7,7 +7,7 @@ Este protocolo describe paso a paso las pruebas funcionales, de seguridad, de ba
 ## 1. Entorno de Pruebas (Docker)
 
 El archivo [docker-compose.test.yml](file:///c:/radioedu-conecta/docker-compose.test.yml) está preconfigurado con:
-* **WordPress**: 7.1 sobre PHP 8.2 (Apache). El plugin exige WordPress 7.0 o superior.
+* **WordPress**: 7.1 sobre PHP 8.2 (Apache). El plugin exige WordPress 7.1 o superior.
 * **Base de Datos**: MariaDB 10.11.
 * **Puerto asignado**: `8090` (`http://localhost:8090`).
 * **Modo Depuración Activo**: `WP_DEBUG=true`, `WP_DEBUG_LOG=true`, `SCRIPT_DEBUG=true`.
@@ -45,6 +45,8 @@ docker exec radioedu-wordpress wp db query "DESCRIBE wp_radioedu_colaboraciones;
 | **TC-03** | **Ordenación por Afinidad** | Seleccionar *"Más afines"* en "Ordenar por". | Prioriza los centros disponibles y ordena según coincidencias de taxonomías con el centro del usuario conectado, que aparece el último. Un administrador no tiene centro propio, así que ningún centro se manda al final. |
 | **TC-04** | **Vista de Mapa y Consentimiento RGPD** | Pulsar **"Vista de mapa"**. | Antes de conectar con `tile.openstreetmap.org`, se muestra el aviso RGPD. Al pulsar *"Aceptar y mostrar el mapa interactivo"*, se carga el mapa Leaflet con los marcadores y popups construidos con nodos DOM seguros. |
 | **TC-05** | **Ficha de Perfil Individual** | Pulsar **"Ver perfil"** en cualquier tarjeta (ej. `/centro-radioedu/ceip-san-jose/`). | Se muestra la ficha con imagen de cabecera arriba, insignia de disponibilidad, logo circular, nombre, bandera, ubicación, etiquetas de colores, edades, idiomas, botones de acción a la izquierda y descripción debajo. |
+| **TC-05b** | **Bloque del directorio** | En una página nueva, insertar el bloque **Directorio Traspasando Fronteras** (categoría *Widgets*) y publicarla. | El editor (lienzo en iframe) muestra la vista previa del directorio con sus estilos; en la web funciona igual que el shortcode. No se puede insertar un segundo directorio en la misma página. |
+| **TC-05c** | **Iconos SVG** | Revisar los filtros, las tarjetas, la ficha, el panel lateral y **Colaboraciones (Matches)**. | Todos los iconos de interfaz son SVG de la API de iconos (`.radioedu-svg-icon`), heredan el color y llevan `aria-hidden="true"`. Solo las banderas siguen siendo emojis. |
 | **TC-06** | **Solicitud de Match desde el Perfil** | Pulsar **"✈️ Proponer match"** dentro de la página de perfil individual de la emisora. | Se despliega directamente el panel lateral *"Solicitud de match"* en esa misma pantalla sin necesidad de volver al directorio. |
 
 ---
@@ -84,7 +86,10 @@ vendor/bin/phpunit                    # sitio individual
 WP_MULTISITE=1 vendor/bin/phpunit     # multisite
 npm ci && npm run lint:js && npm run lint:css
 npm run build && git diff --exit-code -- build/   # build/ versionado y al día
+npx playwright install chromium && npm run wp-env start && npm run test:e2e   # E2E en http://localhost:8889
 npm audit --audit-level=high && composer audit
 ```
 
 Plugin Check debe ejecutarse sobre la copia distribuible (respetando `.distignore`), no sobre el repositorio completo: `wp plugin check radioedu-conecta`. Comprueba también que, sin la carpeta `build/`, el directorio y el editor de centros cargan sin errores fatales (solo pierden la interactividad).
+
+Las pruebas E2E (`tests/e2e`) crean y borran su propio contenido. Para lanzarlas contra otro sitio desechable en lugar de `wp-env`, indica su URL y, si quieres, un navegador instalado: `WP_BASE_URL=http://localhost:8091 PLAYWRIGHT_CHANNEL=msedge npm run test:e2e`. Necesitan la cuenta `admin` / `password` con el idioma de usuario en inglés, porque las utilidades de `@wordpress/e2e-test-utils-playwright` pulsan los botones del editor por su texto en inglés.

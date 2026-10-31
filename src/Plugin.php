@@ -16,6 +16,7 @@ use RadioEdu\Conecta\Admin\Settings;
 use RadioEdu\Conecta\Capabilities\RoleCapabilities;
 use RadioEdu\Conecta\Database\ColaboracionesTable;
 use RadioEdu\Conecta\Frontend\DirectorioShortcode;
+use RadioEdu\Conecta\PostTypes\CentroMeta;
 use RadioEdu\Conecta\PostTypes\CentroPostType;
 use RadioEdu\Conecta\Privacy\PrivacyPolicy;
 use RadioEdu\Conecta\Rest\CentrosController;
@@ -64,7 +65,10 @@ final class Plugin {
 
 		// 2. Registrar CPT y Taxonomías en init.
 		add_action( 'init', [ CentroPostType::class, 'register' ], 5 );
+		add_action( 'init', [ CentroMeta::class, 'register' ], 5 );
 		add_action( 'init', [ TaxonomiesRegistrar::class, 'register_all' ], 5 );
+		// Core registers its icon collection on init priority 0, before the plugin's collection.
+		add_action( 'init', [ Icons::class, 'register' ] );
 
 		// 3. Registrar herramientas de Privacidad / RGPD.
 		PrivacyPolicy::register();

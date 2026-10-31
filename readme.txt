@@ -1,7 +1,7 @@
 === RadioEdu Conecta ===
 Contributors: radioedu
 Tags: school radio, podcast, education, directory, collaboration
-Requires at least: 7.0
+Requires at least: 7.1
 Tested up to: 7.1
 Requires PHP: 8.1
 Stable tag: 1.0.0
@@ -17,7 +17,7 @@ Interactive directory and collaboration system ("Traspasando Fronteras") that co
 It allows schools that run a school radio station to:
 
 * Publish a station profile with cover image, circular logo, location, educational stages, working languages, topics, programme formats and links to their podcast and official website.
-* Search and filter related schools in real time with the interactive faceted directory `[radioedu_directorio]` (taxonomy-based affinity sorting and pagination) and a map view powered by a locally bundled copy of Leaflet.
+* Search and filter related schools in real time with the interactive faceted directory, available as the "Directorio Traspasando Fronteras" block or the `[radioedu_directorio]` shortcode (taxonomy-based affinity sorting and pagination), and a map view powered by a locally bundled copy of Leaflet.
 * Open the individual profile page of each station and propose a collaboration ("match") directly from the profile or from the directory, through an accessible side panel.
 * Send and manage formal collaboration proposals between radio coordinators from **RadioEdu Centros -> Colaboraciones (Matches)** without exposing personal email addresses on the public site.
 
@@ -40,6 +40,7 @@ The plugin contains no telemetry and makes no other calls to external services.
 == Third-party libraries ==
 
 * **Leaflet 1.9.4** (`assets/js/leaflet.js`, `assets/css/leaflet.css`, `assets/css/images/`), bundled locally. BSD-2-Clause license, GPL-compatible. Unminified source: https://github.com/Leaflet/Leaflet/tree/v1.9.4
+* **WordPress icons** (`assets/icons/close.svg`, `globe.svg`, `institution.svg`, `send.svg`): SVG paths from `@wordpress/icons` 10.32.0, GPL-2.0-or-later. Source: https://github.com/WordPress/gutenberg/tree/trunk/packages/icons. The other icons in `assets/icons/` were drawn for this plugin and share its license.
 
 == Source code ==
 
@@ -50,7 +51,7 @@ The minified scripts in `build/` are compiled from the human-readable sources sh
 1. Upload `radioedu-conecta.zip` from **Plugins -> Add New Plugin -> Upload Plugin**, or copy the `radioedu-conecta` folder to `/wp-content/plugins/`.
 2. Activate the plugin from the **Plugins** screen (or from Network Admin when using Multisite).
 3. Manage school profiles from **RadioEdu Centros**, answer proposals from **Colaboraciones (Matches)** and configure the map and notifications from **Ajustes** (Settings).
-4. Add the `[radioedu_directorio]` shortcode to any page to display the interactive directory.
+4. Insert the "Directorio Traspasando Fronteras" block (Widgets category) or the `[radioedu_directorio]` shortcode in any page to display the interactive directory. Only one directory per page is supported.
 
 == Frequently Asked Questions ==
 
@@ -70,6 +71,10 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 
 = 1.0.0 =
 * Interactive `[radioedu_directorio]` directory with faceted filters, affinity sorting, pagination and a locally bundled Leaflet map with prior consent for OpenStreetMap tiles.
+* Requires WordPress 7.1. New "Directorio Traspasando Fronteras" block, registered in PHP only (`supports.autoRegister`) and equivalent to the shortcode.
+* Interface icons use the WordPress 7.1 Icons API (core collection plus a `radioedu-conecta` collection) instead of emoji.
+* School meta fields are registered with `register_post_meta()`, sanitized on every write and neither readable nor writable through the core REST API.
+* Admin notices use `wp_admin_notice()`.
 * Individual station profile template with cover image, circular logo, metadata, description and an integrated match proposal panel.
 * **Colaboraciones (Matches)** admin screen to review, accept or decline received and sent proposals; each proposal can be answered only once.
 * Hardened security: anti-IDOR validation of the sending school, strict URL and DOM sanitization, prepared SQL queries with `%i` and full capability mapping for coordinators.

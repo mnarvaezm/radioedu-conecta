@@ -90,6 +90,24 @@ import { speak } from '@wordpress/a11y';
 		const leafletMapEl = document.getElementById( 'radioedu-leaflet-map' );
 		const sortSelect = document.getElementById( 'radioedu-sort-select' );
 		const filtersForm = document.getElementById( 'radioedu-filters-form' );
+		const iconTemplates = document.getElementById(
+			'radioedu-icon-templates'
+		);
+
+		/**
+		 * Clona un icono SVG renderizado en el servidor con la API de iconos de WordPress.
+		 *
+		 * @param {string} slug Nombre del icono sin colección (p. ej. "send").
+		 * @return {?Element} Copia del <svg> o null si la plantilla no lo incluye.
+		 */
+		function createIcon( slug ) {
+			const icon = iconTemplates
+				? iconTemplates.content.querySelector(
+						'.radioedu-svg-icon--' + slug
+					)
+				: null;
+			return icon ? icon.cloneNode( true ) : null;
+		}
 
 		// Drawer de Match.
 		const drawerOverlay = document.getElementById(
@@ -437,7 +455,14 @@ import { speak } from '@wordpress/a11y';
 				// Botón Favorito
 				const favBtn = document.createElement( 'button' );
 				const setFavState = function ( isFav ) {
-					favBtn.textContent = isFav ? '❤️' : '♡';
+					const favIcon = createIcon(
+						isFav ? 'star-filled' : 'star-empty'
+					);
+					if ( favIcon ) {
+						favBtn.replaceChildren( favIcon );
+					} else {
+						favBtn.textContent = isFav ? '★' : '☆';
+					}
 					favBtn.classList.toggle( 'is-active', isFav );
 					favBtn.setAttribute(
 						'aria-pressed',
@@ -531,10 +556,10 @@ import { speak } from '@wordpress/a11y';
 					btnMatch.disabled = true;
 					btnMatch.textContent = i18n.unavailable || 'No disponible';
 				} else {
-					const planeIcon = document.createElement( 'span' );
-					planeIcon.setAttribute( 'aria-hidden', 'true' );
-					planeIcon.textContent = '✈️';
-					btnMatch.appendChild( planeIcon );
+					const planeIcon = createIcon( 'send' );
+					if ( planeIcon ) {
+						btnMatch.appendChild( planeIcon );
+					}
 
 					const matchText = document.createTextNode(
 						' ' + ( i18n.proposeMatch || 'Proponer match' )

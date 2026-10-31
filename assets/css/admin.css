@@ -21,3 +21,33 @@
 	object-fit: cover;
 	box-shadow: 0 2px 6px rgba(0, 131, 143, 0.2);
 }
+
+/* Iconos SVG de la API de iconos de WordPress.
+ * wp_get_icon() no fija el color de relleno. */
+.radioedu-svg-icon {
+	width: 20px;
+	height: 20px;
+	fill: currentcolor;
+	vertical-align: middle;
+}
+
+/* Estado de las propuestas en la pantalla Colaboraciones.
+ * Colores con contraste AA sobre las filas claras. */
+.radioedu-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-weight: 600;
+}
+
+.radioedu-status--aceptada {
+	color: #1b5e20;
+}
+
+.radioedu-status--rechazada {
+	color: #b71c1c;
+}
+
+.radioedu-status--pendiente {
+	color: #8a4b00;
+}

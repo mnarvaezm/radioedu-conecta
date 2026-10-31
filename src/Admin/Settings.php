@@ -238,20 +238,24 @@ class Settings {
 
 			<?php settings_errors(); ?>
 
-			<?php // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only counter shown after the nonce-protected import redirect. ?>
-			<?php if ( isset( $_GET['demo_imported'] ) ) : ?>
-				<div class="notice notice-success is-dismissible" style="margin-top: 15px;">
-					<p>
-						<?php
-						printf(
+			<?php
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only counter shown after the nonce-protected import redirect.
+			if ( isset( $_GET['demo_imported'] ) ) {
+				wp_admin_notice(
+					esc_html(
+						sprintf(
 							/* translators: %d: number of imported centers */
-							esc_html__( '¡Se han cargado o sincronizado con éxito %d emisoras de ejemplo con sus imágenes, taxonomías y coordenadas en el mapa!', 'radioedu-conecta' ),
+							__( '¡Se han cargado o sincronizado con éxito %d emisoras de ejemplo con sus imágenes, taxonomías y coordenadas en el mapa!', 'radioedu-conecta' ),
 							is_scalar( $_GET['demo_imported'] ) ? absint( wp_unslash( $_GET['demo_imported'] ) ) : 0 // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only integer.
-						);
-						?>
-					</p>
-				</div>
-			<?php endif; ?>
+						)
+					),
+					[
+						'type'        => 'success',
+						'dismissible' => true,
+					]
+				);
+			}
+			?>
 
 			<form method="post" action="options.php">
 				<?php

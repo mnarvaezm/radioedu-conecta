@@ -10,7 +10,7 @@
  */
 
 define( 'RADIOEDU_CONECTA_VERSION', '1.0.0' );
-define( 'RADIOEDU_CONECTA_MIN_WP', '7.0' );
+define( 'RADIOEDU_CONECTA_MIN_WP', '7.1' );
 define( 'RADIOEDU_CONECTA_MIN_PHP', '8.1' );
 define( 'RADIOEDU_CONECTA_FILE', dirname( __DIR__ ) . '/radioedu-conecta.php' );
 define( 'RADIOEDU_CONECTA_DIR', dirname( __DIR__ ) . '/' );

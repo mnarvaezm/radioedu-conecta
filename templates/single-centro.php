@@ -25,6 +25,8 @@
 
 declare( strict_types=1 );
 
+use RadioEdu\Conecta\Icons;
+
 defined( 'ABSPATH' ) || exit;
 ?>
 
@@ -33,7 +35,7 @@ defined( 'ABSPATH' ) || exit;
 	<!-- Barra superior de retorno al directorio -->
 	<div class="radioedu-profile-topbar">
 		<a href="<?php echo esc_url( $directorio_url ); ?>" class="radioedu-profile-back-link">
-			<span aria-hidden="true">←</span> <?php esc_html_e( 'Volver al directorio Traspasando Fronteras', 'radioedu-conecta' ); ?>
+			<?php Icons::render( 'core/arrow-left' ); ?> <?php esc_html_e( 'Volver al directorio Traspasando Fronteras', 'radioedu-conecta' ); ?>
 		</a>
 	</div>
 
@@ -45,9 +47,9 @@ defined( 'ABSPATH' ) || exit;
 			<div class="radioedu-profile-cover-overlay"></div>
 			<span class="radioedu-profile-status-badge <?php echo $disponible ? 'is-available' : 'is-unavailable'; ?>">
 				<?php if ( $disponible ) : ?>
-					<span aria-hidden="true">🟢</span> <?php esc_html_e( 'Disponible para colaborar', 'radioedu-conecta' ); ?>
+					<span class="radioedu-status-dot" aria-hidden="true"></span> <?php esc_html_e( 'Disponible para colaborar', 'radioedu-conecta' ); ?>
 				<?php else : ?>
-					<span aria-hidden="true">⚪</span> <?php esc_html_e( 'No disponible actualmente', 'radioedu-conecta' ); ?>
+					<span class="radioedu-status-dot" aria-hidden="true"></span> <?php esc_html_e( 'No disponible actualmente', 'radioedu-conecta' ); ?>
 				<?php endif; ?>
 			</span>
 		</div>
@@ -60,7 +62,7 @@ defined( 'ABSPATH' ) || exit;
 					<?php if ( '' !== $logo_url ) : ?>
 						<img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( $title ); ?>" class="radioedu-profile-logo" />
 					<?php else : ?>
-						<div class="radioedu-profile-logo radioedu-profile-logo-placeholder" aria-hidden="true">🎙️</div>
+						<div class="radioedu-profile-logo radioedu-profile-logo-placeholder"><?php Icons::render( 'radioedu-conecta/microphone' ); ?></div>
 					<?php endif; ?>
 				</div>
 
@@ -89,7 +91,7 @@ defined( 'ABSPATH' ) || exit;
 			<div class="radioedu-profile-meta-grid">
 				<?php if ( '' !== $edades ) : ?>
 					<div class="radioedu-profile-meta-item">
-						<span class="radioedu-profile-meta-icon" aria-hidden="true">👥</span>
+						<span class="radioedu-profile-meta-icon"><?php Icons::render( 'core/people' ); ?></span>
 						<div>
 							<span class="radioedu-profile-meta-label"><?php esc_html_e( 'Cursos / Edades', 'radioedu-conecta' ); ?></span>
 							<strong class="radioedu-profile-meta-value"><?php echo esc_html( $edades ); ?></strong>
@@ -99,7 +101,7 @@ defined( 'ABSPATH' ) || exit;
 
 				<?php if ( '' !== $idiomas_texto ) : ?>
 					<div class="radioedu-profile-meta-item">
-						<span class="radioedu-profile-meta-icon" aria-hidden="true">💬</span>
+						<span class="radioedu-profile-meta-icon"><?php Icons::render( 'core/language' ); ?></span>
 						<div>
 							<span class="radioedu-profile-meta-label"><?php esc_html_e( 'Idiomas de trabajo', 'radioedu-conecta' ); ?></span>
 							<strong class="radioedu-profile-meta-value"><?php echo esc_html( $idiomas_texto ); ?></strong>
@@ -119,7 +121,7 @@ defined( 'ABSPATH' ) || exit;
 						data-nombre="<?php echo esc_attr( $title ); ?>"
 						data-ubicacion="<?php echo esc_attr( '' !== $ubicacion ? $ubicacion : __( 'Extremadura', 'radioedu-conecta' ) ); ?>"
 					>
-						<span aria-hidden="true">✈️</span> <?php esc_html_e( 'Proponer match', 'radioedu-conecta' ); ?>
+						<?php Icons::render( 'radioedu-conecta/send' ); ?> <?php esc_html_e( 'Proponer match', 'radioedu-conecta' ); ?>
 					</button>
 				<?php else : ?>
 					<button type="button" class="radioedu-btn-match radioedu-profile-btn-inline" disabled>
@@ -129,13 +131,13 @@ defined( 'ABSPATH' ) || exit;
 
 				<?php if ( '' !== $podcast_url ) : ?>
 					<a href="<?php echo esc_url( $podcast_url ); ?>" target="_blank" rel="noopener noreferrer" class="radioedu-btn-primary">
-						<span aria-hidden="true">🎧</span> <?php esc_html_e( 'Escuchar Podcast / Emisora', 'radioedu-conecta' ); ?>
+						<?php Icons::render( 'radioedu-conecta/headphones' ); ?> <?php esc_html_e( 'Escuchar Podcast / Emisora', 'radioedu-conecta' ); ?>
 					</a>
 				<?php endif; ?>
 
 				<?php if ( '' !== $web_centro ) : ?>
 					<a href="<?php echo esc_url( $web_centro ); ?>" target="_blank" rel="noopener noreferrer" class="radioedu-btn-secondary radioedu-profile-btn-inline">
-						<span aria-hidden="true">🌐</span> <?php esc_html_e( 'Web del centro', 'radioedu-conecta' ); ?>
+						<?php Icons::render( 'radioedu-conecta/globe' ); ?> <?php esc_html_e( 'Web del centro', 'radioedu-conecta' ); ?>
 					</a>
 				<?php endif; ?>
 			</div>

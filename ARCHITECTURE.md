@@ -12,7 +12,7 @@ display_name: RadioEdu Conecta (Traspasando Fronteras)
 version: 1.0.0
 db_schema_version: 1.0.1
 php_version_requirement: ">=8.1"
-wp_version_requirement: ">=7.0"
+wp_version_requirement: ">=7.1"
 tested_up_to: "7.1"
 license: GPL-2.0-or-later
 text_domain: radioedu-conecta
@@ -54,13 +54,16 @@ c:\radioedu-conecta\
 ├── AGENTS.md                            # Development rules, security directives, and DoD
 ├── TESTING-PROTOCOL.md                  # Test suites, Docker topology, and verification scripts
 ├── composer.json                        # PSR-4 autoload definition & dev dependencies
-├── package.json                         # npm script configurations (@wordpress/scripts)
+├── package.json                         # npm script configurations (@wordpress/scripts, wp-env, Playwright)
+├── playwright.config.js                 # E2E config: extends @wordpress/scripts defaults, specs in tests/e2e
+├── .wp-env.json                         # Reproducible E2E site (latest WordPress, PHP 8.1, plugin mounted)
 ├── .distignore                          # Build exclusion rules for release distribution
 ├── .gitignore                           # Git repository exclusions
 ├── docker-compose.test.yml              # Local testing environment on port 8090 (WP 7.1 + MariaDB 10.11)
 ├── radioedu-conecta.zip                 # Production release archive (POSIX paths, ~9.35 MB with demo media)
 ├── src/
 │   ├── Plugin.php                       # Core singleton orchestrator (lifecycle, hooks, Multisite, DB schema check)
+│   ├── Icons.php                        # WordPress 7.1 Icons API: plugin icon collection + escaped wp_get_icon() output
 │   ├── Admin/
 │   │   ├── CentroMetaBoxes.php          # Metaboxes for CPT (coordinates, logo upload, RGPD emails, podcast)
 │   │   ├── ColaboracionesAdminPage.php  # Admin panel to view, accept, or decline match proposals
@@ -73,9 +76,10 @@ c:\radioedu-conecta\
 │   ├── Emails/
 │   │   └── NotificationService.php      # wp_mail() notification pipeline for proposals and match responses
 │   ├── Frontend/
-│   │   └── DirectorioShortcode.php      # Shortcode [radioedu_directorio], single station profile filter & assets
+│   │   └── DirectorioShortcode.php      # Shortcode [radioedu_directorio], PHP-only block radioedu-conecta/directorio, single profile filter & assets
 │   ├── PostTypes/
-│   │   └── CentroPostType.php           # Custom Post Type registration (`radioedu_centro`)
+│   │   ├── CentroPostType.php           # Custom Post Type registration (`radioedu_centro`)
+│   │   └── CentroMeta.php               # register_post_meta() for every `_radioedu_*` key (type + sanitizer, locked auth)
 │   ├── Privacy/
 │   │   └── PrivacyPolicy.php            # RGPD/GDPR personal data exporter, eraser, and policy notice
 │   ├── Rest/
@@ -92,6 +96,7 @@ c:\radioedu-conecta\
 │   │   ├── admin.css                    # Styling for admin metaboxes and media uploader preview
 │   │   ├── directorio.css               # Styling for directory UI, facet filters, card grid, single profile, and drawer
 │   │   └── leaflet.css                  # Self-contained Leaflet 1.9.4 CSS (zero CDN)
+│   ├── icons/                           # Fill-based SVGs of the `radioedu-conecta` icon collection (core lacks them)
 │   ├── images/
 │   │   └── demo/                        # Local cover photos and circular logos for the 6 demo radio stations
 │   └── js/
@@ -103,6 +108,7 @@ c:\radioedu-conecta\
 │   └── directorio.js / directorio.asset.php # Compiled directorio.js + dependencies (wp-a11y, wp-i18n)
 ├── languages/
 │   └── radioedu-conecta.pot             # GNU gettext internationalization template
+├── tests/                               # PHPUnit (single site + Multisite) and tests/e2e Playwright specs (not shipped)
 └── vendor/
     └── autoload.php                     # Composer generated PSR-4 class loader
 ```
@@ -127,7 +133,7 @@ c:\radioedu-conecta\
 
 ### 3.3 Strict Output Escaping, Zero `innerHTML`, and URL Validation
 * **Server-side (PHP):** Strict "Late Escaping" rule. Variables are escaped at the exact moment of output using `esc_html()`, `esc_attr()`, `esc_url()`, `wp_kses_post()`, or `wp_json_encode()`. All SQL queries use `$wpdb->prepare()` with `%i` identifier placeholders for table names.
-* **Client-side (JavaScript):** `assets/js/directorio.js` (compiled to `build/directorio.js`) prohibits `innerHTML` and HTML string concatenation. All dynamic card nodes, badges, and Leaflet map popups (`marker.bindPopup(popupNode)`) are assembled using `document.createElement()` and `textContent`. All external URLs are validated via `sanitizeHttpUrl()` (`http:` / `https:` whitelist) and escaped before CSS `url(...)` injection. Server-side, the profile cover URL is percent-encoded for CSS context (`DirectorioShortcode::css_safe_url()`) because `esc_url()` keeps quotes and parentheses that the browser decodes before parsing CSS.
+* **Client-side (JavaScript):** `assets/js/directorio.js` (compiled to `build/directorio.js`) prohibits `innerHTML` and HTML string concatenation. All dynamic card nodes, badges, and Leaflet map popups (`marker.bindPopup(popupNode)`) are assembled using `document.createElement()` and `textContent`. All external URLs are validated via `sanitizeHttpUrl()` (`http:` / `https:` whitelist) and escaped before CSS `url(...)` injection. Icons the script needs (favourite stars, send) are server-rendered SVGs inside `<template id="radioedu-icon-templates">` that the script clones with `cloneNode()`. Server-side, the profile cover URL is percent-encoded for CSS context (`DirectorioShortcode::css_safe_url()`) because `esc_url()` keeps quotes and parentheses that the browser decodes before parsing CSS.
 
 ---
 
@@ -139,20 +145,23 @@ c:\radioedu-conecta\
 * **Single Profile Template:** Rendered dynamically via `DirectorioShortcode::render_single_centro_profile()` using [templates/single-centro.php](file:///c:/radioedu-conecta/templates/single-centro.php), featuring the full-width cover header, left-aligned station logo, title, flag, location, colored tags, metadata cards, action buttons (including direct Match Drawer trigger), and descriptive text below.
 
 #### Meta Keys Schema (`wp_postmeta`)
+Every key is declared with `register_post_meta()` in [src/PostTypes/CentroMeta.php](file:///c:/radioedu-conecta/src/PostTypes/CentroMeta.php), so its sanitizer runs on **every** write (meta box, demo importer, WP-CLI, imports, other plugins). All keys use `show_in_rest => false` and `auth_callback => '__return_false'`: they are never exposed or writable through the core `/wp/v2/centros` endpoint, XML-RPC or the Custom Fields panel, only through the plugin's validated meta box. The meta box keeps its own context checks (nonce, `edit_post`, logo image readable by the user, flag whitelist). The last column refers to the plugin's own `/radioedu-conecta/v1/centros` endpoint.
+
 | Meta Key | Data Type | Sanitization / Validation | Description | Public in REST? |
 | :--- | :--- | :--- | :--- | :---: |
-| `_radioedu_logo_id` | `int` | `absint()` | Attachment ID for the circular radio station logo | Yes (URL) |
-| `_radioedu_logo_url` | `string` (URL) | `esc_url_raw()` | Fallback URL for bundled demo station logos | Yes (URL) |
-| `_radioedu_cover_url` | `string` (URL) | `esc_url_raw()` | Fallback URL for bundled demo station cover images | Yes (URL) |
+| `_radioedu_logo_id` | `int` | `absint()` + must be an image attachment | Attachment ID for the circular radio station logo | Yes (URL) |
+| `_radioedu_logo_url` | `string` (URL) | `esc_url_raw()` (http/https) | Fallback URL for bundled demo station logos | Yes (URL) |
+| `_radioedu_cover_url` | `string` (URL) | `esc_url_raw()` (http/https) | Fallback URL for bundled demo station cover images | Yes (URL) |
 | `_radioedu_bandera` | `string` | `sanitize_key()` + whitelist | Region/Country flag code (`es-ex`, `es-ct`, `ie`, etc.) | Yes |
-| `_radioedu_lat` | `float` (stored as `string`) | Clamped `[-90.0, 90.0]` | Latitude coordinates for Leaflet map pin | Yes |
-| `_radioedu_lng` | `float` (stored as `string`) | Clamped `[-180.0, 180.0]` | Longitude coordinates for Leaflet map pin | Yes |
-| `_radioedu_podcast_url` | `string` (URL) | `esc_url_raw()` | External RSS / iVoox / Educarex podcast feed URL | Yes |
-| `_radioedu_web_centro` | `string` (URL) | `esc_url_raw()` | Official school website URL | Yes |
+| `_radioedu_lat` | `float` (stored as `string`) | Clamped `[-90.0, 90.0]`, non-numeric becomes `''` | Latitude coordinates for Leaflet map pin | Yes |
+| `_radioedu_lng` | `float` (stored as `string`) | Clamped `[-180.0, 180.0]`, non-numeric becomes `''` | Longitude coordinates for Leaflet map pin | Yes |
+| `_radioedu_podcast_url` | `string` (URL) | `esc_url_raw()` (http/https) | External RSS / iVoox / Educarex podcast feed URL | Yes |
+| `_radioedu_web_centro` | `string` (URL) | `esc_url_raw()` (http/https) | Official school website URL | Yes |
 | `_radioedu_edades` | `string` | `sanitize_text_field()` | Student age range (e.g. `10-14 años`) | Yes |
 | `_radioedu_coordinador_nombre` | `string` | `sanitize_text_field()` | Full name of teacher coordinator | **NO (Admin only)** |
 | `_radioedu_coordinador_email` | `string` | `sanitize_email()` | Notification email address of coordinator | **NO (Admin only)** |
 | `_radioedu_disponible_colaborar`| `string` (`'1'` or `'0'`) | `'1' === $val ? '1' : '0'` | Availability flag for receiving new match proposals | Yes (Boolean) |
+| `_radioedu_conecta_demo` | `string` (`'1'` or `''`) | `'1' === $val ? '1' : ''` | Marks content created by the demo importer | No |
 
 ### 4.2 Faceted Taxonomies
 * **Registered in:** [src/Taxonomies/TaxonomiesRegistrar.php](file:///c:/radioedu-conecta/src/Taxonomies/TaxonomiesRegistrar.php)
@@ -263,6 +272,18 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
 2. Displays a table of received and sent proposals for the current coordinator's centers (or all proposals for `manage_radioedu`).
 3. For pending proposals where the user manages the receiving center, provides an inline response textarea and **Aceptar** / **Declinar** buttons protected by `check_admin_referer`.
 4. Once accepted, displays direct `mailto:` links for both coordinators and sends an acceptance email containing the coordinator's contact information.
+5. Result notices (here and in **Ajustes**) are printed with core `wp_admin_notice()`. The requirement notices of the main file use it too, with a classic-markup fallback for WordPress < 6.4, where that check is the only code that runs.
+
+### 7.3 Directory Block (`radioedu-conecta/directorio`)
+1. Registered in PHP only (`DirectorioShortcode::register_block()`) with `supports.autoRegister` (WordPress 7.0+): core registers it in the editor and previews it with ServerSideRender, so the plugin ships no editor JavaScript.
+2. `render_block()` wraps the shortcode output in `get_block_wrapper_attributes()` (align `wide`/`full`). `multiple => false` because the directory markup uses fixed IDs.
+3. `style_handles` loads `directorio.css` in the editor iframe; front-end assets are registered on `init` and enqueued in the `<head>` when the post contains the block or the shortcode. The shortcode `[radioedu_directorio]` remains supported.
+
+### 7.4 SVG Icons (WordPress 7.1 Icons API)
+1. UI icons come from `wp_get_icon()`: the core `core/*` collection when WordPress ships a suitable icon, and the plugin collection `radioedu-conecta` (registered in `Icons::register()` from `assets/icons/*.svg`) for the rest: close, globe, graduation, headphones, institution, map, microphone, send.
+2. The core sanitizer only keeps `<svg>`, `<path>` and `<polygon>` with fill attributes, so plugin icons are fill-based (stroke icons would render empty). `Icons::render()` escapes the markup again with an SVG `wp_kses()` allowlist.
+3. Icons are decorative (`aria-hidden="true"`, `focusable="false"`) unless a `label` is given. `wp_get_icon()` does not set a fill colour, so `.radioedu-svg-icon { fill: currentcolor; }` makes them follow the text colour.
+4. Region flags remain emoji: they are data, not interface icons.
 
 ---
 

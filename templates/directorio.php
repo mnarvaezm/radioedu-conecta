@@ -18,6 +18,8 @@
 
 declare( strict_types=1 );
 
+use RadioEdu\Conecta\Icons;
+
 defined( 'ABSPATH' ) || exit;
 ?>
 
@@ -46,7 +48,7 @@ defined( 'ABSPATH' ) || exit;
 			<!-- Filtro Ubicación -->
 			<div class="radioedu-filter-group">
 				<label for="radioedu-filter-ubicacion" class="radioedu-filter-label">
-					<span class="radioedu-icon" aria-hidden="true">📍</span> <?php esc_html_e( 'Ubicación', 'radioedu-conecta' ); ?>
+					<?php Icons::render( 'core/map-marker' ); ?> <?php esc_html_e( 'Ubicación', 'radioedu-conecta' ); ?>
 				</label>
 				<select id="radioedu-filter-ubicacion" name="ubicacion" class="radioedu-filter-select">
 					<option value=""><?php esc_html_e( 'Cualquier lugar', 'radioedu-conecta' ); ?></option>
@@ -63,7 +65,7 @@ defined( 'ABSPATH' ) || exit;
 			<!-- Filtro Idioma -->
 			<div class="radioedu-filter-group">
 				<label for="radioedu-filter-idioma" class="radioedu-filter-label">
-					<span class="radioedu-icon" aria-hidden="true">💬</span> <?php esc_html_e( 'Idioma', 'radioedu-conecta' ); ?>
+					<?php Icons::render( 'core/language' ); ?> <?php esc_html_e( 'Idioma', 'radioedu-conecta' ); ?>
 				</label>
 				<select id="radioedu-filter-idioma" name="idioma" class="radioedu-filter-select">
 					<option value=""><?php esc_html_e( 'Cualquier idioma', 'radioedu-conecta' ); ?></option>
@@ -80,7 +82,7 @@ defined( 'ABSPATH' ) || exit;
 			<!-- Filtro Etapa Educativa -->
 			<div class="radioedu-filter-group">
 				<label for="radioedu-filter-etapa" class="radioedu-filter-label">
-					<span class="radioedu-icon" aria-hidden="true">🎓</span> <?php esc_html_e( 'Etapa educativa', 'radioedu-conecta' ); ?>
+					<?php Icons::render( 'radioedu-conecta/graduation' ); ?> <?php esc_html_e( 'Etapa educativa', 'radioedu-conecta' ); ?>
 				</label>
 				<select id="radioedu-filter-etapa" name="etapa" class="radioedu-filter-select">
 					<option value=""><?php esc_html_e( 'Cualquiera', 'radioedu-conecta' ); ?></option>
@@ -97,7 +99,7 @@ defined( 'ABSPATH' ) || exit;
 			<!-- Filtro Temas -->
 			<div class="radioedu-filter-group">
 				<label for="radioedu-filter-tematica" class="radioedu-filter-label">
-					<span class="radioedu-icon" aria-hidden="true">🏷️</span> <?php esc_html_e( 'Temas', 'radioedu-conecta' ); ?>
+					<?php Icons::render( 'core/tag' ); ?> <?php esc_html_e( 'Temas', 'radioedu-conecta' ); ?>
 				</label>
 				<select id="radioedu-filter-tematica" name="tematica" class="radioedu-filter-select">
 					<option value=""><?php esc_html_e( 'Cualquier tema', 'radioedu-conecta' ); ?></option>
@@ -114,7 +116,7 @@ defined( 'ABSPATH' ) || exit;
 			<!-- Filtro Formato -->
 			<div class="radioedu-filter-group">
 				<label for="radioedu-filter-formato" class="radioedu-filter-label">
-					<span class="radioedu-icon" aria-hidden="true">🎙️</span> <?php esc_html_e( 'Formato', 'radioedu-conecta' ); ?>
+					<?php Icons::render( 'radioedu-conecta/microphone' ); ?> <?php esc_html_e( 'Formato', 'radioedu-conecta' ); ?>
 				</label>
 				<select id="radioedu-filter-formato" name="formato" class="radioedu-filter-select">
 					<option value=""><?php esc_html_e( 'Cualquier formato', 'radioedu-conecta' ); ?></option>
@@ -131,7 +133,7 @@ defined( 'ABSPATH' ) || exit;
 			<!-- Búsqueda libre: Busca colaboración con... -->
 			<div class="radioedu-filter-group radioedu-search-group">
 				<label for="radioedu-filter-search" class="radioedu-filter-label">
-					<span class="radioedu-icon" aria-hidden="true">👥</span> <?php esc_html_e( 'Busca colaboración con...', 'radioedu-conecta' ); ?>
+					<?php Icons::render( 'core/people' ); ?> <?php esc_html_e( 'Busca colaboración con...', 'radioedu-conecta' ); ?>
 				</label>
 				<input type="text" id="radioedu-filter-search" name="search" class="radioedu-filter-input" maxlength="200" placeholder="<?php esc_attr_e( 'Cualquier centro o temática...', 'radioedu-conecta' ); ?>" />
 			</div>
@@ -139,7 +141,7 @@ defined( 'ABSPATH' ) || exit;
 			<!-- Botón de acción principal -->
 			<div class="radioedu-filter-action">
 				<button type="submit" id="radioedu-btn-buscar" class="radioedu-btn-primary">
-					<span class="radioedu-btn-icon" aria-hidden="true">🔍</span> <?php esc_html_e( 'Buscar centros', 'radioedu-conecta' ); ?>
+					<?php Icons::render( 'core/search' ); ?> <?php esc_html_e( 'Buscar centros', 'radioedu-conecta' ); ?>
 				</button>
 			</div>
 
@@ -163,7 +165,7 @@ defined( 'ABSPATH' ) || exit;
 		<div class="radioedu-controls-right">
 			<!-- Toggle Vista de Mapa -->
 			<button type="button" id="radioedu-btn-toggle-map" class="radioedu-btn-toggle" aria-pressed="false">
-				<span class="radioedu-icon" aria-hidden="true">🗺️</span>
+				<?php Icons::render( 'radioedu-conecta/map' ); ?>
 				<span id="radioedu-toggle-map-text"><?php esc_html_e( 'Vista de mapa', 'radioedu-conecta' ); ?></span>
 			</button>
 
@@ -186,7 +188,7 @@ defined( 'ABSPATH' ) || exit;
 		<!-- Vista Mapa Interactivo (oculta por defecto, con aviso RGPD previo a cargar teselas de OpenStreetMap) -->
 		<div id="radioedu-map-view" class="radioedu-map-view" style="display: none;" aria-hidden="true">
 			<div id="radioedu-map-consent" class="radioedu-no-results-state" style="padding: 32px; text-align: center;">
-				<div class="radioedu-no-results-icon" aria-hidden="true">🗺️</div>
+				<div class="radioedu-no-results-icon"><?php Icons::render( 'radioedu-conecta/map' ); ?></div>
 				<h3><?php esc_html_e( 'Mapa geográfico interactivo (OpenStreetMap)', 'radioedu-conecta' ); ?></h3>
 				<p><?php esc_html_e( 'Al cargar el mapa cartográfico se establecerá conexión con los servidores externos de OpenStreetMap Foundation para descargar las imágenes del mapa.', 'radioedu-conecta' ); ?></p>
 				<button type="button" id="radioedu-btn-accept-map" class="radioedu-btn-primary">
@@ -216,7 +218,7 @@ defined( 'ABSPATH' ) || exit;
 
 		<!-- Estado Sin Resultados -->
 		<div id="radioedu-no-results" class="radioedu-no-results-state" style="display: none;">
-			<div class="radioedu-no-results-icon" aria-hidden="true">📡</div>
+			<div class="radioedu-no-results-icon"><?php Icons::render( 'core/rss' ); ?></div>
 			<h3><?php esc_html_e( 'No se han encontrado emisoras con estos filtros', 'radioedu-conecta' ); ?></h3>
 			<p><?php esc_html_e( 'Prueba a seleccionar otros temas, idiomas o restablecer la búsqueda.', 'radioedu-conecta' ); ?></p>
 			<button type="button" id="radioedu-btn-reset" class="radioedu-btn-secondary">
@@ -225,6 +227,13 @@ defined( 'ABSPATH' ) || exit;
 		</div>
 
 	</main>
+
+	<!-- Iconos que directorio.js clona al construir las tarjetas, sin usar innerHTML. -->
+	<template id="radioedu-icon-templates">
+		<?php Icons::render( 'core/star-empty' ); ?>
+		<?php Icons::render( 'core/star-filled' ); ?>
+		<?php Icons::render( 'radioedu-conecta/send' ); ?>
+	</template>
 
 	<!-- 5. PANEL LATERAL DESPLEGABLE: "SOLICITUD DE MATCH" (OFFCANVAS / DRAWER) -->
 	<?php require __DIR__ . '/match-drawer.php'; ?>

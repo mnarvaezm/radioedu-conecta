@@ -234,7 +234,7 @@ class CentrosController extends WP_REST_Controller {
 		];
 
 		$terms = wp_get_object_terms( $center_id, $taxonomies, [ 'fields' => 'tt_ids' ] );
-		if ( is_wp_error( $terms ) || ! is_array( $terms ) ) {
+		if ( is_wp_error( $terms ) ) {
 			return [];
 		}
 

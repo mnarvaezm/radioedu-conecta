@@ -27,3 +27,6 @@ README.md
 vendor
 dist
 .phpunit.result.cache
+playwright.config.js
+.wp-env.json
+artifacts

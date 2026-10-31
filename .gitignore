@@ -19,3 +19,4 @@ Thumbs.db
 # Herramientas de QA
 /dist/
 .phpunit.result.cache
+artifacts/

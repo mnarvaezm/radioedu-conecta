@@ -65,6 +65,39 @@ jobs:
           git diff --exit-code -- build/
           test -z "$(git status --porcelain -- build/)"
 
+  e2e:
+    name: E2E (Playwright + wp-env, latest WordPress)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install npm dependencies
+        run: npm ci --no-fund
+
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium --with-deps
+
+      - name: Start wp-env
+        run: npm run wp-env start
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+
+      - name: Upload Playwright artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts
+          path: artifacts/
+          if-no-files-found: ignore
+
   phpunit:
     name: PHPUnit (PHP ${{ matrix.php }} / WP ${{ matrix.wp }} / multisite=${{ matrix.multisite }})
     runs-on: ubuntu-latest
@@ -72,7 +105,7 @@ jobs:
       fail-fast: false
       matrix:
         php: [ '8.1', '8.3' ]
-        wp: [ '7.0', 'latest' ]
+        wp: [ '7.1', 'latest' ]
         multisite: [ '0', '1' ]
 
     services:

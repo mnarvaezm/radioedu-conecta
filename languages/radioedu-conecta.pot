@@ -9,13 +9,14 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-30T20:12:38+00:00\n"
+"POT-Creation-Date: 2026-10-30T23:32:58+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: radioedu-conecta\n"
 
 #. Plugin Name of the plugin
 #: radioedu-conecta.php
+#: src/Icons.php:39
 msgid "RadioEdu Conecta"
 msgstr ""
 
@@ -40,18 +41,18 @@ msgid "https://radioedu.educarex.es"
 msgstr ""
 
 #. translators: 1: Required PHP version, 2: Current PHP version
-#: radioedu-conecta.php:75
+#: radioedu-conecta.php:74
 #, php-format
 msgid "RadioEdu Conecta requires PHP version %1$s or higher. Your server is running PHP %2$s."
 msgstr ""
 
 #. translators: 1: Required WordPress version, 2: Current WordPress version
-#: radioedu-conecta.php:94
+#: radioedu-conecta.php:92
 #, php-format
 msgid "RadioEdu Conecta requires WordPress %1$s or higher. You are using WordPress %2$s."
 msgstr ""
 
-#: radioedu-conecta.php:159
+#: radioedu-conecta.php:174
 #: src/Admin/Settings.php:51
 msgid "Ajustes"
 msgstr ""
@@ -184,216 +185,216 @@ msgstr ""
 msgid "Logo de la Radio Escolar"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:176
+#: src/Admin/CentroMetaBoxes.php:175
 #: build/admin.js:1
 msgid "Logo de la radio"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:178
+#: src/Admin/CentroMetaBoxes.php:177
 #: build/admin.js:1
 msgid "No hay logo asignado. Se mostrará un icono por defecto."
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:182
+#: src/Admin/CentroMetaBoxes.php:181
 msgid "Subir / Elegir Logo"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:183
+#: src/Admin/CentroMetaBoxes.php:182
 msgid "Eliminar logo"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:185
+#: src/Admin/CentroMetaBoxes.php:184
 msgid "Imagen circular distintiva de la emisora escolar (recomendado 300x300 px formato PNG o JPG)."
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:192
+#: src/Admin/CentroMetaBoxes.php:191
 msgid "Bandera / Región"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:196
+#: src/Admin/CentroMetaBoxes.php:195
 msgid "-- Selecciona región o país --"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:203
+#: src/Admin/CentroMetaBoxes.php:202
 msgid "Determina la bandera mostrada en la tarjeta de resultados y filtros geográficos."
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:209
+#: src/Admin/CentroMetaBoxes.php:208
 msgid "Coordenadas para el Mapa"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:211
+#: src/Admin/CentroMetaBoxes.php:210
 msgid "Latitud:"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:214
+#: src/Admin/CentroMetaBoxes.php:213
 msgid "Longitud:"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:217
+#: src/Admin/CentroMetaBoxes.php:216
 msgid "Coordenadas decimales para ubicar el centro en el mapa interactivo (ej. Cáceres: 39.4699, -6.3708)."
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:224
+#: src/Admin/CentroMetaBoxes.php:223
 msgid "URL de Podcast / Streaming"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:228
+#: src/Admin/CentroMetaBoxes.php:227
 msgid "Enlace donde se pueden escuchar las grabaciones o emisiones del centro escolar."
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:235
+#: src/Admin/CentroMetaBoxes.php:234
 msgid "Web Oficial del Centro"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:245
+#: src/Admin/CentroMetaBoxes.php:244
 msgid "Cursos / Edades del Alumnado"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:249
+#: src/Admin/CentroMetaBoxes.php:248
 msgid "Informa a otros centros sobre el grupo de edad de los alumnos que participan en la radio."
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:256
+#: src/Admin/CentroMetaBoxes.php:255
 msgid "Coordinador/a Responsable"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:259
+#: src/Admin/CentroMetaBoxes.php:258
 msgid "Nombre del docente coordinador"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:261
+#: src/Admin/CentroMetaBoxes.php:260
 msgid "Email:"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:265
+#: src/Admin/CentroMetaBoxes.php:264
 msgid "Aviso de Privacidad (RGPD):"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:266
+#: src/Admin/CentroMetaBoxes.php:265
 msgid "El correo NO se publicará en el directorio público. Se emplea exclusivamente para avisos internos del sistema cuando otro centro envíe una propuesta de colaboración."
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:273
+#: src/Admin/CentroMetaBoxes.php:272
 msgid "Estado de Colaboración"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:278
+#: src/Admin/CentroMetaBoxes.php:277
 msgid "Disponible para recibir propuestas de match y proyectos conjuntos"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:42
+#: src/Admin/ColaboracionesAdminPage.php:71
 msgid "Propuestas de Colaboración (Matches)"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:43
+#: src/Admin/ColaboracionesAdminPage.php:72
 msgid "Colaboraciones (Matches)"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:55
+#: src/Admin/ColaboracionesAdminPage.php:84
 #: src/Admin/DemoDataImporter.php:71
 #: src/Rest/ColaboracionesController.php:298
 #: src/Rest/ColaboracionesController.php:476
 msgid "No tienes permisos para realizar esta acción."
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:66
+#: src/Admin/ColaboracionesAdminPage.php:95
 msgid "Parámetros de respuesta no válidos."
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:71
+#: src/Admin/ColaboracionesAdminPage.php:100
 #: src/Rest/ColaboracionesController.php:497
 msgid "No tienes permisos para responder a las propuestas de este centro."
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:98
+#: src/Admin/ColaboracionesAdminPage.php:127
 #: src/Admin/Settings.php:230
 msgid "No tienes permisos suficientes para acceder a esta página."
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:115
+#: src/Admin/ColaboracionesAdminPage.php:144
 msgid "Propuestas de Colaboración (Matches) - Traspasando Fronteras"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:117
+#: src/Admin/ColaboracionesAdminPage.php:146
 msgid "Consulta las solicitudes de hermanamiento recibidas o enviadas por tu emisora escolar y coordina proyectos conjuntos."
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:123
+#: src/Admin/ColaboracionesAdminPage.php:152
 msgid "La respuesta a la propuesta de colaboración se ha guardado correctamente y se ha notificado al centro emisor."
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:130
+#: src/Admin/ColaboracionesAdminPage.php:163
 msgid "Todavía no hay propuestas de colaboración registradas para tus centros escolares."
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:136
+#: src/Admin/ColaboracionesAdminPage.php:169
 #: src/Privacy/PrivacyPolicy.php:193
 msgid "Fecha"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:137
+#: src/Admin/ColaboracionesAdminPage.php:170
 msgid "Centro Emisor"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:138
+#: src/Admin/ColaboracionesAdminPage.php:171
 msgid "Centro Receptor"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:139
+#: src/Admin/ColaboracionesAdminPage.php:172
 msgid "Idea del Proyecto y Detalles"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:140
+#: src/Admin/ColaboracionesAdminPage.php:173
 #: src/Privacy/PrivacyPolicy.php:201
 msgid "Estado"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:141
+#: src/Admin/ColaboracionesAdminPage.php:174
 msgid "Respuesta / Acciones"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:172
+#: src/Admin/ColaboracionesAdminPage.php:205
 msgid "Edades:"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:175
+#: src/Admin/ColaboracionesAdminPage.php:208
 msgid "Idiomas:"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:178
+#: src/Admin/ColaboracionesAdminPage.php:211
 msgid "Fechas:"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:183
+#: src/Admin/ColaboracionesAdminPage.php:216
 msgid "Aceptada"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:185
+#: src/Admin/ColaboracionesAdminPage.php:218
 msgid "Declinada"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:187
+#: src/Admin/ColaboracionesAdminPage.php:220
 msgid "Pendiente"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:201
+#: src/Admin/ColaboracionesAdminPage.php:234
 msgid "Mensaje de respuesta"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:209
+#: src/Admin/ColaboracionesAdminPage.php:242
 msgid "Escribe un mensaje para el centro emisor..."
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:212
+#: src/Admin/ColaboracionesAdminPage.php:245
 msgid "Aceptar"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:215
+#: src/Admin/ColaboracionesAdminPage.php:248
 msgid "Declinar"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:219
+#: src/Admin/ColaboracionesAdminPage.php:252
 msgid "En espera de respuesta del centro receptor."
 msgstr ""
 
@@ -459,15 +460,15 @@ msgstr ""
 msgid "¡Se han cargado o sincronizado con éxito %d emisoras de ejemplo con sus imágenes, taxonomías y coordenadas en el mapa!"
 msgstr ""
 
-#: src/Admin/Settings.php:267
+#: src/Admin/Settings.php:271
 msgid "Emisoras de Demostración (Traspasando Fronteras)"
 msgstr ""
 
-#: src/Admin/Settings.php:269
+#: src/Admin/Settings.php:273
 msgid "El instalador incluye 6 emisoras completas de ejemplo con fotografías de cabecera, logotipos, edades, formatos, idiomas y coordenadas geográficas. Puedes volver a generarlas o sincronizarlas en cualquier momento con este botón:"
 msgstr ""
 
-#: src/Admin/Settings.php:274
+#: src/Admin/Settings.php:278
 msgid "Sincronizar / Cargar las 6 emisoras de ejemplo"
 msgstr ""
 
@@ -560,6 +561,114 @@ msgstr ""
 
 #: src/Emails/NotificationService.php:208
 msgid "RadioEdu Conecta - Traspasando Fronteras"
+msgstr ""
+
+#: src/Frontend/DirectorioShortcode.php:67
+msgid "Directorio Traspasando Fronteras"
+msgstr ""
+
+#: src/Frontend/DirectorioShortcode.php:68
+msgid "Directorio interactivo de radios escolares con filtros, mapa y propuestas de colaboración."
+msgstr ""
+
+#: src/Frontend/DirectorioShortcode.php:72
+msgid "radio escolar"
+msgstr ""
+
+#: src/Frontend/DirectorioShortcode.php:73
+msgid "directorio"
+msgstr ""
+
+#: src/Frontend/DirectorioShortcode.php:74
+msgid "colaboración"
+msgstr ""
+
+#: src/Icons.php:40
+msgid "Iconos del directorio de radios escolares Traspasando Fronteras."
+msgstr ""
+
+#: src/Icons.php:64
+msgid "Cerrar"
+msgstr ""
+
+#: src/Icons.php:65
+msgid "Globo terráqueo"
+msgstr ""
+
+#: src/Icons.php:66
+msgid "Birrete de graduación"
+msgstr ""
+
+#: src/Icons.php:67
+msgid "Auriculares"
+msgstr ""
+
+#: src/Icons.php:68
+msgid "Centro educativo"
+msgstr ""
+
+#: src/Icons.php:69
+msgid "Mapa"
+msgstr ""
+
+#: src/Icons.php:70
+msgid "Micrófono"
+msgstr ""
+
+#: src/Icons.php:71
+msgid "Enviar"
+msgstr ""
+
+#: src/PostTypes/CentroMeta.php:61
+msgid "ID del adjunto de imagen usado como logo de la emisora."
+msgstr ""
+
+#: src/PostTypes/CentroMeta.php:66
+msgid "URL del logo de los centros de demostración."
+msgstr ""
+
+#: src/PostTypes/CentroMeta.php:71
+msgid "URL de la imagen de cabecera de los centros de demostración."
+msgstr ""
+
+#: src/PostTypes/CentroMeta.php:76
+msgid "Código de la bandera o región mostrada en el directorio."
+msgstr ""
+
+#: src/PostTypes/CentroMeta.php:81
+msgid "Latitud decimal del centro en el mapa."
+msgstr ""
+
+#: src/PostTypes/CentroMeta.php:86
+msgid "Longitud decimal del centro en el mapa."
+msgstr ""
+
+#: src/PostTypes/CentroMeta.php:91
+msgid "URL del podcast o de la emisión en directo."
+msgstr ""
+
+#: src/PostTypes/CentroMeta.php:96
+msgid "URL de la web oficial del centro."
+msgstr ""
+
+#: src/PostTypes/CentroMeta.php:101
+msgid "Cursos o edades del alumnado que participa en la radio."
+msgstr ""
+
+#: src/PostTypes/CentroMeta.php:106
+msgid "Nombre del coordinador o coordinadora (dato personal, privado)."
+msgstr ""
+
+#: src/PostTypes/CentroMeta.php:111
+msgid "Email del coordinador o coordinadora (dato personal, privado)."
+msgstr ""
+
+#: src/PostTypes/CentroMeta.php:116
+msgid "Disponibilidad para recibir propuestas: \"1\" disponible, \"0\" no disponible."
+msgstr ""
+
+#: src/PostTypes/CentroMeta.php:121
+msgid "Marca los contenidos creados por el importador de demostración."
 msgstr ""
 
 #: src/PostTypes/CentroPostType.php:29
@@ -731,7 +840,7 @@ msgid "Centro receptor"
 msgstr ""
 
 #: src/Privacy/PrivacyPolicy.php:177
-#: templates/single-centro.php:94
+#: templates/single-centro.php:96
 msgid "Cursos / Edades"
 msgstr ""
 
@@ -741,7 +850,7 @@ msgid "Idiomas"
 msgstr ""
 
 #: src/Privacy/PrivacyPolicy.php:185
-#: templates/match-drawer.php:87
+#: templates/match-drawer.php:89
 msgid "Fechas aproximadas"
 msgstr ""
 
@@ -750,7 +859,7 @@ msgid "Respuesta"
 msgstr ""
 
 #: src/Privacy/PrivacyPolicy.php:197
-#: templates/match-drawer.php:63
+#: templates/match-drawer.php:65
 msgid "Idea de proyecto"
 msgstr ""
 
@@ -1092,264 +1201,264 @@ msgstr ""
 msgid "Ubicaciones"
 msgstr ""
 
-#: templates/directorio.php:29
+#: templates/directorio.php:31
 msgid "Traspasando Fronteras"
 msgstr ""
 
-#: templates/directorio.php:31
+#: templates/directorio.php:33
 msgid "Conectamos radios escolares de Extremadura con otras emisoras de España y del mundo."
 msgstr ""
 
-#: templates/directorio.php:36
+#: templates/directorio.php:38
 msgid "Diferentes voces, un mismo mundo"
 msgstr ""
 
-#: templates/directorio.php:37
+#: templates/directorio.php:39
 msgid "RADIOS ESCOLARES QUE HACEN UN MUNDO MÁS GRANDE 🌍"
 msgstr ""
 
-#: templates/directorio.php:43
+#: templates/directorio.php:45
 msgid "Filtros del directorio"
 msgstr ""
 
-#: templates/directorio.php:49
+#: templates/directorio.php:51
 msgid "Ubicación"
 msgstr ""
 
-#: templates/directorio.php:52
+#: templates/directorio.php:54
 msgid "Cualquier lugar"
 msgstr ""
 
-#: templates/directorio.php:66
+#: templates/directorio.php:68
 msgid "Idioma"
 msgstr ""
 
-#: templates/directorio.php:69
+#: templates/directorio.php:71
 msgid "Cualquier idioma"
 msgstr ""
 
-#: templates/directorio.php:83
+#: templates/directorio.php:85
 msgid "Etapa educativa"
 msgstr ""
 
-#: templates/directorio.php:86
+#: templates/directorio.php:88
 msgid "Cualquiera"
 msgstr ""
 
-#: templates/directorio.php:100
+#: templates/directorio.php:102
 msgid "Temas"
 msgstr ""
 
-#: templates/directorio.php:103
+#: templates/directorio.php:105
 msgid "Cualquier tema"
 msgstr ""
 
-#: templates/directorio.php:117
+#: templates/directorio.php:119
 msgid "Formato"
 msgstr ""
 
-#: templates/directorio.php:120
+#: templates/directorio.php:122
 msgid "Cualquier formato"
 msgstr ""
 
-#: templates/directorio.php:134
+#: templates/directorio.php:136
 msgid "Busca colaboración con..."
 msgstr ""
 
-#: templates/directorio.php:136
+#: templates/directorio.php:138
 msgid "Cualquier centro o temática..."
 msgstr ""
 
-#: templates/directorio.php:142
+#: templates/directorio.php:144
 msgid "Buscar centros"
 msgstr ""
 
 #. translators: %s: Number of schools found.
-#: templates/directorio.php:156
+#: templates/directorio.php:158
 #: build/directorio.js:3
 #, php-format,js-format
 msgid "Resultados (%s centros)"
 msgstr ""
 
-#: templates/directorio.php:167
+#: templates/directorio.php:169
 msgid "Vista de mapa"
 msgstr ""
 
-#: templates/directorio.php:172
+#: templates/directorio.php:174
 msgid "Ordenar por"
 msgstr ""
 
-#: templates/directorio.php:174
+#: templates/directorio.php:176
 msgid "Más afines"
 msgstr ""
 
-#: templates/directorio.php:175
+#: templates/directorio.php:177
 msgid "Más recientes"
 msgstr ""
 
-#: templates/directorio.php:176
+#: templates/directorio.php:178
 msgid "Alfabético (A-Z)"
 msgstr ""
 
-#: templates/directorio.php:184
+#: templates/directorio.php:186
 msgid "No se han podido cargar los centros. Vuelve a pulsar Buscar centros para reintentar."
 msgstr ""
 
-#: templates/directorio.php:190
+#: templates/directorio.php:192
 msgid "Mapa geográfico interactivo (OpenStreetMap)"
 msgstr ""
 
-#: templates/directorio.php:191
+#: templates/directorio.php:193
 msgid "Al cargar el mapa cartográfico se establecerá conexión con los servidores externos de OpenStreetMap Foundation para descargar las imágenes del mapa."
 msgstr ""
 
-#: templates/directorio.php:193
+#: templates/directorio.php:195
 msgid "Aceptar y mostrar el mapa interactivo"
 msgstr ""
 
-#: templates/directorio.php:207
+#: templates/directorio.php:209
 msgid "Cargar más centros"
 msgstr ""
 
-#: templates/directorio.php:214
+#: templates/directorio.php:216
 msgid "Buscando centros afines en la red..."
 msgstr ""
 
-#: templates/directorio.php:220
+#: templates/directorio.php:222
 msgid "No se han encontrado emisoras con estos filtros"
 msgstr ""
 
-#: templates/directorio.php:221
+#: templates/directorio.php:223
 msgid "Prueba a seleccionar otros temas, idiomas o restablecer la búsqueda."
 msgstr ""
 
-#: templates/directorio.php:223
+#: templates/directorio.php:225
 msgid "Limpiar todos los filtros"
 msgstr ""
 
-#: templates/match-drawer.php:21
+#: templates/match-drawer.php:23
 msgid "Solicitud de match"
 msgstr ""
 
-#: templates/match-drawer.php:22
+#: templates/match-drawer.php:24
 msgid "¡Cuéntanos tu idea y empezad a crear juntos!"
 msgstr ""
 
-#: templates/match-drawer.php:24
+#: templates/match-drawer.php:26
 msgid "Cerrar panel"
 msgstr ""
 
-#: templates/match-drawer.php:33
-#: templates/match-drawer.php:44
+#: templates/match-drawer.php:35
+#: templates/match-drawer.php:46
 msgid "Tu centro"
 msgstr ""
 
-#: templates/match-drawer.php:46
+#: templates/match-drawer.php:48
 msgid "Sin centro asignado como coordinador"
 msgstr ""
 
-#: templates/match-drawer.php:46
+#: templates/match-drawer.php:48
 msgid "Debes iniciar sesión para enviar propuestas"
 msgstr ""
 
-#: templates/match-drawer.php:54
+#: templates/match-drawer.php:56
 msgid "Centro con el que quieres colaborar"
 msgstr ""
 
-#: templates/match-drawer.php:65
+#: templates/match-drawer.php:67
 msgid "Ejemplo: Queremos crear un podcast conjunto sobre la vida en entornos rurales, con entrevistas a estudiantes de ambos centros..."
 msgstr ""
 
-#: templates/match-drawer.php:72
+#: templates/match-drawer.php:74
 msgid "Curso o edades"
 msgstr ""
 
-#: templates/match-drawer.php:74
+#: templates/match-drawer.php:76
 msgid "Ej: 12-14 años (1º-2º ESO)"
 msgstr ""
 
-#: templates/match-drawer.php:78
+#: templates/match-drawer.php:80
 msgid "Idioma(s)"
 msgstr ""
 
-#: templates/match-drawer.php:80
+#: templates/match-drawer.php:82
 msgid "Ej: Español / Inglés"
 msgstr ""
 
-#: templates/match-drawer.php:89
+#: templates/match-drawer.php:91
 msgid "Ej: 2º Trimestre (Enero - Marzo)"
 msgstr ""
 
-#: templates/match-drawer.php:98
+#: templates/match-drawer.php:100
 #: build/directorio.js:3
 msgid "Enviar propuesta"
 msgstr ""
 
-#: templates/match-drawer.php:108
+#: templates/match-drawer.php:110
 msgid "1. Encuentra"
 msgstr ""
 
-#: templates/match-drawer.php:109
+#: templates/match-drawer.php:111
 msgid "Busca centros afines a tus intereses"
 msgstr ""
 
-#: templates/match-drawer.php:114
+#: templates/match-drawer.php:116
 msgid "2. Conecta"
 msgstr ""
 
-#: templates/match-drawer.php:115
+#: templates/match-drawer.php:117
 msgid "Envía tu propuesta de match"
 msgstr ""
 
-#: templates/match-drawer.php:120
+#: templates/match-drawer.php:122
 msgid "3. Crea"
 msgstr ""
 
-#: templates/match-drawer.php:121
+#: templates/match-drawer.php:123
 msgid "¡Desarrollad juntos vuestro proyecto!"
 msgstr ""
 
-#: templates/single-centro.php:36
+#: templates/single-centro.php:38
 msgid "Volver al directorio Traspasando Fronteras"
 msgstr ""
 
-#: templates/single-centro.php:48
+#: templates/single-centro.php:50
 msgid "Disponible para colaborar"
 msgstr ""
 
-#: templates/single-centro.php:50
+#: templates/single-centro.php:52
 msgid "No disponible actualmente"
 msgstr ""
 
-#: templates/single-centro.php:72
-#: templates/single-centro.php:120
+#: templates/single-centro.php:74
+#: templates/single-centro.php:122
 #: build/directorio.js:3
 msgid "Extremadura"
 msgstr ""
 
-#: templates/single-centro.php:104
+#: templates/single-centro.php:106
 msgid "Idiomas de trabajo"
 msgstr ""
 
-#: templates/single-centro.php:122
+#: templates/single-centro.php:124
 #: build/directorio.js:3
 msgid "Proponer match"
 msgstr ""
 
-#: templates/single-centro.php:126
+#: templates/single-centro.php:128
 #: build/directorio.js:3
 msgid "No disponible"
 msgstr ""
 
-#: templates/single-centro.php:132
+#: templates/single-centro.php:134
 msgid "Escuchar Podcast / Emisora"
 msgstr ""
 
-#: templates/single-centro.php:138
+#: templates/single-centro.php:140
 msgid "Web del centro"
 msgstr ""
 
-#: templates/single-centro.php:148
+#: templates/single-centro.php:150
 msgid "Sobre nuestra emisora escolar"
 msgstr ""
 
