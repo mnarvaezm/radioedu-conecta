@@ -81,12 +81,19 @@ class CentroMetaBoxes {
 	/**
 	 * Encola scripts necesarios para el selector de medios en la pantalla de edición del centro.
 	 *
+	 * Only for the classic editor: the block editor uses the CentroEditorPanel sidebar panels.
+	 *
 	 * @param string $hook_suffix Pantalla actual del panel de administración.
 	 */
 	public static function enqueue_admin_assets( string $hook_suffix ): void {
 		global $post_type;
 
 		if ( ! in_array( $hook_suffix, [ 'post.php', 'post-new.php' ], true ) || CentroPostType::POST_TYPE !== $post_type ) {
+			return;
+		}
+
+		$screen = get_current_screen();
+		if ( null !== $screen && $screen->is_block_editor() ) {
 			return;
 		}
 
@@ -121,6 +128,9 @@ class CentroMetaBoxes {
 
 	/**
 	 * Registra el metabox de datos complementarios del centro.
+	 *
+	 * Classic editor only (`__back_compat_meta_box`): the block editor edits the same fields in
+	 * the sidebar panels of CentroEditorPanel.
 	 */
 	public static function add_meta_boxes(): void {
 		add_meta_box(
@@ -129,7 +139,8 @@ class CentroMetaBoxes {
 			[ self::class, 'render_detalles_box' ],
 			CentroPostType::POST_TYPE,
 			'normal',
-			'high'
+			'high',
+			[ '__back_compat_meta_box' => true ]
 		);
 	}
 

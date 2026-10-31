@@ -22,6 +22,39 @@
 	box-shadow: 0 2px 6px rgba(0, 131, 143, 0.2);
 }
 
+/* Paneles del centro en la barra lateral del editor de bloques.
+ * Los controles de WordPress 7.1 no traen margen inferior. */
+.radioedu-centro-panel > :not(h2) ~ * {
+	margin-top: 16px;
+}
+
+.radioedu-centro-panel__logo .radioedu-logo-preview-box {
+	display: block;
+	width: fit-content;
+	margin: 8px 0;
+}
+
+.radioedu-centro-panel__logo .radioedu-logo-preview-box img {
+	width: 96px;
+	height: 96px;
+	border: 2px solid #00838f;
+	border-radius: 50%;
+}
+
+/* Same look as the help text of the core controls (AA contrast). */
+.radioedu-centro-panel__help {
+	margin-bottom: 0;
+	font-size: 12px;
+	color: #757575;
+}
+
+.radioedu-centro-panel__logo-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 16px;
+	align-items: center;
+}
+
 /* Iconos SVG de la API de iconos de WordPress.
  * wp_get_icon() no fija el color de relleno. */
 .radioedu-svg-icon {

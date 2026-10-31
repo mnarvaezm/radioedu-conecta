@@ -9,6 +9,7 @@ declare( strict_types=1 );
 
 namespace RadioEdu\Conecta;
 
+use RadioEdu\Conecta\Admin\CentroEditorPanel;
 use RadioEdu\Conecta\Admin\CentroMetaBoxes;
 use RadioEdu\Conecta\Admin\ColaboracionesAdminPage;
 use RadioEdu\Conecta\Admin\DemoDataImporter;
@@ -66,6 +67,8 @@ final class Plugin {
 		// 2. Registrar CPT y Taxonomías en init.
 		add_action( 'init', [ CentroPostType::class, 'register' ], 5 );
 		add_action( 'init', [ CentroMeta::class, 'register' ], 5 );
+		add_filter( 'rest_prepare_' . CentroPostType::POST_TYPE, [ CentroMeta::class, 'hide_private_meta' ], 10, 2 );
+		add_filter( 'rest_pre_insert_' . CentroPostType::POST_TYPE, [ CentroMeta::class, 'validate_rest_logo' ], 10, 2 );
 		add_action( 'init', [ TaxonomiesRegistrar::class, 'register_all' ], 5 );
 		// Core registers its icon collection on init priority 0, before the plugin's collection.
 		add_action( 'init', [ Icons::class, 'register' ] );
@@ -75,6 +78,7 @@ final class Plugin {
 
 		// 4. Registrar Meta Boxes, Gestión de Colaboraciones y Ajustes del panel de administración.
 		if ( is_admin() ) {
+			CentroEditorPanel::register();
 			CentroMetaBoxes::register();
 			ColaboracionesAdminPage::register();
 			Settings::register();

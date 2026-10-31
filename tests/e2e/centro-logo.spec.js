@@ -1,8 +1,9 @@
 /**
- * Logo picker of the centro meta box in the block editor.
+ * Centro fields in the block editor sidebar panels.
  *
- * WordPress 7.1 always renders the editor canvas in an iframe, also when a post type keeps
- * classic meta boxes; the meta box and the media modal stay in the outer document.
+ * The panels replace the classic meta box in the block editor and save the registered meta
+ * with the centro through the REST API. The media modal opens in the outer document, outside
+ * the iframed editor canvas.
  */
 const path = require( 'path' );
 const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
@@ -12,7 +13,12 @@ const LOGO_FILE = path.join(
 	'../../assets/images/demo/logo-sierra-gata.jpg'
 );
 
-test.describe( 'Logo de la emisora en el editor de centros', () => {
+// WordPress 7.1 logs this for its own global styles in the iframed editor, with or without the plugin.
+const CORE_WARNINGS = [
+	/^global-styles-css-custom-properties-inline-css was added to the iframe incorrectly/,
+];
+
+test.describe( 'Datos del centro en el panel lateral del editor', () => {
 	let media;
 	const centroIds = [];
 
@@ -32,11 +38,22 @@ test.describe( 'Logo de la emisora en el editor de centros', () => {
 		await requestUtils.deleteMedia( media.id );
 	} );
 
-	test( 'se elige en la biblioteca de medios, se guarda y se muestra en la ficha', async ( {
+	test( 'se rellenan en el panel, se guardan y se muestran en la ficha', async ( {
 		admin,
 		editor,
 		page,
 	} ) => {
+		const consoleProblems = [];
+		page.on( 'console', ( message ) => {
+			const text = message.text();
+			if (
+				[ 'error', 'warning' ].includes( message.type() ) &&
+				! CORE_WARNINGS.some( ( pattern ) => pattern.test( text ) )
+			) {
+				consoleProblems.push( text );
+			}
+		} );
+
 		await admin.createNewPost( {
 			postType: 'radioedu_centro',
 			title: 'Centro E2E con logo',
@@ -46,45 +63,65 @@ test.describe( 'Logo de la emisora en el editor de centros', () => {
 				window.wp.data.select( 'core/editor' ).getCurrentPostId()
 			)
 		);
-		// The canvas is iframed even though the post type has a classic meta box.
-		await expect(
-			page.locator( 'iframe[name="editor-canvas"]' )
-		).toBeAttached();
-		// Meta boxes live in a collapsible pane below the canvas, closed by default. The welcome
-		// guide is dismissed again because a new user's stored preferences can load late.
+		// The welcome guide is dismissed again because a new user's stored preferences can load late.
 		await editor.setPreferences( 'core/edit-post', {
-			metaBoxesMainIsOpen: true,
 			welcomeGuide: false,
 		} );
+		await editor.openDocumentSettingsSidebar();
 
-		await page
-			.locator( '#radioedu_centro_detalles' )
+		// The classic meta box is only for the classic editor.
+		await expect( page.locator( '#radioedu_centro_detalles' ) ).toHaveCount(
+			0
+		);
+
+		// The main panel opens by itself the first time.
+		const sidebar = page.getByRole( 'region', { name: 'Editor settings' } );
+		await expect(
+			sidebar.getByRole( 'button', { name: 'Datos de la emisora' } )
+		).toHaveAttribute( 'aria-expanded', 'true' );
+
+		await sidebar
 			.getByRole( 'button', { name: 'Subir / Elegir Logo' } )
 			.click();
 		const modal = page.locator( '.media-modal:visible' );
-		// Core tab ids instead of labels, which depend on the site language.
+		// Core ids and classes instead of labels, which depend on the site language.
 		await modal.locator( '#menu-item-browse' ).click();
 		await modal.locator( `li.attachment[data-id="${ media.id }"]` ).click();
-		await modal.getByRole( 'button', { name: 'Usar este logo' } ).click();
-
-		await expect( page.locator( '#radioedu_logo_id' ) ).toHaveValue(
-			String( media.id )
-		);
+		await modal.locator( '.media-button-select' ).click();
 		await expect(
-			page.locator( '#radioedu-logo-preview img' )
+			sidebar.locator( '.radioedu-centro-panel__logo img' )
 		).toBeVisible();
 
-		// The editor submits the meta box form after saving the post through REST.
-		const metaBoxSaved = page.waitForResponse( ( response ) =>
-			response.url().includes( 'meta-box-loader=1' )
-		);
-		await editor.publishPost();
-		await metaBoxSaved;
+		await sidebar
+			.getByRole( 'combobox', { name: 'Bandera / Región' } )
+			.selectOption( 'es-ex' );
+		await sidebar.getByRole( 'button', { name: 'Coordinación' } ).click();
+		await sidebar
+			.getByRole( 'textbox', { name: 'Email del coordinador/a' } )
+			.fill( 'coordinacion-e2e@example.org' );
+		await sidebar
+			.getByRole( 'button', { name: 'Ubicación en el mapa' } )
+			.click();
+		await sidebar
+			.getByRole( 'spinbutton', { name: 'Latitud' } )
+			.fill( '39.4699' );
 
+		await editor.publishPost();
 		await page.reload();
-		await expect( page.locator( '#radioedu_logo_id' ) ).toHaveValue(
-			String( media.id )
+
+		const meta = await page.evaluate( () =>
+			window.wp.data
+				.select( 'core/editor' )
+				.getEditedPostAttribute( 'meta' )
 		);
+		expect( meta._radioedu_logo_id ).toBe( media.id );
+		expect( meta._radioedu_bandera ).toBe( 'es-ex' );
+		expect( meta._radioedu_coordinador_email ).toBe(
+			'coordinacion-e2e@example.org'
+		);
+		expect( meta._radioedu_lat ).toBe( '39.4699' );
+		// Untouched toggle: still available after saving every key.
+		expect( meta._radioedu_disponible_colaborar ).toBe( '1' );
 
 		const permalink = await page.evaluate( () =>
 			window.wp.data.select( 'core/editor' ).getPermalink()
@@ -93,5 +130,11 @@ test.describe( 'Logo de la emisora en el editor de centros', () => {
 		await expect(
 			page.locator( 'img.radioedu-profile-logo' )
 		).toHaveAttribute( 'src', /logo-sierra-gata/ );
+		// The coordinator's email is private.
+		await expect( page.locator( 'body' ) ).not.toContainText(
+			'coordinacion-e2e@example.org'
+		);
+
+		expect( consoleProblems ).toEqual( [] );
 	} );
 } );

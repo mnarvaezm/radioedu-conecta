@@ -32,7 +32,10 @@
    - **Privacidad asimétrica**: Los correos electrónicos de los docentes coordinadores nunca se exponen en el HTML ni en la REST API pública. El contacto se revela únicamente por correo interno cuando el centro receptor acepta la propuesta.
    - **Panel de gestión en WP Admin (`RadioEdu Centros → Colaboraciones (Matches)`)**: Permite a los coordinadores y administradores consultar las solicitudes recibidas/enviadas y **Aceptar** o **Declinar** propuestas con un mensaje de respuesta.
    - Integración nativa con las herramientas de **Privacidad de WordPress** (exportador y borrador de datos personales RGPD y texto sugerido para la política de privacidad).
-5. **Emisoras de Demostración Incluidas**:
+5. **Datos del centro en el editor de bloques**:
+   - Logo, bandera, edades, podcast, web, disponibilidad, coordenadas y datos del coordinador se editan en la barra lateral del editor (pestaña **Centro de Radio**), en los paneles **Datos de la emisora**, **Ubicación en el mapa** y **Coordinación**, y se guardan con el botón *Guardar* del centro.
+   - Con el Editor Clásico se siguen editando en la caja *Datos de la Emisora y Coordinación*.
+6. **Emisoras de Demostración Incluidas**:
    - Incluye 6 emisoras de ejemplo completas (*IES Sierra de Gata Radio*, *Ràdio Institut Montjuïc*, *CEIP La Mar*, *CEIP San José*, *IES Valle de Tena* y *Colegio Internacional San Patricio*) con fotografías de cabecera, logotipos, taxonomías y coordenadas sincronizables en un clic desde **RadioEdu Centros → Ajustes**.
 
 ---
@@ -42,20 +45,20 @@
 1. Sube el archivo `radioedu-conecta_1.1.zip` desde **Plugins → Añadir nuevo plugin → Subir plugin** en WordPress, o descomprime la carpeta `radioedu-conecta` en `/wp-content/plugins/`.
 2. Activa el plugin desde el menú **Plugins**. La activación no publica contenido: si quieres las 6 emisoras de demostración y la página `/traspasando-fronteras/` con el shortcode `[radioedu_directorio]`, cárgalas desde **RadioEdu Centros → Ajustes**.
 3. Para mostrar el directorio en cualquier otra página, inserta el bloque **Directorio Traspasando Fronteras** (categoría *Widgets*) o el shortcode `[radioedu_directorio]`. Solo puede haber un directorio por página.
-4. Gestiona los centros desde **RadioEdu Centros**, responde a propuestas desde **RadioEdu Centros → Colaboraciones (Matches)** y configura el mapa o las notificaciones en **RadioEdu Centros → Ajustes**.
+4. Gestiona los centros desde **RadioEdu Centros** (los datos de cada emisora están en la barra lateral del editor, pestaña **Centro de Radio**), responde a propuestas desde **RadioEdu Centros → Colaboraciones (Matches)** y configura el mapa o las notificaciones en **RadioEdu Centros → Ajustes**.
 
 ---
 
 ## Desarrollo
 
-El JavaScript fuente (`assets/js/admin.js`, `assets/js/directorio.js`) usa `@wordpress/i18n` y `@wordpress/a11y`, así que el navegador solo puede ejecutar la versión compilada en `build/`. Esa carpeta se versiona y la CI comprueba que está al día:
+El JavaScript fuente (`assets/js/admin.js`, `assets/js/centro-panel.js`, `assets/js/directorio.js`) usa paquetes `@wordpress/*` (JSX y componentes del editor en los paneles del centro), así que el navegador solo puede ejecutar la versión compilada en `build/`. Esos paquetes los aporta WordPress como scripts del core: no se instalan con npm y [eslint.config.cjs](eslint.config.cjs) los declara para el lint. La carpeta `build/` se versiona y la CI comprueba que está al día:
 
 ```bash
 npm ci
 npm run build    # regenera build/*.js y build/*.asset.php; haz commit del resultado
 ```
 
-Si falta `build/`, el plugin no falla: el directorio y el editor de centros se muestran sin la parte interactiva.
+Si falta `build/`, el plugin no falla: el directorio se muestra sin la parte interactiva y el editor de centros, sin los paneles de datos.
 
 El bloque del directorio no necesita JavaScript de editor: se registra solo con PHP (`supports.autoRegister`) y WordPress lo previsualiza en el editor con ServerSideRender.
 
@@ -87,7 +90,8 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * Requiere WordPress 7.1.
 * Nuevo bloque **Directorio Traspasando Fronteras** registrado solo con PHP (`supports.autoRegister`), equivalente al shortcode `[radioedu_directorio]`.
 * Iconos SVG de la API de iconos de WordPress 7.1 en lugar de emojis en el directorio, la ficha, el panel lateral y la pantalla de Colaboraciones.
-* Metadatos del centro registrados con `register_post_meta()`: se sanean en cualquier escritura y no se pueden leer ni modificar desde la REST API del core.
+* Los datos del centro pasan de la caja meta, plegada al pie del editor, a tres paneles de la barra lateral (**Datos de la emisora**, **Ubicación en el mapa** y **Coordinación**). La caja meta solo aparece con el Editor Clásico.
+* Metadatos del centro registrados con `register_post_meta()`: se sanean en cualquier escritura. La REST del core solo los muestra en modo edición a quien puede editar el centro (nunca en las respuestas públicas) y XML-RPC no puede modificarlos.
 * La activación ya no crea contenido de demostración: las emisoras de ejemplo y la página del directorio se importan solo desde **RadioEdu Centros → Ajustes** y nunca sobrescriben un centro real.
 * Seguridad: las propuestas exigen una capacidad de RadioEdu, solo el centro receptor puede responderlas y los centros protegidos con contraseña quedan fuera del directorio y de las propuestas.
 * El directorio ordena por afinidad antes de paginar, cancela las búsquedas obsoletas, anuncia los errores de carga con opción de reintentar y funciona con enlaces permanentes simples.
@@ -95,7 +99,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * Scripts compilados con `@wordpress/scripts` y traducidos con `wp_set_script_translations()`. Sin `build/`, las páginas cargan igualmente, sin interactividad.
 * Accesibilidad: foco visible, contraste AA en el color de acento y en los estados, y el botón *Subir / Elegir Logo* conserva su texto como nombre accesible (WCAG 2.5.3).
 * Avisos de administración con `wp_admin_notice()`.
-* Pruebas E2E con Playwright y `wp-env` (selección del logo en el editor con lienzo en iframe de WordPress 7.1 y bloque del directorio).
+* Pruebas E2E con Playwright y `wp-env` (datos del centro en los paneles del editor de WordPress 7.1, incluido el logo, y bloque del directorio).
 
 ### 1.0.0
 * Lanzamiento completo del directorio interactivo `[radioedu_directorio]`, CPT `radioedu_centro` y 5 taxonomías facetadas con mapeo completo de capacidades.

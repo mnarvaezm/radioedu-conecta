@@ -28,5 +28,6 @@ vendor
 dist
 .phpunit.result.cache
 playwright.config.js
+eslint.config.cjs
 .wp-env.json
 artifacts

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-30T23:32:58+00:00\n"
+"POT-Creation-Date: 2026-10-31T02:21:41+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: radioedu-conecta\n"
@@ -52,9 +52,14 @@ msgstr ""
 msgid "RadioEdu Conecta requires WordPress %1$s or higher. You are using WordPress %2$s."
 msgstr ""
 
-#: radioedu-conecta.php:174
+#: radioedu-conecta.php:176
 #: src/Admin/Settings.php:51
 msgid "Ajustes"
+msgstr ""
+
+#: src/Admin/CentroEditorPanel.php:89
+#: src/Admin/CentroMetaBoxes.php:206
+msgid "-- Selecciona región o país --"
 msgstr ""
 
 #: src/Admin/CentroMetaBoxes.php:48
@@ -177,109 +182,124 @@ msgstr ""
 msgid "Otro / Internacional"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:128
+#: src/Admin/CentroMetaBoxes.php:138
 msgid "Datos de la Emisora y Coordinación (Traspasando Fronteras)"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:170
+#: src/Admin/CentroMetaBoxes.php:181
+#: build/centro-panel.js:1
 msgid "Logo de la Radio Escolar"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:175
+#: src/Admin/CentroMetaBoxes.php:186
 #: build/admin.js:1
+#: build/centro-panel.js:1
 msgid "Logo de la radio"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:177
+#: src/Admin/CentroMetaBoxes.php:188
 #: build/admin.js:1
+#: build/centro-panel.js:1
 msgid "No hay logo asignado. Se mostrará un icono por defecto."
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:181
+#: src/Admin/CentroMetaBoxes.php:192
+#: build/centro-panel.js:1
 msgid "Subir / Elegir Logo"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:182
+#: src/Admin/CentroMetaBoxes.php:193
+#: build/centro-panel.js:1
 msgid "Eliminar logo"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:184
+#: src/Admin/CentroMetaBoxes.php:195
+#: build/centro-panel.js:1
 msgid "Imagen circular distintiva de la emisora escolar (recomendado 300x300 px formato PNG o JPG)."
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:191
+#: src/Admin/CentroMetaBoxes.php:202
+#: build/centro-panel.js:1
 msgid "Bandera / Región"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:195
-msgid "-- Selecciona región o país --"
-msgstr ""
-
-#: src/Admin/CentroMetaBoxes.php:202
+#: src/Admin/CentroMetaBoxes.php:213
+#: build/centro-panel.js:1
 msgid "Determina la bandera mostrada en la tarjeta de resultados y filtros geográficos."
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:208
+#: src/Admin/CentroMetaBoxes.php:219
 msgid "Coordenadas para el Mapa"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:210
+#: src/Admin/CentroMetaBoxes.php:221
 msgid "Latitud:"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:213
+#: src/Admin/CentroMetaBoxes.php:224
 msgid "Longitud:"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:216
+#: src/Admin/CentroMetaBoxes.php:227
+#: build/centro-panel.js:1
 msgid "Coordenadas decimales para ubicar el centro en el mapa interactivo (ej. Cáceres: 39.4699, -6.3708)."
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:223
+#: src/Admin/CentroMetaBoxes.php:234
+#: build/centro-panel.js:1
 msgid "URL de Podcast / Streaming"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:227
+#: src/Admin/CentroMetaBoxes.php:238
+#: build/centro-panel.js:1
 msgid "Enlace donde se pueden escuchar las grabaciones o emisiones del centro escolar."
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:234
+#: src/Admin/CentroMetaBoxes.php:245
+#: build/centro-panel.js:1
 msgid "Web Oficial del Centro"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:244
+#: src/Admin/CentroMetaBoxes.php:255
+#: build/centro-panel.js:1
 msgid "Cursos / Edades del Alumnado"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:248
+#: src/Admin/CentroMetaBoxes.php:259
+#: build/centro-panel.js:1
 msgid "Informa a otros centros sobre el grupo de edad de los alumnos que participan en la radio."
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:255
+#: src/Admin/CentroMetaBoxes.php:266
+#: build/centro-panel.js:1
 msgid "Coordinador/a Responsable"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:258
+#: src/Admin/CentroMetaBoxes.php:269
+#: build/centro-panel.js:1
 msgid "Nombre del docente coordinador"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:260
+#: src/Admin/CentroMetaBoxes.php:271
 msgid "Email:"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:264
+#: src/Admin/CentroMetaBoxes.php:275
+#: build/centro-panel.js:1
 msgid "Aviso de Privacidad (RGPD):"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:265
+#: src/Admin/CentroMetaBoxes.php:276
+#: build/centro-panel.js:1
 msgid "El correo NO se publicará en el directorio público. Se emplea exclusivamente para avisos internos del sistema cuando otro centro envíe una propuesta de colaboración."
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:272
+#: src/Admin/CentroMetaBoxes.php:283
 msgid "Estado de Colaboración"
 msgstr ""
 
-#: src/Admin/CentroMetaBoxes.php:277
+#: src/Admin/CentroMetaBoxes.php:288
+#: build/centro-panel.js:1
 msgid "Disponible para recibir propuestas de match y proyectos conjuntos"
 msgstr ""
 
@@ -619,56 +639,60 @@ msgstr ""
 msgid "Enviar"
 msgstr ""
 
-#: src/PostTypes/CentroMeta.php:61
+#: src/PostTypes/CentroMeta.php:81
 msgid "ID del adjunto de imagen usado como logo de la emisora."
 msgstr ""
 
-#: src/PostTypes/CentroMeta.php:66
+#: src/PostTypes/CentroMeta.php:87
 msgid "URL del logo de los centros de demostración."
 msgstr ""
 
-#: src/PostTypes/CentroMeta.php:71
+#: src/PostTypes/CentroMeta.php:93
 msgid "URL de la imagen de cabecera de los centros de demostración."
 msgstr ""
 
-#: src/PostTypes/CentroMeta.php:76
+#: src/PostTypes/CentroMeta.php:99
 msgid "Código de la bandera o región mostrada en el directorio."
 msgstr ""
 
-#: src/PostTypes/CentroMeta.php:81
+#: src/PostTypes/CentroMeta.php:105
 msgid "Latitud decimal del centro en el mapa."
 msgstr ""
 
-#: src/PostTypes/CentroMeta.php:86
+#: src/PostTypes/CentroMeta.php:111
 msgid "Longitud decimal del centro en el mapa."
 msgstr ""
 
-#: src/PostTypes/CentroMeta.php:91
+#: src/PostTypes/CentroMeta.php:117
 msgid "URL del podcast o de la emisión en directo."
 msgstr ""
 
-#: src/PostTypes/CentroMeta.php:96
+#: src/PostTypes/CentroMeta.php:123
 msgid "URL de la web oficial del centro."
 msgstr ""
 
-#: src/PostTypes/CentroMeta.php:101
+#: src/PostTypes/CentroMeta.php:129
 msgid "Cursos o edades del alumnado que participa en la radio."
 msgstr ""
 
-#: src/PostTypes/CentroMeta.php:106
+#: src/PostTypes/CentroMeta.php:135
 msgid "Nombre del coordinador o coordinadora (dato personal, privado)."
 msgstr ""
 
-#: src/PostTypes/CentroMeta.php:111
+#: src/PostTypes/CentroMeta.php:141
 msgid "Email del coordinador o coordinadora (dato personal, privado)."
 msgstr ""
 
-#: src/PostTypes/CentroMeta.php:116
+#: src/PostTypes/CentroMeta.php:147
 msgid "Disponibilidad para recibir propuestas: \"1\" disponible, \"0\" no disponible."
 msgstr ""
 
-#: src/PostTypes/CentroMeta.php:121
+#: src/PostTypes/CentroMeta.php:153
 msgid "Marca los contenidos creados por el importador de demostración."
+msgstr ""
+
+#: src/PostTypes/CentroMeta.php:235
+msgid "El logo debe ser una imagen de la biblioteca de medios a la que tengas acceso."
 msgstr ""
 
 #: src/PostTypes/CentroPostType.php:29
@@ -1463,11 +1487,44 @@ msgid "Sobre nuestra emisora escolar"
 msgstr ""
 
 #: build/admin.js:1
+#: build/centro-panel.js:1
 msgid "Seleccionar logo de la radio"
 msgstr ""
 
 #: build/admin.js:1
 msgid "Usar este logo"
+msgstr ""
+
+#: build/centro-panel.js:1
+msgid "Necesitas permiso para subir archivos para cambiar el logo."
+msgstr ""
+
+#: build/centro-panel.js:1
+msgid "Datos de la emisora"
+msgstr ""
+
+#: build/centro-panel.js:1
+msgid "Ej: 10–14 años (5º Primaria a 2º ESO)"
+msgstr ""
+
+#: build/centro-panel.js:1
+msgid "Ubicación en el mapa"
+msgstr ""
+
+#: build/centro-panel.js:1
+msgid "Latitud"
+msgstr ""
+
+#: build/centro-panel.js:1
+msgid "Longitud"
+msgstr ""
+
+#: build/centro-panel.js:1
+msgid "Coordinación"
+msgstr ""
+
+#: build/centro-panel.js:1
+msgid "Email del coordinador/a"
 msgstr ""
 
 #: build/directorio.js:3

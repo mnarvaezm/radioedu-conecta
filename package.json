@@ -6,7 +6,7 @@
   "scripts": {
     "lint:js": "wp-scripts lint-js assets/js tests/e2e playwright.config.js --ignore-pattern assets/js/leaflet.js",
     "lint:css": "wp-scripts lint-style \"assets/css/**/*.css\" --ignore-pattern assets/css/leaflet.css",
-    "build": "wp-scripts build assets/js/admin.js assets/js/directorio.js",
+    "build": "wp-scripts build assets/js/admin.js assets/js/centro-panel.js assets/js/directorio.js",
     "wp-env": "wp-env",
     "test:e2e": "wp-scripts test-playwright"
   },

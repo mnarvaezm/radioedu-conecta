@@ -56,6 +56,7 @@ c:\radioedu-conecta\
 ├── composer.json                        # PSR-4 autoload definition & dev dependencies
 ├── package.json                         # npm script configurations (@wordpress/scripts, wp-env, Playwright)
 ├── playwright.config.js                 # E2E config: extends @wordpress/scripts defaults, specs in tests/e2e
+├── eslint.config.cjs                    # wp-scripts ESLint defaults + @wordpress/* packages loaded from core (not installed)
 ├── .wp-env.json                         # Reproducible E2E site (latest WordPress, PHP 8.1, plugin mounted)
 ├── .distignore                          # Build exclusion rules for release distribution
 ├── .gitignore                           # Git repository exclusions
@@ -65,7 +66,8 @@ c:\radioedu-conecta\
 │   ├── Plugin.php                       # Core singleton orchestrator (lifecycle, hooks, Multisite, DB schema check)
 │   ├── Icons.php                        # WordPress 7.1 Icons API: plugin icon collection + escaped wp_get_icon() output
 │   ├── Admin/
-│   │   ├── CentroMetaBoxes.php          # Metaboxes for CPT (coordinates, logo upload, RGPD emails, podcast)
+│   │   ├── CentroEditorPanel.php        # Loads the centro sidebar panels of the block editor (build/centro-panel.js)
+│   │   ├── CentroMetaBoxes.php          # Classic-editor meta box for the same fields (__back_compat_meta_box)
 │   │   ├── ColaboracionesAdminPage.php  # Admin panel to view, accept, or decline match proposals
 │   │   ├── DemoDataImporter.php         # Demo stations importer & synchronizer (6 sample stations + images)
 │   │   └── Settings.php                 # WordPress Settings API options (map defaults, notification flags, demo sync)
@@ -79,7 +81,7 @@ c:\radioedu-conecta\
 │   │   └── DirectorioShortcode.php      # Shortcode [radioedu_directorio], PHP-only block radioedu-conecta/directorio, single profile filter & assets
 │   ├── PostTypes/
 │   │   ├── CentroPostType.php           # Custom Post Type registration (`radioedu_centro`)
-│   │   └── CentroMeta.php               # register_post_meta() for every `_radioedu_*` key (type + sanitizer, locked auth)
+│   │   └── CentroMeta.php               # register_post_meta() for every `_radioedu_*` key (type, sanitizer, edit-context REST, auth)
 │   ├── Privacy/
 │   │   └── PrivacyPolicy.php            # RGPD/GDPR personal data exporter, eraser, and policy notice
 │   ├── Rest/
@@ -93,18 +95,20 @@ c:\radioedu-conecta\
 │   └── match-drawer.php                 # Shared "Solicitud de match" drawer (accessible dialog) used by both views
 ├── assets/
 │   ├── css/
-│   │   ├── admin.css                    # Styling for admin metaboxes and media uploader preview
+│   │   ├── admin.css                    # Centro editor panels, classic meta box, logo preview and Colaboraciones statuses
 │   │   ├── directorio.css               # Styling for directory UI, facet filters, card grid, single profile, and drawer
 │   │   └── leaflet.css                  # Self-contained Leaflet 1.9.4 CSS (zero CDN)
 │   ├── icons/                           # Fill-based SVGs of the `radioedu-conecta` icon collection (core lacks them)
 │   ├── images/
 │   │   └── demo/                        # Local cover photos and circular logos for the 6 demo radio stations
 │   └── js/
-│       ├── admin.js                     # Source: WP Media Uploader connector for radio station logo
+│       ├── admin.js                     # Source: WP Media Uploader connector for the classic meta box logo
+│       ├── centro-panel.js              # Source: block editor sidebar panels of the centro fields (registerPlugin)
 │       ├── directorio.js                # Source: frontend reactive controller (DOM builder, Leaflet manager, Drawer)
 │       └── leaflet.js                   # Self-contained Leaflet 1.9.4 JavaScript runtime (zero CDN)
 ├── build/                               # Committed `npm run build` output (@wordpress/scripts); the only JS the plugin loads
 │   ├── admin.js / admin.asset.php       # Compiled admin.js + generated dependencies (wp-i18n) and version hash
+│   ├── centro-panel.js / centro-panel.asset.php # Compiled panels + dependencies (wp-editor, wp-plugins, wp-components…)
 │   └── directorio.js / directorio.asset.php # Compiled directorio.js + dependencies (wp-a11y, wp-i18n)
 ├── languages/
 │   └── radioedu-conecta.pot             # GNU gettext internationalization template
@@ -128,6 +132,7 @@ c:\radioedu-conecta\
 * **Implementation:**
   - Coordinators' emails and direct names are saved in `_radioedu_coordinador_email` and `_radioedu_coordinador_nombre` post meta.
   - `CentrosController::prepare_item_for_response()` **explicitly omits** these fields from public REST API payloads.
+  - In the core `/wp/v2/centros` endpoint, the centro meta exists only in the `edit` context (which requires editing rights), and `CentroMeta::hide_private_meta()` strips it from `edit` responses of centros the user cannot edit, so a coordinator listing every centro with `context=edit` never sees other coordinators' data.
   - External coordinators interact with other schools exclusively through the platform's proposal system. The plugin dispatches transactional emails on the server side (`NotificationService`), revealing the receiving coordinator's contact details (`Nombre <email>`) only once a proposal is explicitly **accepted** (`estado === 'aceptada'`).
   - `PrivacyPolicy.php` integrates with WordPress Core's GDPR subsystem (`wp_add_privacy_policy_content`, `wp_privacy_personal_data_exporters`, `wp_privacy_personal_data_erasers`) to export or erase/anonymize coordinator data upon request.
 
@@ -141,15 +146,22 @@ c:\radioedu-conecta\
 
 ### 4.1 Custom Post Type: `radioedu_centro`
 * **Registered in:** [src/PostTypes/CentroPostType.php](file:///c:/radioedu-conecta/src/PostTypes/CentroPostType.php)
-* **Features:** `title`, `editor` (station description), `thumbnail` (station header/cover image), `excerpt` (brief intro), `author`.
+* **Features:** `title`, `editor` (station description), `thumbnail` (station header/cover image), `excerpt` (brief intro), `author`, `custom-fields` (required by the REST API to expose the registered meta to the block editor panels; the plugin keys are protected, so the Custom Fields panel never lists them).
 * **Single Profile Template:** Rendered dynamically via `DirectorioShortcode::render_single_centro_profile()` using [templates/single-centro.php](file:///c:/radioedu-conecta/templates/single-centro.php), featuring the full-width cover header, left-aligned station logo, title, flag, location, colored tags, metadata cards, action buttons (including direct Match Drawer trigger), and descriptive text below.
 
 #### Meta Keys Schema (`wp_postmeta`)
-Every key is declared with `register_post_meta()` in [src/PostTypes/CentroMeta.php](file:///c:/radioedu-conecta/src/PostTypes/CentroMeta.php), so its sanitizer runs on **every** write (meta box, demo importer, WP-CLI, imports, other plugins). All keys use `show_in_rest => false` and `auth_callback => '__return_false'`: they are never exposed or writable through the core `/wp/v2/centros` endpoint, XML-RPC or the Custom Fields panel, only through the plugin's validated meta box. The meta box keeps its own context checks (nonce, `edit_post`, logo image readable by the user, flag whitelist). The last column refers to the plugin's own `/radioedu-conecta/v1/centros` endpoint.
+Every key is declared with `register_post_meta()` in [src/PostTypes/CentroMeta.php](file:///c:/radioedu-conecta/src/PostTypes/CentroMeta.php), so its sanitizer runs on **every** write (editor panels, classic meta box, demo importer, WP-CLI, imports, other plugins).
+
+* **Editable keys** (every key except `_radioedu_logo_url`, `_radioedu_cover_url` and `_radioedu_conecta_demo`) are shown in the core `/wp/v2/centros` endpoint **only in the `edit` context**, which the block editor uses. Their `auth_callback` (`CentroMeta::can_edit_meta()`) allows writes only to users who can `edit_post` the centro, and denies XML-RPC. The REST schema only fixes the type: the editor re-sends every key on save, so values are cleaned by the sanitizers rather than rejected.
+* **A new logo** sent through REST must be an image the user can read (`read_post`). `CentroMeta::validate_rest_logo()` (`rest_pre_insert_radioedu_centro`) returns `400 radioedu_conecta_invalid_logo` otherwise. An unchanged logo chosen by another user is not re-checked. The classic meta box applies the same check.
+* **Locked keys** (written only by the demo importer) keep `show_in_rest => false` and `auth_callback => '__return_false'`.
+* `_radioedu_disponible_colaborar` defaults to `'1'` (available) when unset.
+
+The last column refers to the plugin's own public `/radioedu-conecta/v1/centros` endpoint.
 
 | Meta Key | Data Type | Sanitization / Validation | Description | Public in REST? |
 | :--- | :--- | :--- | :--- | :---: |
-| `_radioedu_logo_id` | `int` | `absint()` + must be an image attachment | Attachment ID for the circular radio station logo | Yes (URL) |
+| `_radioedu_logo_id` | `int` | `absint()` + must be an image attachment (a new one must also be readable by the user) | Attachment ID for the circular radio station logo | Yes (URL) |
 | `_radioedu_logo_url` | `string` (URL) | `esc_url_raw()` (http/https) | Fallback URL for bundled demo station logos | Yes (URL) |
 | `_radioedu_cover_url` | `string` (URL) | `esc_url_raw()` (http/https) | Fallback URL for bundled demo station cover images | Yes (URL) |
 | `_radioedu_bandera` | `string` | `sanitize_key()` + whitelist | Region/Country flag code (`es-ex`, `es-ct`, `ie`, etc.) | Yes |
@@ -160,7 +172,7 @@ Every key is declared with `register_post_meta()` in [src/PostTypes/CentroMeta.p
 | `_radioedu_edades` | `string` | `sanitize_text_field()` | Student age range (e.g. `10-14 años`) | Yes |
 | `_radioedu_coordinador_nombre` | `string` | `sanitize_text_field()` | Full name of teacher coordinator | **NO (Admin only)** |
 | `_radioedu_coordinador_email` | `string` | `sanitize_email()` | Notification email address of coordinator | **NO (Admin only)** |
-| `_radioedu_disponible_colaborar`| `string` (`'1'` or `'0'`) | `'1' === $val ? '1' : '0'` | Availability flag for receiving new match proposals | Yes (Boolean) |
+| `_radioedu_disponible_colaborar`| `string` (`'1'` or `'0'`, default `'1'`) | `'1'` or `''` → `'1'`, anything else → `'0'` | Availability flag for receiving new match proposals | Yes (Boolean) |
 | `_radioedu_conecta_demo` | `string` (`'1'` or `''`) | `'1' === $val ? '1' : ''` | Marks content created by the demo importer | No |
 
 ### 4.2 Faceted Taxonomies
@@ -284,6 +296,17 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
 2. The core sanitizer only keeps `<svg>`, `<path>` and `<polygon>` with fill attributes, so plugin icons are fill-based (stroke icons would render empty). `Icons::render()` escapes the markup again with an SVG `wp_kses()` allowlist.
 3. Icons are decorative (`aria-hidden="true"`, `focusable="false"`) unless a `label` is given. `wp_get_icon()` does not set a fill colour, so `.radioedu-svg-icon { fill: currentcolor; }` makes them follow the text colour.
 4. Region flags remain emoji: they are data, not interface icons.
+
+### 7.5 Centro Editor Panels (block editor sidebar)
+1. `CentroEditorPanel::enqueue_assets()` (`enqueue_block_editor_assets`) loads `build/centro-panel.js` only in the block editor of `radioedu_centro`. It passes the flag whitelist (translated in PHP) and the demo logo URL through `wp_add_inline_script()` + `wp_json_encode()`.
+2. The script registers a plugin with three `PluginDocumentSettingPanel` panels in the **Centro de Radio** tab:
+   - **Datos de la emisora:** logo through `MediaUpload`, flag, ages, podcast, website, availability.
+   - **Ubicación en el mapa:** latitude and longitude.
+   - **Coordinación:** name and email, with the GDPR notice.
+3. The fields edit the post's `meta` (`editPost`), so the editor saves them with the centro in the same REST request, under the rules of section 4.1.
+4. The main panel opens automatically the first time each user edits a centro, tracked with the `radioedu-conecta/centroPanelOpened` preference. Afterwards the editor remembers whether the user closed it.
+5. The classic meta box (`CentroMetaBoxes`) is registered with `__back_compat_meta_box`, so only the classic editor shows it, and `admin.js` loads only there.
+6. The logo controls have no `<label for>`, so the buttons keep their own text as accessible name (WCAG 2.5.3). After **Eliminar logo**, focus returns to **Subir / Elegir Logo**.
 
 ---
 

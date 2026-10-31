@@ -16,14 +16,14 @@ Interactive directory and collaboration system ("Traspasando Fronteras") that co
 
 It allows schools that run a school radio station to:
 
-* Publish a station profile with cover image, circular logo, location, educational stages, working languages, topics, programme formats and links to their podcast and official website.
+* Publish a station profile with cover image, circular logo, location, educational stages, working languages, topics, programme formats and links to their podcast and official website, edited in sidebar panels of the block editor (or in a meta box with the classic editor).
 * Search and filter related schools in real time with the interactive faceted directory, available as the "Directorio Traspasando Fronteras" block or the `[radioedu_directorio]` shortcode (taxonomy-based affinity sorting and pagination), and a map view powered by a locally bundled copy of Leaflet.
 * Open the individual profile page of each station and propose a collaboration ("match") directly from the profile or from the directory, through an accessible side panel.
 * Send and manage formal collaboration proposals between radio coordinators from **RadioEdu Centros -> Colaboraciones (Matches)** without exposing personal email addresses on the public site.
 
 == Privacy & GDPR ==
 
-* Coordinators' names and email addresses are stored privately and are never exposed in the public HTML or in the public `/wp-json/radioedu-conecta/v1/centros` endpoint.
+* Coordinators' names and email addresses are stored privately and are never exposed in the public HTML or in the public `/wp-json/radioedu-conecta/v1/centros` endpoint. The core `/wp/v2/centros` endpoint returns them only in the edit context, and only to users who can edit that school, so the block editor can show them.
 * Notifications are sent server-side with `wp_mail()`. The receiving coordinator's contact details are shared with the sending school only after the proposal is explicitly accepted.
 * Collaboration proposals store the sending user account, the schools involved and the project text.
 * Favourite schools and the map consent are stored only in the visitor's browser storage and are never sent to the server.
@@ -44,13 +44,13 @@ The plugin contains no telemetry and makes no other calls to external services.
 
 == Source code ==
 
-The minified scripts in `build/` are compiled from the human-readable sources shipped in `assets/js/admin.js` and `assets/js/directorio.js` with `@wordpress/scripts` (version 37), using its default webpack configuration: `npx wp-scripts build assets/js/admin.js assets/js/directorio.js`. The `@wordpress/i18n` and `@wordpress/a11y` packages are not bundled; they are loaded from WordPress core as script dependencies.
+The minified scripts in `build/` are compiled from the human-readable sources shipped in `assets/js/admin.js`, `assets/js/centro-panel.js` and `assets/js/directorio.js` with `@wordpress/scripts` (version 37), using its default webpack configuration: `npx wp-scripts build assets/js/admin.js assets/js/centro-panel.js assets/js/directorio.js`. The `@wordpress/*` packages they import (such as `i18n`, `a11y`, `editor`, `components` and `element`) are not bundled; they are loaded from WordPress core as script dependencies.
 
 == Installation ==
 
 1. Upload `radioedu-conecta_1.1.zip` from **Plugins -> Add New Plugin -> Upload Plugin**, or copy the `radioedu-conecta` folder to `/wp-content/plugins/`.
 2. Activate the plugin from the **Plugins** screen (or from Network Admin when using Multisite).
-3. Manage school profiles from **RadioEdu Centros**, answer proposals from **Colaboraciones (Matches)** and configure the map and notifications from **Ajustes** (Settings).
+3. Manage school profiles from **RadioEdu Centros** (each station's data is in the editor sidebar, "Centro de Radio" tab), answer proposals from **Colaboraciones (Matches)** and configure the map and notifications from **Ajustes** (Settings).
 4. Insert the "Directorio Traspasando Fronteras" block (Widgets category) or the `[radioedu_directorio]` shortcode in any page to display the interactive directory. Only one directory per page is supported.
 
 == Frequently Asked Questions ==
@@ -73,7 +73,8 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * Requires WordPress 7.1.
 * New "Directorio Traspasando Fronteras" block, registered in PHP only (`supports.autoRegister`) and equivalent to the `[radioedu_directorio]` shortcode.
 * Interface icons use the WordPress 7.1 Icons API (core collection plus a `radioedu-conecta` collection) instead of emoji.
-* School meta fields are registered with `register_post_meta()`, sanitized on every write and neither readable nor writable through the core REST API.
+* School data moves from the meta box, collapsed below the editor, to three sidebar panels ("Datos de la emisora", "Ubicación en el mapa" and "Coordinación"). The meta box remains for the classic editor.
+* School meta fields are registered with `register_post_meta()` and sanitized on every write. The core REST API shows them only in the edit context to users who can edit the school, never in public responses, and XML-RPC cannot change them.
 * Activation no longer creates demo content: the demo stations and the directory page are imported from **RadioEdu Centros -> Ajustes** only, and never overwrite a real school.
 * Security: proposals require a RadioEdu capability, only the receiving school can answer them, and password-protected schools are excluded from the directory and from proposals.
 * The directory sorts by affinity before paginating, cancels outdated searches, announces loading errors with a retry option and works with plain permalinks.
@@ -92,4 +93,4 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 == Upgrade Notice ==
 
 = 1.1 =
-Requires WordPress 7.1. Adds the directory block and SVG icons. Demo content is no longer created on activation; import it from RadioEdu Centros -> Ajustes.
+Requires WordPress 7.1. Adds the directory block, SVG icons and editor sidebar panels for school data. Demo content is no longer created on activation; import it from RadioEdu Centros -> Ajustes.
