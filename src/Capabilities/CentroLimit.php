@@ -11,7 +11,10 @@ namespace RadioEdu\Conecta\Capabilities;
 
 use RadioEdu\Conecta\Admin\Settings;
 use RadioEdu\Conecta\PostTypes\CentroPostType;
+use stdClass;
+use WP_Error;
 use WP_Post;
+use WP_REST_Request;
 use WP_User;
 
 defined( 'ABSPATH' ) || exit;
@@ -55,8 +58,57 @@ final class CentroLimit {
 	 */
 	public static function register(): void {
 		add_filter( 'user_has_cap', [ self::class, 'grant_create_cap' ], 10, 4 );
+		add_filter( 'rest_pre_insert_' . CentroPostType::POST_TYPE, [ self::class, 'check_rest_status_change' ], 10, 2 );
+		add_filter( 'pre_untrash_post', [ self::class, 'check_untrash' ], 10, 2 );
 		add_action( 'clean_post_cache', [ self::class, 'flush_count_cache_for_post' ], 10, 2 );
 		add_action( 'admin_notices', [ self::class, 'render_limit_notice' ] );
+	}
+
+	/**
+	 * Applies the limit when a REST save makes a centro count: restoring it from the trash or
+	 * saving an auto-draft opened before the limit was reached.
+	 *
+	 * The capability only guards creation, so without this a coordinator could trash a centro,
+	 * create another one and restore the first.
+	 *
+	 * @since 1.1
+	 *
+	 * @param stdClass|WP_Error $prepared_post Post about to be saved.
+	 * @param WP_REST_Request   $request       REST request (unused).
+	 * @return stdClass|WP_Error The post, or an error when the change would exceed the limit.
+	 */
+	public static function check_rest_status_change( stdClass|WP_Error $prepared_post, WP_REST_Request $request ): stdClass|WP_Error { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- Signature of the rest_pre_insert_{$post_type} filter.
+		if ( is_wp_error( $prepared_post ) || empty( $prepared_post->post_status ) ) {
+			return $prepared_post;
+		}
+
+		$post_id    = isset( $prepared_post->ID ) ? (int) $prepared_post->ID : 0;
+		$old_status = $post_id > 0 ? (string) get_post_status( $post_id ) : '';
+		if ( ! self::status_change_exceeds_limit( $post_id, $old_status, (string) $prepared_post->post_status ) ) {
+			return $prepared_post;
+		}
+
+		return new WP_Error( 'radioedu_centro_limit', self::get_limit_message(), [ 'status' => 403 ] );
+	}
+
+	/**
+	 * Applies the limit when a centro is restored from the trash outside the REST API.
+	 *
+	 * The admin list then explains why with the limit notice.
+	 *
+	 * @since 1.1
+	 *
+	 * @param bool|null $untrash Whether to go ahead; null lets WordPress decide.
+	 * @param WP_Post   $post    Post being restored.
+	 * @return bool|null False to keep the centro in the trash, otherwise $untrash.
+	 */
+	public static function check_untrash( ?bool $untrash, WP_Post $post ): ?bool {
+		if ( null !== $untrash || CentroPostType::POST_TYPE !== $post->post_type ) {
+			return $untrash;
+		}
+
+		// wp_untrash_post() restores to draft, or to the previous status through a filter; both count.
+		return self::status_change_exceeds_limit( $post->ID, 'trash', 'draft' ) ? false : $untrash;
 	}
 
 	/**
@@ -127,21 +179,62 @@ final class CentroLimit {
 			return;
 		}
 
-		$limit   = (int) self::get_limit();
-		$message = 0 === $limit
-			? __( 'Las radios las da de alta un administrador. Puedes editar las que tengas asignadas.', 'radioedu-conecta' )
-			: sprintf(
-				/* translators: %d: maximum number of radios per user. */
-				_n(
-					'Has alcanzado el máximo de %d radio por usuario. Para dar de alta otra, contacta con un administrador.',
-					'Has alcanzado el máximo de %d radios por usuario. Para dar de alta otra, contacta con un administrador.',
-					$limit,
-					'radioedu-conecta'
-				),
-				$limit
-			);
+		wp_admin_notice( esc_html( self::get_limit_message() ), [ 'type' => 'info' ] );
+	}
 
-		wp_admin_notice( esc_html( $message ), [ 'type' => 'info' ] );
+	/**
+	 * Explains the limit to a coordinator who has reached it.
+	 *
+	 * @since 1.1
+	 *
+	 * @return string Plain-text message.
+	 */
+	private static function get_limit_message(): string {
+		$limit = (int) self::get_limit();
+		if ( 0 === $limit ) {
+			return __( 'Las radios las da de alta un administrador. Puedes editar las que tengas asignadas.', 'radioedu-conecta' );
+		}
+
+		return sprintf(
+			/* translators: %d: maximum number of radios per user. */
+			_n(
+				'Has alcanzado el máximo de %d radio por usuario. Para dar de alta otra, contacta con un administrador.',
+				'Has alcanzado el máximo de %d radios por usuario. Para dar de alta otra, contacta con un administrador.',
+				$limit,
+				'radioedu-conecta'
+			),
+			$limit
+		);
+	}
+
+	/**
+	 * Tells whether moving a centro to a new status would take a limited user over the limit.
+	 *
+	 * Only changes from a status that does not count (trash, auto-draft, a new post) to one that
+	 * counts matter. The centro itself is not counted yet, so it needs no special handling.
+	 *
+	 * @param int    $post_id    Centro ID, or 0 for a new one.
+	 * @param string $old_status Current status, or '' for a new centro.
+	 * @param string $new_status Status being saved.
+	 * @return bool True when the change must be refused.
+	 */
+	private static function status_change_exceeds_limit( int $post_id, string $old_status, string $new_status ): bool {
+		if ( in_array( $old_status, self::COUNTED_STATUSES, true ) || ! in_array( $new_status, self::COUNTED_STATUSES, true ) ) {
+			return false;
+		}
+
+		$user_id = get_current_user_id();
+		if ( $user_id <= 0 ) {
+			return false;
+		}
+
+		$author_id = $post_id > 0 ? (int) get_post_field( 'post_author', $post_id ) : $user_id;
+
+		if ( user_can( $user_id, 'edit_others_radioedu_centros' ) || user_can( $user_id, 'manage_radioedu' ) ) {
+			return false;
+		}
+
+		return self::is_over_limit( $author_id );
 	}
 
 	/**

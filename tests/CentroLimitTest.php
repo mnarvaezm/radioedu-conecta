@@ -115,6 +115,53 @@ class CentroLimitTest extends WP_UnitTestCase {
 		$this->assertSame( 201, rest_do_request( $request )->get_status() );
 	}
 
+	public function test_restoring_a_trashed_centro_respects_the_limit(): void {
+		$this->set_limit( '1' );
+		$author = $this->user( 'author' );
+		$first  = $this->centro( $author );
+		wp_set_current_user( $author );
+		wp_trash_post( $first );
+		$this->centro( $author );
+
+		// The block editor restores through the REST API...
+		$request = new WP_REST_Request( 'POST', '/wp/v2/centros/' . $first );
+		$request->set_body_params( [ 'status' => 'publish' ] );
+		$response = rest_do_request( $request );
+		$this->assertSame( 403, $response->get_status() );
+		$this->assertSame( 'radioedu_centro_limit', $response->get_data()['code'] );
+
+		// ...and the Restore link of the list through wp_untrash_post().
+		$this->assertFalse( wp_untrash_post( $first ) );
+		$this->assertSame( 'trash', get_post_status( $first ) );
+	}
+
+	public function test_an_auto_draft_opened_before_the_limit_cannot_be_saved_after_it(): void {
+		$this->set_limit( '1' );
+		$author = $this->user( 'author' );
+		$tab    = $this->centro( $author, 'auto-draft' );
+		$this->centro( $author );
+		wp_set_current_user( $author );
+
+		$request = new WP_REST_Request( 'POST', '/wp/v2/centros/' . $tab );
+		$request->set_body_params( [ 'title' => 'Second tab', 'status' => 'draft' ] );
+		$this->assertSame( 403, rest_do_request( $request )->get_status() );
+	}
+
+	public function test_at_the_limit_coordinators_still_edit_and_editors_still_restore(): void {
+		$this->set_limit( '1' );
+		$author  = $this->user( 'author' );
+		$own     = $this->centro( $author );
+		$trashed = $this->centro( $author, 'trash' );
+		wp_set_current_user( $author );
+
+		$request = new WP_REST_Request( 'POST', '/wp/v2/centros/' . $own );
+		$request->set_body_params( [ 'title' => 'Renamed', 'status' => 'publish' ] );
+		$this->assertSame( 200, rest_do_request( $request )->get_status() );
+
+		wp_set_current_user( $this->user( 'editor' ) );
+		$this->assertNotFalse( wp_untrash_post( $trashed ) );
+	}
+
 	public function test_settings_sanitize_the_limit(): void {
 		$this->set_limit( '3' );
 

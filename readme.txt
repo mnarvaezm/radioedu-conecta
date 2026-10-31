@@ -117,6 +117,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * Privacy: the reply to a proposal now records who wrote it (database schema 1.0.3), so it is exported and erased for that person. Replies written before 1.1 have no author: erasure keeps them and says so.
 * A database error while answering a proposal returns a retryable error instead of "already answered".
 * In the directory, a late reply to a proposal sent before closing the panel no longer changes the panel opened for another station.
+* The "Radios por usuario" limit also applies when a coordinator restores a station from the trash or saves a second "Add New" tab opened before reaching the limit.
 
 = 1.0.0 =
 * Interactive `[radioedu_directorio]` directory with faceted filters, affinity sorting, pagination and a locally bundled Leaflet map with prior consent for OpenStreetMap tiles.
