@@ -220,7 +220,7 @@ class DemoDataImporter {
 				'post_title'   => $data['nombre'],
 				'post_name'    => $data['slug'],
 				'post_excerpt' => $data['descripcion'],
-				'post_content' => $data['descripcion'] . "\n\nSomos una emisora escolar comprometida con la red Traspasando Fronteras.",
+				'post_content' => self::paragraph_blocks( $data['descripcion'], 'Somos una emisora escolar comprometida con la red Traspasando Fronteras.' ),
 				'post_status'  => 'publish',
 				'post_type'    => CentroPostType::POST_TYPE,
 			];
@@ -281,6 +281,37 @@ class DemoDataImporter {
 		}
 
 		return $count;
+	}
+
+	/**
+	 * Builds block markup with one Paragraph block per text.
+	 *
+	 * Plain text would open as a Classic block in the block editor.
+	 *
+	 * @since 1.1
+	 *
+	 * @param string ...$texts Plain-text paragraphs.
+	 * @return string Serialized core/paragraph blocks.
+	 */
+	private static function paragraph_blocks( string ...$texts ): string {
+		$blocks = array_map(
+			static function ( string $text ): string {
+				$html = '<p>' . esc_html( $text ) . '</p>';
+
+				return serialize_block(
+					[
+						'blockName'    => 'core/paragraph',
+						'attrs'        => [],
+						'innerBlocks'  => [],
+						'innerHTML'    => $html,
+						'innerContent' => [ $html ],
+					]
+				);
+			},
+			$texts
+		);
+
+		return implode( "\n\n", $blocks );
 	}
 
 	/**

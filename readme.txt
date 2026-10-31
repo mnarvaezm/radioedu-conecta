@@ -75,7 +75,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * Interface icons use the WordPress 7.1 Icons API (core collection plus a `radioedu-conecta` collection) instead of emoji.
 * School data moves from the meta box, collapsed below the editor, to three sidebar panels ("Datos de la emisora", "Ubicación en el mapa" and "Coordinación"). The meta box remains for the classic editor.
 * School meta fields are registered with `register_post_meta()` and sanitized on every write. The core REST API shows them only in the edit context to users who can edit the school, never in public responses, and XML-RPC cannot change them.
-* Activation no longer creates demo content: the demo stations and the directory page are imported from **RadioEdu Centros -> Ajustes** only, and never overwrite a real school.
+* Activation no longer creates demo content: the demo stations and the directory page are imported from **RadioEdu Centros -> Ajustes** only, and never overwrite a real school. Their descriptions are Paragraph blocks instead of Classic content.
 * Security: proposals require a RadioEdu capability, only the receiving school can answer them, and password-protected schools are excluded from the directory and from proposals.
 * The directory sorts by affinity before paginating, cancels outdated searches, announces loading errors with a retry option and works with plain permalinks.
 * Personal data export and erasure run in batches, and network-wide tasks process sites in batches of 100.

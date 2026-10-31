@@ -92,7 +92,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * Iconos SVG de la API de iconos de WordPress 7.1 en lugar de emojis en el directorio, la ficha, el panel lateral y la pantalla de Colaboraciones.
 * Los datos del centro pasan de la caja meta, plegada al pie del editor, a tres paneles de la barra lateral (**Datos de la emisora**, **Ubicación en el mapa** y **Coordinación**). La caja meta solo aparece con el Editor Clásico.
 * Metadatos del centro registrados con `register_post_meta()`: se sanean en cualquier escritura. La REST del core solo los muestra en modo edición a quien puede editar el centro (nunca en las respuestas públicas) y XML-RPC no puede modificarlos.
-* La activación ya no crea contenido de demostración: las emisoras de ejemplo y la página del directorio se importan solo desde **RadioEdu Centros → Ajustes** y nunca sobrescriben un centro real.
+* La activación ya no crea contenido de demostración: las emisoras de ejemplo y la página del directorio se importan solo desde **RadioEdu Centros → Ajustes** y nunca sobrescriben un centro real. Sus descripciones se crean como bloques de párrafo, no como un bloque clásico.
 * Seguridad: las propuestas exigen una capacidad de RadioEdu, solo el centro receptor puede responderlas y los centros protegidos con contraseña quedan fuera del directorio y de las propuestas.
 * El directorio ordena por afinidad antes de paginar, cancela las búsquedas obsoletas, anuncia los errores de carga con opción de reintentar y funciona con enlaces permanentes simples.
 * La exportación y el borrado de datos personales se hacen por lotes, y las tareas de red recorren los sitios en lotes de 100.
