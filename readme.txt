@@ -39,7 +39,7 @@ The plugin contains no telemetry and makes no other calls to external services.
 
 == Third-party libraries ==
 
-* **Leaflet 1.9.4** (`assets/js/leaflet.js`, `assets/css/leaflet.css`, `assets/css/images/`), bundled locally. BSD-2-Clause license, GPL-compatible. Unminified source: https://github.com/Leaflet/Leaflet/tree/v1.9.4
+* **Leaflet 1.9.4** (`assets/js/leaflet.js`, `assets/css/leaflet.css`, `assets/css/images/`), bundled locally. BSD-2-Clause license, GPL-compatible. The full license text ships in `assets/leaflet-LICENSE.txt`. Unminified source: https://github.com/Leaflet/Leaflet/tree/v1.9.4
 * **WordPress icons** (`assets/icons/close.svg`, `globe.svg`, `institution.svg`, `send.svg`): SVG paths from `@wordpress/icons` 10.32.0, GPL-2.0-or-later. Source: https://github.com/WordPress/gutenberg/tree/trunk/packages/icons. The other icons in `assets/icons/` were drawn for this plugin and share its license.
 
 == Source code ==
@@ -109,6 +109,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * Accessibility: visible focus outlines, AA contrast for the accent and status colours, and the "Subir / Elegir Logo" button keeps its own text as its accessible name.
 * Accessibility: every page has a single main landmark. The directory no longer adds a nested `<main>` or a `<header>` inside the content, and its results are a named region. With classic themes, the profile page provides `<main>` and the skip link target only when the theme's header does not.
 * Admin notices use `wp_admin_notice()`.
+* The full Leaflet license text ships in `assets/leaflet-LICENSE.txt`.
 
 = 1.0.0 =
 * Interactive `[radioedu_directorio]` directory with faceted filters, affinity sorting, pagination and a locally bundled Leaflet map with prior consent for OpenStreetMap tiles.

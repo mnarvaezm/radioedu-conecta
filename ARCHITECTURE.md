@@ -105,16 +105,18 @@ c:\radioedu-conecta\
 │   ├── css/
 │   │   ├── admin.css                    # Centro editor panels, classic meta box, logo preview and Colaboraciones statuses
 │   │   ├── directorio.css               # Styling for directory UI, facet filters, card grid, single profile, and drawer
+│   │   ├── images/                      # Leaflet marker and layer control images
 │   │   └── leaflet.css                  # Self-contained Leaflet 1.9.4 CSS (zero CDN)
 │   ├── icons/                           # Fill-based SVGs of the `radioedu-conecta` icon collection (core lacks them)
 │   ├── images/
 │   │   └── demo/                        # Local cover photos and circular logos for the 6 demo radio stations
-│   └── js/
-│       ├── admin.js                     # Source: WP Media Uploader connector for the classic meta box logo
-│       ├── centro-panel.js              # Source: block editor sidebar panels of the centro fields (registerPlugin)
-│       ├── directorio.js                # Source: frontend reactive controller (DOM builder, Leaflet manager, Drawer)
-│       ├── network-sync.js              # Source: network admin sync button (batched apiFetch loop, progress, summary)
-│       └── leaflet.js                   # Self-contained Leaflet 1.9.4 JavaScript runtime (zero CDN)
+│   ├── js/
+│   │   ├── admin.js                     # Source: WP Media Uploader connector for the classic meta box logo
+│   │   ├── centro-panel.js              # Source: block editor sidebar panels of the centro fields (registerPlugin)
+│   │   ├── directorio.js                # Source: frontend reactive controller (DOM builder, Leaflet manager, Drawer)
+│   │   ├── network-sync.js              # Source: network admin sync button (batched apiFetch loop, progress, summary)
+│   │   └── leaflet.js                   # Self-contained Leaflet 1.9.4 JavaScript runtime (zero CDN)
+│   └── leaflet-LICENSE.txt              # Leaflet 1.9.4 BSD-2-Clause license, covering leaflet.js, leaflet.css and css/images/
 ├── build/                               # Committed `npm run build` output (@wordpress/scripts); the only JS the plugin loads
 │   ├── admin.js / admin.asset.php       # Compiled admin.js + generated dependencies (wp-i18n) and version hash
 │   ├── centro-panel.js / centro-panel.asset.php # Compiled panels + dependencies (wp-editor, wp-plugins, wp-components…)

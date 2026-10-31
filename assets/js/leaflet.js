@@ -1,5 +1,6 @@
 /*!
- * Leaflet 1.9.4, bundled locally (no CDN). License: BSD-2-Clause.
+ * Leaflet 1.9.4, bundled locally (no CDN). License: BSD-2-Clause, full text in
+ * assets/leaflet-LICENSE.txt.
  * Unminified source: https://github.com/Leaflet/Leaflet/tree/v1.9.4
  */
 /* @preserve
