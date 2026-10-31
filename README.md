@@ -90,6 +90,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * Requiere WordPress 7.1.
 * Nuevo bloque **Directorio Traspasando Fronteras** registrado solo con PHP (`supports.autoRegister`), equivalente al shortcode `[radioedu_directorio]`.
 * Iconos SVG de la API de iconos de WordPress 7.1 en lugar de emojis en el directorio, la ficha, el panel lateral y la pantalla de Colaboraciones.
+* La página pública de cada centro ya no repite encima de la ficha el título, el autor y la fecha ni la imagen destacada del tema: el plugin aporta su plantilla (una plantilla de bloques editable en el Editor del sitio, o una plantilla PHP con la cabecera y el pie del tema en los temas clásicos), que el tema puede sustituir.
 * Los datos del centro pasan de la caja meta, plegada al pie del editor, a tres paneles de la barra lateral (**Datos de la emisora**, **Ubicación en el mapa** y **Coordinación**). La caja meta solo aparece con el Editor Clásico.
 * Metadatos del centro registrados con `register_post_meta()`: se sanean en cualquier escritura. La REST del core solo los muestra en modo edición a quien puede editar el centro (nunca en las respuestas públicas) y XML-RPC no puede modificarlos.
 * La activación ya no crea contenido de demostración: las emisoras de ejemplo y la página del directorio se importan solo desde **RadioEdu Centros → Ajustes** y nunca sobrescriben un centro real. Sus descripciones se crean como bloques de párrafo, no como un bloque clásico.

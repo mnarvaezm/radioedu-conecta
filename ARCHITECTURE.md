@@ -92,6 +92,7 @@ c:\radioedu-conecta\
 ├── templates/
 │   ├── directorio.php                   # Frontend directory view: Banner, Facet Bar, Grid, Map
 │   ├── single-centro.php                # Single station profile view: Cover, Identity, Tags, Metadata, Description
+│   ├── theme-single-centro.php          # Classic-theme page template: theme header/footer around the profile only
 │   └── match-drawer.php                 # Shared "Solicitud de match" drawer (accessible dialog) used by both views
 ├── assets/
 │   ├── css/
@@ -148,6 +149,10 @@ c:\radioedu-conecta\
 * **Registered in:** [src/PostTypes/CentroPostType.php](file:///c:/radioedu-conecta/src/PostTypes/CentroPostType.php)
 * **Features:** `title`, `editor` (station description), `thumbnail` (station header/cover image), `excerpt` (brief intro), `author`, `custom-fields` (required by the REST API to expose the registered meta to the block editor panels; the plugin keys are protected, so the Custom Fields panel never lists them).
 * **Single Profile Template:** Rendered dynamically via `DirectorioShortcode::render_single_centro_profile()` using [templates/single-centro.php](file:///c:/radioedu-conecta/templates/single-centro.php), featuring the full-width cover header, left-aligned station logo, title, flag, location, colored tags, metadata cards, action buttons (including direct Match Drawer trigger), and descriptive text below.
+* **Profile Page Template (no theme duplicates):** the profile already shows the title, the featured image (as cover) and the station data, so the page around it only keeps the theme header and footer.
+  - **Block themes:** `DirectorioShortcode::register_profile_block_template()` registers `radioedu-conecta//single-radioedu_centro` with `register_block_template()`. It contains the header part, `core/post-content` in a `<main>` group (980px) and the footer part, with no post title, date, author or featured image. It is the most specific template of the hierarchy; a theme template with the same slug or a Site Editor customization takes precedence.
+  - **Classic themes:** `DirectorioShortcode::use_profile_page_template()` (`template_include`) swaps only the generic `single.php` / `singular.php` / `index.php` for [templates/theme-single-centro.php](file:///c:/radioedu-conecta/templates/theme-single-centro.php) (`get_header()`, the profile, `get_footer()`). A theme or page-builder template made for centros is kept, and themes can override the file with `radioedu-conecta/single-radioedu_centro.php`.
+  - **Fallback:** on the profile page, the `has_post_thumbnail` and `post_thumbnail_html` filters hide the featured image from the theme for the queried centro only. They do not run inside `wp_head`, so Open Graph and SEO tags keep the image. The profile reads its cover with `get_the_post_thumbnail_url()`, which the filters do not affect.
 
 #### Meta Keys Schema (`wp_postmeta`)
 Every key is declared with `register_post_meta()` in [src/PostTypes/CentroMeta.php](file:///c:/radioedu-conecta/src/PostTypes/CentroMeta.php), so its sanitizer runs on **every** write (editor panels, classic meta box, demo importer, WP-CLI, imports, other plugins).

@@ -73,6 +73,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * Requires WordPress 7.1.
 * New "Directorio Traspasando Fronteras" block, registered in PHP only (`supports.autoRegister`) and equivalent to the `[radioedu_directorio]` shortcode.
 * Interface icons use the WordPress 7.1 Icons API (core collection plus a `radioedu-conecta` collection) instead of emoji.
+* The public school page no longer repeats the theme's title, author/date and featured image above the profile. The plugin provides the page template: a block template (editable in the Site Editor) for block themes, or the theme header and footer around the profile for classic themes. Themes can override it.
 * School data moves from the meta box, collapsed below the editor, to three sidebar panels ("Datos de la emisora", "Ubicación en el mapa" and "Coordinación"). The meta box remains for the classic editor.
 * School meta fields are registered with `register_post_meta()` and sanitized on every write. The core REST API shows them only in the edit context to users who can edit the school, never in public responses, and XML-RPC cannot change them.
 * Activation no longer creates demo content: the demo stations and the directory page are imported from **RadioEdu Centros -> Ajustes** only, and never overwrite a real school. Their descriptions are Paragraph blocks instead of Classic content.

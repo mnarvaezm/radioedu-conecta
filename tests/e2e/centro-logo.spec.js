@@ -127,6 +127,9 @@ test.describe( 'Datos del centro en el panel lateral del editor', () => {
 			window.wp.data.select( 'core/editor' ).getPermalink()
 		);
 		await page.goto( permalink );
+		// The theme does not repeat the title, meta or featured image above the profile.
+		await expect( page.locator( 'h1' ) ).toHaveCount( 1 );
+		await expect( page.locator( '.wp-post-image' ) ).toHaveCount( 0 );
 		await expect(
 			page.locator( 'img.radioedu-profile-logo' )
 		).toHaveAttribute( 'src', /logo-sierra-gata/ );

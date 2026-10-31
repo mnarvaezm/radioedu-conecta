@@ -751,11 +751,11 @@
    6. VISTA DE PERFIL INDIVIDUAL DE EMISORA ESCOLAR (single-radioedu_centro)
    ========================================================================== */
 
-body.single-radioedu_centro .wp-block-post-title,
-body.single-radioedu_centro .wp-block-post-date,
-body.single-radioedu_centro .entry-header,
-body.single-radioedu_centro main > .wp-block-separator {
-	display: none !important;
+/* The profile page templates print only the theme header and footer
+ * around the profile, so the theme's title, meta and featured image
+ * are not repeated (no CSS hiding needed). */
+.radioedu-profile-page {
+	padding: 0 16px;
 }
 
 .radioedu-single-profile {
@@ -763,7 +763,7 @@ body.single-radioedu_centro main > .wp-block-separator {
 	color: var(--radioedu-text-dark);
 	max-width: 980px !important;
 	width: 100%;
-	margin: 0 auto 48px auto;
+	margin: 32px auto 48px auto;
 	box-sizing: border-box;
 }
 

@@ -14,6 +14,7 @@ use RadioEdu\Conecta\Admin\Settings;
 use RadioEdu\Conecta\PostTypes\CentroPostType;
 use RadioEdu\Conecta\Rest\ColaboracionesController;
 use RadioEdu\Conecta\Taxonomies\TaxonomiesRegistrar;
+use WP_Post;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -33,6 +34,11 @@ class DirectorioShortcode {
 	public const BLOCK_NAME = 'radioedu-conecta/directorio';
 
 	/**
+	 * Name of the profile page block template (plugin namespace + hierarchy slug).
+	 */
+	public const PROFILE_BLOCK_TEMPLATE = 'radioedu-conecta//single-radioedu_centro';
+
+	/**
 	 * Controla que window.radioeduConectaData no se inyecte más de una vez por petición.
 	 *
 	 * @var bool
@@ -49,6 +55,114 @@ class DirectorioShortcode {
 		add_action( 'init', [ self::class, 'register_block' ] );
 		add_action( 'wp_enqueue_scripts', [ self::class, 'enqueue_assets' ] );
 		add_filter( 'the_content', [ self::class, 'render_single_centro_profile' ], 20 );
+		// The profile page shows only the theme header and footer around the profile, without the
+		// theme's post title, author/date meta and featured image, which the profile already has.
+		add_action( 'init', [ self::class, 'register_profile_block_template' ] );
+		add_filter( 'template_include', [ self::class, 'use_profile_page_template' ], 20 );
+		// The profile uses the featured image as its cover, so the theme must not print it again.
+		add_filter( 'has_post_thumbnail', [ self::class, 'hide_theme_featured_image' ], 10, 2 );
+		add_filter( 'post_thumbnail_html', [ self::class, 'hide_theme_featured_image_html' ], 10, 2 );
+	}
+
+	/**
+	 * Registers the profile page template for block themes.
+	 *
+	 * It is the most specific template of the hierarchy for centros (single-radioedu_centro),
+	 * so it replaces the theme's single template. A theme template with the same slug, or a
+	 * version edited in the Site Editor, takes precedence.
+	 *
+	 * @since 1.1
+	 */
+	public static function register_profile_block_template(): void {
+		if ( ! wp_is_block_theme() ) {
+			return;
+		}
+
+		register_block_template(
+			self::PROFILE_BLOCK_TEMPLATE,
+			[
+				'title'       => __( 'Ficha de centro de radio', 'radioedu-conecta' ),
+				'description' => __( 'Perfil público de un centro: cabecera y pie del tema alrededor de la ficha, sin repetir su título, autor, fecha ni imagen de cabecera.', 'radioedu-conecta' ),
+				'content'     => '<!-- wp:template-part {"slug":"header","tagName":"header"} /-->'
+					. '<!-- wp:group {"tagName":"main","layout":{"type":"constrained","contentSize":"980px"}} -->'
+					. '<main class="wp-block-group"><!-- wp:post-content /--></main>'
+					. '<!-- /wp:group -->'
+					. '<!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->',
+			]
+		);
+	}
+
+	/**
+	 * Uses the plugin's profile page template with classic themes.
+	 *
+	 * Only replaces the generic templates (single.php, singular.php, index.php): a theme template
+	 * made for centros or a page builder template is kept. Themes can override the plugin file
+	 * with radioedu-conecta/single-radioedu_centro.php.
+	 *
+	 * @since 1.1
+	 *
+	 * @param string $template Template file chosen by WordPress.
+	 * @return string Template file to load.
+	 */
+	public static function use_profile_page_template( string $template ): string {
+		if ( wp_is_block_theme() || is_embed() || ! is_singular( CentroPostType::POST_TYPE )
+			|| ! in_array( basename( $template ), [ 'single.php', 'singular.php', 'index.php' ], true ) ) {
+			return $template;
+		}
+
+		$theme_override = locate_template( 'radioedu-conecta/single-' . CentroPostType::POST_TYPE . '.php' );
+
+		return '' !== $theme_override ? $theme_override : RADIOEDU_CONECTA_DIR . 'templates/theme-single-centro.php';
+	}
+
+	/**
+	 * Tells the theme that the centro shown on its profile page has no featured image.
+	 *
+	 * The profile template reads the cover with get_the_post_thumbnail_url(), which these filters
+	 * do not affect.
+	 *
+	 * @since 1.1
+	 *
+	 * @param bool  $has_thumbnail Whether the post has a featured image.
+	 * @param mixed $post          Post ID, object or null for the current post.
+	 * @return bool False for the centro of the current profile page.
+	 */
+	public static function hide_theme_featured_image( bool $has_thumbnail, mixed $post = null ): bool {
+		return $has_thumbnail && ! self::is_profile_centro( $post );
+	}
+
+	/**
+	 * Removes the theme's featured image markup on the centro profile page.
+	 *
+	 * Covers themes that print the image without checking has_post_thumbnail() first, and the
+	 * Post Featured Image block of block themes.
+	 *
+	 * @since 1.1
+	 *
+	 * @param string $html    Featured image markup.
+	 * @param mixed  $post_id Post ID.
+	 * @return string Empty for the centro of the current profile page.
+	 */
+	public static function hide_theme_featured_image_html( string $html, mixed $post_id = null ): string {
+		return self::is_profile_centro( $post_id ) ? '' : $html;
+	}
+
+	/**
+	 * Checks whether a post is the centro of the profile page being rendered.
+	 *
+	 * The page <head> is excluded, so Open Graph and SEO plugins keep the image.
+	 *
+	 * @param mixed $post Post ID, object or null for the current post.
+	 * @return bool Whether the post is the queried centro of a front-end profile page.
+	 */
+	private static function is_profile_centro( mixed $post ): bool {
+		if ( is_admin() || doing_action( 'wp_head' ) || ! is_singular( CentroPostType::POST_TYPE ) ) {
+			return false;
+		}
+
+		$post = get_post( $post instanceof WP_Post ? $post : ( is_numeric( $post ) ? (int) $post : null ) );
+
+		return $post instanceof WP_Post && get_queried_object_id() === $post->ID;
 	}
 
 	/**
