@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-31T23:39:53+00:00\n"
+"POT-Creation-Date: 2026-10-31T23:53:00+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: radioedu-conecta\n"
@@ -314,8 +314,8 @@ msgstr ""
 
 #: src/Admin/ColaboracionesAdminPage.php:89
 #: src/Admin/DemoDataImporter.php:83
-#: src/Rest/ColaboracionesController.php:307
-#: src/Rest/ColaboracionesController.php:485
+#: src/Rest/ColaboracionesController.php:326
+#: src/Rest/ColaboracionesController.php:515
 msgid "No tienes permisos para realizar esta acción."
 msgstr ""
 
@@ -324,99 +324,107 @@ msgid "Parámetros de respuesta no válidos."
 msgstr ""
 
 #: src/Admin/ColaboracionesAdminPage.php:105
-#: src/Rest/ColaboracionesController.php:506
+#: src/Rest/ColaboracionesController.php:536
 msgid "No tienes permisos para responder a las propuestas de este centro."
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:132
+#: src/Admin/ColaboracionesAdminPage.php:133
 #: src/Admin/NetworkSyncPage.php:109
 #: src/Admin/Settings.php:282
 msgid "No tienes permisos suficientes para acceder a esta página."
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:151
-msgid "Propuestas de Colaboración (Matches) - Traspasando Fronteras"
-msgstr ""
-
-#: src/Admin/ColaboracionesAdminPage.php:153
-msgid "Consulta las solicitudes de hermanamiento recibidas o enviadas por tu emisora escolar y coordina proyectos conjuntos."
-msgstr ""
-
-#: src/Admin/ColaboracionesAdminPage.php:159
+#: src/Admin/ColaboracionesAdminPage.php:152
 msgid "La respuesta a la propuesta de colaboración se ha guardado correctamente y se ha notificado al centro emisor."
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:170
+#: src/Admin/ColaboracionesAdminPage.php:153
+msgid "La respuesta a la propuesta de colaboración se ha guardado correctamente."
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:154
+msgid "La respuesta a la propuesta de colaboración se ha guardado, pero no se ha podido enviar el aviso por correo al centro emisor."
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:159
+msgid "Propuestas de Colaboración (Matches) - Traspasando Fronteras"
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:161
+msgid "Consulta las solicitudes de hermanamiento recibidas o enviadas por tu emisora escolar y coordina proyectos conjuntos."
+msgstr ""
+
+#: src/Admin/ColaboracionesAdminPage.php:178
 msgid "Todavía no hay propuestas de colaboración registradas para tus centros escolares."
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:176
+#: src/Admin/ColaboracionesAdminPage.php:184
 #: src/Privacy/PrivacyPolicy.php:195
 msgid "Fecha"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:177
+#: src/Admin/ColaboracionesAdminPage.php:185
 msgid "Centro Emisor"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:178
+#: src/Admin/ColaboracionesAdminPage.php:186
 msgid "Centro Receptor"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:179
+#: src/Admin/ColaboracionesAdminPage.php:187
 msgid "Idea del Proyecto y Detalles"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:180
+#: src/Admin/ColaboracionesAdminPage.php:188
 #: src/Privacy/PrivacyPolicy.php:203
 msgid "Estado"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:181
+#: src/Admin/ColaboracionesAdminPage.php:189
 msgid "Respuesta / Acciones"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:212
+#: src/Admin/ColaboracionesAdminPage.php:220
 msgid "Edades:"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:215
+#: src/Admin/ColaboracionesAdminPage.php:223
 msgid "Idiomas:"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:218
+#: src/Admin/ColaboracionesAdminPage.php:226
 msgid "Fechas:"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:223
+#: src/Admin/ColaboracionesAdminPage.php:231
 msgid "Aceptada"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:225
+#: src/Admin/ColaboracionesAdminPage.php:233
 msgid "Declinada"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:227
+#: src/Admin/ColaboracionesAdminPage.php:235
 msgid "Pendiente"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:241
+#: src/Admin/ColaboracionesAdminPage.php:249
 msgid "Mensaje de respuesta"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:249
+#: src/Admin/ColaboracionesAdminPage.php:257
 msgid "Escribe un mensaje para el centro emisor..."
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:252
+#: src/Admin/ColaboracionesAdminPage.php:260
 msgid "Aceptar"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:255
+#: src/Admin/ColaboracionesAdminPage.php:263
 msgid "Declinar"
 msgstr ""
 
-#: src/Admin/ColaboracionesAdminPage.php:259
+#: src/Admin/ColaboracionesAdminPage.php:267
 msgid "En espera de respuesta del centro receptor."
 msgstr ""
 
@@ -637,93 +645,93 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: Name of the sending school.
-#: src/Emails/NotificationService.php:90
+#: src/Emails/NotificationService.php:99
 #, php-format
 msgid "[RadioEdu Traspasando Fronteras] ¡Nueva propuesta de match de %s!"
 msgstr ""
 
-#: src/Emails/NotificationService.php:95
-#: src/Emails/NotificationService.php:175
+#: src/Emails/NotificationService.php:104
+#: src/Emails/NotificationService.php:184
 msgid "Hola,"
 msgstr ""
 
 #. translators: 1: Name of the sending school, 2: Name of the receiving school.
-#: src/Emails/NotificationService.php:99
+#: src/Emails/NotificationService.php:108
 #, php-format
 msgid "El centro escolar \"%1$s\" ha seleccionado vuestra emisora (\"%2$s\") para proponer un proyecto de colaboración en la red Traspasando Fronteras."
 msgstr ""
 
-#: src/Emails/NotificationService.php:104
+#: src/Emails/NotificationService.php:113
 msgid "Idea del proyecto propuesta:"
 msgstr ""
 
 #. translators: %s: Course or ages of the participating students.
-#: src/Emails/NotificationService.php:109
+#: src/Emails/NotificationService.php:118
 #, php-format
 msgid "Cursos/Edades: %s"
 msgstr ""
 
-#: src/Emails/NotificationService.php:110
+#: src/Emails/NotificationService.php:119
 msgid "No especificado"
 msgstr ""
 
 #. translators: %s: Approximate project dates.
-#: src/Emails/NotificationService.php:114
+#: src/Emails/NotificationService.php:123
 #, php-format
 msgid "Fechas previstas: %s"
 msgstr ""
 
-#: src/Emails/NotificationService.php:115
+#: src/Emails/NotificationService.php:124
 msgid "Por acordar"
 msgstr ""
 
-#: src/Emails/NotificationService.php:118
+#: src/Emails/NotificationService.php:127
 msgid "Puedes consultar todos los detalles y responder a la propuesta accediendo al panel de RadioEdu:"
 msgstr ""
 
-#: src/Emails/NotificationService.php:122
+#: src/Emails/NotificationService.php:131
 msgid "RadioEdu Conecta - Red de Radios Escolares de Extremadura y del Mundo"
 msgstr ""
 
-#: src/Emails/NotificationService.php:162
+#: src/Emails/NotificationService.php:171
 msgid "ACEPTADA"
 msgstr ""
 
-#: src/Emails/NotificationService.php:163
+#: src/Emails/NotificationService.php:172
 msgid "DECLINADA"
 msgstr ""
 
 #. translators: 1: Name of the receiving school, 2: New status (accepted/declined).
-#: src/Emails/NotificationService.php:167
+#: src/Emails/NotificationService.php:176
 #, php-format
 msgid "[RadioEdu Traspasando Fronteras] Tu propuesta a %1$s ha sido %2$s"
 msgstr ""
 
 #. translators: 1: Name of the sending school, 2: Name of the receiving school, 3: New status.
-#: src/Emails/NotificationService.php:179
+#: src/Emails/NotificationService.php:188
 #, php-format
 msgid "Te informamos de que la propuesta de colaboración enviada por \"%1$s\" al centro \"%2$s\" ha sido marcada como: %3$s."
 msgstr ""
 
-#: src/Emails/NotificationService.php:185
+#: src/Emails/NotificationService.php:194
 msgid "Mensaje o indicaciones del centro:"
 msgstr ""
 
-#: src/Emails/NotificationService.php:186
+#: src/Emails/NotificationService.php:195
 msgid "Sin mensaje adicional."
 msgstr ""
 
 #. translators: 1: Coordinator name of the receiving school, 2: Coordinator email of the receiving school.
-#: src/Emails/NotificationService.php:197
+#: src/Emails/NotificationService.php:206
 #, php-format
 msgid "Contacto de coordinación de la emisora: %1$s <%2$s>"
 msgstr ""
 
-#: src/Emails/NotificationService.php:205
+#: src/Emails/NotificationService.php:214
 msgid "Puedes acceder a la plataforma para coordinar los siguientes pasos con la emisora."
 msgstr ""
 
-#: src/Emails/NotificationService.php:208
+#: src/Emails/NotificationService.php:217
 msgid "RadioEdu Conecta - Traspasando Fronteras"
 msgstr ""
 
@@ -1068,7 +1076,7 @@ msgid "No se han podido eliminar todos los datos. Reintente la solicitud de borr
 msgstr ""
 
 #: src/Rest/CentrosController.php:351
-#: src/Rest/ColaboracionesController.php:544
+#: src/Rest/ColaboracionesController.php:572
 msgid "Número de página de resultados."
 msgstr ""
 
@@ -1108,99 +1116,107 @@ msgstr ""
 msgid "Slug de ubicación geográfica."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:86
+#: src/Rest/ColaboracionesController.php:91
 msgid "ID de la propuesta de colaboración."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:94
+#: src/Rest/ColaboracionesController.php:99
 msgid "Nuevo estado de la propuesta."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:102
+#: src/Rest/ColaboracionesController.php:107
 msgid "Mensaje de respuesta para el centro emisor."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:328
+#: src/Rest/ColaboracionesController.php:347
 msgid "Has alcanzado el límite de propuestas por hora. Por favor, inténtalo más tarde."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:343
+#: src/Rest/ColaboracionesController.php:362
 msgid "No puedes enviar una propuesta de colaboración a tu propio centro escolar."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:351
+#: src/Rest/ColaboracionesController.php:370
 msgid "Por favor, describe brevemente la idea del proyecto conjunto."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:367
+#: src/Rest/ColaboracionesController.php:386
 msgid "Uno de los centros especificados no es válido o no está publicado."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:376
+#: src/Rest/ColaboracionesController.php:395
 msgid "No tienes permisos para enviar propuestas en nombre del centro emisor seleccionado."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:385
+#: src/Rest/ColaboracionesController.php:404
 msgid "Este centro escolar no está disponible actualmente para recibir nuevas propuestas de colaboración."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:414
+#: src/Rest/ColaboracionesController.php:433
 msgid "No se pudo registrar la propuesta en la base de datos."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:437
+#: src/Rest/ColaboracionesController.php:454
 msgid "¡Propuesta de match enviada con éxito! La emisora receptora recibirá una notificación para comenzar a coordinar el proyecto."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:466
+#: src/Rest/ColaboracionesController.php:455
+msgid "¡Propuesta de match enviada con éxito! La emisora receptora la verá en su panel de Colaboraciones."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:456
+msgid "¡Propuesta de match enviada con éxito! No se ha podido enviar el aviso por correo, pero la emisora receptora la verá en su panel de Colaboraciones."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:492
 msgid "Estado de la colaboración actualizado correctamente."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:491
+#: src/Rest/ColaboracionesController.php:521
 msgid "El estado indicado no es válido."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:500
+#: src/Rest/ColaboracionesController.php:530
 msgid "La propuesta de colaboración no existe."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:511
+#: src/Rest/ColaboracionesController.php:541
 msgid "El mensaje de respuesta es demasiado largo."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:517
+#: src/Rest/ColaboracionesController.php:547
 msgid "No se pudo guardar la respuesta. Inténtalo de nuevo."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:522
+#: src/Rest/ColaboracionesController.php:552
 msgid "Esta propuesta ya ha sido respondida y no puede modificarse."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:552
+#: src/Rest/ColaboracionesController.php:580
 msgid "Número de propuestas por página."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:571
+#: src/Rest/ColaboracionesController.php:599
 msgid "ID del centro que envía la propuesta."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:579
+#: src/Rest/ColaboracionesController.php:607
 msgid "ID del centro que recibe la propuesta."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:587
+#: src/Rest/ColaboracionesController.php:615
 msgid "Idea del proyecto conjunto."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:596
+#: src/Rest/ColaboracionesController.php:624
 msgid "Curso o edades del alumnado participante."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:604
+#: src/Rest/ColaboracionesController.php:632
 msgid "Idiomas de trabajo del proyecto."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:612
+#: src/Rest/ColaboracionesController.php:640
 msgid "Fechas aproximadas del proyecto."
 msgstr ""
 

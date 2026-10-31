@@ -447,14 +447,21 @@ class ColaboracionesController extends WP_REST_Controller {
 			$rate_ttl
 		);
 
-		// Disparar email de notificación al centro receptor.
-		NotificationService::send_proposal_email( $colaboracion_id );
+		// Disparar email de notificación al centro receptor. The message says what really happened:
+		// the proposal is stored either way, and the receiving school sees it in its panel.
+		$notification = NotificationService::send_proposal_email( $colaboracion_id );
+		$messages     = [
+			NotificationService::SENT     => __( '¡Propuesta de match enviada con éxito! La emisora receptora recibirá una notificación para comenzar a coordinar el proyecto.', 'radioedu-conecta' ),
+			NotificationService::DISABLED => __( '¡Propuesta de match enviada con éxito! La emisora receptora la verá en su panel de Colaboraciones.', 'radioedu-conecta' ),
+			NotificationService::FAILED   => __( '¡Propuesta de match enviada con éxito! No se ha podido enviar el aviso por correo, pero la emisora receptora la verá en su panel de Colaboraciones.', 'radioedu-conecta' ),
+		];
 
 		return new WP_REST_Response(
 			[
-				'success' => true,
-				'message' => __( '¡Propuesta de match enviada con éxito! La emisora receptora recibirá una notificación para comenzar a coordinar el proyecto.', 'radioedu-conecta' ),
-				'id'      => $colaboracion_id,
+				'success'      => true,
+				'message'      => $messages[ $notification ] ?? $messages[ NotificationService::FAILED ],
+				'id'           => $colaboracion_id,
+				'notificacion' => $notification,
 			],
 			201
 		);
@@ -475,15 +482,16 @@ class ColaboracionesController extends WP_REST_Controller {
 			sanitize_textarea_field( (string) $request->get_param( 'respuesta' ) )
 		);
 
-		if ( null !== $result ) {
+		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
 
 		return new WP_REST_Response(
 			[
-				'success' => true,
-				'message' => __( 'Estado de la colaboración actualizado correctamente.', 'radioedu-conecta' ),
-				'estado'  => $estado,
+				'success'      => true,
+				'message'      => __( 'Estado de la colaboración actualizado correctamente.', 'radioedu-conecta' ),
+				'estado'       => $estado,
+				'notificacion' => $result,
 			]
 		);
 	}
@@ -497,9 +505,12 @@ class ColaboracionesController extends WP_REST_Controller {
 	 * @param int    $id        ID de la colaboración.
 	 * @param string $estado    Nuevo estado: 'aceptada' o 'rechazada'.
 	 * @param string $respuesta Mensaje de respuesta ya sanitizado.
-	 * @return WP_Error|null Null si se resolvió correctamente; WP_Error en caso contrario.
+	 * @since 1.1 Returns the result of the notification instead of null on success.
+	 *
+	 * @return WP_Error|string NotificationService::SENT, FAILED or DISABLED when the proposal was
+	 *                         answered; WP_Error otherwise.
 	 */
-	public static function respond_to_proposal( int $id, string $estado, string $respuesta ): ?WP_Error {
+	public static function respond_to_proposal( int $id, string $estado, string $respuesta ): WP_Error|string {
 		if ( ! current_user_can( 'manage_radioedu' ) && ! current_user_can( 'propose_radioedu_colaboracion' ) && ! current_user_can( 'edit_radioedu_centros' ) ) {
 			return new WP_Error( 'radioedu_forbidden', __( 'No tienes permisos para realizar esta acción.', 'radioedu-conecta' ), [ 'status' => 403 ] );
 		}
@@ -543,9 +554,7 @@ class ColaboracionesController extends WP_REST_Controller {
 			);
 		}
 
-		NotificationService::send_status_update_email( $id, $estado );
-
-		return null;
+		return NotificationService::send_status_update_email( $id, $estado );
 	}
 
 	/**

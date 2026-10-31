@@ -25,6 +25,14 @@ class NotificationService {
 	private const HEADERS = [ 'Content-Type: text/plain; charset=UTF-8' ];
 
 	/**
+	 * Notification results: wp_mail() accepted the email, it could not be sent, or the setting
+	 * turns it off.
+	 */
+	public const SENT     = 'sent';
+	public const FAILED   = 'failed';
+	public const DISABLED = 'disabled';
+
+	/**
 	 * Obtiene el correo electrónico de contacto de un centro escolar (metadato o autor).
 	 *
 	 * @param int $centro_id ID del post radioedu_centro.
@@ -61,17 +69,18 @@ class NotificationService {
 	 * Envía notificación al coordinador del centro receptor cuando recibe una propuesta de match.
 	 *
 	 * @param int $colaboracion_id ID del registro de la colaboración.
-	 * @return bool True si se envió correctamente o las notificaciones están desactivadas.
+	 * @return string SENT when wp_mail() accepted the email (which does not prove delivery), FAILED when it
+	 *                could not be sent, DISABLED when the setting turns these notifications off.
 	 */
-	public static function send_proposal_email( int $colaboracion_id ): bool {
+	public static function send_proposal_email( int $colaboracion_id ): string {
 		// Comprobar si las notificaciones están activadas en los ajustes.
 		if ( '1' !== Settings::get( 'notify_on_proposal', '1' ) ) {
-			return true;
+			return self::DISABLED;
 		}
 
 		$colab = ColaboracionesTable::get_by_id( $colaboracion_id );
 		if ( null === $colab ) {
-			return false;
+			return self::FAILED;
 		}
 
 		$receptor_id     = (int) $colab->centro_receptor_id;
@@ -80,7 +89,7 @@ class NotificationService {
 
 		$email_dest = self::get_center_contact_email( $receptor_id );
 		if ( '' === $email_dest ) {
-			return false;
+			return self::FAILED;
 		}
 
 		$panel_url = admin_url( 'edit.php?post_type=radioedu_centro&page=radioedu-conecta-colaboraciones' );
@@ -122,7 +131,7 @@ class NotificationService {
 			__( 'RadioEdu Conecta - Red de Radios Escolares de Extremadura y del Mundo', 'radioedu-conecta' ),
 		];
 
-		return wp_mail( $email_dest, $subject, implode( "\n", $lines ), self::HEADERS );
+		return wp_mail( $email_dest, $subject, implode( "\n", $lines ), self::HEADERS ) ? self::SENT : self::FAILED;
 	}
 
 	/**
@@ -130,16 +139,16 @@ class NotificationService {
 	 *
 	 * @param int    $colaboracion_id ID de la colaboración.
 	 * @param string $nuevo_estado    Nuevo estado ('aceptada' o 'rechazada').
-	 * @return bool True si se envió o está desactivado.
+	 * @return string SENT, FAILED or DISABLED, as for send_proposal_email().
 	 */
-	public static function send_status_update_email( int $colaboracion_id, string $nuevo_estado ): bool {
+	public static function send_status_update_email( int $colaboracion_id, string $nuevo_estado ): string {
 		if ( '1' !== Settings::get( 'notify_on_status', '1' ) ) {
-			return true;
+			return self::DISABLED;
 		}
 
 		$colab = ColaboracionesTable::get_by_id( $colaboracion_id );
 		if ( null === $colab ) {
-			return false;
+			return self::FAILED;
 		}
 
 		$emisor_id       = (int) $colab->centro_emisor_id;
@@ -155,7 +164,7 @@ class NotificationService {
 		}
 
 		if ( '' === $email_dest ) {
-			return false;
+			return self::FAILED;
 		}
 
 		$estado_legible = 'aceptada' === $nuevo_estado
@@ -207,6 +216,6 @@ class NotificationService {
 		$lines[] = '--';
 		$lines[] = __( 'RadioEdu Conecta - Traspasando Fronteras', 'radioedu-conecta' );
 
-		return wp_mail( $email_dest, $subject, implode( "\n", $lines ), self::HEADERS );
+		return wp_mail( $email_dest, $subject, implode( "\n", $lines ), self::HEADERS ) ? self::SENT : self::FAILED;
 	}
 }

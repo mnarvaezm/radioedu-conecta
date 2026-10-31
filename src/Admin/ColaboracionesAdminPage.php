@@ -106,7 +106,7 @@ class ColaboracionesAdminPage {
 		}
 
 		$result = ColaboracionesController::respond_to_proposal( $colab_id, $estado, $respuesta );
-		if ( null !== $result ) {
+		if ( is_wp_error( $result ) ) {
 			$error_data = $result->get_error_data();
 			wp_die( esc_html( $result->get_error_message() ), '', [ 'response' => is_array( $error_data ) ? (int) $error_data['status'] : 500 ] );
 		}
@@ -116,6 +116,7 @@ class ColaboracionesAdminPage {
 				'post_type'     => CentroPostType::POST_TYPE,
 				'page'          => self::PAGE_SLUG,
 				'match_updated' => $estado,
+				'match_notice'  => $result,
 			],
 			admin_url( 'edit.php' )
 		);
@@ -145,6 +146,14 @@ class ColaboracionesAdminPage {
 		if ( ! in_array( $updated_status, ColaboracionesTable::RESPONSE_STATUSES, true ) ) {
 			$updated_status = '';
 		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only flag used to display a notice after the nonce-protected redirect.
+		$notification = isset( $_GET['match_notice'] ) ? sanitize_key( wp_unslash( $_GET['match_notice'] ) ) : NotificationService::SENT;
+		$notices      = [
+			NotificationService::SENT     => [ 'success', __( 'La respuesta a la propuesta de colaboración se ha guardado correctamente y se ha notificado al centro emisor.', 'radioedu-conecta' ) ],
+			NotificationService::DISABLED => [ 'success', __( 'La respuesta a la propuesta de colaboración se ha guardado correctamente.', 'radioedu-conecta' ) ],
+			NotificationService::FAILED   => [ 'warning', __( 'La respuesta a la propuesta de colaboración se ha guardado, pero no se ha podido enviar el aviso por correo al centro emisor.', 'radioedu-conecta' ) ],
+		];
+		$notice       = $notices[ $notification ] ?? $notices[ NotificationService::SENT ];
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Propuestas de Colaboración (Matches) - Traspasando Fronteras', 'radioedu-conecta' ); ?></h1>
@@ -155,9 +164,9 @@ class ColaboracionesAdminPage {
 			<?php
 			if ( '' !== $updated_status ) {
 				wp_admin_notice(
-					esc_html__( 'La respuesta a la propuesta de colaboración se ha guardado correctamente y se ha notificado al centro emisor.', 'radioedu-conecta' ),
+					esc_html( $notice[1] ),
 					[
-						'type'        => 'success',
+						'type'        => $notice[0],
 						'dismissible' => true,
 					]
 				);
@@ -269,7 +278,7 @@ class ColaboracionesAdminPage {
 							echo wp_kses_post(
 								(string) paginate_links(
 									[
-										'base'    => add_query_arg( 'paged', '%#%', remove_query_arg( 'match_updated' ) ),
+										'base'    => add_query_arg( 'paged', '%#%', remove_query_arg( [ 'match_updated', 'match_notice' ] ) ),
 										'format'  => '',
 										'current' => $paged,
 										'total'   => $pages,

@@ -11,6 +11,7 @@ namespace RadioEdu\Conecta\Tests;
 
 use RadioEdu\Conecta\Capabilities\RoleCapabilities;
 use RadioEdu\Conecta\Database\ColaboracionesTable;
+use RadioEdu\Conecta\Emails\NotificationService;
 use RadioEdu\Conecta\PostTypes\CentroPostType;
 use RadioEdu\Conecta\Privacy\PrivacyPolicy;
 use RadioEdu\Conecta\Rest\ColaboracionesController;
@@ -62,7 +63,7 @@ class PrivacyRepliesTest extends WP_UnitTestCase {
 	public function test_the_reply_is_exported_and_erased_for_the_person_who_wrote_it(): void {
 		$id = $this->proposal( $this->receiver_centro );
 		wp_set_current_user( $this->receiver );
-		$this->assertNull( ColaboracionesController::respond_to_proposal( $id, 'aceptada', 'Receiver personal reply' ) );
+		$this->assertSame( NotificationService::SENT, ColaboracionesController::respond_to_proposal( $id, 'aceptada', 'Receiver personal reply' ) );
 		$this->assertSame( $this->receiver, (int) ColaboracionesTable::get_by_id( $id )->usuario_respuesta_id );
 
 		$export = PrivacyPolicy::export_personal_data( 'receiver@example.org' );

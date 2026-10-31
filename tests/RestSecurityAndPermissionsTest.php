@@ -293,7 +293,7 @@ class RestSecurityAndPermissionsTest extends WP_UnitTestCase {
 		$this->assertSame( 500, $result->get_error_data()['status'] );
 		$this->assertSame( 'pendiente', ColaboracionesTable::get_by_id( $colab_id )->estado );
 
-		$this->assertNull( ColaboracionesController::respond_to_proposal( $colab_id, 'aceptada', '' ) );
+		$this->assertNotWPError( ColaboracionesController::respond_to_proposal( $colab_id, 'aceptada', '' ) );
 		$this->assertSame( 'aceptada', ColaboracionesTable::get_by_id( $colab_id )->estado );
 	}
 

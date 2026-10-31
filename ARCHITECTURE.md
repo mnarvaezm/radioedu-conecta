@@ -308,10 +308,11 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
   - `ColaboracionesController::user_can_manage_center( $centro_emisor_id, $user_id )` must be `true` (prevents spoofing another school's station).
   - Receiving center must be available (`_radioedu_disponible_colaborar !== '0'`).
 * **Rate Limiting:** Fixed 1-hour window allowing a maximum of 20 proposals per user per hour (`ColaboracionesController::RATE_LIMIT_PER_HOUR`, transient `radioedu_rate_{user_id}`). Returns `HTTP 429` if exceeded. It is an anti-spam limit, not a strict quota: the counter is read and then written, so simultaneous requests may exceed it by a few, which is accepted (audit finding S-02).
+* **Notification:** the `201` response includes `notificacion`: `sent` when `wp_mail()` accepted the email (which does not prove delivery), `failed` when it could not be sent (no contact email or a mail error) and `disabled` when the setting turns proposal emails off. The `message` matches it, so the sender is never promised an email that was not sent.
 
 ### 6.4 `PATCH /wp-json/radioedu-conecta/v1/colaboraciones/{id}`
 * **Permission:** Target station coordinator (`ColaboracionesController::user_can_manage_center( $centro_receptor_id )`) or Admin (`manage_radioedu`).
-* **Result:** Updates table record (`aceptada` or `rechazada`), sets `updated_at`, and triggers `NotificationService::send_status_update_email()`.
+* **Result:** Updates table record (`aceptada` or `rechazada`), sets `updated_at`, and triggers `NotificationService::send_status_update_email()`. The response includes `notificacion` with the same values as for proposals, and the **Colaboraciones (Matches)** screen shows a success or warning notice to match.
 * **Single response:** Only `pendiente` proposals can be answered (`ColaboracionesTable::resolve_pending()` conditions the `UPDATE` on `estado = 'pendiente'`). Unknown IDs return `404 radioedu_not_found`; already answered proposals return `409 radioedu_already_resolved` and no email is re-sent. The admin screen (`admin-post.php?action=radioedu_respond_match`) shares the same logic through `ColaboracionesController::respond_to_proposal()`.
 
 ---
