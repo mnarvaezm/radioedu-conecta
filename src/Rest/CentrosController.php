@@ -146,8 +146,7 @@ class CentrosController extends WP_REST_Controller {
 		if ( 'afines' === $orden ) {
 			// Default to the user's own centro so it sinks to the end. Global managers "manage" every
 			// centro, so their first one would be an arbitrary pick: leave them without a self centro.
-			$is_global_manager = current_user_can( 'manage_radioedu' ) || current_user_can( 'edit_others_radioedu_centros' );
-			if ( 0 === $afines_a && get_current_user_id() > 0 && ! $is_global_manager ) {
+			if ( 0 === $afines_a && get_current_user_id() > 0 && ! ColaboracionesController::user_manages_all_centers( get_current_user_id() ) ) {
 				$managed  = ColaboracionesController::get_user_managed_center_ids( get_current_user_id() );
 				$afines_a = $managed[0] ?? 0;
 			}
@@ -207,20 +206,13 @@ class CentrosController extends WP_REST_Controller {
 	/**
 	 * Obtiene los slugs de taxonomías del centro de referencia del usuario para calcular afinidad.
 	 *
-	 * @param int $center_id ID del centro de referencia.
+	 * The default reference is resolved once, in get_items(). 0 means there is none, so global managers,
+	 * who have no centro of their own, get no affinity scoring instead of their first centro's.
+	 *
+	 * @param int $center_id ID del centro de referencia, o 0.
 	 * @return array<int, int>
 	 */
 	private function get_reference_center_term_ids( int $center_id ): array {
-		if ( $center_id <= 0 ) {
-			$user_id = get_current_user_id();
-			if ( $user_id > 0 ) {
-				$managed = ColaboracionesController::get_user_managed_center_ids( $user_id );
-				if ( ! empty( $managed ) ) {
-					$center_id = $managed[0];
-				}
-			}
-		}
-
 		// Sólo centros publicados: evita revelar términos de borradores o centros privados a través de 'afines_a'.
 		if ( $center_id <= 0 || CentroPostType::POST_TYPE !== get_post_type( $center_id ) || 'publish' !== get_post_status( $center_id ) || '' !== get_post_field( 'post_password', $center_id ) ) {
 			return [];

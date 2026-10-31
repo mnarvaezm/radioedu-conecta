@@ -116,6 +116,19 @@ class SecurityRegressionTest extends WP_UnitTestCase {
 		$this->assertSame( [ $first, $second ], wp_list_pluck( rest_do_request( $request )->get_data()['centros'], 'id' ) );
 	}
 
+	public function test_global_managers_get_no_affinity_from_an_arbitrary_centro(): void {
+		$first  = $this->center( 0, [ 'post_title' => 'A tagged' ] );
+		$middle = $this->center( 0, [ 'post_title' => 'B untagged' ] );
+		$last   = $this->center( 0, [ 'post_title' => 'Z tagged' ] );
+		wp_set_object_terms( $first, [ 'Música' ], TaxonomiesRegistrar::TAX_TEMATICA );
+		wp_set_object_terms( $last, [ 'Música' ], TaxonomiesRegistrar::TAX_TEMATICA );
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
+		$request = new WP_REST_Request( 'GET', '/radioedu-conecta/v1/centros' );
+		$request->set_query_params( [ 'orden' => 'afines' ] );
+		// With "A tagged" as a hidden reference, "Z tagged" would jump ahead of "B untagged".
+		$this->assertSame( [ $first, $middle, $last ], wp_list_pluck( rest_do_request( $request )->get_data()['centros'], 'id' ) );
+	}
+
 	public function test_affinity_default_sinks_the_coordinators_own_centro(): void {
 		$author = self::factory()->user->create( [ 'role' => 'author' ] );
 		$own    = $this->center( $author, [ 'post_title' => 'A own school' ] );

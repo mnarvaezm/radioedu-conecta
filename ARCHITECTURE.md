@@ -292,7 +292,7 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
   - `per_page` (`int`, default: 24, max: 100): Centros per page.
   - `search` (`string`): Free-text search matching title/description.
   - `orden` (`enum`: `afines`, `recientes`, `alfa`): Ordering criteria (`afines` prioritizes available centers and ranks by shared taxonomy tags with the reference center, which is sorted last; the ordering runs in SQL, before pagination).
-  - `afines_a` (`int`, default: 0): Optional reference center ID. When omitted, the endpoint uses the logged-in coordinator's own center; global managers (`manage_radioedu` / `edit_others_radioedu_centros`) get no self center, so no arbitrary center is pushed to the end. The bundled directory JavaScript relies on this default and does not send the parameter.
+  - `afines_a` (`int`, default: 0): Optional reference center ID. When omitted, the endpoint uses the logged-in coordinator's own center; global managers (`manage_radioedu` / `edit_others_radioedu_centros`) get no reference at all: no arbitrary center is pushed to the end, and no center's terms drive the affinity score, so the results keep the title order. The default is resolved once, in `get_items()`. The bundled directory JavaScript relies on this default and does not send the parameter.
   - `etapa`, `idioma`, `tematica`, `formato`, `ubicacion` (`string`): Taxonomy slugs.
 
 ### 6.2 `GET /wp-json/radioedu-conecta/v1/colaboraciones`

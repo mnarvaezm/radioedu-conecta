@@ -122,6 +122,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * The proposals listing is paginated: the REST endpoint accepts `page` and `per_page` and returns `X-WP-Total`, and the admin screen shows 20 proposals per page. Before, proposals beyond the newest 100 could not be seen or answered.
 * Coordinators see the proposals of every station they manage, however many they have, and editors see every proposal. The sender selector lists up to 500 stations instead of 50 or 100.
 * Proposal and answer messages say what happened to the email: sent, turned off in the settings, or not sent. Before, they always promised a notification.
+* With "Más afines" sorting, administrators and editors, who have no station of their own, no longer get results ranked by the terms of the first station in alphabetical order.
 
 = 1.0.0 =
 * Interactive `[radioedu_directorio]` directory with faceted filters, affinity sorting, pagination and a locally bundled Leaflet map with prior consent for OpenStreetMap tiles.

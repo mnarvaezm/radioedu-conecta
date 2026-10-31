@@ -147,6 +147,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * El listado de propuestas tiene paginación: el endpoint REST acepta `page` y `per_page` y devuelve `X-WP-Total`, y la pantalla de administración muestra 20 propuestas por página. Antes, las propuestas posteriores a las 100 más recientes no se podían ver ni responder.
 * Los coordinadores ven las propuestas de todas las emisoras que gestionan, sean cuantas sean, y los editores ven todas las propuestas. El selector de centro emisor muestra hasta 500 en lugar de 50 o 100.
 * Los mensajes al enviar o responder una propuesta dicen qué ha pasado con el correo: enviado, desactivado en los ajustes o no enviado. Antes siempre prometían una notificación.
+* Con el orden *Más afines*, administradores y editores, que no tienen emisora propia, ya no ven los resultados ordenados según los términos de la primera emisora por orden alfabético.
 * Pruebas E2E con Playwright y `wp-env` (datos del centro en los paneles del editor de WordPress 7.1, incluido el logo, y bloque del directorio).
 
 ### 1.0.0
