@@ -27,8 +27,12 @@ class ColaboracionesController extends WP_REST_Controller {
 
 	/**
 	 * Número máximo de propuestas que un usuario puede enviar por hora.
+	 *
+	 * An anti-spam limit, not a quota: the counter is a transient that is read and then written, so
+	 * requests sent at the same moment may each get through and exceed it by a few (audit finding
+	 * S-02, accepted).
 	 */
-	private const RATE_LIMIT_PER_HOUR = 10;
+	public const RATE_LIMIT_PER_HOUR = 20;
 
 	/**
 	 * Namespace de la REST API de RadioEdu Conecta.

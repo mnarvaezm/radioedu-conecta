@@ -227,6 +227,31 @@ class RestSecurityAndPermissionsTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A coordinator sends up to 20 proposals per hour; the next one gets a 429.
+	 */
+	public function test_proposals_are_limited_to_twenty_per_hour(): void {
+		$coord    = self::factory()->user->create( [ 'role' => 'author' ] );
+		$sender   = self::factory()->post->create( [ 'post_type' => CentroPostType::POST_TYPE, 'post_status' => 'publish', 'post_author' => $coord ] );
+		$receiver = self::factory()->post->create( [ 'post_type' => CentroPostType::POST_TYPE, 'post_status' => 'publish' ] );
+		$this->assertSame( 20, ColaboracionesController::RATE_LIMIT_PER_HOUR );
+
+		$controller = new ColaboracionesController();
+		wp_set_current_user( $coord );
+		$request = new WP_REST_Request( 'POST', '/radioedu-conecta/v1/colaboraciones' );
+		$request->set_param( 'centro_emisor_id', $sender );
+		$request->set_param( 'centro_receptor_id', $receiver );
+		$request->set_param( 'idea_proyecto', 'Podcast conjunto' );
+		for ( $i = 1; $i <= 20; ++$i ) {
+			$this->assertSame( 201, $controller->create_item( $request )->get_status(), "Proposal $i" );
+		}
+
+		$over = $controller->create_item( $request );
+		$this->assertWPError( $over );
+		$this->assertSame( 'radioedu_rate_limit', $over->get_error_code() );
+		$this->assertSame( 429, $over->get_error_data()['status'] );
+	}
+
+	/**
 	 * A database error while answering is a retryable 500, not "already answered".
 	 */
 	public function test_a_storage_error_while_answering_is_not_reported_as_already_answered(): void {

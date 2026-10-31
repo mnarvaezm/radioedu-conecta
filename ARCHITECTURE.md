@@ -306,7 +306,7 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
   - Both centers must have `post_type === 'radioedu_centro'` and `post_status === 'publish'`.
   - `ColaboracionesController::user_can_manage_center( $centro_emisor_id, $user_id )` must be `true` (prevents spoofing another school's station).
   - Receiving center must be available (`_radioedu_disponible_colaborar !== '0'`).
-* **Rate Limiting:** Fixed 1-hour window allowing a maximum of 10 proposals per user per hour (`radioedu_rate_{user_id}`). Returns `HTTP 429` if exceeded.
+* **Rate Limiting:** Fixed 1-hour window allowing a maximum of 20 proposals per user per hour (`ColaboracionesController::RATE_LIMIT_PER_HOUR`, transient `radioedu_rate_{user_id}`). Returns `HTTP 429` if exceeded. It is an anti-spam limit, not a strict quota: the counter is read and then written, so simultaneous requests may exceed it by a few, which is accepted (audit finding S-02).
 
 ### 6.4 `PATCH /wp-json/radioedu-conecta/v1/colaboraciones/{id}`
 * **Permission:** Target station coordinator (`ColaboracionesController::user_can_manage_center( $centro_receptor_id )`) or Admin (`manage_radioedu`).

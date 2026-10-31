@@ -28,7 +28,7 @@
 3. **Ficha de Perfil Individual de la Emisora (`single-radioedu_centro`)**:
    - Diseño dedicado con imagen de cabecera a ancho completo, insignia de disponibilidad, logotipo circular superpuesto, nombre del centro, bandera y localización, píldoras de colores por categoría, tarjetas de edades e idiomas, enlaces al Podcast/Streaming y Web oficial, texto descriptivo y botón para **Proponer match directamente desde el perfil**.
 4. **Sistema de Propuestas de Colaboración ("Matches") y Privacidad RGPD**:
-   - Envío de propuestas mediante panel lateral desplegable (*Drawer*) desde el directorio o desde la ficha de cada emisora, con validación anti-suplantación (anti-IDOR) y límite de peticiones (*Rate Limiting* de 10 propuestas/hora).
+   - Envío de propuestas mediante panel lateral desplegable (*Drawer*) desde el directorio o desde la ficha de cada emisora, con validación anti-suplantación (anti-IDOR) y límite de peticiones (*Rate Limiting* de 20 propuestas/hora).
    - **Privacidad asimétrica**: Los correos electrónicos de los docentes coordinadores nunca se exponen en el HTML ni en la REST API pública. El contacto se revela únicamente por correo interno cuando el centro receptor acepta la propuesta.
    - **Panel de gestión en WP Admin (`RadioEdu Centros → Colaboraciones (Matches)`)**: Permite a los coordinadores y administradores consultar las solicitudes recibidas/enviadas y **Aceptar** o **Declinar** propuestas con un mensaje de respuesta.
    - Integración nativa con las herramientas de **Privacidad de WordPress** (exportador y borrador de datos personales RGPD y texto sugerido para la política de privacidad).
@@ -143,6 +143,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * Un error de base de datos al responder una propuesta devuelve un error reintentable en lugar de «ya respondida».
 * En el directorio, la respuesta tardía a una propuesta enviada antes de cerrar el panel ya no cambia el panel abierto para otra emisora.
 * El límite de *Radios por usuario* también se aplica cuando un coordinador restaura una emisora desde la papelera o guarda una segunda pestaña de *Añadir nuevo* abierta antes de llegar al límite.
+* Cada coordinador puede enviar hasta 20 propuestas por hora en lugar de 10. Es un límite contra el spam: varias peticiones simultáneas pueden superarlo en alguna.
 * Pruebas E2E con Playwright y `wp-env` (datos del centro en los paneles del editor de WordPress 7.1, incluido el logo, y bloque del directorio).
 
 ### 1.0.0
