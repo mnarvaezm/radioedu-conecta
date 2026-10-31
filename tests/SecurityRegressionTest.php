@@ -238,4 +238,17 @@ class SecurityRegressionTest extends WP_UnitTestCase {
 		$this->assertSame( '1', get_post_meta( $page, '_radioedu_conecta_demo', true ) );
 		$this->assertSame( $page, (int) get_option( 'radioedu_conecta_directory_page_id' ) );
 	}
+
+	public function test_demo_images_only_fill_in_for_marked_demo_centros(): void {
+		$real = $this->center( 0, [ 'post_name' => 'ceip-san-jose-de-calasanz' ] );
+		$demo = $this->center( 0, [ 'post_name' => 'ceip-san-jose' ] );
+		update_post_meta( $demo, '_radioedu_conecta_demo', '1' );
+		$this->assertSame( '', DemoDataImporter::get_demo_image_url( $real, 'logo' ) );
+		$this->assertStringEndsWith( '/assets/images/demo/logo-san-jose.jpg', DemoDataImporter::get_demo_image_url( $demo, 'logo' ) );
+		$response = rest_do_request( new WP_REST_Request( 'GET', '/radioedu-conecta/v1/centros' ) );
+		$centros  = array_column( $response->get_data()['centros'], null, 'id' );
+		$this->assertSame( '', $centros[ $real ]['logo_radio'] );
+		$this->assertSame( '', $centros[ $real ]['foto_cabecera'] );
+		$this->assertNotSame( '', $centros[ $demo ]['logo_radio'] );
+	}
 }

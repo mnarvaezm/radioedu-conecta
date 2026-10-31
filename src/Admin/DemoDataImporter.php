@@ -24,6 +24,11 @@ class DemoDataImporter {
 	public const NONCE_NAME   = 'radioedu_import_demo_nonce';
 
 	/**
+	 * Post meta that marks the centros and the page created by this importer.
+	 */
+	public const DEMO_META = '_radioedu_conecta_demo';
+
+	/**
 	 * Imágenes de ejemplo empaquetadas: fragmento del slug del centro => sufijo del fichero.
 	 */
 	private const DEMO_IMAGES = [
@@ -38,12 +43,18 @@ class DemoDataImporter {
 	/**
 	 * Devuelve la URL de la imagen empaquetada de un centro de ejemplo.
 	 *
-	 * @param string $post_name Slug del centro.
-	 * @param string $type      'header' (portada) o 'logo'.
+	 * Only centros marked by this importer get one: real schools often share a slug fragment
+	 * with a demo centro (a "CEIP San José", an "IES La Marisma") and must not show its images.
+	 *
+	 * @since 1.1 Takes the centro ID and requires the demo marker.
+	 *
+	 * @param int    $post_id ID del centro.
+	 * @param string $type    'header' (portada) o 'logo'.
 	 * @return string URL de la imagen o cadena vacía si el centro no es de ejemplo.
 	 */
-	public static function get_demo_image_url( string $post_name, string $type ): string {
-		if ( '' === $post_name || ! in_array( $type, [ 'header', 'logo' ], true ) ) {
+	public static function get_demo_image_url( int $post_id, string $type ): string {
+		$post_name = (string) get_post_field( 'post_name', $post_id );
+		if ( '' === $post_name || ! in_array( $type, [ 'header', 'logo' ], true ) || '1' !== get_post_meta( $post_id, self::DEMO_META, true ) ) {
 			return '';
 		}
 

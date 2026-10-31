@@ -110,6 +110,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * Accessibility: every page has a single main landmark. The directory no longer adds a nested `<main>` or a `<header>` inside the content, and its results are a named region. With classic themes, the profile page provides `<main>` and the skip link target only when the theme's header does not.
 * Admin notices use `wp_admin_notice()`.
 * The full Leaflet license text ships in `assets/leaflet-LICENSE.txt`.
+* The bundled demo images appear only on demo stations, not on real schools whose slug contains "san-jose" or "la-mar".
 
 = 1.0.0 =
 * Interactive `[radioedu_directorio]` directory with faceted filters, affinity sorting, pagination and a locally bundled Leaflet map with prior consent for OpenStreetMap tiles.

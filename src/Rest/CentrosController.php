@@ -259,12 +259,11 @@ class CentrosController extends WP_REST_Controller {
 		}
 
 		// Fallback automático para centros de ejemplo si no tienen imagen personalizada asignada.
-		$post_name = (string) get_post_field( 'post_name', $post_id );
 		if ( '' === $thumb_url ) {
-			$thumb_url = DemoDataImporter::get_demo_image_url( $post_name, 'header' );
+			$thumb_url = DemoDataImporter::get_demo_image_url( $post_id, 'header' );
 		}
 		if ( '' === $logo_url ) {
-			$logo_url = DemoDataImporter::get_demo_image_url( $post_name, 'logo' );
+			$logo_url = DemoDataImporter::get_demo_image_url( $post_id, 'logo' );
 		}
 
 		$bandera    = (string) get_post_meta( $post_id, '_radioedu_bandera', true );

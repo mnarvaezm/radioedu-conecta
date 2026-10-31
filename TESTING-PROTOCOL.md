@@ -26,7 +26,7 @@ docker compose -f docker-compose.test.yml up -d
 1. Accede a `http://localhost:8090/wp-admin` e inicia sesión.
 2. En **Plugins → Plugins instalados**, activa **RadioEdu Conecta**.
 3. La activación no crea contenido. Carga las **6 emisoras de demostración** (con sus imágenes de cabecera y logotipos) y la página `/traspasando-fronteras/` con el shortcode `[radioedu_directorio]` desde **RadioEdu Centros → Ajustes → "Sincronizar / Cargar las 6 emisoras de ejemplo"**.
-4. Puedes repetir la sincronización cuando quieras: solo actualiza los centros de demostración y nunca sobrescribe un centro real aunque comparta el slug.
+4. Puedes repetir la sincronización cuando quieras: solo actualiza los centros de demostración y nunca sobrescribe un centro real aunque comparta el slug. Las imágenes de ejemplo solo aparecen en los centros de demostración: un centro real llamado, por ejemplo, «CEIP San José de Calasanz» no muestra el logo de «CEIP San José».
 
 ### Paso 1.3: Verificar Tabla Personalizada y Logs
 ```powershell
