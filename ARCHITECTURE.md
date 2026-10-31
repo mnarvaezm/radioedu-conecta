@@ -121,7 +121,10 @@ c:\radioedu-conecta\
 │   ├── directorio.js / directorio.asset.php # Compiled directorio.js + dependencies (wp-a11y, wp-i18n)
 │   └── network-sync.js / network-sync.asset.php # Compiled network sync + dependencies (wp-api-fetch, wp-a11y, wp-dom-ready, wp-i18n)
 ├── languages/
-│   └── radioedu-conecta.pot             # GNU gettext internationalization template
+│   ├── radioedu-conecta.pot             # GNU gettext internationalization template (Spanish source strings)
+│   ├── radioedu-conecta-{locale}.po     # Editable translations: ca, ca_valencia, gl_ES, eu
+│   ├── radioedu-conecta-{locale}.mo / .l10n.php # Compiled PHP translations (WordPress prefers .l10n.php)
+│   └── radioedu-conecta-{locale}-{md5}.json # Script translations, one per build/*.js (md5 of its relative path)
 ├── tests/                               # PHPUnit (single site + Multisite) and tests/e2e Playwright specs (not shipped)
 └── vendor/
     └── autoload.php                     # Composer generated PSR-4 class loader
@@ -343,6 +346,17 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
 4. The main panel opens automatically the first time each user edits a centro, tracked with the `radioedu-conecta/centroPanelOpened` preference. Afterwards the editor remembers whether the user closed it.
 5. The classic meta box (`CentroMetaBoxes`) is registered with `__back_compat_meta_box`, so only the classic editor shows it, and `admin.js` loads only there.
 6. The logo controls have no `<label for>`, so the buttons keep their own text as accessible name (WCAG 2.5.3). After **Eliminar logo**, focus returns to **Subir / Elegir Logo**.
+
+### 7.6 Internationalization (bundled translations)
+1. The source strings are Spanish. `languages/` ships Catalan (`ca`), Valencian (`ca_valencia`), Galician (`gl_ES`) and Basque (`eu`), all with `nplurals=2`.
+2. **PHP:** `radioedu_conecta_load_textdomain()` (`init`, priority 0, in the main file, outside the requirements check so the requirement notices are translated too) calls `load_plugin_textdomain()` to register the folder.
+   - WordPress 7.1 loads translations just in time. It looks in `wp-content/languages/plugins` first and in the registered folder last, so official language packs win.
+   - Without the call, WordPress never reads `languages/`. Plugin Check flags the call for plugins hosted on WordPress.org; the `phpcs:ignore` next to it records why it is needed here.
+3. **Scripts:** each `wp_set_script_translations()` call passes `languages/`. WordPress looks for `radioedu-conecta-{locale}-{md5}.json`, where md5 is the hash of the script path relative to the plugin (`build/directorio.js`), and prints it inline before the script.
+4. **Build:** `wp i18n make-json --no-purge --use-map=bin/i18n-js-map.json`, then `make-mo` and `make-php`.
+   - The map works around WP-CLI 2.12, which strips `.min` with an unescaped regex and turns `build/admin.js` into `build/a.js`. It also limits the JSON files to the four scripts, so new scripts must be added to it.
+   - `--no-purge` keeps script strings in the `.po`/`.mo`, because some are shared with PHP.
+5. **Tests:** `TranslationsTest` checks the `init` registration, a PHP string in each locale, the JSON of every script in each locale and the plural forms.
 
 ---
 

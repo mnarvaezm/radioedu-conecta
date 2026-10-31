@@ -51,7 +51,7 @@
 
 ## Desarrollo
 
-El JavaScript fuente (`assets/js/admin.js`, `assets/js/centro-panel.js`, `assets/js/directorio.js`) usa paquetes `@wordpress/*` (JSX y componentes del editor en los paneles del centro), así que el navegador solo puede ejecutar la versión compilada en `build/`. Esos paquetes los aporta WordPress como scripts del core: no se instalan con npm y [eslint.config.cjs](eslint.config.cjs) los declara para el lint. La carpeta `build/` se versiona y la CI comprueba que está al día:
+El JavaScript fuente (`assets/js/admin.js`, `assets/js/centro-panel.js`, `assets/js/directorio.js`, `assets/js/network-sync.js`) usa paquetes `@wordpress/*` (JSX y componentes del editor en los paneles del centro), así que el navegador solo puede ejecutar la versión compilada en `build/`. Esos paquetes los aporta WordPress como scripts del core: no se instalan con npm y [eslint.config.cjs](eslint.config.cjs) los declara para el lint. La carpeta `build/` se versiona y la CI comprueba que está al día:
 
 ```bash
 npm ci
@@ -61,6 +61,22 @@ npm run build    # regenera build/*.js y build/*.asset.php; haz commit del resul
 Si falta `build/`, el plugin no falla: el directorio se muestra sin la parte interactiva y el editor de centros, sin los paneles de datos.
 
 El bloque del directorio no necesita JavaScript de editor: se registra solo con PHP (`supports.autoRegister`) y WordPress lo previsualiza en el editor con ServerSideRender.
+
+### Traducciones
+
+Las cadenas fuente están en castellano. `languages/` incluye catalán (`ca`), valenciano (`ca_valencia`), gallego (`gl_ES`) y euskera (`eu`). De cada idioma hay un `.po` editable y tres ficheros compilados: `.mo` y `.l10n.php` para PHP, y un `.json` por script de `build/`. Tras cambiar cadenas o traducciones, regenera con [WP-CLI](https://wp-cli.org/) desde la raíz del repositorio:
+
+```bash
+wp i18n make-pot . languages/radioedu-conecta.pot --exclude=node_modules,vendor,tests,dist,assets/js,artifacts
+wp i18n update-po languages/radioedu-conecta.pot languages/   # añade las cadenas nuevas a cada .po; tradúcelas (p. ej. con Poedit)
+wp i18n make-json languages/ --no-purge --use-map=bin/i18n-js-map.json
+wp i18n make-mo languages/
+wp i18n make-php languages/
+```
+
+- **Por qué el mapa** [bin/i18n-js-map.json](bin/i18n-js-map.json): WP-CLI 2.12 quita el sufijo `.min` con una expresión regular sin escapar y convierte `build/admin.js` en `build/a.js`. El `.json` resultante tendría un nombre que WordPress nunca busca, y el mapa lo evita.
+- **Scripts nuevos:** `make-json` ignora los que no están en el mapa, así que añade ahí cada script nuevo de `build/`.
+- **Control automático:** `tests/TranslationsTest.php` falla si a algún script le falta su `.json`.
 
 Pruebas de extremo a extremo (Playwright) en un sitio desechable con [`wp-env`](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-env/) (requiere Docker):
 
@@ -90,6 +106,9 @@ Sí. En **Administración de la red → Ajustes → RadioEdu Conecta**, el botó
 
 La sincronización es manual, por lotes con barra de progreso, y solo la puede lanzar un superadministrador. El plugin debe estar activo en el sitio principal; lo recomendable es activarlo en red.
 
+### ¿En qué idiomas está disponible?
+En castellano, con traducciones incluidas al catalán, valenciano, gallego y euskera, tanto de las pantallas como de los scripts (directorio, paneles del editor y sincronización de red). WordPress las usa solo cuando el idioma del sitio o del usuario es uno de esos (**Ajustes → Generales → Idioma del sitio**, o el perfil de cada usuario). Si algún día hay paquetes de idioma oficiales en translate.wordpress.org, tienen prioridad sobre los incluidos.
+
 ### ¿Se publican los correos electrónicos de los docentes en la web?
 No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se exponen en el DOM ni en el endpoint público `/wp-json/radioedu-conecta/v1/centros`. Las notificaciones se gestionan internamente en el servidor mediante `wp_mail()` y solo se comparten los datos de contacto cuando un centro acepta formalmente un match.
 
@@ -111,6 +130,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * El directorio ordena por afinidad antes de paginar, cancela las búsquedas obsoletas, anuncia los errores de carga con opción de reintentar y funciona con enlaces permanentes simples.
 * La exportación y el borrado de datos personales se hacen por lotes, y las tareas de red recorren los sitios en lotes de 100.
 * Scripts compilados con `@wordpress/scripts` y traducidos con `wp_set_script_translations()`. Sin `build/`, las páginas cargan igualmente, sin interactividad.
+* Traducciones incluidas al catalán, valenciano, gallego y euskera, para PHP y para los scripts. Los paquetes de idioma oficiales, si existen, tienen prioridad.
 * Accesibilidad: foco visible, contraste AA en el color de acento y en los estados, y el botón *Subir / Elegir Logo* conserva su texto como nombre accesible (WCAG 2.5.3).
 * Avisos de administración con `wp_admin_notice()`.
 * Pruebas E2E con Playwright y `wp-env` (datos del centro en los paneles del editor de WordPress 7.1, incluido el logo, y bloque del directorio).

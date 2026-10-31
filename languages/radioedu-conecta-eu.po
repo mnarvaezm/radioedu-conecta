@@ -1,0 +1,1944 @@
+# Basque translation of RadioEdu Conecta.
+# Copyright (C) 2026 RadioEdu - Consejería de Educación, Ciencia y Formación Profesional (Junta de Extremadura)
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: RadioEdu Conecta 1.1\n"
+"Report-Msgid-Bugs-To: https://radioedu.educarex.es\n"
+"Last-Translator: RadioEdu <radioedu@educarex.es>\n"
+"Language-Team: Basque\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-10-31T15:33:36+00:00\n"
+"PO-Revision-Date: 2026-10-31 17:59+0000\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: radioedu-conecta\n"
+"Language: eu\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. Plugin Name of the plugin
+#: radioedu-conecta.php
+#: src/Admin/NetworkSyncPage.php:58
+#: src/Icons.php:39
+msgid "RadioEdu Conecta"
+msgstr "RadioEdu Conecta"
+
+#. Plugin URI of the plugin
+#: radioedu-conecta.php
+msgid "https://radioedu.educarex.es/conecta"
+msgstr "https://radioedu.educarex.es/conecta"
+
+#. Description of the plugin
+#: radioedu-conecta.php
+msgid "Directorio interactivo y sistema colaborativo (\"Traspasando Fronteras\") para la red de radios escolares de Extremadura y del mundo."
+msgstr "Direktorio interaktiboa eta lankidetza-sistema (\"Traspasando Fronteras\"), Extremadurako eta munduko eskola-irratien sarearentzat."
+
+#. Author of the plugin
+#: radioedu-conecta.php
+msgid "RadioEdu - Consejería de Educación, Ciencia y Formación Profesional (Junta de Extremadura)"
+msgstr "RadioEdu - Consejería de Educación, Ciencia y Formación Profesional (Junta de Extremadura)"
+
+#. Author URI of the plugin
+#: radioedu-conecta.php
+msgid "https://radioedu.educarex.es"
+msgstr "https://radioedu.educarex.es"
+
+#. translators: 1: Required PHP version, 2: Current PHP version
+#: radioedu-conecta.php:74
+#, php-format
+msgid "RadioEdu Conecta requires PHP version %1$s or higher. Your server is running PHP %2$s."
+msgstr "RadioEdu Conectak PHP %1$s edo berriagoa behar du. Zure zerbitzariak PHP %2$s erabiltzen du."
+
+#. translators: 1: Required WordPress version, 2: Current WordPress version
+#: radioedu-conecta.php:92
+#, php-format
+msgid "RadioEdu Conecta requires WordPress %1$s or higher. You are using WordPress %2$s."
+msgstr "RadioEdu Conectak WordPress %1$s edo berriagoa behar du. WordPress %2$s erabiltzen ari zara."
+
+#: radioedu-conecta.php:176
+#: src/Admin/Settings.php:52
+msgid "Ajustes"
+msgstr "Ezarpenak"
+
+#: src/Admin/CentroEditorPanel.php:89
+#: src/Admin/CentroMetaBoxes.php:206
+msgid "-- Selecciona región o país --"
+msgstr "-- Hautatu eskualdea edo herrialdea --"
+
+#: src/Admin/CentroMetaBoxes.php:48
+msgid "Extremadura (España)"
+msgstr "Extremadura (Espainia)"
+
+#: src/Admin/CentroMetaBoxes.php:49
+msgid "Andalucía (España)"
+msgstr "Andaluzia (Espainia)"
+
+#: src/Admin/CentroMetaBoxes.php:50
+msgid "Aragón (España)"
+msgstr "Aragoi (Espainia)"
+
+#: src/Admin/CentroMetaBoxes.php:51
+msgid "Asturias (España)"
+msgstr "Asturias (Espainia)"
+
+#: src/Admin/CentroMetaBoxes.php:52
+msgid "Cantabria (España)"
+msgstr "Kantabria (Espainia)"
+
+#: src/Admin/CentroMetaBoxes.php:53
+msgid "Castilla y León (España)"
+msgstr "Gaztela eta Leon (Espainia)"
+
+#: src/Admin/CentroMetaBoxes.php:54
+msgid "Castilla-La Mancha (España)"
+msgstr "Gaztela-Mantxa (Espainia)"
+
+#: src/Admin/CentroMetaBoxes.php:55
+msgid "Cataluña (España)"
+msgstr "Katalunia (Espainia)"
+
+#: src/Admin/CentroMetaBoxes.php:56
+msgid "Comunidad Valenciana (España)"
+msgstr "Valentziako Erkidegoa (Espainia)"
+
+#: src/Admin/CentroMetaBoxes.php:57
+msgid "Galicia (España)"
+msgstr "Galizia (Espainia)"
+
+#: src/Admin/CentroMetaBoxes.php:58
+msgid "Islas Baleares (España)"
+msgstr "Balear Uharteak (Espainia)"
+
+#: src/Admin/CentroMetaBoxes.php:59
+msgid "Islas Canarias (España)"
+msgstr "Kanariak (Espainia)"
+
+#: src/Admin/CentroMetaBoxes.php:60
+msgid "La Rioja (España)"
+msgstr "Errioxa (Espainia)"
+
+#: src/Admin/CentroMetaBoxes.php:61
+msgid "Madrid (España)"
+msgstr "Madril (Espainia)"
+
+#: src/Admin/CentroMetaBoxes.php:62
+msgid "Murcia (España)"
+msgstr "Murtzia (Espainia)"
+
+#: src/Admin/CentroMetaBoxes.php:63
+msgid "Navarra (España)"
+msgstr "Nafarroa (Espainia)"
+
+#: src/Admin/CentroMetaBoxes.php:64
+msgid "País Vasco (España)"
+msgstr "Euskadi (Espainia)"
+
+#: src/Admin/CentroMetaBoxes.php:65
+msgid "España (General)"
+msgstr "Espainia (orokorra)"
+
+#: src/Admin/CentroMetaBoxes.php:66
+msgid "Portugal"
+msgstr "Portugal"
+
+#: src/Admin/CentroMetaBoxes.php:67
+msgid "Francia"
+msgstr "Frantzia"
+
+#: src/Admin/CentroMetaBoxes.php:68
+msgid "Italia"
+msgstr "Italia"
+
+#: src/Admin/CentroMetaBoxes.php:69
+msgid "Irlanda"
+msgstr "Irlanda"
+
+#: src/Admin/CentroMetaBoxes.php:70
+msgid "Reino Unido"
+msgstr "Erresuma Batua"
+
+#: src/Admin/CentroMetaBoxes.php:71
+msgid "Alemania"
+msgstr "Alemania"
+
+#: src/Admin/CentroMetaBoxes.php:72
+msgid "Unión Europea / Internacional"
+msgstr "Europar Batasuna / Nazioartekoa"
+
+#: src/Admin/CentroMetaBoxes.php:73
+msgid "México"
+msgstr "Mexiko"
+
+#: src/Admin/CentroMetaBoxes.php:74
+msgid "Argentina"
+msgstr "Argentina"
+
+#: src/Admin/CentroMetaBoxes.php:75
+msgid "Colombia"
+msgstr "Kolonbia"
+
+#: src/Admin/CentroMetaBoxes.php:76
+msgid "Chile"
+msgstr "Txile"
+
+#: src/Admin/CentroMetaBoxes.php:77
+msgid "Otro / Internacional"
+msgstr "Beste bat / Nazioartekoa"
+
+#: src/Admin/CentroMetaBoxes.php:138
+msgid "Datos de la Emisora y Coordinación (Traspasando Fronteras)"
+msgstr "Irratiaren eta koordinazioaren datuak (Traspasando Fronteras)"
+
+#: src/Admin/CentroMetaBoxes.php:181
+#: build/centro-panel.js:1
+msgid "Logo de la Radio Escolar"
+msgstr "Eskola-irratiaren logoa"
+
+#: src/Admin/CentroMetaBoxes.php:186
+#: build/admin.js:1
+#: build/centro-panel.js:1
+msgid "Logo de la radio"
+msgstr "Irratiaren logoa"
+
+#: src/Admin/CentroMetaBoxes.php:188
+#: build/admin.js:1
+#: build/centro-panel.js:1
+msgid "No hay logo asignado. Se mostrará un icono por defecto."
+msgstr "Ez dago logorik esleituta. Ikono lehenetsi bat erakutsiko da."
+
+#: src/Admin/CentroMetaBoxes.php:192
+#: build/centro-panel.js:1
+msgid "Subir / Elegir Logo"
+msgstr "Igo / Aukeratu logoa"
+
+#: src/Admin/CentroMetaBoxes.php:193
+#: build/centro-panel.js:1
+msgid "Eliminar logo"
+msgstr "Kendu logoa"
+
+#: src/Admin/CentroMetaBoxes.php:195
+#: build/centro-panel.js:1
+msgid "Imagen circular distintiva de la emisora escolar (recomendado 300x300 px formato PNG o JPG)."
+msgstr "Eskola-irratia bereizten duen irudi biribila (300x300 px gomendatzen da, PNG edo JPG formatuan)."
+
+#: src/Admin/CentroMetaBoxes.php:202
+#: build/centro-panel.js:1
+msgid "Bandera / Región"
+msgstr "Bandera / Eskualdea"
+
+#: src/Admin/CentroMetaBoxes.php:213
+#: build/centro-panel.js:1
+msgid "Determina la bandera mostrada en la tarjeta de resultados y filtros geográficos."
+msgstr "Emaitzen txartelean eta iragazki geografikoetan erakusten den bandera zehazten du."
+
+#: src/Admin/CentroMetaBoxes.php:219
+msgid "Coordenadas para el Mapa"
+msgstr "Maparako koordenatuak"
+
+#: src/Admin/CentroMetaBoxes.php:221
+msgid "Latitud:"
+msgstr "Latitudea:"
+
+#: src/Admin/CentroMetaBoxes.php:224
+msgid "Longitud:"
+msgstr "Longitudea:"
+
+#: src/Admin/CentroMetaBoxes.php:227
+#: build/centro-panel.js:1
+msgid "Coordenadas decimales para ubicar el centro en el mapa interactivo (ej. Cáceres: 39.4699, -6.3708)."
+msgstr "Ikastetxea mapa interaktiboan kokatzeko koordenatu hamartarrak (adib. Cáceres: 39.4699, -6.3708)."
+
+#: src/Admin/CentroMetaBoxes.php:234
+#: build/centro-panel.js:1
+msgid "URL de Podcast / Streaming"
+msgstr "Podcastaren / streamingaren URLa"
+
+#: src/Admin/CentroMetaBoxes.php:238
+#: build/centro-panel.js:1
+msgid "Enlace donde se pueden escuchar las grabaciones o emisiones del centro escolar."
+msgstr "Ikastetxeko grabazioak edo emisioak entzuteko esteka."
+
+#: src/Admin/CentroMetaBoxes.php:245
+#: build/centro-panel.js:1
+msgid "Web Oficial del Centro"
+msgstr "Ikastetxearen webgune ofiziala"
+
+#: src/Admin/CentroMetaBoxes.php:255
+#: build/centro-panel.js:1
+msgid "Cursos / Edades del Alumnado"
+msgstr "Ikasleen mailak / adinak"
+
+#: src/Admin/CentroMetaBoxes.php:259
+#: build/centro-panel.js:1
+msgid "Informa a otros centros sobre el grupo de edad de los alumnos que participan en la radio."
+msgstr "Irratian parte hartzen duten ikasleen adin-taldearen berri ematen die beste ikastetxeei."
+
+#: src/Admin/CentroMetaBoxes.php:266
+#: build/centro-panel.js:1
+msgid "Coordinador/a Responsable"
+msgstr "Koordinatzaile arduraduna"
+
+#: src/Admin/CentroMetaBoxes.php:269
+#: build/centro-panel.js:1
+msgid "Nombre del docente coordinador"
+msgstr "Irakasle koordinatzailearen izena"
+
+#: src/Admin/CentroMetaBoxes.php:271
+msgid "Email:"
+msgstr "Helbide elektronikoa:"
+
+#: src/Admin/CentroMetaBoxes.php:275
+#: build/centro-panel.js:1
+msgid "Aviso de Privacidad (RGPD):"
+msgstr "Pribatutasun-oharra (DBEO):"
+
+#: src/Admin/CentroMetaBoxes.php:276
+#: build/centro-panel.js:1
+msgid "El correo NO se publicará en el directorio público. Se emplea exclusivamente para avisos internos del sistema cuando otro centro envíe una propuesta de colaboración."
+msgstr "Helbide elektronikoa EZ da direktorio publikoan argitaratuko. Sistemaren barne-abisuetarako soilik erabiltzen da, beste ikastetxe batek lankidetza-proposamen bat bidaltzen duenean."
+
+#: src/Admin/CentroMetaBoxes.php:283
+msgid "Estado de Colaboración"
+msgstr "Lankidetza-egoera"
+
+#: src/Admin/CentroMetaBoxes.php:288
+#: build/centro-panel.js:1
+msgid "Disponible para recibir propuestas de match y proyectos conjuntos"
+msgstr "Match proposamenak eta proiektu bateratuak jasotzeko prest"
+
+#: src/Admin/ColaboracionesAdminPage.php:71
+msgid "Propuestas de Colaboración (Matches)"
+msgstr "Lankidetza-proposamenak (matchak)"
+
+#: src/Admin/ColaboracionesAdminPage.php:72
+msgid "Colaboraciones (Matches)"
+msgstr "Lankidetzak (matchak)"
+
+#: src/Admin/ColaboracionesAdminPage.php:84
+#: src/Admin/DemoDataImporter.php:72
+#: src/Rest/ColaboracionesController.php:298
+#: src/Rest/ColaboracionesController.php:476
+msgid "No tienes permisos para realizar esta acción."
+msgstr "Ez duzu ekintza hau egiteko baimenik."
+
+#: src/Admin/ColaboracionesAdminPage.php:95
+msgid "Parámetros de respuesta no válidos."
+msgstr "Erantzunaren parametroak ez dira baliozkoak."
+
+#: src/Admin/ColaboracionesAdminPage.php:100
+#: src/Rest/ColaboracionesController.php:497
+msgid "No tienes permisos para responder a las propuestas de este centro."
+msgstr "Ez duzu ikastetxe honen proposamenei erantzuteko baimenik."
+
+#: src/Admin/ColaboracionesAdminPage.php:127
+#: src/Admin/NetworkSyncPage.php:109
+#: src/Admin/Settings.php:282
+msgid "No tienes permisos suficientes para acceder a esta página."
+msgstr "Ez duzu orri honetara sartzeko behar adina baimenik."
+
+#: src/Admin/ColaboracionesAdminPage.php:144
+msgid "Propuestas de Colaboración (Matches) - Traspasando Fronteras"
+msgstr "Lankidetza-proposamenak (matchak) - Traspasando Fronteras"
+
+#: src/Admin/ColaboracionesAdminPage.php:146
+msgid "Consulta las solicitudes de hermanamiento recibidas o enviadas por tu emisora escolar y coordina proyectos conjuntos."
+msgstr "Kontsultatu zure eskola-irratiak jaso edo bidalitako senidetze-eskaerak eta koordinatu proiektu bateratuak."
+
+#: src/Admin/ColaboracionesAdminPage.php:152
+msgid "La respuesta a la propuesta de colaboración se ha guardado correctamente y se ha notificado al centro emisor."
+msgstr "Lankidetza-proposamenaren erantzuna behar bezala gorde da, eta ikastetxe igorleari jakinarazi zaio."
+
+#: src/Admin/ColaboracionesAdminPage.php:163
+msgid "Todavía no hay propuestas de colaboración registradas para tus centros escolares."
+msgstr "Oraindik ez dago lankidetza-proposamenik erregistratuta zure ikastetxeentzat."
+
+#: src/Admin/ColaboracionesAdminPage.php:169
+#: src/Privacy/PrivacyPolicy.php:193
+msgid "Fecha"
+msgstr "Data"
+
+#: src/Admin/ColaboracionesAdminPage.php:170
+msgid "Centro Emisor"
+msgstr "Ikastetxe igorlea"
+
+#: src/Admin/ColaboracionesAdminPage.php:171
+msgid "Centro Receptor"
+msgstr "Ikastetxe hartzailea"
+
+#: src/Admin/ColaboracionesAdminPage.php:172
+msgid "Idea del Proyecto y Detalles"
+msgstr "Proiektuaren ideia eta xehetasunak"
+
+#: src/Admin/ColaboracionesAdminPage.php:173
+#: src/Privacy/PrivacyPolicy.php:201
+msgid "Estado"
+msgstr "Egoera"
+
+#: src/Admin/ColaboracionesAdminPage.php:174
+msgid "Respuesta / Acciones"
+msgstr "Erantzuna / ekintzak"
+
+#: src/Admin/ColaboracionesAdminPage.php:205
+msgid "Edades:"
+msgstr "Adinak:"
+
+#: src/Admin/ColaboracionesAdminPage.php:208
+msgid "Idiomas:"
+msgstr "Hizkuntzak:"
+
+#: src/Admin/ColaboracionesAdminPage.php:211
+msgid "Fechas:"
+msgstr "Datak:"
+
+#: src/Admin/ColaboracionesAdminPage.php:216
+msgid "Aceptada"
+msgstr "Onartua"
+
+#: src/Admin/ColaboracionesAdminPage.php:218
+msgid "Declinada"
+msgstr "Baztertua"
+
+#: src/Admin/ColaboracionesAdminPage.php:220
+msgid "Pendiente"
+msgstr "Zain"
+
+#: src/Admin/ColaboracionesAdminPage.php:234
+msgid "Mensaje de respuesta"
+msgstr "Erantzun-mezua"
+
+#: src/Admin/ColaboracionesAdminPage.php:242
+msgid "Escribe un mensaje para el centro emisor..."
+msgstr "Idatzi mezu bat ikastetxe igorlearentzat..."
+
+#: src/Admin/ColaboracionesAdminPage.php:245
+msgid "Aceptar"
+msgstr "Onartu"
+
+#: src/Admin/ColaboracionesAdminPage.php:248
+msgid "Declinar"
+msgstr "Baztertu"
+
+#: src/Admin/ColaboracionesAdminPage.php:252
+msgid "En espera de respuesta del centro receptor."
+msgstr "Ikastetxe hartzailearen erantzunaren zain."
+
+#: src/Admin/NetworkSyncPage.php:57
+msgid "RadioEdu Conecta: fichas de la red"
+msgstr "RadioEdu Conecta: sareko fitxak"
+
+#: src/Admin/NetworkSyncPage.php:114
+msgid "Nombre del sitio"
+msgstr "Gunearen izena"
+
+#: src/Admin/NetworkSyncPage.php:114
+msgid "Nombre del centro"
+msgstr "Ikastetxearen izena"
+
+#: src/Admin/NetworkSyncPage.php:114
+#: src/Admin/NetworkSyncPage.php:115
+#: src/Admin/NetworkSyncPage.php:116
+#: build/network-sync.js:11
+msgid "Sí"
+msgstr "Bai"
+
+#: src/Admin/NetworkSyncPage.php:115
+msgid "URL del sitio"
+msgstr "Gunearen URLa"
+
+#: src/Admin/NetworkSyncPage.php:115
+msgid "Web oficial"
+msgstr "Webgune ofiziala"
+
+#: src/Admin/NetworkSyncPage.php:116
+msgid "Icono del sitio"
+msgstr "Gunearen ikonoa"
+
+#: src/Admin/NetworkSyncPage.php:116
+msgid "Logo"
+msgstr "Logoa"
+
+#: src/Admin/NetworkSyncPage.php:117
+msgid "Descripción corta"
+msgstr "Deskribapen laburra"
+
+#: src/Admin/NetworkSyncPage.php:117
+msgid "Descripción"
+msgstr "Deskribapena"
+
+#: src/Admin/NetworkSyncPage.php:117
+#: src/Admin/NetworkSyncPage.php:118
+#: src/Admin/NetworkSyncPage.php:119
+msgid "Solo al crearla"
+msgstr "Sortzean soilik"
+
+#: src/Admin/NetworkSyncPage.php:118
+msgid "Email de administración"
+msgstr "Administrazioko helbide elektronikoa"
+
+#: src/Admin/NetworkSyncPage.php:118
+#: build/centro-panel.js:1
+msgid "Email del coordinador/a"
+msgstr "Koordinatzailearen helbide elektronikoa"
+
+#: src/Admin/NetworkSyncPage.php:119
+msgid "Administrador del sitio"
+msgstr "Gunearen administratzailea"
+
+#: src/Admin/NetworkSyncPage.php:119
+msgid "Autor de la ficha"
+msgstr "Fitxaren egilea"
+
+#. translators: %d: number of network sites (the main site excluded).
+#: src/Admin/NetworkSyncPage.php:129
+#, php-format
+msgid "Crea en el directorio del sitio principal una ficha de radio para el %d sitio de la red, o actualiza la que ya tiene."
+msgid_plural "Crea en el directorio del sitio principal una ficha de radio por cada uno de los %d sitios de la red, o actualiza la que ya tienen."
+msgstr[0] "Gune nagusiaren direktorioan irrati-fitxa bat sortzen du sareko %d gunerako, edo lehendik duena eguneratzen du."
+msgstr[1] "Gune nagusiaren direktorioan irrati-fitxa bat sortzen du sareko %d guneetako bakoitzerako, edo lehendik dutena eguneratzen du."
+
+#: src/Admin/NetworkSyncPage.php:142
+msgid "Datos que la sincronización toma de cada sitio"
+msgstr "Sinkronizazioak gune bakoitzetik hartzen dituen datuak"
+
+#: src/Admin/NetworkSyncPage.php:145
+msgid "Del sitio"
+msgstr "Gunetik"
+
+#: src/Admin/NetworkSyncPage.php:146
+msgid "A la ficha"
+msgstr "Fitxara"
+
+#: src/Admin/NetworkSyncPage.php:147
+msgid "¿Se actualiza al volver a sincronizar?"
+msgstr "Berriro sinkronizatzean eguneratzen da?"
+
+#: src/Admin/NetworkSyncPage.php:162
+msgid "Lo que el coordinador complete después (coordenadas, bandera, etapas, idiomas, temas y podcast) no se modifica nunca. Si ya existe una ficha creada a mano con la misma web, se reutiliza. Las fichas en la papelera no se tocan. Las fichas de sitios que ya no existen no se borran: aparecen en el resumen."
+msgstr "Koordinatzaileak geroago betetzen duena (koordenatuak, bandera, etapak, hizkuntzak, gaiak eta podcasta) ez da inoiz aldatzen. Webgune bera duen eskuz sortutako fitxa bat badago, berrerabili egiten da. Zakarrontziko fitxak ez dira ukitzen. Jada existitzen ez diren guneen fitxak ez dira ezabatzen: laburpenean agertzen dira."
+
+#: src/Admin/NetworkSyncPage.php:168
+msgid "Dar el rol Autor en el sitio principal a los autores de las fichas que no lo tengan, ni tengan otro superior, para que puedan editar su ficha."
+msgstr "Eman Egilea rola gune nagusian rol hori edo goragoko bat ez duten fitxen egileei, beren fitxa editatu ahal izan dezaten."
+
+#: src/Admin/NetworkSyncPage.php:174
+msgid "Sincronizar fichas con los sitios de la red"
+msgstr "Sinkronizatu fitxak sareko guneekin"
+
+#: src/Admin/NetworkSyncPage.php:178
+msgid "La sincronización necesita JavaScript."
+msgstr "Sinkronizazioak JavaScript behar du."
+
+#: src/Admin/NetworkSyncPage.php:182
+msgid "Progreso de la sincronización"
+msgstr "Sinkronizazioaren aurrerapena"
+
+#: src/Admin/Settings.php:51
+msgid "Ajustes de RadioEdu Conecta"
+msgstr "RadioEdu Conectaren ezarpenak"
+
+#: src/Admin/Settings.php:76
+msgid "Configuración del Mapa Interactivo"
+msgstr "Mapa interaktiboaren konfigurazioa"
+
+#: src/Admin/Settings.php:78
+msgid "Define el centro geográfico y nivel de zoom inicial al abrir la vista de mapa en el directorio."
+msgstr "Direktorioko mapa-ikuspegia irekitzean erabiliko diren erdigune geografikoa eta hasierako zoom-maila zehazten ditu."
+
+#: src/Admin/Settings.php:85
+msgid "Centro del mapa (Latitud / Longitud)"
+msgstr "Maparen erdigunea (latitudea / longitudea)"
+
+#: src/Admin/Settings.php:94
+msgid "Notificaciones por Correo Electrónico"
+msgstr "Posta elektroniko bidezko jakinarazpenak"
+
+#: src/Admin/Settings.php:96
+msgid "Gestiona las notificaciones automáticas enviadas a los docentes coordinadores de las emisoras."
+msgstr "Irratietako irakasle koordinatzaileei bidaltzen zaizkien jakinarazpen automatikoak kudeatzen ditu."
+
+#: src/Admin/Settings.php:103
+msgid "Avisos automáticos"
+msgstr "Abisu automatikoak"
+
+#: src/Admin/Settings.php:112
+msgid "Coordinadores"
+msgstr "Koordinatzaileak"
+
+#: src/Admin/Settings.php:114
+msgid "Controla cuántas radios puede dar de alta cada coordinador (rol Autor). Los administradores y editores no tienen límite."
+msgstr "Koordinatzaile bakoitzak (Egilea rola) zenbat irrati sor ditzakeen kontrolatzen du. Administratzaileek eta editoreek ez dute mugarik."
+
+#: src/Admin/Settings.php:121
+msgid "Radios por usuario"
+msgstr "Irratiak erabiltzaileko"
+
+#: src/Admin/Settings.php:212
+msgid "El número de radios por usuario debe ser un número entero igual o mayor que 0, o quedar vacío. Se mantiene el valor anterior."
+msgstr "Erabiltzaileko irrati kopuruak 0 edo handiagoa den zenbaki oso bat izan behar du, edo hutsik egon. Aurreko balioa mantentzen da."
+
+#: src/Admin/Settings.php:228
+msgid "Lat:"
+msgstr "Lat:"
+
+#: src/Admin/Settings.php:231
+msgid "Lng:"
+msgstr "Lng:"
+
+#: src/Admin/Settings.php:234
+msgid "Zoom inicial (1-18):"
+msgstr "Hasierako zooma (1-18):"
+
+#: src/Admin/Settings.php:237
+msgid "Por defecto centrado en Extremadura (39.4699, -6.3708, zoom 8)."
+msgstr "Lehenespenez, Extremaduran zentratuta (39.4699, -6.3708, 8 zooma)."
+
+#: src/Admin/Settings.php:251
+msgid "Notificar por correo al coordinador del centro receptor cuando reciba una nueva propuesta de colaboración."
+msgstr "Bidali mezu elektroniko bat ikastetxe hartzailearen koordinatzaileari lankidetza-proposamen berri bat jasotzen duenean."
+
+#: src/Admin/Settings.php:256
+msgid "Notificar por correo al coordinador emisor cuando su propuesta sea aceptada o rechazada."
+msgstr "Bidali mezu elektroniko bat koordinatzaile igorleari bere proposamena onartu edo baztertzen denean."
+
+#: src/Admin/Settings.php:272
+msgid "Número máximo de radios que puede crear cada coordinador. Déjalo vacío para no poner límite. Con 0 no pueden crear ninguna y solo editan las que les asigne un administrador. Las radios en la papelera no cuentan."
+msgstr "Koordinatzaile bakoitzak sor ditzakeen irratien gehienezko kopurua. Utzi hutsik mugarik ez jartzeko. 0 jarrita, ezin dute bat ere sortu, eta administratzaile batek esleitzen dizkienak soilik edita ditzakete. Zakarrontziko irratiak ez dira zenbatzen."
+
+#: src/Admin/Settings.php:288
+msgid "Configuración global del directorio de radios escolares Traspasando Fronteras."
+msgstr "Traspasando Fronteras eskola-irratien direktorioaren konfigurazio orokorra."
+
+#. translators: %d: number of imported centers
+#: src/Admin/Settings.php:300
+#, php-format
+msgid "¡Se han cargado o sincronizado con éxito %d emisoras de ejemplo con sus imágenes, taxonomías y coordenadas en el mapa!"
+msgstr "Adibideko %d irrati behar bezala kargatu edo sinkronizatu dira, beren irudi, taxonomia eta mapako koordenatuekin!"
+
+#: src/Admin/Settings.php:323
+msgid "Emisoras de Demostración (Traspasando Fronteras)"
+msgstr "Adibideko irratiak (Traspasando Fronteras)"
+
+#: src/Admin/Settings.php:325
+msgid "El instalador incluye 6 emisoras completas de ejemplo con fotografías de cabecera, logotipos, edades, formatos, idiomas y coordenadas geográficas. Puedes volver a generarlas o sincronizarlas en cualquier momento con este botón:"
+msgstr "Instalatzaileak adibideko 6 irrati oso ditu, goiburuko argazki, logo, adin, formatu, hizkuntza eta koordenatu geografikoekin. Botoi honekin edozein unetan sor edo sinkroniza ditzakezu berriro:"
+
+#: src/Admin/Settings.php:330
+msgid "Sincronizar / Cargar las 6 emisoras de ejemplo"
+msgstr "Sinkronizatu / Kargatu adibideko 6 irratiak"
+
+#: src/Capabilities/CentroLimit.php:132
+msgid "Las radios las da de alta un administrador. Puedes editar las que tengas asignadas."
+msgstr "Irratiak administratzaile batek sortzen ditu. Esleituta dituzunak edita ditzakezu."
+
+#. translators: %d: maximum number of radios per user.
+#: src/Capabilities/CentroLimit.php:135
+#, php-format
+msgid "Has alcanzado el máximo de %d radio por usuario. Para dar de alta otra, contacta con un administrador."
+msgid_plural "Has alcanzado el máximo de %d radios por usuario. Para dar de alta otra, contacta con un administrador."
+msgstr[0] "Erabiltzaileko %d irratiko mugara iritsi zara. Beste bat sortzeko, jarri harremanetan administratzaile batekin."
+msgstr[1] "Erabiltzaileko %d irratiko mugara iritsi zara. Beste bat sortzeko, jarri harremanetan administratzaile batekin."
+
+#. translators: %s: Name of the sending school.
+#: src/Emails/NotificationService.php:90
+#, php-format
+msgid "[RadioEdu Traspasando Fronteras] ¡Nueva propuesta de match de %s!"
+msgstr "[RadioEdu Traspasando Fronteras] Match proposamen berria: %s"
+
+#: src/Emails/NotificationService.php:95
+#: src/Emails/NotificationService.php:175
+msgid "Hola,"
+msgstr "Kaixo:"
+
+#. translators: 1: Name of the sending school, 2: Name of the receiving school.
+#: src/Emails/NotificationService.php:99
+#, php-format
+msgid "El centro escolar \"%1$s\" ha seleccionado vuestra emisora (\"%2$s\") para proponer un proyecto de colaboración en la red Traspasando Fronteras."
+msgstr "\"%1$s\" ikastetxeak zuen irratia (\"%2$s\") hautatu du Traspasando Fronteras sarean lankidetza-proiektu bat proposatzeko."
+
+#: src/Emails/NotificationService.php:104
+msgid "Idea del proyecto propuesta:"
+msgstr "Proposatutako proiektuaren ideia:"
+
+#. translators: %s: Course or ages of the participating students.
+#: src/Emails/NotificationService.php:109
+#, php-format
+msgid "Cursos/Edades: %s"
+msgstr "Mailak/adinak: %s"
+
+#: src/Emails/NotificationService.php:110
+msgid "No especificado"
+msgstr "Zehaztu gabe"
+
+#. translators: %s: Approximate project dates.
+#: src/Emails/NotificationService.php:114
+#, php-format
+msgid "Fechas previstas: %s"
+msgstr "Aurreikusitako datak: %s"
+
+#: src/Emails/NotificationService.php:115
+msgid "Por acordar"
+msgstr "Adosteko"
+
+#: src/Emails/NotificationService.php:118
+msgid "Puedes consultar todos los detalles y responder a la propuesta accediendo al panel de RadioEdu:"
+msgstr "Xehetasun guztiak kontsultatu eta proposamenari erantzun diezaiokezu RadioEduren panelean:"
+
+#: src/Emails/NotificationService.php:122
+msgid "RadioEdu Conecta - Red de Radios Escolares de Extremadura y del Mundo"
+msgstr "RadioEdu Conecta - Extremadurako eta munduko eskola-irratien sarea"
+
+#: src/Emails/NotificationService.php:162
+msgid "ACEPTADA"
+msgstr "ONARTUA"
+
+#: src/Emails/NotificationService.php:163
+msgid "DECLINADA"
+msgstr "BAZTERTUA"
+
+#. translators: 1: Name of the receiving school, 2: New status (accepted/declined).
+#: src/Emails/NotificationService.php:167
+#, php-format
+msgid "[RadioEdu Traspasando Fronteras] Tu propuesta a %1$s ha sido %2$s"
+msgstr "[RadioEdu Traspasando Fronteras] %1$s ikastetxeari egindako zure proposamena %2$s izan da"
+
+#. translators: 1: Name of the sending school, 2: Name of the receiving school, 3: New status.
+#: src/Emails/NotificationService.php:179
+#, php-format
+msgid "Te informamos de que la propuesta de colaboración enviada por \"%1$s\" al centro \"%2$s\" ha sido marcada como: %3$s."
+msgstr "Jakinarazten dizugu \"%1$s\" ikastetxeak \"%2$s\" ikastetxeari bidalitako lankidetza-proposamena honela markatu dela: %3$s."
+
+#: src/Emails/NotificationService.php:185
+msgid "Mensaje o indicaciones del centro:"
+msgstr "Ikastetxearen mezua edo argibideak:"
+
+#: src/Emails/NotificationService.php:186
+msgid "Sin mensaje adicional."
+msgstr "Ez dago mezu gehigarririk."
+
+#. translators: 1: Coordinator name of the receiving school, 2: Coordinator email of the receiving school.
+#: src/Emails/NotificationService.php:197
+#, php-format
+msgid "Contacto de coordinación de la emisora: %1$s <%2$s>"
+msgstr "Irratiaren koordinazio-kontaktua: %1$s <%2$s>"
+
+#: src/Emails/NotificationService.php:205
+msgid "Puedes acceder a la plataforma para coordinar los siguientes pasos con la emisora."
+msgstr "Plataformara sar zaitezke, irratiarekin hurrengo urratsak koordinatzeko."
+
+#: src/Emails/NotificationService.php:208
+msgid "RadioEdu Conecta - Traspasando Fronteras"
+msgstr "RadioEdu Conecta - Traspasando Fronteras"
+
+#: src/Frontend/DirectorioShortcode.php:84
+msgid "Ficha de centro de radio"
+msgstr "Irrati-ikastetxearen fitxa"
+
+#: src/Frontend/DirectorioShortcode.php:85
+msgid "Perfil público de un centro: cabecera y pie del tema alrededor de la ficha, sin repetir su título, autor, fecha ni imagen de cabecera."
+msgstr "Ikastetxe baten profil publikoa: gaiaren goiburua eta orri-oina fitxaren inguruan, haren izenburua, egilea, data eta goiburuko irudia errepikatu gabe."
+
+#: src/Frontend/DirectorioShortcode.php:181
+msgid "Directorio Traspasando Fronteras"
+msgstr "Traspasando Fronteras direktorioa"
+
+#: src/Frontend/DirectorioShortcode.php:182
+msgid "Directorio interactivo de radios escolares con filtros, mapa y propuestas de colaboración."
+msgstr "Eskola-irratien direktorio interaktiboa, iragazkiekin, maparekin eta lankidetza-proposamenekin."
+
+#: src/Frontend/DirectorioShortcode.php:186
+msgid "radio escolar"
+msgstr "eskola-irratia"
+
+#: src/Frontend/DirectorioShortcode.php:187
+msgid "directorio"
+msgstr "direktorioa"
+
+#: src/Frontend/DirectorioShortcode.php:188
+msgid "colaboración"
+msgstr "lankidetza"
+
+#: src/Icons.php:40
+msgid "Iconos del directorio de radios escolares Traspasando Fronteras."
+msgstr "Traspasando Fronteras eskola-irratien direktorioaren ikonoak."
+
+#: src/Icons.php:64
+msgid "Cerrar"
+msgstr "Itxi"
+
+#: src/Icons.php:65
+msgid "Globo terráqueo"
+msgstr "Lur-globoa"
+
+#: src/Icons.php:66
+msgid "Birrete de graduación"
+msgstr "Graduazio-txanoa"
+
+#: src/Icons.php:67
+msgid "Auriculares"
+msgstr "Entzungailuak"
+
+#: src/Icons.php:68
+msgid "Centro educativo"
+msgstr "Ikastetxea"
+
+#: src/Icons.php:69
+msgid "Mapa"
+msgstr "Mapa"
+
+#: src/Icons.php:70
+msgid "Micrófono"
+msgstr "Mikrofonoa"
+
+#: src/Icons.php:71
+msgid "Enviar"
+msgstr "Bidali"
+
+#: src/Network/NetworkSync.php:317
+msgid "El sitio no existe."
+msgstr "Gunea ez da existitzen."
+
+#: src/PostTypes/CentroMeta.php:81
+msgid "ID del adjunto de imagen usado como logo de la emisora."
+msgstr "Irratiaren logo gisa erabiltzen den irudi-eranskinaren IDa."
+
+#: src/PostTypes/CentroMeta.php:87
+msgid "URL del logo de los centros de demostración."
+msgstr "Adibideko ikastetxeen logoaren URLa."
+
+#: src/PostTypes/CentroMeta.php:93
+msgid "URL de la imagen de cabecera de los centros de demostración."
+msgstr "Adibideko ikastetxeen goiburuko irudiaren URLa."
+
+#: src/PostTypes/CentroMeta.php:99
+msgid "Código de la bandera o región mostrada en el directorio."
+msgstr "Direktorioan erakusten den banderaren edo eskualdearen kodea."
+
+#: src/PostTypes/CentroMeta.php:105
+msgid "Latitud decimal del centro en el mapa."
+msgstr "Ikastetxearen latitude hamartarra mapan."
+
+#: src/PostTypes/CentroMeta.php:111
+msgid "Longitud decimal del centro en el mapa."
+msgstr "Ikastetxearen longitude hamartarra mapan."
+
+#: src/PostTypes/CentroMeta.php:117
+msgid "URL del podcast o de la emisión en directo."
+msgstr "Podcastaren edo zuzeneko emisioaren URLa."
+
+#: src/PostTypes/CentroMeta.php:123
+msgid "URL de la web oficial del centro."
+msgstr "Ikastetxearen webgune ofizialaren URLa."
+
+#: src/PostTypes/CentroMeta.php:129
+msgid "Cursos o edades del alumnado que participa en la radio."
+msgstr "Irratian parte hartzen duten ikasleen mailak edo adinak."
+
+#: src/PostTypes/CentroMeta.php:135
+msgid "Nombre del coordinador o coordinadora (dato personal, privado)."
+msgstr "Koordinatzailearen izena (datu pertsonala, pribatua)."
+
+#: src/PostTypes/CentroMeta.php:141
+msgid "Email del coordinador o coordinadora (dato personal, privado)."
+msgstr "Koordinatzailearen helbide elektronikoa (datu pertsonala, pribatua)."
+
+#: src/PostTypes/CentroMeta.php:147
+msgid "Disponibilidad para recibir propuestas: \"1\" disponible, \"0\" no disponible."
+msgstr "Proposamenak jasotzeko prestasuna: \"1\" prest, \"0\" ez prest."
+
+#: src/PostTypes/CentroMeta.php:153
+msgid "Marca los contenidos creados por el importador de demostración."
+msgstr "Adibideen inportatzaileak sortutako edukiak markatzen ditu."
+
+#: src/PostTypes/CentroMeta.php:159
+msgid "ID del sitio de la red del que la sincronización de red tomó los datos de la ficha."
+msgstr "Sareko sinkronizazioak fitxaren datuak zein sareko gunetatik hartu zituen, gune horren IDa."
+
+#: src/PostTypes/CentroMeta.php:241
+msgid "El logo debe ser una imagen de la biblioteca de medios a la que tengas acceso."
+msgstr "Logoak sarbidea duzun multimedia-liburutegiko irudi bat izan behar du."
+
+#: src/PostTypes/CentroPostType.php:31
+msgctxt "Post type general name"
+msgid "Centros y Radios"
+msgstr "Ikastetxeak eta irratiak"
+
+#: src/PostTypes/CentroPostType.php:32
+msgctxt "Post type singular name"
+msgid "Centro de Radio"
+msgstr "Irrati-ikastetxea"
+
+#: src/PostTypes/CentroPostType.php:33
+msgctxt "Admin Menu text"
+msgid "RadioEdu Centros"
+msgstr "RadioEdu Ikastetxeak"
+
+#: src/PostTypes/CentroPostType.php:34
+msgctxt "Add New on Toolbar"
+msgid "Centro de Radio"
+msgstr "Irrati-ikastetxea"
+
+#: src/PostTypes/CentroPostType.php:35
+msgid "Añadir nuevo centro"
+msgstr "Gehitu ikastetxe berria"
+
+#: src/PostTypes/CentroPostType.php:36
+msgid "Añadir nuevo centro de radio"
+msgstr "Gehitu irrati-ikastetxe berria"
+
+#: src/PostTypes/CentroPostType.php:37
+msgid "Nuevo centro"
+msgstr "Ikastetxe berria"
+
+#: src/PostTypes/CentroPostType.php:38
+msgid "Editar centro de radio"
+msgstr "Editatu irrati-ikastetxea"
+
+#: src/PostTypes/CentroPostType.php:39
+msgid "Ver ficha de centro"
+msgstr "Ikusi ikastetxearen fitxa"
+
+#: src/PostTypes/CentroPostType.php:40
+msgid "Todos los centros"
+msgstr "Ikastetxe guztiak"
+
+#: src/PostTypes/CentroPostType.php:41
+msgid "Buscar centros de radio"
+msgstr "Bilatu irrati-ikastetxeak"
+
+#: src/PostTypes/CentroPostType.php:42
+msgid "Centro superior:"
+msgstr "Ikastetxe gurasoa:"
+
+#: src/PostTypes/CentroPostType.php:43
+msgid "No se encontraron centros."
+msgstr "Ez da ikastetxerik aurkitu."
+
+#: src/PostTypes/CentroPostType.php:44
+msgid "No hay centros en la papelera."
+msgstr "Ez dago ikastetxerik zakarrontzian."
+
+#: src/PostTypes/CentroPostType.php:45
+msgctxt "Overrides the \"Featured Image\" phrase"
+msgid "Foto de cabecera / Fachada del centro"
+msgstr "Goiburuko argazkia / Ikastetxearen fatxada"
+
+#: src/PostTypes/CentroPostType.php:46
+msgctxt "Overrides the \"Set featured image\" phrase"
+msgid "Asignar foto de cabecera"
+msgstr "Ezarri goiburuko argazkia"
+
+#: src/PostTypes/CentroPostType.php:47
+msgctxt "Overrides the \"Remove featured image\" phrase"
+msgid "Quitar foto de cabecera"
+msgstr "Kendu goiburuko argazkia"
+
+#: src/PostTypes/CentroPostType.php:48
+msgctxt "Overrides the \"Use as featured image\" phrase"
+msgid "Usar como foto de cabecera"
+msgstr "Erabili goiburuko argazki gisa"
+
+#: src/PostTypes/CentroPostType.php:49
+msgctxt "The post type archive label"
+msgid "Directorio de radios escolares"
+msgstr "Eskola-irratien direktorioa"
+
+#: src/PostTypes/CentroPostType.php:50
+msgctxt "The post type attributes label"
+msgid "Atributos de centro"
+msgstr "Ikastetxearen atributuak"
+
+#: src/PostTypes/CentroPostType.php:51
+msgctxt "Overrides the \"Insert into post\" phrase"
+msgid "Insertar en la ficha de centro"
+msgstr "Txertatu ikastetxearen fitxan"
+
+#: src/PostTypes/CentroPostType.php:52
+msgctxt "Overrides the \"Uploaded to this post\" phrase"
+msgid "Subido a este centro"
+msgstr "Ikastetxe honetara igota"
+
+#: src/PostTypes/CentroPostType.php:53
+msgctxt "Screen reader text for the filter links"
+msgid "Filtrar lista de centros"
+msgstr "Iragazi ikastetxeen zerrenda"
+
+#: src/PostTypes/CentroPostType.php:54
+msgctxt "Screen reader text for the pagination"
+msgid "Navegación de lista de centros"
+msgstr "Ikastetxeen zerrendaren nabigazioa"
+
+#: src/PostTypes/CentroPostType.php:55
+msgctxt "Screen reader text for the items list"
+msgid "Lista de centros"
+msgstr "Ikastetxeen zerrenda"
+
+#: src/Privacy/PrivacyPolicy.php:44
+msgid "RadioEdu Conecta (Traspasando Fronteras)"
+msgstr "RadioEdu Conecta (Traspasando Fronteras)"
+
+#: src/Privacy/PrivacyPolicy.php:45
+msgid "Este sitio utiliza el plugin RadioEdu Conecta para gestionar el directorio de radios escolares. Los datos de contacto del docente coordinador (nombre y correo electrónico profesional) se almacenan de forma interna y nunca se exponen públicamente en el directorio web ni en las respuestas públicas de la API REST."
+msgstr "Gune honek RadioEdu Conecta plugina erabiltzen du eskola-irratien direktorioa kudeatzeko. Irakasle koordinatzailearen harremanetarako datuak (izena eta laneko helbide elektronikoa) barnean gordetzen dira, eta ez dira inoiz publikoki erakusten web-direktorioan, ezta REST APIaren erantzun publikoetan ere."
+
+#: src/Privacy/PrivacyPolicy.php:46
+msgid "Las propuestas de colaboración guardan la cuenta de usuario que las envía, los centros implicados y el texto del proyecto. El correo de contacto del centro receptor solo se comparte con el centro emisor cuando la propuesta es aceptada."
+msgstr "Lankidetza-proposamenek bidaltzen dituen erabiltzaile-kontua, inplikatutako ikastetxeak eta proiektuaren testua gordetzen dituzte. Ikastetxe hartzailearen harremanetarako helbide elektronikoa proposamena onartzen denean soilik partekatzen da ikastetxe igorlearekin."
+
+#: src/Privacy/PrivacyPolicy.php:47
+msgid "Al activar voluntariamente la vista de mapa interactivo, el navegador del usuario se conecta con los servidores de OpenStreetMap Foundation para descargar la cartografía."
+msgstr "Mapa interaktiboaren ikuspegia borondatez aktibatzean, erabiltzailearen nabigatzailea OpenStreetMap Foundation-en zerbitzariekin konektatzen da kartografia deskargatzeko."
+
+#: src/Privacy/PrivacyPolicy.php:48
+msgid "Los centros marcados como favoritos y la aceptación del mapa se guardan únicamente en el almacenamiento local del navegador del visitante y no se envían al servidor."
+msgstr "Gogoko gisa markatutako ikastetxeak eta maparen onarpena bisitariaren nabigatzailearen biltegiratze lokalean soilik gordetzen dira, eta ez dira zerbitzarira bidaltzen."
+
+#: src/Privacy/PrivacyPolicy.php:62
+#: src/Privacy/PrivacyPolicy.php:76
+msgid "RadioEdu Conecta (Coordinadores y Propuestas)"
+msgstr "RadioEdu Conecta (koordinatzaileak eta proposamenak)"
+
+#: src/Privacy/PrivacyPolicy.php:124
+msgid "RadioEdu Conecta - Coordinación de Centros"
+msgstr "RadioEdu Conecta - Ikastetxeen koordinazioa"
+
+#: src/Privacy/PrivacyPolicy.php:128
+msgid "Centro escolar"
+msgstr "Ikastetxea"
+
+#: src/Privacy/PrivacyPolicy.php:132
+msgid "Nombre del coordinador"
+msgstr "Koordinatzailearen izena"
+
+#: src/Privacy/PrivacyPolicy.php:136
+msgid "Email de coordinación"
+msgstr "Koordinazioko helbide elektronikoa"
+
+#: src/Privacy/PrivacyPolicy.php:165
+msgid "RadioEdu Conecta - Propuestas de Colaboración"
+msgstr "RadioEdu Conecta - Lankidetza-proposamenak"
+
+#: src/Privacy/PrivacyPolicy.php:169
+msgid "Centro emisor"
+msgstr "Ikastetxe igorlea"
+
+#: src/Privacy/PrivacyPolicy.php:173
+msgid "Centro receptor"
+msgstr "Ikastetxe hartzailea"
+
+#: src/Privacy/PrivacyPolicy.php:177
+#: templates/single-centro.php:96
+msgid "Cursos / Edades"
+msgstr "Mailak / adinak"
+
+#: src/Privacy/PrivacyPolicy.php:181
+#: src/Taxonomies/TaxonomiesRegistrar.php:102
+msgid "Idiomas"
+msgstr "Hizkuntzak"
+
+#: src/Privacy/PrivacyPolicy.php:185
+#: templates/match-drawer.php:89
+msgid "Fechas aproximadas"
+msgstr "Gutxi gorabeherako datak"
+
+#: src/Privacy/PrivacyPolicy.php:189
+msgid "Respuesta"
+msgstr "Erantzuna"
+
+#: src/Privacy/PrivacyPolicy.php:197
+#: templates/match-drawer.php:65
+msgid "Idea de proyecto"
+msgstr "Proiektuaren ideia"
+
+#: src/Privacy/PrivacyPolicy.php:288
+msgid "Se han eliminado los textos enviados y la vinculación con la cuenta. Los centros, las fechas, el estado y las respuestas de otros participantes se conservan como historial compartido; revise esas respuestas si contienen datos personales de la persona solicitante."
+msgstr "Bidalitako testuak eta kontuarekiko lotura ezabatu dira. Ikastetxeak, datak, egoera eta beste parte-hartzaile batzuen erantzunak historia partekatu gisa gordetzen dira; berrikusi erantzun horiek, eskatzailearen datu pertsonalik ba ote duten jakiteko."
+
+#: src/Privacy/PrivacyPolicy.php:301
+msgid "No se han podido eliminar todos los datos. Reintente la solicitud de borrado."
+msgstr "Ezin izan dira datu guztiak ezabatu. Egin berriro ezabatze-eskaera."
+
+#: src/Rest/CentrosController.php:352
+msgid "Número de página de resultados."
+msgstr "Emaitzen orri-zenbakia."
+
+#: src/Rest/CentrosController.php:360
+msgid "Número de centros por página."
+msgstr "Orri bakoitzeko ikastetxe kopurua."
+
+#: src/Rest/CentrosController.php:369
+msgid "Término de búsqueda por nombre o palabra clave."
+msgstr "Izenaren edo gako-hitzaren araberako bilaketa-terminoa."
+
+#: src/Rest/CentrosController.php:376
+msgid "Criterio de ordenación."
+msgstr "Ordenatzeko irizpidea."
+
+#: src/Rest/CentrosController.php:384
+msgid "ID del centro de referencia para calcular afinidad."
+msgstr "Afinitatea kalkulatzeko erreferentziako ikastetxearen IDa."
+
+#: src/Rest/CentrosController.php:391
+msgid "Slug de etapa educativa."
+msgstr "Hezkuntza-etaparen slug-a."
+
+#: src/Rest/CentrosController.php:397
+msgid "Slug de idioma."
+msgstr "Hizkuntzaren slug-a."
+
+#: src/Rest/CentrosController.php:403
+msgid "Slug de temática."
+msgstr "Gaiaren slug-a."
+
+#: src/Rest/CentrosController.php:409
+msgid "Slug de formato de programa."
+msgstr "Programa-formatuaren slug-a."
+
+#: src/Rest/CentrosController.php:415
+msgid "Slug de ubicación geográfica."
+msgstr "Kokapen geografikoaren slug-a."
+
+#: src/Rest/ColaboracionesController.php:82
+msgid "ID de la propuesta de colaboración."
+msgstr "Lankidetza-proposamenaren IDa."
+
+#: src/Rest/ColaboracionesController.php:90
+msgid "Nuevo estado de la propuesta."
+msgstr "Proposamenaren egoera berria."
+
+#: src/Rest/ColaboracionesController.php:98
+msgid "Mensaje de respuesta para el centro emisor."
+msgstr "Ikastetxe igorlearentzako erantzun-mezua."
+
+#: src/Rest/ColaboracionesController.php:319
+msgid "Has alcanzado el límite de propuestas por hora. Por favor, inténtalo más tarde."
+msgstr "Orduko proposamen-mugara iritsi zara. Saiatu berriro geroago."
+
+#: src/Rest/ColaboracionesController.php:334
+msgid "No puedes enviar una propuesta de colaboración a tu propio centro escolar."
+msgstr "Ezin diozu zure ikastetxeari lankidetza-proposamenik bidali."
+
+#: src/Rest/ColaboracionesController.php:342
+msgid "Por favor, describe brevemente la idea del proyecto conjunto."
+msgstr "Deskribatu laburki proiektu bateratuaren ideia."
+
+#: src/Rest/ColaboracionesController.php:358
+msgid "Uno de los centros especificados no es válido o no está publicado."
+msgstr "Zehaztutako ikastetxeetako bat ez da baliozkoa edo ez dago argitaratuta."
+
+#: src/Rest/ColaboracionesController.php:367
+msgid "No tienes permisos para enviar propuestas en nombre del centro emisor seleccionado."
+msgstr "Ez duzu hautatutako ikastetxe igorlearen izenean proposamenak bidaltzeko baimenik."
+
+#: src/Rest/ColaboracionesController.php:376
+msgid "Este centro escolar no está disponible actualmente para recibir nuevas propuestas de colaboración."
+msgstr "Ikastetxe hau ez dago une honetan lankidetza-proposamen berriak jasotzeko prest."
+
+#: src/Rest/ColaboracionesController.php:405
+msgid "No se pudo registrar la propuesta en la base de datos."
+msgstr "Ezin izan da proposamena datu-basean erregistratu."
+
+#: src/Rest/ColaboracionesController.php:428
+msgid "¡Propuesta de match enviada con éxito! La emisora receptora recibirá una notificación para comenzar a coordinar el proyecto."
+msgstr "Match proposamena bidali da! Irrati hartzaileak jakinarazpen bat jasoko du proiektua koordinatzen hasteko."
+
+#: src/Rest/ColaboracionesController.php:457
+msgid "Estado de la colaboración actualizado correctamente."
+msgstr "Lankidetzaren egoera behar bezala eguneratu da."
+
+#: src/Rest/ColaboracionesController.php:482
+msgid "El estado indicado no es válido."
+msgstr "Adierazitako egoera ez da baliozkoa."
+
+#: src/Rest/ColaboracionesController.php:491
+msgid "La propuesta de colaboración no existe."
+msgstr "Lankidetza-proposamena ez da existitzen."
+
+#: src/Rest/ColaboracionesController.php:502
+msgid "El mensaje de respuesta es demasiado largo."
+msgstr "Erantzun-mezua luzeegia da."
+
+#: src/Rest/ColaboracionesController.php:508
+msgid "Esta propuesta ya ha sido respondida y no puede modificarse."
+msgstr "Proposamen honi dagoeneko erantzun zaio, eta ezin da aldatu."
+
+#: src/Rest/ColaboracionesController.php:526
+msgid "ID del centro que envía la propuesta."
+msgstr "Proposamena bidaltzen duen ikastetxearen IDa."
+
+#: src/Rest/ColaboracionesController.php:534
+msgid "ID del centro que recibe la propuesta."
+msgstr "Proposamena jasotzen duen ikastetxearen IDa."
+
+#: src/Rest/ColaboracionesController.php:542
+msgid "Idea del proyecto conjunto."
+msgstr "Proiektu bateratuaren ideia."
+
+#: src/Rest/ColaboracionesController.php:551
+msgid "Curso o edades del alumnado participante."
+msgstr "Parte hartzen duten ikasleen maila edo adinak."
+
+#: src/Rest/ColaboracionesController.php:559
+msgid "Idiomas de trabajo del proyecto."
+msgstr "Proiektuaren lan-hizkuntzak."
+
+#: src/Rest/ColaboracionesController.php:567
+msgid "Fechas aproximadas del proyecto."
+msgstr "Proiektuaren gutxi gorabeherako datak."
+
+#: src/Rest/NetworkSyncController.php:59
+msgid "Número de sitios ya procesados."
+msgstr "Dagoeneko prozesatutako gune kopurua."
+
+#: src/Rest/NetworkSyncController.php:68
+msgid "Si los autores de las fichas reciben el rol Autor en el sitio principal. Si se omite, se usa la última elección."
+msgstr "Fitxen egileek gune nagusian Egilea rola jasotzen duten ala ez. Adierazten ez bada, azken aukera erabiltzen da."
+
+#: src/Rest/NetworkSyncController.php:91
+msgid "La sincronización de red solo funciona en el sitio principal de una red multisitio."
+msgstr "Sareko sinkronizazioak gune anitzeko sare baten gune nagusian soilik funtzionatzen du."
+
+#: src/Rest/NetworkSyncController.php:94
+msgid "No tienes permiso para sincronizar las fichas de la red."
+msgstr "Ez duzu sareko fitxak sinkronizatzeko baimenik."
+
+#: src/Rest/NetworkSyncController.php:142
+msgid "Sitios procesados en este lote."
+msgstr "Sorta honetan prozesatutako guneak."
+
+#: src/Rest/NetworkSyncController.php:143
+msgid "Sitios de la red que se sincronizan."
+msgstr "Sinkronizatzen diren sareko guneak."
+
+#: src/Rest/NetworkSyncController.php:144
+msgid "Valor de offset del siguiente lote."
+msgstr "Hurrengo sortaren offset balioa."
+
+#: src/Rest/NetworkSyncController.php:148
+msgid "Si este es el último lote."
+msgstr "Hau azken sorta den ala ez."
+
+#: src/Rest/NetworkSyncController.php:150
+msgid "Fichas creadas."
+msgstr "Sortutako fitxak."
+
+#: src/Rest/NetworkSyncController.php:151
+msgid "Fichas actualizadas."
+msgstr "Eguneratutako fitxak."
+
+#: src/Rest/NetworkSyncController.php:152
+msgid "Fichas creadas a mano reutilizadas."
+msgstr "Berrerabilitako eskuz sortutako fitxak."
+
+#: src/Rest/NetworkSyncController.php:153
+msgid "Fichas omitidas porque están en la papelera."
+msgstr "Zakarrontzian daudelako saltatutako fitxak."
+
+#: src/Rest/NetworkSyncController.php:154
+msgid "Autores de fichas que han recibido el rol Autor en el sitio principal."
+msgstr "Gune nagusian Egilea rola jaso duten fitxen egileak."
+
+#: src/Rest/NetworkSyncController.php:158
+msgid "Fichas sincronizadas en este lote."
+msgstr "Sorta honetan sinkronizatutako fitxak."
+
+#: src/Rest/NetworkSyncController.php:195
+msgid "Fichas cuyo sitio de origen ya no existe (solo en el último lote)."
+msgstr "Jatorrizko gunerik jada ez duten fitxak (azken sortan soilik)."
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:59
+msgctxt "taxonomy general name"
+msgid "Etapas Educativas"
+msgstr "Hezkuntza-etapak"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:60
+msgctxt "taxonomy singular name"
+msgid "Etapa Educativa"
+msgstr "Hezkuntza-etapa"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:61
+msgid "Buscar etapas educativas"
+msgstr "Bilatu hezkuntza-etapak"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:62
+msgid "Todas las etapas"
+msgstr "Etapa guztiak"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:63
+msgid "Etapa superior"
+msgstr "Etapa gurasoa"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:64
+msgid "Etapa superior:"
+msgstr "Etapa gurasoa:"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:65
+msgid "Editar etapa"
+msgstr "Editatu etapa"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:66
+msgid "Actualizar etapa"
+msgstr "Eguneratu etapa"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:67
+msgid "Añadir nueva etapa educativa"
+msgstr "Gehitu hezkuntza-etapa berria"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:68
+msgid "Nombre de nueva etapa"
+msgstr "Etapa berriaren izena"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:69
+msgid "Etapas Educativas"
+msgstr "Hezkuntza-etapak"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:94
+msgctxt "taxonomy general name"
+msgid "Idiomas"
+msgstr "Hizkuntzak"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:95
+msgctxt "taxonomy singular name"
+msgid "Idioma"
+msgstr "Hizkuntza"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:96
+msgid "Buscar idiomas"
+msgstr "Bilatu hizkuntzak"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:97
+msgid "Todos los idiomas"
+msgstr "Hizkuntza guztiak"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:98
+msgid "Editar idioma"
+msgstr "Editatu hizkuntza"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:99
+msgid "Actualizar idioma"
+msgstr "Eguneratu hizkuntza"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:100
+msgid "Añadir nuevo idioma"
+msgstr "Gehitu hizkuntza berria"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:101
+msgid "Nombre del nuevo idioma"
+msgstr "Hizkuntza berriaren izena"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:127
+msgctxt "taxonomy general name"
+msgid "Temas de Interés"
+msgstr "Intereseko gaiak"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:128
+msgctxt "taxonomy singular name"
+msgid "Tema de Interés"
+msgstr "Intereseko gaia"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:129
+msgid "Buscar temas"
+msgstr "Bilatu gaiak"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:130
+msgid "Todos los temas"
+msgstr "Gai guztiak"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:131
+msgid "Editar tema"
+msgstr "Editatu gaia"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:132
+msgid "Actualizar tema"
+msgstr "Eguneratu gaia"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:133
+msgid "Añadir nuevo tema"
+msgstr "Gehitu gai berria"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:134
+msgid "Nombre del nuevo tema"
+msgstr "Gai berriaren izena"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:135
+msgid "Temas de Interés"
+msgstr "Intereseko gaiak"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:160
+msgctxt "taxonomy general name"
+msgid "Formatos de Radio"
+msgstr "Irrati-formatuak"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:161
+msgctxt "taxonomy singular name"
+msgid "Formato de Radio"
+msgstr "Irrati-formatua"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:162
+msgid "Buscar formatos"
+msgstr "Bilatu formatuak"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:163
+msgid "Todos los formatos"
+msgstr "Formatu guztiak"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:164
+msgid "Editar formato"
+msgstr "Editatu formatua"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:165
+msgid "Actualizar formato"
+msgstr "Eguneratu formatua"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:166
+msgid "Añadir nuevo formato"
+msgstr "Gehitu formatu berria"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:167
+msgid "Nombre del nuevo formato"
+msgstr "Formatu berriaren izena"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:168
+msgid "Formatos de Radio"
+msgstr "Irrati-formatuak"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:193
+msgctxt "taxonomy general name"
+msgid "Ubicaciones"
+msgstr "Kokapenak"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:194
+msgctxt "taxonomy singular name"
+msgid "Ubicación"
+msgstr "Kokapena"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:195
+msgid "Buscar ubicaciones"
+msgstr "Bilatu kokapenak"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:196
+msgid "Todas las ubicaciones"
+msgstr "Kokapen guztiak"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:197
+msgid "Ubicación superior"
+msgstr "Kokapen gurasoa"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:198
+msgid "Ubicación superior:"
+msgstr "Kokapen gurasoa:"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:199
+msgid "Editar ubicación"
+msgstr "Editatu kokapena"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:200
+msgid "Actualizar ubicación"
+msgstr "Eguneratu kokapena"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:201
+msgid "Añadir nueva ubicación"
+msgstr "Gehitu kokapen berria"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:202
+msgid "Nombre de la ubicación"
+msgstr "Kokapenaren izena"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:203
+msgid "Ubicaciones"
+msgstr "Kokapenak"
+
+#: templates/directorio.php:31
+msgid "Traspasando Fronteras"
+msgstr "Traspasando Fronteras"
+
+#: templates/directorio.php:33
+msgid "Conectamos radios escolares de Extremadura con otras emisoras de España y del mundo."
+msgstr "Extremadurako eskola-irratiak Espainiako eta munduko beste irrati batzuekin konektatzen ditugu."
+
+#: templates/directorio.php:38
+msgid "Diferentes voces, un mismo mundo"
+msgstr "Ahots desberdinak, mundu bera"
+
+#: templates/directorio.php:39
+msgid "RADIOS ESCOLARES QUE HACEN UN MUNDO MÁS GRANDE 🌍"
+msgstr "MUNDUA HANDIAGOA EGITEN DUTEN ESKOLA-IRRATIAK 🌍"
+
+#: templates/directorio.php:45
+msgid "Filtros del directorio"
+msgstr "Direktorioaren iragazkiak"
+
+#: templates/directorio.php:51
+msgid "Ubicación"
+msgstr "Kokapena"
+
+#: templates/directorio.php:54
+msgid "Cualquier lugar"
+msgstr "Edozein leku"
+
+#: templates/directorio.php:68
+msgid "Idioma"
+msgstr "Hizkuntza"
+
+#: templates/directorio.php:71
+msgid "Cualquier idioma"
+msgstr "Edozein hizkuntza"
+
+#: templates/directorio.php:85
+msgid "Etapa educativa"
+msgstr "Hezkuntza-etapa"
+
+#: templates/directorio.php:88
+msgid "Cualquiera"
+msgstr "Edozein"
+
+#: templates/directorio.php:102
+msgid "Temas"
+msgstr "Gaiak"
+
+#: templates/directorio.php:105
+msgid "Cualquier tema"
+msgstr "Edozein gai"
+
+#: templates/directorio.php:119
+msgid "Formato"
+msgstr "Formatua"
+
+#: templates/directorio.php:122
+msgid "Cualquier formato"
+msgstr "Edozein formatu"
+
+#: templates/directorio.php:136
+msgid "Busca colaboración con..."
+msgstr "Bilatu lankidetzarako..."
+
+#: templates/directorio.php:138
+msgid "Cualquier centro o temática..."
+msgstr "Edozein ikastetxe edo gai..."
+
+#: templates/directorio.php:144
+msgid "Buscar centros"
+msgstr "Bilatu ikastetxeak"
+
+#. translators: %s: Number of schools found.
+#: templates/directorio.php:158
+#: build/directorio.js:3
+#, php-format,js-format
+msgid "Resultados (%s centros)"
+msgstr "Emaitzak (%s ikastetxe)"
+
+#: templates/directorio.php:169
+msgid "Vista de mapa"
+msgstr "Mapa-ikuspegia"
+
+#: templates/directorio.php:174
+msgid "Ordenar por"
+msgstr "Ordenatu honen arabera"
+
+#: templates/directorio.php:176
+msgid "Más afines"
+msgstr "Antzekoenak"
+
+#: templates/directorio.php:177
+msgid "Más recientes"
+msgstr "Berrienak"
+
+#: templates/directorio.php:178
+msgid "Alfabético (A-Z)"
+msgstr "Alfabetikoki (A-Z)"
+
+#: templates/directorio.php:186
+msgid "No se han podido cargar los centros. Vuelve a pulsar Buscar centros para reintentar."
+msgstr "Ezin izan dira ikastetxeak kargatu. Sakatu berriro Bilatu ikastetxeak berriro saiatzeko."
+
+#: templates/directorio.php:192
+msgid "Mapa geográfico interactivo (OpenStreetMap)"
+msgstr "Mapa geografiko interaktiboa (OpenStreetMap)"
+
+#: templates/directorio.php:193
+msgid "Al cargar el mapa cartográfico se establecerá conexión con los servidores externos de OpenStreetMap Foundation para descargar las imágenes del mapa."
+msgstr "Mapa kartografikoa kargatzean, OpenStreetMap Foundation-en kanpoko zerbitzariekin konexioa ezarriko da maparen irudiak deskargatzeko."
+
+#: templates/directorio.php:195
+msgid "Aceptar y mostrar el mapa interactivo"
+msgstr "Onartu eta erakutsi mapa interaktiboa"
+
+#: templates/directorio.php:209
+msgid "Cargar más centros"
+msgstr "Kargatu ikastetxe gehiago"
+
+#: templates/directorio.php:216
+msgid "Buscando centros afines en la red..."
+msgstr "Antzeko ikastetxeak bilatzen sarean..."
+
+#: templates/directorio.php:222
+msgid "No se han encontrado emisoras con estos filtros"
+msgstr "Ez da irratirik aurkitu iragazki hauekin"
+
+#: templates/directorio.php:223
+msgid "Prueba a seleccionar otros temas, idiomas o restablecer la búsqueda."
+msgstr "Saiatu beste gai edo hizkuntza batzuk hautatzen, edo berrezarri bilaketa."
+
+#: templates/directorio.php:225
+msgid "Limpiar todos los filtros"
+msgstr "Garbitu iragazki guztiak"
+
+#: templates/match-drawer.php:23
+msgid "Solicitud de match"
+msgstr "Match eskaera"
+
+#: templates/match-drawer.php:24
+msgid "¡Cuéntanos tu idea y empezad a crear juntos!"
+msgstr "Kontaiguzu zure ideia, eta hasi elkarrekin sortzen!"
+
+#: templates/match-drawer.php:26
+msgid "Cerrar panel"
+msgstr "Itxi panela"
+
+#: templates/match-drawer.php:35
+#: templates/match-drawer.php:46
+msgid "Tu centro"
+msgstr "Zure ikastetxea"
+
+#: templates/match-drawer.php:48
+msgid "Sin centro asignado como coordinador"
+msgstr "Ez duzu ikastetxerik esleituta koordinatzaile gisa"
+
+#: templates/match-drawer.php:48
+msgid "Debes iniciar sesión para enviar propuestas"
+msgstr "Saioa hasi behar duzu proposamenak bidaltzeko"
+
+#: templates/match-drawer.php:56
+msgid "Centro con el que quieres colaborar"
+msgstr "Lankidetzan aritu nahi duzun ikastetxea"
+
+#: templates/match-drawer.php:67
+msgid "Ejemplo: Queremos crear un podcast conjunto sobre la vida en entornos rurales, con entrevistas a estudiantes de ambos centros..."
+msgstr "Adibidez: Landa-inguruneetako bizitzari buruzko podcast bateratu bat sortu nahi dugu, bi ikastetxeetako ikasleei egindako elkarrizketekin..."
+
+#: templates/match-drawer.php:74
+msgid "Curso o edades"
+msgstr "Maila edo adinak"
+
+#: templates/match-drawer.php:76
+msgid "Ej: 12-14 años (1º-2º ESO)"
+msgstr "Adib.: 12-14 urte (DBHko 1.-2. maila)"
+
+#: templates/match-drawer.php:80
+msgid "Idioma(s)"
+msgstr "Hizkuntza(k)"
+
+#: templates/match-drawer.php:82
+msgid "Ej: Español / Inglés"
+msgstr "Adib.: Euskara / Ingelesa"
+
+#: templates/match-drawer.php:91
+msgid "Ej: 2º Trimestre (Enero - Marzo)"
+msgstr "Adib.: 2. hiruhilekoa (urtarrila - martxoa)"
+
+#: templates/match-drawer.php:100
+#: build/directorio.js:3
+msgid "Enviar propuesta"
+msgstr "Bidali proposamena"
+
+#: templates/match-drawer.php:110
+msgid "1. Encuentra"
+msgstr "1. Aurkitu"
+
+#: templates/match-drawer.php:111
+msgid "Busca centros afines a tus intereses"
+msgstr "Bilatu zure interesekin bat datozen ikastetxeak"
+
+#: templates/match-drawer.php:116
+msgid "2. Conecta"
+msgstr "2. Konektatu"
+
+#: templates/match-drawer.php:117
+msgid "Envía tu propuesta de match"
+msgstr "Bidali zure match proposamena"
+
+#: templates/match-drawer.php:122
+msgid "3. Crea"
+msgstr "3. Sortu"
+
+#: templates/match-drawer.php:123
+msgid "¡Desarrollad juntos vuestro proyecto!"
+msgstr "Garatu elkarrekin zuen proiektua!"
+
+#: templates/single-centro.php:38
+msgid "Volver al directorio Traspasando Fronteras"
+msgstr "Itzuli Traspasando Fronteras direktoriora"
+
+#: templates/single-centro.php:50
+msgid "Disponible para colaborar"
+msgstr "Lankidetzarako prest"
+
+#: templates/single-centro.php:52
+msgid "No disponible actualmente"
+msgstr "Une honetan ez dago prest"
+
+#: templates/single-centro.php:74
+#: templates/single-centro.php:122
+#: build/directorio.js:3
+msgid "Extremadura"
+msgstr "Extremadura"
+
+#: templates/single-centro.php:106
+msgid "Idiomas de trabajo"
+msgstr "Lan-hizkuntzak"
+
+#: templates/single-centro.php:124
+#: build/directorio.js:3
+msgid "Proponer match"
+msgstr "Proposatu match bat"
+
+#: templates/single-centro.php:128
+#: build/directorio.js:3
+msgid "No disponible"
+msgstr "Ez dago prest"
+
+#: templates/single-centro.php:134
+msgid "Escuchar Podcast / Emisora"
+msgstr "Entzun podcasta / irratia"
+
+#: templates/single-centro.php:140
+msgid "Web del centro"
+msgstr "Ikastetxearen webgunea"
+
+#: templates/single-centro.php:150
+msgid "Sobre nuestra emisora escolar"
+msgstr "Gure eskola-irratiari buruz"
+
+#: build/admin.js:1
+#: build/centro-panel.js:1
+msgid "Seleccionar logo de la radio"
+msgstr "Hautatu irratiaren logoa"
+
+#: build/admin.js:1
+msgid "Usar este logo"
+msgstr "Erabili logo hau"
+
+#: build/centro-panel.js:1
+msgid "Necesitas permiso para subir archivos para cambiar el logo."
+msgstr "Fitxategiak igotzeko baimena behar duzu logoa aldatzeko."
+
+#: build/centro-panel.js:1
+msgid "Datos de la emisora"
+msgstr "Irratiaren datuak"
+
+#: build/centro-panel.js:1
+msgid "Ej: 10–14 años (5º Primaria a 2º ESO)"
+msgstr "Adib.: 10–14 urte (Lehen Hezkuntzako 5. mailatik DBHko 2. mailara)"
+
+#: build/centro-panel.js:1
+msgid "Ubicación en el mapa"
+msgstr "Kokapena mapan"
+
+#: build/centro-panel.js:1
+msgid "Latitud"
+msgstr "Latitudea"
+
+#: build/centro-panel.js:1
+msgid "Longitud"
+msgstr "Longitudea"
+
+#: build/centro-panel.js:1
+msgid "Coordinación"
+msgstr "Koordinazioa"
+
+#: build/directorio.js:3
+msgid "No se encontraron centros con los filtros seleccionados."
+msgstr "Ez da ikastetxerik aurkitu hautatutako iragazkiekin."
+
+#: build/directorio.js:3
+msgid "Cargando centros…"
+msgstr "Ikastetxeak kargatzen…"
+
+#: build/directorio.js:3
+msgid "Ver perfil"
+msgstr "Ikusi profila"
+
+#: build/directorio.js:3
+msgid "Añadir a favoritos"
+msgstr "Gehitu gogokoetara"
+
+#: build/directorio.js:3
+msgid "Quitar de favoritos"
+msgstr "Kendu gogokoetatik"
+
+#: build/directorio.js:3
+msgid "Enviando propuesta…"
+msgstr "Proposamena bidaltzen…"
+
+#: build/directorio.js:3
+msgid "¡Propuesta enviada con éxito!"
+msgstr "Proposamena bidali da!"
+
+#: build/directorio.js:3
+msgid "Debes iniciar sesión con tu cuenta de coordinador de centro para enviar propuestas de colaboración."
+msgstr "Ikastetxeko koordinatzaile-kontuarekin hasi behar duzu saioa lankidetza-proposamenak bidaltzeko."
+
+#: build/directorio.js:3
+msgid "Tu cuenta actual no dispone de permisos de coordinador para proponer colaboraciones."
+msgstr "Zure uneko kontuak ez du lankidetzak proposatzeko koordinatzaile-baimenik."
+
+#: build/directorio.js:3
+msgid "Por favor, selecciona tu centro escolar."
+msgstr "Hautatu zure ikastetxea."
+
+#: build/directorio.js:3
+msgid "Ha ocurrido un error al procesar la solicitud."
+msgstr "Errore bat gertatu da eskaera prozesatzean."
+
+#: build/directorio.js:3
+msgid "Iniciar sesión"
+msgstr "Hasi saioa"
+
+#: build/directorio.js:3
+msgid "Colaboradores de OpenStreetMap"
+msgstr "OpenStreetMap-en laguntzaileak"
+
+#: build/network-sync.js:1
+msgid "Sincronizando…"
+msgstr "Sinkronizatzen…"
+
+#. translators: 1: processed sites, 2: total sites.
+#: build/network-sync.js:2
+#, js-format
+msgid "Procesados %1$d de %2$d sitios…"
+msgstr "%2$d guneetatik %1$d prozesatuta…"
+
+#: build/network-sync.js:2
+#: build/network-sync.js:11
+msgid "Sincronización terminada."
+msgstr "Sinkronizazioa amaitu da."
+
+#. translators: %d: number of fichas.
+#: build/network-sync.js:3
+#, js-format
+msgid "%d ficha creada."
+msgid_plural "%d fichas creadas."
+msgstr[0] "%d fitxa sortu da."
+msgstr[1] "%d fitxa sortu dira."
+
+#. translators: %d: number of fichas.
+#: build/network-sync.js:4
+#, js-format
+msgid "%d ficha actualizada."
+msgid_plural "%d fichas actualizadas."
+msgstr[0] "%d fitxa eguneratu da."
+msgstr[1] "%d fitxa eguneratu dira."
+
+#. translators: %d: number of fichas.
+#: build/network-sync.js:5
+#, js-format
+msgid "%d ficha creada a mano reutilizada."
+msgid_plural "%d fichas creadas a mano reutilizadas."
+msgstr[0] "Eskuz sortutako %d fitxa berrerabili da."
+msgstr[1] "Eskuz sortutako %d fitxa berrerabili dira."
+
+#. translators: %d: number of fichas.
+#: build/network-sync.js:6
+#, js-format
+msgid "%d ficha omitida porque está en la papelera."
+msgid_plural "%d fichas omitidas porque están en la papelera."
+msgstr[0] "%d fitxa saltatu da, zakarrontzian dagoelako."
+msgstr[1] "%d fitxa saltatu dira, zakarrontzian daudelako."
+
+#. translators: %d: number of coordinators.
+#: build/network-sync.js:7
+#, js-format
+msgid "%d coordinador ha recibido el rol Autor en el sitio principal."
+msgid_plural "%d coordinadores han recibido el rol Autor en el sitio principal."
+msgstr[0] "%d koordinatzailek Egilea rola jaso du gune nagusian."
+msgstr[1] "%d koordinatzailek Egilea rola jaso dute gune nagusian."
+
+#: build/network-sync.js:7
+msgid "Sitios que no se han podido sincronizar:"
+msgstr "Sinkronizatu ezin izan diren guneak:"
+
+#. translators: 1: site ID, 2: error message.
+#: build/network-sync.js:8
+#, js-format
+msgid "Sitio %1$d: %2$s"
+msgstr "%1$d gunea: %2$s"
+
+#: build/network-sync.js:8
+msgid "Fichas cuyo sitio ya no existe (no se han borrado):"
+msgstr "Gunerik jada ez duten fitxak (ez dira ezabatu):"
+
+#. translators: %d: ID of the site that no longer exists.
+#: build/network-sync.js:9
+#, js-format
+msgid "(sitio %d)"
+msgstr "(%d gunea)"
+
+#: build/network-sync.js:9
+msgid "Creada"
+msgstr "Sortua"
+
+#: build/network-sync.js:9
+msgid "Actualizada"
+msgstr "Eguneratua"
+
+#: build/network-sync.js:9
+msgid "Reutilizada (ficha hecha a mano)"
+msgstr "Berrerabilia (eskuz egindako fitxa)"
+
+#: build/network-sync.js:9
+msgid "Omitida (en la papelera)"
+msgstr "Saltatua (zakarrontzian)"
+
+#. translators: %d: number of synced stations.
+#: build/network-sync.js:10
+#, js-format
+msgid "%d emisora sincronizada"
+msgid_plural "%d emisoras sincronizadas"
+msgstr[0] "Sinkronizatutako %d irrati"
+msgstr[1] "Sinkronizatutako %d irrati"
+
+#: build/network-sync.js:10
+msgid "Resultado de la sincronización por emisora"
+msgstr "Sinkronizazioaren emaitza irratiz irrati"
+
+#: build/network-sync.js:10
+msgid "Emisora"
+msgstr "Irratia"
+
+#: build/network-sync.js:10
+msgid "Sitio de origen"
+msgstr "Jatorrizko gunea"
+
+#: build/network-sync.js:10
+msgid "Resultado"
+msgstr "Emaitza"
+
+#: build/network-sync.js:10
+msgid "Rol Autor añadido"
+msgstr "Egilea rola gehituta"
+
+#. translators: %d: ficha ID.
+#: build/network-sync.js:11
+#, js-format
+msgid "Ficha %d"
+msgstr "Fitxa %d"
+
+#: build/network-sync.js:11
+msgid "No"
+msgstr "Ez"
+
+#. translators: 1: created fichas, 2: updated fichas, 3: problems.
+#: build/network-sync.js:12
+#, js-format
+msgid "Sincronización terminada: %1$d creadas, %2$d actualizadas, %3$d avisos."
+msgstr "Sinkronizazioa amaitu da: %1$d sortuta, %2$d eguneratuta, %3$d abisu."
+
+#. translators: %s: error message.
+#: build/network-sync.js:13
+#, js-format
+msgid "La sincronización se ha detenido: %s"
+msgstr "Sinkronizazioa gelditu egin da: %s"
+
+#: build/network-sync.js:13
+msgid "error desconocido"
+msgstr "errore ezezaguna"

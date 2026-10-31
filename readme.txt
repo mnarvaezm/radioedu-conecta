@@ -12,7 +12,7 @@ Interactive directory and collaboration system ("Traspasando Fronteras") that co
 
 == Description ==
 
-**RadioEdu Conecta** is the official plugin of the **Traspasando Fronteras** initiative by RadioEdu (Regional Ministry of Education, Science and Vocational Training, Junta de Extremadura, Spain). Its user interface is currently in Spanish.
+**RadioEdu Conecta** is the official plugin of the **Traspasando Fronteras** initiative by RadioEdu (Regional Ministry of Education, Science and Vocational Training, Junta de Extremadura, Spain). Its user interface is in Spanish, with bundled Catalan, Valencian, Galician and Basque translations.
 
 It allows schools that run a school radio station to:
 
@@ -44,7 +44,7 @@ The plugin contains no telemetry and makes no other calls to external services.
 
 == Source code ==
 
-The minified scripts in `build/` are compiled from the human-readable sources shipped in `assets/js/admin.js`, `assets/js/centro-panel.js` and `assets/js/directorio.js` with `@wordpress/scripts` (version 37), using its default webpack configuration: `npx wp-scripts build assets/js/admin.js assets/js/centro-panel.js assets/js/directorio.js`. The `@wordpress/*` packages they import (such as `i18n`, `a11y`, `editor`, `components` and `element`) are not bundled; they are loaded from WordPress core as script dependencies.
+The minified scripts in `build/` are compiled from the human-readable sources shipped in `assets/js/admin.js`, `assets/js/centro-panel.js`, `assets/js/directorio.js` and `assets/js/network-sync.js` with `@wordpress/scripts` (version 37), using its default webpack configuration: `npx wp-scripts build assets/js/admin.js assets/js/centro-panel.js assets/js/directorio.js assets/js/network-sync.js`. The `@wordpress/*` packages they import (such as `i18n`, `a11y`, `api-fetch`, `dom-ready`, `editor`, `components` and `element`) are not bundled; they are loaded from WordPress core as script dependencies.
 
 == Installation ==
 
@@ -72,6 +72,10 @@ Yes. In **Network Admin -> Settings -> RadioEdu Conecta**, the "Sincronizar fich
 * At the end, a table lists every synced station with a link to its profile, its source site, the result (created, updated, reused or skipped) and whether its coordinator got the Author role.
 
 Only network administrators can run it, and the plugin must be active on the main site.
+
+= Which languages are available? =
+
+The interface is in Spanish. The plugin includes Catalan (`ca`), Valencian (`ca_valencia`), Galician (`gl_ES`) and Basque (`eu`) translations of its screens and scripts. WordPress uses them when the site or user language is one of these. Official language packs from translate.wordpress.org, when available, take priority over the bundled files.
 
 = Are teachers' email addresses published on the website? =
 
@@ -101,6 +105,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * The directory sorts by affinity before paginating, cancels outdated searches, announces loading errors with a retry option and works with plain permalinks.
 * Personal data export and erasure run in batches, and network-wide tasks process sites in batches of 100.
 * Scripts are compiled with `@wordpress/scripts` and translated with `wp_set_script_translations()`. Without `build/`, pages still load, without interactivity.
+* Bundled Catalan, Valencian, Galician and Basque translations for PHP and scripts. Official language packs, when available, take priority.
 * Accessibility: visible focus outlines, AA contrast for the accent and status colours, and the "Subir / Elegir Logo" button keeps its own text as its accessible name.
 * Admin notices use `wp_admin_notice()`.
 

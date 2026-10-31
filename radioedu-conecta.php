@@ -146,6 +146,20 @@ function radioedu_conecta_deactivate( bool $network_wide = false ): void {
 register_deactivation_hook( __FILE__, 'radioedu_conecta_deactivate' );
 
 /**
+ * Registers the bundled translations in the plugin's languages folder.
+ *
+ * WordPress loads them just in time and looks in wp-content/languages/plugins
+ * first, so language packs, when they exist, take priority over these files.
+ *
+ * @since 1.1
+ */
+function radioedu_conecta_load_textdomain(): void {
+	// phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- The ca, ca_valencia, gl_ES and eu translations ship with the plugin, not as language packs, and WordPress only looks for them in a folder registered here.
+	load_plugin_textdomain( 'radioedu-conecta', false, dirname( RADIOEDU_CONECTA_BASENAME ) . '/languages' );
+}
+add_action( 'init', 'radioedu_conecta_load_textdomain', 0 );
+
+/**
  * Bootstrap the plugin on plugins_loaded.
  */
 function radioedu_conecta_bootstrap(): void {
