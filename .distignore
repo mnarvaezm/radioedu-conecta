@@ -4,6 +4,9 @@
 .distignore
 .agents
 AGENTS.md
+docs
+.env
+.env.*
 BRIEFING.md
 ARCHITECTURE.md
 TESTING-PROTOCOL.md
