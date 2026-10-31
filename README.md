@@ -32,6 +32,7 @@
    - **Privacidad asimétrica**: Los correos electrónicos de los docentes coordinadores nunca se exponen en el HTML ni en la REST API pública. El contacto se revela únicamente por correo interno cuando el centro receptor acepta la propuesta.
    - **Panel de gestión en WP Admin (`RadioEdu Centros → Colaboraciones (Matches)`)**: Permite a los coordinadores y administradores consultar las solicitudes recibidas/enviadas y **Aceptar** o **Declinar** propuestas con un mensaje de respuesta.
    - Integración nativa con las herramientas de **Privacidad de WordPress** (exportador y borrador de datos personales RGPD y texto sugerido para la política de privacidad).
+   - **Conservación**: las propuestas no caducan. Se conservan como historial compartido hasta que una solicitud de borrado de datos personales anonimiza la parte de la persona solicitante, o hasta que se desinstala el plugin.
 5. **Datos del centro en el editor de bloques**:
    - Logo, bandera, edades, podcast, web, disponibilidad, coordenadas y datos del coordinador se editan en la barra lateral del editor (pestaña **Centro de Radio**), en los paneles **Datos de la emisora**, **Ubicación en el mapa** y **Coordinación**, y se guardan con el botón *Guardar* del centro.
    - Con el Editor Clásico se siguen editando en la caja *Datos de la Emisora y Coordinación*.

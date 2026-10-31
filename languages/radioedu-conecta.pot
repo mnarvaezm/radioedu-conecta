@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-31T23:16:00+00:00\n"
+"POT-Creation-Date: 2026-10-31T23:20:59+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: radioedu-conecta\n"
@@ -351,7 +351,7 @@ msgid "Todavía no hay propuestas de colaboración registradas para tus centros 
 msgstr ""
 
 #: src/Admin/ColaboracionesAdminPage.php:169
-#: src/Privacy/PrivacyPolicy.php:194
+#: src/Privacy/PrivacyPolicy.php:195
 msgid "Fecha"
 msgstr ""
 
@@ -368,7 +368,7 @@ msgid "Idea del Proyecto y Detalles"
 msgstr ""
 
 #: src/Admin/ColaboracionesAdminPage.php:173
-#: src/Privacy/PrivacyPolicy.php:202
+#: src/Privacy/PrivacyPolicy.php:203
 msgid "Estado"
 msgstr ""
 
@@ -983,83 +983,87 @@ msgid "Las propuestas de colaboración guardan la cuenta de usuario que las env�
 msgstr ""
 
 #: src/Privacy/PrivacyPolicy.php:47
-msgid "Al activar voluntariamente la vista de mapa interactivo, el navegador del usuario se conecta con los servidores de OpenStreetMap Foundation para descargar la cartografía."
+msgid "Las propuestas no caducan: se conservan como historial compartido hasta que se atiende una solicitud de borrado de datos personales, que anonimiza la parte de la persona solicitante, o hasta que se desinstala el plugin."
 msgstr ""
 
 #: src/Privacy/PrivacyPolicy.php:48
+msgid "Al activar voluntariamente la vista de mapa interactivo, el navegador del usuario se conecta con los servidores de OpenStreetMap Foundation para descargar la cartografía."
+msgstr ""
+
+#: src/Privacy/PrivacyPolicy.php:49
 msgid "Los centros marcados como favoritos y la aceptación del mapa se guardan únicamente en el almacenamiento local del navegador del visitante y no se envían al servidor."
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:62
-#: src/Privacy/PrivacyPolicy.php:76
+#: src/Privacy/PrivacyPolicy.php:63
+#: src/Privacy/PrivacyPolicy.php:77
 msgid "RadioEdu Conecta (Coordinadores y Propuestas)"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:124
+#: src/Privacy/PrivacyPolicy.php:125
 msgid "RadioEdu Conecta - Coordinación de Centros"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:128
+#: src/Privacy/PrivacyPolicy.php:129
 msgid "Centro escolar"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:132
+#: src/Privacy/PrivacyPolicy.php:133
 msgid "Nombre del coordinador"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:136
+#: src/Privacy/PrivacyPolicy.php:137
 msgid "Email de coordinación"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:166
+#: src/Privacy/PrivacyPolicy.php:167
 msgid "RadioEdu Conecta - Propuestas de Colaboración"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:170
+#: src/Privacy/PrivacyPolicy.php:171
 msgid "Centro emisor"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:174
+#: src/Privacy/PrivacyPolicy.php:175
 msgid "Centro receptor"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:178
+#: src/Privacy/PrivacyPolicy.php:179
 #: templates/single-centro.php:96
 msgid "Cursos / Edades"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:182
+#: src/Privacy/PrivacyPolicy.php:183
 #: src/Taxonomies/TaxonomiesRegistrar.php:102
 msgid "Idiomas"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:186
+#: src/Privacy/PrivacyPolicy.php:187
 #: templates/match-drawer.php:89
 msgid "Fechas aproximadas"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:190
+#: src/Privacy/PrivacyPolicy.php:191
 msgid "Respuesta"
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:198
+#: src/Privacy/PrivacyPolicy.php:199
 #: templates/match-drawer.php:65
 msgid "Idea de proyecto"
 msgstr ""
 
 #. translators: %d: number of replies kept.
-#: src/Privacy/PrivacyPolicy.php:250
+#: src/Privacy/PrivacyPolicy.php:251
 #, php-format
 msgid "Se conserva %d respuesta anterior a la versión 1.1 en propuestas recibidas por los centros de esta persona, porque no registra quién la escribió. Revísela en Colaboraciones (Matches) por si contiene datos personales."
 msgid_plural "Se conservan %d respuestas anteriores a la versión 1.1 en propuestas recibidas por los centros de esta persona, porque no registran quién las escribió. Revíselas en Colaboraciones (Matches) por si contienen datos personales."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Privacy/PrivacyPolicy.php:326
+#: src/Privacy/PrivacyPolicy.php:327
 msgid "Se han eliminado los textos enviados y la vinculación con la cuenta. Los centros, las fechas, el estado y las respuestas de otros participantes se conservan como historial compartido; revise esas respuestas si contienen datos personales de la persona solicitante."
 msgstr ""
 
-#: src/Privacy/PrivacyPolicy.php:339
+#: src/Privacy/PrivacyPolicy.php:340
 msgid "No se han podido eliminar todos los datos. Reintente la solicitud de borrado."
 msgstr ""
 

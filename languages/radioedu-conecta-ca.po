@@ -351,7 +351,7 @@ msgid "Todavía no hay propuestas de colaboración registradas para tus centros 
 msgstr "Encara no hi ha propostes de col·laboració registrades per als teus centres escolars."
 
 #: src/Admin/ColaboracionesAdminPage.php:169
-#: src/Privacy/PrivacyPolicy.php:194
+#: src/Privacy/PrivacyPolicy.php:195
 msgid "Fecha"
 msgstr "Data"
 
@@ -368,7 +368,7 @@ msgid "Idea del Proyecto y Detalles"
 msgstr "Idea del projecte i detalls"
 
 #: src/Admin/ColaboracionesAdminPage.php:173
-#: src/Privacy/PrivacyPolicy.php:202
+#: src/Privacy/PrivacyPolicy.php:203
 msgid "Estado"
 msgstr "Estat"
 
@@ -978,76 +978,76 @@ msgstr "RadioEdu Conecta (Traspasando Fronteras)"
 msgid "Este sitio utiliza el plugin RadioEdu Conecta para gestionar el directorio de radios escolares. Los datos de contacto del docente coordinador (nombre y correo electrónico profesional) se almacenan de forma interna y nunca se exponen públicamente en el directorio web ni en las respuestas públicas de la API REST."
 msgstr "Aquest lloc utilitza l'extensió RadioEdu Conecta per gestionar el directori de ràdios escolars. Les dades de contacte del docent coordinador (nom i correu electrònic professional) s'emmagatzemen internament i mai no s'exposen públicament al directori web ni a les respostes públiques de l'API REST."
 
-#: src/Privacy/PrivacyPolicy.php:47
+#: src/Privacy/PrivacyPolicy.php:48
 msgid "Al activar voluntariamente la vista de mapa interactivo, el navegador del usuario se conecta con los servidores de OpenStreetMap Foundation para descargar la cartografía."
 msgstr "En activar voluntàriament la vista de mapa interactiu, el navegador de l'usuari es connecta amb els servidors de l'OpenStreetMap Foundation per descarregar la cartografia."
 
-#: src/Privacy/PrivacyPolicy.php:48
+#: src/Privacy/PrivacyPolicy.php:49
 msgid "Los centros marcados como favoritos y la aceptación del mapa se guardan únicamente en el almacenamiento local del navegador del visitante y no se envían al servidor."
 msgstr "Els centres marcats com a preferits i l'acceptació del mapa es desen únicament a l'emmagatzematge local del navegador del visitant i no s'envien al servidor."
 
-#: src/Privacy/PrivacyPolicy.php:62
-#: src/Privacy/PrivacyPolicy.php:76
+#: src/Privacy/PrivacyPolicy.php:63
+#: src/Privacy/PrivacyPolicy.php:77
 msgid "RadioEdu Conecta (Coordinadores y Propuestas)"
 msgstr "RadioEdu Conecta (coordinadors i propostes)"
 
-#: src/Privacy/PrivacyPolicy.php:124
+#: src/Privacy/PrivacyPolicy.php:125
 msgid "RadioEdu Conecta - Coordinación de Centros"
 msgstr "RadioEdu Conecta - Coordinació de centres"
 
-#: src/Privacy/PrivacyPolicy.php:128
+#: src/Privacy/PrivacyPolicy.php:129
 msgid "Centro escolar"
 msgstr "Centre escolar"
 
-#: src/Privacy/PrivacyPolicy.php:132
+#: src/Privacy/PrivacyPolicy.php:133
 msgid "Nombre del coordinador"
 msgstr "Nom del coordinador"
 
-#: src/Privacy/PrivacyPolicy.php:136
+#: src/Privacy/PrivacyPolicy.php:137
 msgid "Email de coordinación"
 msgstr "Correu electrònic de coordinació"
 
-#: src/Privacy/PrivacyPolicy.php:166
+#: src/Privacy/PrivacyPolicy.php:167
 msgid "RadioEdu Conecta - Propuestas de Colaboración"
 msgstr "RadioEdu Conecta - Propostes de col·laboració"
 
-#: src/Privacy/PrivacyPolicy.php:170
+#: src/Privacy/PrivacyPolicy.php:171
 msgid "Centro emisor"
 msgstr "Centre emissor"
 
-#: src/Privacy/PrivacyPolicy.php:174
+#: src/Privacy/PrivacyPolicy.php:175
 msgid "Centro receptor"
 msgstr "Centre receptor"
 
-#: src/Privacy/PrivacyPolicy.php:178
+#: src/Privacy/PrivacyPolicy.php:179
 #: templates/single-centro.php:96
 msgid "Cursos / Edades"
 msgstr "Cursos / edats"
 
-#: src/Privacy/PrivacyPolicy.php:182
+#: src/Privacy/PrivacyPolicy.php:183
 #: src/Taxonomies/TaxonomiesRegistrar.php:102
 msgid "Idiomas"
 msgstr "Idiomes"
 
-#: src/Privacy/PrivacyPolicy.php:186
+#: src/Privacy/PrivacyPolicy.php:187
 #: templates/match-drawer.php:89
 msgid "Fechas aproximadas"
 msgstr "Dates aproximades"
 
-#: src/Privacy/PrivacyPolicy.php:190
+#: src/Privacy/PrivacyPolicy.php:191
 msgid "Respuesta"
 msgstr "Resposta"
 
-#: src/Privacy/PrivacyPolicy.php:198
+#: src/Privacy/PrivacyPolicy.php:199
 #: templates/match-drawer.php:65
 msgid "Idea de proyecto"
 msgstr "Idea de projecte"
 
-#: src/Privacy/PrivacyPolicy.php:326
+#: src/Privacy/PrivacyPolicy.php:327
 msgid "Se han eliminado los textos enviados y la vinculación con la cuenta. Los centros, las fechas, el estado y las respuestas de otros participantes se conservan como historial compartido; revise esas respuestas si contienen datos personales de la persona solicitante."
 msgstr "S'han eliminat els textos enviats i la vinculació amb el compte. Els centres, les dates, l'estat i les respostes d'altres participants es conserven com a historial compartit; reviseu aquestes respostes per si contenen dades personals de la persona sol·licitant."
 
-#: src/Privacy/PrivacyPolicy.php:339
+#: src/Privacy/PrivacyPolicy.php:340
 msgid "No se han podido eliminar todos los datos. Reintente la solicitud de borrado."
 msgstr "No s'han pogut eliminar totes les dades. Torneu a fer la sol·licitud d'esborrament."
 
@@ -1941,7 +1941,7 @@ msgid "Las propuestas de colaboración guardan la cuenta de usuario que las env�
 msgstr "Les propostes de col·laboració desen el compte d'usuari que les envia, els centres implicats, el text del projecte i la resposta, juntament amb el compte que l'escriu. El correu de contacte del centre receptor només es comparteix amb el centre emissor quan s'accepta la proposta."
 
 #. translators: %d: number of replies kept.
-#: src/Privacy/PrivacyPolicy.php:250
+#: src/Privacy/PrivacyPolicy.php:251
 #, php-format
 msgid "Se conserva %d respuesta anterior a la versión 1.1 en propuestas recibidas por los centros de esta persona, porque no registra quién la escribió. Revísela en Colaboraciones (Matches) por si contiene datos personales."
 msgid_plural "Se conservan %d respuestas anteriores a la versión 1.1 en propuestas recibidas por los centros de esta persona, porque no registran quién las escribió. Revíselas en Colaboraciones (Matches) por si contienen datos personales."
@@ -1951,3 +1951,7 @@ msgstr[1] "Es conserven %d respostes anteriors a la versió 1.1 en propostes reb
 #: src/Rest/ColaboracionesController.php:508
 msgid "No se pudo guardar la respuesta. Inténtalo de nuevo."
 msgstr "No s'ha pogut desar la resposta. Torna-ho a provar."
+
+#: src/Privacy/PrivacyPolicy.php:47
+msgid "Las propuestas no caducan: se conservan como historial compartido hasta que se atiende una solicitud de borrado de datos personales, que anonimiza la parte de la persona solicitante, o hasta que se desinstala el plugin."
+msgstr "Les propostes no caduquen: es conserven com a historial compartit fins que s'atén una sol·licitud d'esborrament de dades personals, que anonimitza la part de la persona sol·licitant, o fins que es desinstal·la l'extensió."

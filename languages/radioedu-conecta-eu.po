@@ -351,7 +351,7 @@ msgid "Todavía no hay propuestas de colaboración registradas para tus centros 
 msgstr "Oraindik ez dago lankidetza-proposamenik erregistratuta zure ikastetxeentzat."
 
 #: src/Admin/ColaboracionesAdminPage.php:169
-#: src/Privacy/PrivacyPolicy.php:194
+#: src/Privacy/PrivacyPolicy.php:195
 msgid "Fecha"
 msgstr "Data"
 
@@ -368,7 +368,7 @@ msgid "Idea del Proyecto y Detalles"
 msgstr "Proiektuaren ideia eta xehetasunak"
 
 #: src/Admin/ColaboracionesAdminPage.php:173
-#: src/Privacy/PrivacyPolicy.php:202
+#: src/Privacy/PrivacyPolicy.php:203
 msgid "Estado"
 msgstr "Egoera"
 
@@ -978,76 +978,76 @@ msgstr "RadioEdu Conecta (Traspasando Fronteras)"
 msgid "Este sitio utiliza el plugin RadioEdu Conecta para gestionar el directorio de radios escolares. Los datos de contacto del docente coordinador (nombre y correo electrónico profesional) se almacenan de forma interna y nunca se exponen públicamente en el directorio web ni en las respuestas públicas de la API REST."
 msgstr "Gune honek RadioEdu Conecta plugina erabiltzen du eskola-irratien direktorioa kudeatzeko. Irakasle koordinatzailearen harremanetarako datuak (izena eta laneko helbide elektronikoa) barnean gordetzen dira, eta ez dira inoiz publikoki erakusten web-direktorioan, ezta REST APIaren erantzun publikoetan ere."
 
-#: src/Privacy/PrivacyPolicy.php:47
+#: src/Privacy/PrivacyPolicy.php:48
 msgid "Al activar voluntariamente la vista de mapa interactivo, el navegador del usuario se conecta con los servidores de OpenStreetMap Foundation para descargar la cartografía."
 msgstr "Mapa interaktiboaren ikuspegia borondatez aktibatzean, erabiltzailearen nabigatzailea OpenStreetMap Foundation-en zerbitzariekin konektatzen da kartografia deskargatzeko."
 
-#: src/Privacy/PrivacyPolicy.php:48
+#: src/Privacy/PrivacyPolicy.php:49
 msgid "Los centros marcados como favoritos y la aceptación del mapa se guardan únicamente en el almacenamiento local del navegador del visitante y no se envían al servidor."
 msgstr "Gogoko gisa markatutako ikastetxeak eta maparen onarpena bisitariaren nabigatzailearen biltegiratze lokalean soilik gordetzen dira, eta ez dira zerbitzarira bidaltzen."
 
-#: src/Privacy/PrivacyPolicy.php:62
-#: src/Privacy/PrivacyPolicy.php:76
+#: src/Privacy/PrivacyPolicy.php:63
+#: src/Privacy/PrivacyPolicy.php:77
 msgid "RadioEdu Conecta (Coordinadores y Propuestas)"
 msgstr "RadioEdu Conecta (koordinatzaileak eta proposamenak)"
 
-#: src/Privacy/PrivacyPolicy.php:124
+#: src/Privacy/PrivacyPolicy.php:125
 msgid "RadioEdu Conecta - Coordinación de Centros"
 msgstr "RadioEdu Conecta - Ikastetxeen koordinazioa"
 
-#: src/Privacy/PrivacyPolicy.php:128
+#: src/Privacy/PrivacyPolicy.php:129
 msgid "Centro escolar"
 msgstr "Ikastetxea"
 
-#: src/Privacy/PrivacyPolicy.php:132
+#: src/Privacy/PrivacyPolicy.php:133
 msgid "Nombre del coordinador"
 msgstr "Koordinatzailearen izena"
 
-#: src/Privacy/PrivacyPolicy.php:136
+#: src/Privacy/PrivacyPolicy.php:137
 msgid "Email de coordinación"
 msgstr "Koordinazioko helbide elektronikoa"
 
-#: src/Privacy/PrivacyPolicy.php:166
+#: src/Privacy/PrivacyPolicy.php:167
 msgid "RadioEdu Conecta - Propuestas de Colaboración"
 msgstr "RadioEdu Conecta - Lankidetza-proposamenak"
 
-#: src/Privacy/PrivacyPolicy.php:170
+#: src/Privacy/PrivacyPolicy.php:171
 msgid "Centro emisor"
 msgstr "Ikastetxe igorlea"
 
-#: src/Privacy/PrivacyPolicy.php:174
+#: src/Privacy/PrivacyPolicy.php:175
 msgid "Centro receptor"
 msgstr "Ikastetxe hartzailea"
 
-#: src/Privacy/PrivacyPolicy.php:178
+#: src/Privacy/PrivacyPolicy.php:179
 #: templates/single-centro.php:96
 msgid "Cursos / Edades"
 msgstr "Mailak / adinak"
 
-#: src/Privacy/PrivacyPolicy.php:182
+#: src/Privacy/PrivacyPolicy.php:183
 #: src/Taxonomies/TaxonomiesRegistrar.php:102
 msgid "Idiomas"
 msgstr "Hizkuntzak"
 
-#: src/Privacy/PrivacyPolicy.php:186
+#: src/Privacy/PrivacyPolicy.php:187
 #: templates/match-drawer.php:89
 msgid "Fechas aproximadas"
 msgstr "Gutxi gorabeherako datak"
 
-#: src/Privacy/PrivacyPolicy.php:190
+#: src/Privacy/PrivacyPolicy.php:191
 msgid "Respuesta"
 msgstr "Erantzuna"
 
-#: src/Privacy/PrivacyPolicy.php:198
+#: src/Privacy/PrivacyPolicy.php:199
 #: templates/match-drawer.php:65
 msgid "Idea de proyecto"
 msgstr "Proiektuaren ideia"
 
-#: src/Privacy/PrivacyPolicy.php:326
+#: src/Privacy/PrivacyPolicy.php:327
 msgid "Se han eliminado los textos enviados y la vinculación con la cuenta. Los centros, las fechas, el estado y las respuestas de otros participantes se conservan como historial compartido; revise esas respuestas si contienen datos personales de la persona solicitante."
 msgstr "Bidalitako testuak eta kontuarekiko lotura ezabatu dira. Ikastetxeak, datak, egoera eta beste parte-hartzaile batzuen erantzunak historia partekatu gisa gordetzen dira; berrikusi erantzun horiek, eskatzailearen datu pertsonalik ba ote duten jakiteko."
 
-#: src/Privacy/PrivacyPolicy.php:339
+#: src/Privacy/PrivacyPolicy.php:340
 msgid "No se han podido eliminar todos los datos. Reintente la solicitud de borrado."
 msgstr "Ezin izan dira datu guztiak ezabatu. Egin berriro ezabatze-eskaera."
 
@@ -1941,7 +1941,7 @@ msgid "Las propuestas de colaboración guardan la cuenta de usuario que las env�
 msgstr "Lankidetza-proposamenek bidaltzen dituen erabiltzaile-kontua, inplikatutako ikastetxeak, proiektuaren testua eta erantzuna gordetzen dituzte, erantzuna idazten duen kontuarekin batera. Ikastetxe hartzailearen harremanetarako helbide elektronikoa proposamena onartzen denean soilik partekatzen da ikastetxe igorlearekin."
 
 #. translators: %d: number of replies kept.
-#: src/Privacy/PrivacyPolicy.php:250
+#: src/Privacy/PrivacyPolicy.php:251
 #, php-format
 msgid "Se conserva %d respuesta anterior a la versión 1.1 en propuestas recibidas por los centros de esta persona, porque no registra quién la escribió. Revísela en Colaboraciones (Matches) por si contiene datos personales."
 msgid_plural "Se conservan %d respuestas anteriores a la versión 1.1 en propuestas recibidas por los centros de esta persona, porque no registran quién las escribió. Revíselas en Colaboraciones (Matches) por si contienen datos personales."
@@ -1951,3 +1951,7 @@ msgstr[1] "1.1 bertsioa baino lehenagoko %d erantzun gordetzen dira pertsona hon
 #: src/Rest/ColaboracionesController.php:508
 msgid "No se pudo guardar la respuesta. Inténtalo de nuevo."
 msgstr "Ezin izan da erantzuna gorde. Saiatu berriro."
+
+#: src/Privacy/PrivacyPolicy.php:47
+msgid "Las propuestas no caducan: se conservan como historial compartido hasta que se atiende una solicitud de borrado de datos personales, que anonimiza la parte de la persona solicitante, o hasta que se desinstala el plugin."
+msgstr "Proposamenek ez dute iraungitze-datarik: historia partekatu gisa gordetzen dira datu pertsonalak ezabatzeko eskaera bat bete arte (eskatzailearen zatia anonimizatzen du) edo plugina desinstalatu arte."
