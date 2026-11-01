@@ -327,7 +327,7 @@ Claude (asistente de programación) hizo las correcciones a petición del respon
 - su entrada en el changelog de `readme.txt` y `README.md`;
 - cambios en `ARCHITECTURE.md` y `TESTING-PROTOCOL.md` cuando procedía.
 
-Las cadenas nuevas o modificadas se tradujeron al catalán, valenciano, gallego y euskera. Las correcciones están en la rama `feat/wp71-apis`, que todavía no se ha fusionado con `main`. El ZIP `radioedu-conecta_1.1.zip` se regeneró con el código de `5b36de5`.
+Las cadenas nuevas o modificadas se tradujeron al catalán, valenciano, gallego y euskera. Las correcciones están en la rama `feat/wp71-apis`, que todavía no se ha fusionado con `main`. El ZIP `radioedu-conecta_1.1.zip` se regeneró con el código de `97b8f69`, que añade a esas correcciones el bloque del directorio en la página de demostración.
 
 **Resumen:**
 
@@ -469,6 +469,8 @@ Q-02, el bloque en el editor, ya lo cubría `directorio-block.spec.js`. La prueb
 
 Con YOOtheme, `centro-logo.spec.js` falla porque WordPress avisa en la consola de que el tema usa controles de barra de herramientas obsoletos; la prueba no admite avisos de consola. Con Twenty Twenty-Five, el tema de `wp-env` y de la CI, pasa.
 
+Fuera de la auditoría, `97b8f69` hace que la página de demostración «Traspasando Fronteras» lleve el bloque del directorio en vez del shortcode, para que el editor muestre su vista previa. La activación sigue sin crear la página: se crea solo al importar los datos de demostración desde los ajustes. Con ese código, PHPUnit pasa en sitio único (151 pruebas, 21 omitidas por ser de multisitio) y en multisitio (151). PHPCS y PHPStan no dan errores, y Plugin Check tampoco, sobre el plugin instalado desde el ZIP regenerado: 102 ficheros, idénticos a `97b8f69`. En el entorno de QA, la activación no creó páginas; la importación creó la página con el bloque, una segunda importación no la duplicó y el enlace *Volver al directorio* de las fichas lleva a ella.
+
 Los scripts de navegador están en `evidencias/seguimiento-2026-11-01/`. Usan el entorno desechable del puerto 8091 y su cuenta de pruebas, y no deben ejecutarse contra otros sitios.
 
 ### Segunda revisión: R-01 a R-05
@@ -538,7 +540,7 @@ S-02, que se había aceptado como riesgo, se corrigió después a petición del 
 
 **Antes de publicar:**
 
-- Revisar el resultado de la CI remota de la rama y fusionar con `main` mediante un PR. El ZIP ya está regenerado con el código de `5b36de5`; si cambia el código, hay que volver a generarlo.
+- Revisar el resultado de la CI remota de la rama y fusionar con `main` mediante un PR. El ZIP ya está regenerado con el código de `97b8f69`; si cambia el código, hay que volver a generarlo.
 - Pedir una revisión nativa de las traducciones, en especial de las 13 cadenas nuevas o modificadas en este seguimiento:
   - las 12 de las correcciones;
   - la palabra clave «podcast» del bloque.
