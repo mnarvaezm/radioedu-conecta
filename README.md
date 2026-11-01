@@ -154,6 +154,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * La ficha ya no elimina los reproductores embebidos (YouTube, pódcast…) de la descripción: muestra el contenido tal como lo filtra WordPress, igual que cualquier tema.
 * Multisite: el recuento de *Radios por usuario* se guarda en caché por sitio, así que el código que comprueba varios sitios en una misma petición ya no reutiliza el recuento de otro sitio.
 * Multisite: dos sincronizaciones de red simultáneas ya no crean dos fichas del mismo sitio; la segunda indica que el sitio está ocupado.
+* Multisite: el resumen final de la sincronización lista todas las fichas cuyo sitio ya no existe, no solo las de las 1.000 primeras.
 * Pruebas E2E con Playwright y `wp-env` (datos del centro en los paneles del editor de WordPress 7.1, incluido el logo, y bloque del directorio).
 
 ### 1.0.0

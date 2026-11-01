@@ -48,9 +48,9 @@ final class NetworkSync {
 	public const GRANT_AUTHOR_OPTION = 'radioedu_conecta_sync_grant_author';
 
 	/**
-	 * Most fichas checked for a missing source site.
+	 * Fichas or sites read per query while looking for fichas whose site is gone.
 	 */
-	private const MAX_ORPHAN_CHECK = 1000;
+	private const ORPHAN_BATCH = 500;
 
 	/**
 	 * Prefix of the option that locks the sync of one site, followed by the site ID.
@@ -340,32 +340,62 @@ final class NetworkSync {
 	 * @return list<array{id: int, title: string, blog_id: int, edit_url: string}> Orphaned fichas.
 	 */
 	public static function find_orphaned_fichas(): array {
-		$ids = get_posts(
-			[
-				'post_type'      => CentroPostType::POST_TYPE,
-				'post_status'    => 'any',
-				'posts_per_page' => self::MAX_ORPHAN_CHECK,
-				'fields'         => 'ids',
-				'no_found_rows'  => true,
-				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Bounded admin-only lookup of synced fichas.
-				'meta_key'       => self::SOURCE_META,
-			]
-		);
-
-		$orphans = [];
-		foreach ( $ids as $post_id ) {
-			$blog_id = (int) get_post_meta( (int) $post_id, self::SOURCE_META, true );
-			$site    = $blog_id > 0 ? get_site( $blog_id ) : null;
-			if ( null !== $site && '1' !== (string) $site->archived && '1' !== (string) $site->spam && '1' !== (string) $site->deleted ) {
-				continue;
+		// Every live site, read in batches: fichas are checked against this set, not one get_site() each.
+		$live   = [];
+		$offset = 0;
+		do {
+			$site_ids = get_sites(
+				[
+					'fields'   => 'ids',
+					'archived' => 0,
+					'spam'     => 0,
+					'deleted'  => 0,
+					'number'   => self::ORPHAN_BATCH,
+					'offset'   => $offset,
+					'orderby'  => 'id',
+					'order'    => 'ASC',
+				]
+			);
+			foreach ( $site_ids as $site_id ) {
+				$live[ (int) $site_id ] = true;
 			}
-			$orphans[] = [
-				'id'       => (int) $post_id,
-				'title'    => html_entity_decode( get_the_title( (int) $post_id ), ENT_QUOTES, 'UTF-8' ),
-				'blog_id'  => $blog_id,
-				'edit_url' => (string) get_edit_post_link( (int) $post_id, 'raw' ),
-			];
-		}
+			$offset    += self::ORPHAN_BATCH;
+			$more_sites = count( $site_ids ) === self::ORPHAN_BATCH;
+		} while ( $more_sites );
+
+		// Every synced ficha, page by page in ID order: nothing is left out, however many there are.
+		$orphans = [];
+		$page    = 1;
+		do {
+			$fichas = get_posts(
+				[
+					'post_type'              => CentroPostType::POST_TYPE,
+					'post_status'            => 'any',
+					'posts_per_page'         => self::ORPHAN_BATCH,
+					'paged'                  => $page,
+					'orderby'                => 'ID',
+					'order'                  => 'ASC',
+					'no_found_rows'          => true,
+					'update_post_term_cache' => false,
+					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Admin-only lookup of synced fichas, in batches.
+					'meta_key'               => self::SOURCE_META,
+				]
+			);
+			foreach ( $fichas as $ficha ) {
+				$blog_id = (int) get_post_meta( $ficha->ID, self::SOURCE_META, true );
+				if ( isset( $live[ $blog_id ] ) ) {
+					continue;
+				}
+				$orphans[] = [
+					'id'       => $ficha->ID,
+					'title'    => html_entity_decode( get_the_title( $ficha ), ENT_QUOTES, 'UTF-8' ),
+					'blog_id'  => $blog_id,
+					'edit_url' => (string) get_edit_post_link( $ficha->ID, 'raw' ),
+				];
+			}
+			++$page;
+			$more_fichas = count( $fichas ) === self::ORPHAN_BATCH;
+		} while ( $more_fichas );
 
 		return $orphans;
 	}

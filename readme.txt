@@ -129,6 +129,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * The profile no longer strips embedded players (YouTube, podcasts…) from the description: it prints the content as WordPress filters it, like any theme.
 * Multisite: the "Radios por usuario" count is cached per site, so code that checks several sites in one request no longer reuses another site's count.
 * Multisite: two network syncs at once no longer create two profiles for the same site; the second one reports that the site is busy.
+* Multisite: the final sync summary lists every profile whose site is gone, not only those among the first 1,000.
 
 = 1.0.0 =
 * Interactive `[radioedu_directorio]` directory with faceted filters, affinity sorting, pagination and a locally bundled Leaflet map with prior consent for OpenStreetMap tiles.

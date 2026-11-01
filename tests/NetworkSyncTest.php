@@ -403,6 +403,20 @@ class NetworkSyncTest extends WP_UnitTestCase {
 		$this->assertNotWPError( NetworkSync::sync_site( $blog_id ) );
 	}
 
+	public function test_every_ficha_is_checked_for_a_missing_site(): void {
+		global $wpdb;
+		$live = $this->site( 'Radio Viva', $this->teacher() );
+		// More than 1,000 fichas, inserted directly to keep the test fast. The orphan is the oldest,
+		// which a single page of the newest 1,000 left out.
+		for ( $i = 0; $i <= 1000; ++$i ) {
+			$date = 1000 === $i ? '2000-01-01 00:00:00' : current_time( 'mysql' );
+			$wpdb->insert( $wpdb->posts, [ 'post_type' => CentroPostType::POST_TYPE, 'post_status' => 'publish', 'post_title' => "Ficha $i", 'post_date' => $date, 'post_date_gmt' => $date, 'post_modified' => $date, 'post_modified_gmt' => $date, 'post_content' => '', 'post_excerpt' => '', 'to_ping' => '', 'pinged' => '', 'post_content_filtered' => '' ] );
+			$wpdb->insert( $wpdb->postmeta, [ 'post_id' => $wpdb->insert_id, 'meta_key' => NetworkSync::SOURCE_META, 'meta_value' => 1000 === $i ? 999999 : $live ] );
+		}
+
+		$this->assertSame( [ 999999 ], array_column( NetworkSync::find_orphaned_fichas(), 'blog_id' ) );
+	}
+
 	public function test_a_lock_left_by_a_request_that_died_does_not_block_the_sync(): void {
 		$blog_id = $this->site( 'Radio Bloqueada', $this->teacher() );
 		add_option( NetworkSync::LOCK_PREFIX . $blog_id, (string) ( time() - 120 ), '', false );
