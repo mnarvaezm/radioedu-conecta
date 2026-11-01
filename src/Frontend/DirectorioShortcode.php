@@ -35,6 +35,11 @@ class DirectorioShortcode {
 	public const BLOCK_NAME = 'radioedu-conecta/directorio';
 
 	/**
+	 * Option with the ID of the page that shows the directory.
+	 */
+	public const DIRECTORY_PAGE_OPTION = 'radioedu_conecta_directory_page_id';
+
+	/**
 	 * Name of the profile page block template (plugin namespace + hierarchy slug).
 	 */
 	public const PROFILE_BLOCK_TEMPLATE = 'radioedu-conecta//single-radioedu_centro';
@@ -263,6 +268,67 @@ class DirectorioShortcode {
 	 */
 	public static function render_block(): string {
 		return sprintf( '<div %s>%s</div>', get_block_wrapper_attributes(), self::render_shortcode() );
+	}
+
+	/**
+	 * Returns the URL of the directory, for the "Volver al directorio" link of the profiles.
+	 *
+	 * Uses the recorded directory page while it is published and still shows the directory, then
+	 * the page with the demo slug, then the home page.
+	 *
+	 * @since 1.1
+	 *
+	 * @return string Directory URL.
+	 */
+	public static function get_directory_url(): string {
+		$page_id = (int) get_option( self::DIRECTORY_PAGE_OPTION, 0 );
+		if ( ! self::is_directory_page( $page_id ) ) {
+			$fallback = get_page_by_path( 'traspasando-fronteras' );
+			$page_id  = $fallback && self::is_directory_page( $fallback->ID ) ? $fallback->ID : 0;
+		}
+		$url = $page_id > 0 ? (string) get_permalink( $page_id ) : home_url( '/' );
+
+		/**
+		 * Filters the URL of the "Volver al directorio" link on the station profiles.
+		 *
+		 * @since 1.1
+		 *
+		 * @param string $url     Directory URL.
+		 * @param int    $page_id ID of the directory page, or 0 when none was found.
+		 */
+		return (string) apply_filters( 'radioedu_conecta_directory_url', $url, $page_id );
+	}
+
+	/**
+	 * Remembers the page that shows the directory, when no valid one is recorded yet.
+	 *
+	 * Runs when the shortcode or the block renders, so the profiles link back to wherever the
+	 * directory was placed. A recorded page that still shows the directory is kept.
+	 *
+	 * @since 1.1
+	 */
+	private static function remember_directory_page(): void {
+		$page_id = is_singular() ? (int) get_queried_object_id() : 0;
+		if ( $page_id <= 0 || ! self::is_directory_page( $page_id ) || self::is_directory_page( (int) get_option( self::DIRECTORY_PAGE_OPTION, 0 ) ) ) {
+			return;
+		}
+
+		update_option( self::DIRECTORY_PAGE_OPTION, $page_id, false );
+	}
+
+	/**
+	 * Tells whether a post is published, public and shows the directory.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return bool True for a published post without password that holds the shortcode or the block.
+	 */
+	private static function is_directory_page( int $post_id ): bool {
+		$post = $post_id > 0 ? get_post( $post_id ) : null;
+		if ( ! $post instanceof \WP_Post || 'publish' !== $post->post_status || '' !== $post->post_password ) {
+			return false;
+		}
+
+		return has_shortcode( $post->post_content, self::SHORTCODE_TAG ) || has_block( self::BLOCK_NAME, $post );
 	}
 
 	/**
@@ -506,9 +572,7 @@ class DirectorioShortcode {
 			}
 		}
 
-		// URL de retorno al directorio Traspasando Fronteras.
-		$directorio_page = get_page_by_path( 'traspasando-fronteras' );
-		$directorio_url  = $directorio_page ? (string) get_permalink( $directorio_page->ID ) : home_url( '/' );
+		$directorio_url = self::get_directory_url();
 
 		$raw_description_html = $content;
 
@@ -562,6 +626,8 @@ class DirectorioShortcode {
 	 * @return string Salida HTML del directorio.
 	 */
 	public static function render_shortcode( array|string $atts = [] ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- WordPress supplies shortcode attributes.
+		self::remember_directory_page();
+
 		if ( ! wp_style_is( 'radioedu-directorio-css', 'registered' ) ) {
 			self::register_assets();
 		}
