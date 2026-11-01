@@ -170,7 +170,11 @@ radioedu-conecta/
 - Sustituciones dinámicas mediante `sprintf()` o `printf()`, incluyendo comentario aclaratorio para traductores: `/* translators: ... */`.
 - En JavaScript: usar `@wordpress/i18n` (`wp.i18n`) y registrar traducciones con `wp_set_script_translations()`.
 - Generar plantilla de traducción `.pot` mediante `wp i18n make-pot`.
-- El idioma base del código y los comentarios debe ser el inglés.
+- **Idioma base**:
+  - **Cadenas de origen (`msgid`):** en español, el idioma del público del plugin (centros educativos de Extremadura). El plugin incluye traducciones al catalán (`ca`), valenciano (`ca_valencia`), gallego (`gl_ES`) y euskera (`eu`). Toda cadena nueva o modificada se traduce a esos cuatro idiomas en el mismo cambio (`.po`, `.mo`, `.l10n.php` y, si es de JavaScript, los `.json`).
+  - **Identificadores:** en inglés (clases, métodos, variables, hooks, claves de arrays).
+  - **Comentarios y DocBlocks:** en inglés en el código nuevo. Los comentarios en español que ya existen se mantienen y se traducen solo al reescribir ese código.
+  - **Si se publica en WordPress.org:** translate.wordpress.org trabajará a partir de las cadenas en español. Pasarlas al inglés obligaría a cambiar todos los `msgid` y rehacer las traducciones; sería una decisión aparte.
 
 ---
 
