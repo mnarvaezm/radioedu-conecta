@@ -312,7 +312,62 @@ class DirectorioShortcode {
 			return false;
 		}
 
-		return has_shortcode( $post->post_content, self::SHORTCODE_TAG ) || has_block( self::BLOCK_NAME, $post );
+		return self::content_shows_directory( $post->post_content, [] );
+	}
+
+	/**
+	 * Tells whether content holds the directory, directly or inside synced patterns.
+	 *
+	 * A page may show the directory through a synced pattern (a core/block that references a
+	 * wp_block post). Those are opened too, up to five levels, and each one only once.
+	 *
+	 * @since 1.1
+	 *
+	 * @param string          $content Post content.
+	 * @param array<int, int> $opened  IDs of the synced patterns already opened.
+	 * @return bool True when the shortcode or the block is found.
+	 */
+	private static function content_shows_directory( string $content, array $opened ): bool {
+		if ( has_shortcode( $content, self::SHORTCODE_TAG ) || has_block( self::BLOCK_NAME, $content ) ) {
+			return true;
+		}
+		if ( count( $opened ) >= 5 || ! has_block( 'core/block', $content ) ) {
+			return false;
+		}
+
+		foreach ( self::synced_pattern_ids( parse_blocks( $content ) ) as $pattern_id ) {
+			if ( in_array( $pattern_id, $opened, true ) ) {
+				continue;
+			}
+			$pattern = get_post( $pattern_id );
+			if ( $pattern instanceof \WP_Post && 'wp_block' === $pattern->post_type && 'publish' === $pattern->post_status
+				&& self::content_shows_directory( $pattern->post_content, array_merge( $opened, [ $pattern_id ] ) ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Lists the synced patterns referenced by some blocks, including nested ones.
+	 *
+	 * @param array<int, array<string, mixed>> $blocks Parsed blocks.
+	 * @return array<int, int> Referenced wp_block IDs.
+	 */
+	private static function synced_pattern_ids( array $blocks ): array {
+		$ids = [];
+		foreach ( $blocks as $block ) {
+			$attrs = isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : [];
+			if ( 'core/block' === ( $block['blockName'] ?? '' ) && ! empty( $attrs['ref'] ) ) {
+				$ids[] = (int) $attrs['ref'];
+			}
+			if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
+				$ids = array_merge( $ids, self::synced_pattern_ids( $block['innerBlocks'] ) );
+			}
+		}
+
+		return $ids;
 	}
 
 	/**

@@ -45,6 +45,28 @@ class DirectoryUrlTest extends WP_UnitTestCase {
 		$this->assertSame( $fallback, (int) get_option( DirectorioShortcode::DIRECTORY_PAGE_OPTION ) );
 	}
 
+	public function test_a_directory_inside_a_synced_pattern_is_found(): void {
+		$pattern = self::factory()->post->create( [ 'post_type' => 'wp_block', 'post_status' => 'publish', 'post_content' => '<!-- wp:radioedu-conecta/directorio /-->' ] );
+		// The pattern sits inside a group, as editors often leave it.
+		$page = $this->page( 'radios-patron', '<!-- wp:group --><div class="wp-block-group"><!-- wp:block {"ref":' . $pattern . '} /--></div><!-- /wp:group -->' );
+
+		$this->go_to( get_permalink( $page ) );
+		do_blocks( get_post_field( 'post_content', $page ) );
+		$this->assertSame( get_permalink( $page ), DirectorioShortcode::get_directory_url() );
+
+		// Once the pattern no longer holds the directory, the page is not used.
+		wp_update_post( [ 'ID' => $pattern, 'post_content' => '<!-- wp:paragraph --><p>Otra cosa</p><!-- /wp:paragraph -->' ] );
+		$this->assertSame( home_url( '/' ), DirectorioShortcode::get_directory_url() );
+	}
+
+	public function test_a_pattern_that_references_itself_does_not_loop(): void {
+		$pattern = self::factory()->post->create( [ 'post_type' => 'wp_block', 'post_status' => 'publish' ] );
+		wp_update_post( [ 'ID' => $pattern, 'post_content' => '<!-- wp:block {"ref":' . $pattern . '} /-->' ] );
+		update_option( DirectorioShortcode::DIRECTORY_PAGE_OPTION, $this->page( 'bucle', '<!-- wp:block {"ref":' . $pattern . '} /-->' ) );
+
+		$this->assertSame( home_url( '/' ), DirectorioShortcode::get_directory_url() );
+	}
+
 	public function test_the_back_link_can_be_filtered(): void {
 		$filter = static fn() => 'https://example.org/radios/';
 		add_filter( 'radioedu_conecta_directory_url', $filter );
