@@ -112,6 +112,8 @@ npx playwright install chromium && npm run wp-env start && npm run test:e2e   # 
 npm audit --audit-level=high && composer audit
 ```
 
+La CI ejecuta PHPUnit, en sitio único y en multisitio, con PHP 8.1 a 8.5 sobre la última versión de WordPress, y con PHP 8.1 sobre WordPress 7.1.0, la combinación más antigua que admite el plugin. Para una versión concreta, pásala a `bin/install-wp-tests.sh` en lugar de `latest`, por ejemplo `7.1.0`. El script es una copia del de WP-CLI con un cambio local: las etiquetas de `wordpress-develop` conservan el `.0`, y el original las busca sin él.
+
 Plugin Check debe ejecutarse sobre la copia distribuible (respetando `.distignore`), no sobre el repositorio completo: `wp plugin check radioedu-conecta`. Comprueba también que, sin la carpeta `build/`, el directorio y el editor de centros cargan sin errores fatales: pierden la interactividad, y el directorio muestra el número de radios y el enlace a su listado.
 
 Las pruebas E2E (`tests/e2e`) crean y borran su propio contenido:

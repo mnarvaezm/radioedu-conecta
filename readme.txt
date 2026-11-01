@@ -56,6 +56,10 @@ The minified scripts in `build/` are compiled from the human-readable sources sh
 
 == Frequently Asked Questions ==
 
+= Which PHP version should I use? =
+
+The plugin requires PHP 8.1 and is tested on PHP 8.1 to 8.5. PHP 8.1 no longer receives security fixes from the PHP project, and PHP 8.2 only receives them until the end of 2026, so use PHP 8.3 or later in production.
+
 = Is it compatible with WordPress Multisite? =
 
 Yes. It supports per-site and network activation, automatic provisioning of new sites while network-active (`wp_initialize_site`), removal of the plugin table when a site is deleted (`wpmu_drop_tables`) and a complete network-wide cleanup in `uninstall.php`.

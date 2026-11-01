@@ -103,10 +103,19 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      # Every PHP version from the plugin minimum (8.1) to the newest WordPress supports (8.5) on the
+      # latest WordPress, plus the oldest pair the plugin accepts: PHP 8.1 with WordPress 7.1.0.
       matrix:
-        php: [ '8.1', '8.3' ]
-        wp: [ '7.1', 'latest' ]
+        php: [ '8.1', '8.2', '8.3', '8.4', '8.5' ]
+        wp: [ 'latest' ]
         multisite: [ '0', '1' ]
+        include:
+          - php: '8.1'
+            wp: '7.1.0'
+            multisite: '0'
+          - php: '8.1'
+            wp: '7.1.0'
+            multisite: '1'
 
     services:
       mysql:
@@ -135,6 +144,9 @@ jobs:
 
       - name: Install WordPress Test Suite
         # The database is already created by the service container (skip-database-creation=true).
+        # The script carries a local fix, so its check for a newer upstream copy would always warn.
+        env:
+          WP_INSTALL_TESTS_SKIP_UPDATE_CHECK: 'true'
         run: bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 ${{ matrix.wp }} true
 
       - name: Run PHPUnit
