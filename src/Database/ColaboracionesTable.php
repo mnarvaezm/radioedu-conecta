@@ -45,6 +45,18 @@ class ColaboracionesTable {
 	/**
 	 * Columns the plugin reads or writes. The schema version is saved only when all of them exist.
 	 */
+	/**
+	 * Indexes the queries rely on: the version is saved only when they exist too.
+	 */
+	private const REQUIRED_INDEXES = [
+		'PRIMARY',
+		'centro_emisor_id',
+		'centro_receptor_id',
+		'usuario_emisor_id',
+		'usuario_respuesta_id',
+		'estado',
+	];
+
 	private const REQUIRED_COLUMNS = [
 		'id',
 		'centro_emisor_id',
@@ -128,13 +140,15 @@ class ColaboracionesTable {
 	}
 
 	/**
-	 * Tells whether the table exists with every column the plugin uses.
+	 * Tells whether the table exists with every column and index the plugin uses.
 	 *
-	 * Uses SHOW COLUMNS rather than SHOW TABLES, which does not list temporary tables.
+	 * Uses SHOW COLUMNS and SHOW INDEX rather than SHOW TABLES, which does not list temporary
+	 * tables. A missing index is checked too: dbDelta() adds a column and its index in separate
+	 * statements, and the second one can fail on its own.
 	 *
 	 * @since 1.1
 	 *
-	 * @return bool True when no required column is missing.
+	 * @return bool True when no required column or index is missing.
 	 */
 	public static function has_current_schema(): bool {
 		global $wpdb;
@@ -143,9 +157,11 @@ class ColaboracionesTable {
 		$suppress = $wpdb->suppress_errors();
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Schema check right after dbDelta(); a cached answer would hide the failure.
 		$columns = $wpdb->get_col( $wpdb->prepare( 'SHOW COLUMNS FROM %i', self::get_table_name() ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Same check for the indexes; the third column of SHOW INDEX is the index name.
+		$indexes = $wpdb->get_col( $wpdb->prepare( 'SHOW INDEX FROM %i', self::get_table_name() ), 2 );
 		$wpdb->suppress_errors( $suppress );
 
-		return [] === array_diff( self::REQUIRED_COLUMNS, $columns );
+		return [] === array_diff( self::REQUIRED_COLUMNS, $columns ) && [] === array_diff( self::REQUIRED_INDEXES, $indexes );
 	}
 
 	/**

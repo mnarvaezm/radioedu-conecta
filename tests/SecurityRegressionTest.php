@@ -261,6 +261,32 @@ class SecurityRegressionTest extends WP_UnitTestCase {
 		$this->assertSame( ColaboracionesTable::DB_VERSION, get_option( 'radioedu_conecta_db_version' ) );
 	}
 
+	public function test_a_schema_update_missing_only_its_new_index_is_not_recorded(): void {
+		global $wpdb;
+		$table = ColaboracionesTable::get_table_name();
+		// The column exists but its index does not, as when ADD KEY failed after ADD COLUMN.
+		$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i DROP INDEX usuario_respuesta_id', $table ) );
+		update_option( 'radioedu_conecta_db_version', '1.0.2' );
+		delete_transient( Plugin::SCHEMA_RETRY_TRANSIENT );
+		$refuse = static function ( string $query ) use ( $table ): string {
+			return str_contains( $query, $table ) && preg_match( '/^\s*ALTER\s+TABLE.*ADD\s+(KEY|INDEX)/is', $query ) ? '' : $query;
+		};
+
+		add_filter( 'query', $refuse );
+		try {
+			Plugin::instance()->maybe_update_db_schema();
+		} finally {
+			remove_filter( 'query', $refuse );
+		}
+		$this->assertFalse( ColaboracionesTable::has_current_schema() );
+		$this->assertSame( '1.0.2', get_option( 'radioedu_conecta_db_version' ) );
+
+		delete_transient( Plugin::SCHEMA_RETRY_TRANSIENT );
+		Plugin::instance()->maybe_update_db_schema();
+		$this->assertContains( 'usuario_respuesta_id', $wpdb->get_col( $wpdb->prepare( 'SHOW INDEX FROM %i', $table ), 2 ) );
+		$this->assertSame( ColaboracionesTable::DB_VERSION, get_option( 'radioedu_conecta_db_version' ) );
+	}
+
 	public function test_activation_does_not_publish_demo_content(): void {
 		$before = wp_count_posts( CentroPostType::POST_TYPE )->publish;
 		Plugin::activate( false );

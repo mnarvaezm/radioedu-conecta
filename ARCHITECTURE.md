@@ -247,7 +247,7 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
     KEY estado (estado)
 ) {$charset_collate};
 ```
-* **Schema updates:** `create_table()` saves `radioedu_conecta_db_version` only after `SHOW COLUMNS` confirms every column the plugin uses. If the database refuses the DDL, the version stays behind and `Plugin::maybe_update_db_schema()` retries on a later request, at most every 5 minutes (`radioedu_conecta_schema_retry` transient).
+* **Schema updates:** `create_table()` saves `radioedu_conecta_db_version` only after `SHOW COLUMNS` confirms every column the plugin uses and `SHOW INDEX` confirms every index (dbDelta() adds a column and its index in separate statements, and the second can fail on its own). If the database refuses the DDL, the version stays behind and `Plugin::maybe_update_db_schema()` retries on a later request, at most every 5 minutes (`radioedu_conecta_schema_retry` transient).
 * **Who answered:** `usuario_respuesta_id` (since schema 1.0.3) records the account that accepted or declined the proposal, so the reply can be exported and erased for that person. Older replies keep 0.
 
 ---
