@@ -170,3 +170,9 @@ jobs:
         uses: wordpress/plugin-check-action@v1
         with:
           build-dir: ./dist/radioedu-conecta
+          # The plugin is not published on WordPress.org, so it declares an Update URI (AGENTS.md §1)
+          # to keep WordPress from offering it the update of a directory plugin with the same slug.
+          # The directory forbids that header, which is the only thing this code reports; the rest
+          # of the updater check (updater libraries and routines) still runs.
+          ignore-codes: |
+            plugin_updater_detected

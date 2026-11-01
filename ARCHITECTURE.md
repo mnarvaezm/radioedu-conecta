@@ -14,6 +14,7 @@ db_schema_version: 1.0.3
 php_version_requirement: ">=8.1"
 wp_version_requirement: ">=7.1"
 tested_up_to: "7.1"
+update_uri: https://radioedu.educarex.es/conecta  # not on WordPress.org; no directory updates
 license: GPL-2.0-or-later
 text_domain: radioedu-conecta
 psr4_namespace: RadioEdu\Conecta\

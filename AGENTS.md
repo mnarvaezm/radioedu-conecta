@@ -246,7 +246,7 @@ radioedu-conecta/
 ## 11. Definición de "Terminado" (DoD)
 El desarrollo de una funcionalidad o del plugin no se da por concluido hasta cumplir:
 1. [ ] PHPCS (WPCS) y PHPStan pasan sin errores ni directivas `phpcs:ignore` sin justificar formalmente.
-2. [ ] Plugin Check (PCP) pasa sin advertencias ni errores.
+2. [ ] Plugin Check (PCP) pasa sin advertencias ni errores. Única excepción: `plugin_updater_detected`, que provoca la cabecera `Update URI` exigida en §1 mientras el plugin no se publique en WordPress.org; se ignora solo ese código (`--ignore-codes=plugin_updater_detected`).
 3. [ ] Tests unitarios y E2E superados, incluyendo casos negativos (permiso denegado, datos maliciosos).
 4. [ ] Revisión línea a línea: toda entrada validada/sanitizada y toda salida escapada tardíamente.
 5. [ ] Toda acción que modifique estado comprueba capacidad (`current_user_can`) y nonce.

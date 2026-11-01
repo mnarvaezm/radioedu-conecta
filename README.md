@@ -8,6 +8,7 @@
 - **Probado hasta:** 7.1
 - **Versión mínima de PHP:** 8.1. Se prueba de PHP 8.1 a 8.5; en producción, usa PHP 8.3 o superior, que siguen recibiendo parches de seguridad.
 - **Versión estable:** 1.1
+- **Distribución:** fuera del directorio de WordPress.org. La cabecera `Update URI` impide que WordPress le ofrezca la actualización de otro plugin del directorio con el mismo slug.
 - **Licencia:** GPL-2.0-or-later
 - **URI de licencia:** [GNU General Public License v2](https://www.gnu.org/licenses/gpl-2.0.html)
 

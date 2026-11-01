@@ -12,6 +12,7 @@
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       radioedu-conecta
  * Domain Path:       /languages
+ * Update URI:        https://radioedu.educarex.es/conecta
  *
  * @package RadioEdu\Conecta
  */
