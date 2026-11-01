@@ -4,7 +4,7 @@ Tags: school radio, podcast, education, directory, collaboration
 Requires at least: 7.1
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.1
+Stable tag: 1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,7 +49,7 @@ The minified scripts in `build/` are compiled from the human-readable sources sh
 
 == Installation ==
 
-1. Upload `radioedu-conecta_1.1.zip` from **Plugins -> Add New Plugin -> Upload Plugin**, or copy the `radioedu-conecta` folder to `/wp-content/plugins/`.
+1. Upload `radioedu-conecta_1.2.zip` from **Plugins -> Add New Plugin -> Upload Plugin**, or copy the `radioedu-conecta` folder to `/wp-content/plugins/`.
 2. Activate the plugin from the **Plugins** screen (or from Network Admin when using Multisite).
 3. Manage school profiles from **RadioEdu Centros** (each station's data is in the editor sidebar, "Centro de Radio" tab), answer proposals from **Colaboraciones (Matches)** and configure the map, notifications and the number of stations per user from **Ajustes** (Settings).
 4. Insert the "Directorio Traspasando Fronteras" block (Widgets category) or the `[radioedu_directorio]` shortcode in any page to display the interactive directory. Only one directory per page is supported.
@@ -95,6 +95,10 @@ Yes. In **RadioEdu Centros -> Ajustes -> Coordinadores**, set "Radios por usuari
 Yes. Both the directory cards and each station's profile page include the "Proponer match" button, which opens the proposal side panel on the same screen.
 
 == Changelog ==
+
+= 1.2 =
+* The plugin declares an `Update URI` header: it is distributed outside the WordPress.org directory, so WordPress never offers it the update of a directory plugin with the same slug.
+* Tested on PHP 8.1 to 8.5 and on WordPress 7.1.0. PHP 8.1 remains the minimum, but PHP 8.3 or later is recommended in production.
 
 = 1.1 =
 * Requires WordPress 7.1.
@@ -148,6 +152,9 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * Integration with the WordPress personal data exporters/erasers and complete cleanup in `uninstall.php`, including Multisite networks.
 
 == Upgrade Notice ==
+
+= 1.2 =
+Distributed outside WordPress.org, now declared with an Update URI header. Tested on PHP 8.1 to 8.5; PHP 8.3 or later is recommended.
 
 = 1.1 =
 Requires WordPress 7.1. Adds the directory block, SVG icons and editor sidebar panels for school data. Demo content is no longer created on activation; import it from RadioEdu Centros -> Ajustes.

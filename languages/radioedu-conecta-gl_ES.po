@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: RadioEdu Conecta 1.1\n"
+"Project-Id-Version: RadioEdu Conecta 1.2\n"
 "Report-Msgid-Bugs-To: https://radioedu.educarex.es\n"
 "Last-Translator: RadioEdu <radioedu@educarex.es>\n"
 "Language-Team: Galician\n"

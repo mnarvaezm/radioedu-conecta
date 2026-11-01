@@ -7,7 +7,7 @@
 - **Versión mínima de WordPress:** 7.1
 - **Probado hasta:** 7.1
 - **Versión mínima de PHP:** 8.1. Se prueba de PHP 8.1 a 8.5; en producción, usa PHP 8.3 o superior, que siguen recibiendo parches de seguridad.
-- **Versión estable:** 1.1
+- **Versión estable:** 1.2
 - **Distribución:** fuera del directorio de WordPress.org. La cabecera `Update URI` impide que WordPress le ofrezca la actualización de otro plugin del directorio con el mismo slug.
 - **Licencia:** GPL-2.0-or-later
 - **URI de licencia:** [GNU General Public License v2](https://www.gnu.org/licenses/gpl-2.0.html)
@@ -44,7 +44,7 @@
 
 ## Instalación
 
-1. Sube el archivo `radioedu-conecta_1.1.zip` desde **Plugins → Añadir nuevo plugin → Subir plugin** en WordPress, o descomprime la carpeta `radioedu-conecta` en `/wp-content/plugins/`.
+1. Sube el archivo `radioedu-conecta_1.2.zip` desde **Plugins → Añadir nuevo plugin → Subir plugin** en WordPress, o descomprime la carpeta `radioedu-conecta` en `/wp-content/plugins/`.
 2. Activa el plugin desde el menú **Plugins**. La activación no publica contenido: si quieres las 6 emisoras de demostración y la página `/traspasando-fronteras/` con el bloque del directorio, cárgalas desde **RadioEdu Centros → Ajustes**.
 3. Para mostrar el directorio en cualquier otra página, inserta el bloque **Directorio Traspasando Fronteras** (categoría *Widgets*) o el shortcode `[radioedu_directorio]`. Solo puede haber un directorio por página.
 4. Gestiona los centros desde **RadioEdu Centros** (los datos de cada emisora están en la barra lateral del editor, pestaña **Centro de Radio**), responde a propuestas desde **RadioEdu Centros → Colaboraciones (Matches)** y configura el mapa, las notificaciones o el número de radios por usuario en **RadioEdu Centros → Ajustes**.
@@ -117,6 +117,10 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 ---
 
 ## Changelog
+
+### 1.2
+* El plugin declara la cabecera `Update URI`: se distribuye fuera del directorio de WordPress.org, así que WordPress nunca le ofrece la actualización de otro plugin del directorio con el mismo slug.
+* Probado con PHP 8.1 a 8.5 y con WordPress 7.1.0. PHP 8.1 sigue siendo el mínimo, pero en producción se recomienda PHP 8.3 o superior.
 
 ### 1.1
 * Requiere WordPress 7.1.
