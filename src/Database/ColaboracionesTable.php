@@ -206,7 +206,7 @@ class ColaboracionesTable {
 		[ $where, $args ] = self::user_scope( $user_id, $all );
 		$query_args       = array_merge( [ self::get_table_name() ], $args, [ max( 1, min( 500, $limit ) ), max( 0, $offset ) ] );
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where only holds placeholders built in user_scope(); every value goes through prepare(). Listings must reflect the latest state.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $where is fixed SQL with placeholders only, built in user_scope(); every value goes through prepare(). Listings must reflect the latest state.
 		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM %i WHERE {$where} ORDER BY created_at DESC, id DESC LIMIT %d OFFSET %d", ...$query_args ) );
 		// phpcs:enable
 
@@ -226,7 +226,7 @@ class ColaboracionesTable {
 		global $wpdb;
 		[ $where, $args ] = self::user_scope( $user_id, $all );
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $where only holds placeholders built in user_scope(); every value goes through prepare(). The count must match the listing.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $where is fixed SQL with placeholders only, built in user_scope(); every value goes through prepare(). The count must match the listing.
 		$count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM %i WHERE {$where}", ...array_merge( [ self::get_table_name() ], $args ) ) );
 		// phpcs:enable
 
