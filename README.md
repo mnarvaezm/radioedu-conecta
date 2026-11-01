@@ -143,7 +143,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * Un error de base de datos al responder una propuesta devuelve un error reintentable en lugar de «ya respondida».
 * En el directorio, la respuesta tardía a una propuesta enviada antes de cerrar el panel ya no cambia el panel abierto para otra emisora.
 * El límite de *Radios por usuario* también se aplica cuando un coordinador restaura una emisora desde la papelera o guarda una segunda pestaña de *Añadir nuevo* abierta antes de llegar al límite, en el editor de bloques o en el clásico, y dos altas en el mismo momento no pueden ocupar ambas la última plaza.
-* Cada coordinador puede enviar hasta 20 propuestas por hora en lugar de 10. Es un límite contra el spam: varias peticiones simultáneas pueden superarlo en alguna.
+* Cada coordinador puede enviar hasta 20 propuestas por hora en lugar de 10, y el límite es estricto: varias propuestas enviadas a la vez no pueden superarlo.
 * El listado de propuestas tiene paginación: el endpoint REST acepta `page` y `per_page` y devuelve `X-WP-Total`, y la pantalla de administración muestra 20 propuestas por página. Antes, las propuestas posteriores a las 100 más recientes no se podían ver ni responder.
 * Los coordinadores ven las propuestas de todas las emisoras que gestionan, sean cuantas sean, y los editores ven todas las propuestas. El selector de centro emisor muestra hasta 2.000 en lugar de 50 o 100, el doble de la red más grande prevista.
 * Los mensajes al enviar o responder una propuesta dicen qué ha pasado con el correo: enviado, desactivado en los ajustes o no enviado. Antes siempre prometían una notificación.

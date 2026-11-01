@@ -28,11 +28,29 @@ class ColaboracionesController extends WP_REST_Controller {
 	/**
 	 * Número máximo de propuestas que un usuario puede enviar por hora.
 	 *
-	 * An anti-spam limit, not a quota: the counter is a transient that is read and then written, so
-	 * requests sent at the same moment may each get through and exceed it by a few (audit finding
-	 * S-02, accepted).
+	 * A strict limit: the counter is read, the proposal stored and the counter written under the
+	 * user's lock, so proposals sent at the same moment cannot exceed it (audit finding S-02).
 	 */
 	public const RATE_LIMIT_PER_HOUR = 20;
+
+	/**
+	 * Seconds a proposal waits for another one of the same user that holds the rate lock.
+	 */
+	private const RATE_LOCK_WAIT = 10;
+
+	/**
+	 * Proposals of each user that this request is still storing.
+	 *
+	 * @var array<int, int>
+	 */
+	private static array $rate_pending = [];
+
+	/**
+	 * Depth of the rate lock this request holds, by user.
+	 *
+	 * @var array<int, int>
+	 */
+	private static array $rate_locks = [];
 
 	/**
 	 * Most centros listed for one user in the match panel's sender selector.
@@ -334,6 +352,54 @@ class ColaboracionesController extends WP_REST_Controller {
 
 		$user_id = get_current_user_id();
 
+		// The hourly limit is checked, the proposal stored and the counter updated under the user's
+		// lock, so two proposals sent at once cannot both take the last place. If another request of
+		// the same user does not finish in time, this one is refused as over the limit.
+		if ( ! self::lock_rate( $user_id ) ) {
+			return self::rate_limit_error();
+		}
+		try {
+			$colaboracion_id = $this->store_proposal( $request, $user_id );
+		} finally {
+			self::unlock_rate( $user_id );
+		}
+		if ( $colaboracion_id instanceof WP_Error ) {
+			return $colaboracion_id;
+		}
+
+		// Disparar email de notificación al centro receptor. The message says what really happened:
+		// the proposal is stored either way, and the receiving school sees it in its panel.
+		$notification = NotificationService::send_proposal_email( $colaboracion_id );
+		$messages     = [
+			NotificationService::SENT     => __( '¡Propuesta de match enviada con éxito! La emisora receptora recibirá una notificación para comenzar a coordinar el proyecto.', 'radioedu-conecta' ),
+			NotificationService::DISABLED => __( '¡Propuesta de match enviada con éxito! La emisora receptora la verá en su panel de Colaboraciones.', 'radioedu-conecta' ),
+			NotificationService::FAILED   => __( '¡Propuesta de match enviada con éxito! No se ha podido enviar el aviso por correo, pero la emisora receptora la verá en su panel de Colaboraciones.', 'radioedu-conecta' ),
+		];
+
+		return new WP_REST_Response(
+			[
+				'success'      => true,
+				'message'      => $messages[ $notification ] ?? $messages[ NotificationService::FAILED ],
+				'id'           => $colaboracion_id,
+				'notificacion' => $notification,
+			],
+			201
+		);
+	}
+
+	/**
+	 * Checks the hourly limit, validates and stores a proposal, and counts it.
+	 *
+	 * Runs while holding the user's rate lock (see create_item()). Proposals this request is still
+	 * storing count too, for a second proposal sent within the same request.
+	 *
+	 * @since 1.1
+	 *
+	 * @param WP_REST_Request $request Objeto de la petición.
+	 * @param int             $user_id Sending user.
+	 * @return int|WP_Error ID of the stored proposal, or the error.
+	 */
+	private function store_proposal( WP_REST_Request $request, int $user_id ): int|WP_Error {
 		// Protección Rate Limiting con ventana fija de 1 hora por usuario.
 		$transient_key = 'radioedu_rate_' . $user_id;
 		$rate_data     = get_transient( $transient_key );
@@ -347,12 +413,8 @@ class ColaboracionesController extends WP_REST_Controller {
 			$rate_ttl   = HOUR_IN_SECONDS;
 		}
 
-		if ( $rate_count >= self::RATE_LIMIT_PER_HOUR ) {
-			return new WP_Error(
-				'radioedu_rate_limit',
-				__( 'Has alcanzado el límite de propuestas por hora. Por favor, inténtalo más tarde.', 'radioedu-conecta' ),
-				[ 'status' => 429 ]
-			);
+		if ( $rate_count + ( self::$rate_pending[ $user_id ] ?? 0 ) >= self::RATE_LIMIT_PER_HOUR ) {
+			return self::rate_limit_error();
 		}
 
 		$centro_emisor_id   = absint( $request->get_param( 'centro_emisor_id' ) );
@@ -415,62 +477,131 @@ class ColaboracionesController extends WP_REST_Controller {
 		global $wpdb;
 		$now = current_time( 'mysql' );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table write.
-		$inserted = $wpdb->insert(
-			ColaboracionesTable::get_table_name(),
-			[
-				'centro_emisor_id'   => $centro_emisor_id,
-				'centro_receptor_id' => $centro_receptor_id,
-				'usuario_emisor_id'  => $user_id,
-				'idea_proyecto'      => $idea_proyecto,
-				'curso_edades'       => $curso_edades,
-				'idiomas'            => $idiomas,
-				'fechas_aprox'       => $fechas_aprox,
-				'estado'             => 'pendiente',
-				'created_at'         => $now,
-				'updated_at'         => $now,
-			],
-			[ '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ]
-		);
-
-		if ( false === $inserted ) {
-			return new WP_Error(
-				'radioedu_db_error',
-				__( 'No se pudo registrar la propuesta en la base de datos.', 'radioedu-conecta' ),
-				[ 'status' => 500 ]
+		// Count this proposal while it is being written, for another one sent within this request.
+		self::$rate_pending[ $user_id ] = ( self::$rate_pending[ $user_id ] ?? 0 ) + 1;
+		try {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table write.
+			$inserted = $wpdb->insert(
+				ColaboracionesTable::get_table_name(),
+				[
+					'centro_emisor_id'   => $centro_emisor_id,
+					'centro_receptor_id' => $centro_receptor_id,
+					'usuario_emisor_id'  => $user_id,
+					'idea_proyecto'      => $idea_proyecto,
+					'curso_edades'       => $curso_edades,
+					'idiomas'            => $idiomas,
+					'fechas_aprox'       => $fechas_aprox,
+					'estado'             => 'pendiente',
+					'created_at'         => $now,
+					'updated_at'         => $now,
+				],
+				[ '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ]
 			);
+
+			if ( false === $inserted ) {
+				return new WP_Error(
+					'radioedu_db_error',
+					__( 'No se pudo registrar la propuesta en la base de datos.', 'radioedu-conecta' ),
+					[ 'status' => 500 ]
+				);
+			}
+
+			$colaboracion_id = (int) $wpdb->insert_id;
+
+			// Actualizar contador del rate limiting conservando la expiración de la ventana actual. It is
+			// read again: another proposal of this request may have been counted meanwhile.
+			$current = get_transient( $transient_key );
+			$count   = is_array( $current ) && isset( $current['count'], $current['expires'] ) && $current['expires'] > $now_ts ? (int) $current['count'] : $rate_count;
+			set_transient(
+				$transient_key,
+				[
+					'count'   => $count + 1,
+					'expires' => $now_ts + $rate_ttl,
+				],
+				$rate_ttl
+			);
+		} finally {
+			--self::$rate_pending[ $user_id ];
 		}
 
-		$colaboracion_id = (int) $wpdb->insert_id;
+		return $colaboracion_id;
+	}
 
-		// Actualizar contador del rate limiting conservando la expiración de la ventana actual.
-		set_transient(
-			$transient_key,
-			[
-				'count'   => $rate_count + 1,
-				'expires' => $now_ts + $rate_ttl,
-			],
-			$rate_ttl
+	/**
+	 * Error returned when the user has reached the hourly proposal limit.
+	 *
+	 * @return WP_Error 429 error.
+	 */
+	private static function rate_limit_error(): WP_Error {
+		return new WP_Error(
+			'radioedu_rate_limit',
+			__( 'Has alcanzado el límite de propuestas por hora. Por favor, inténtalo más tarde.', 'radioedu-conecta' ),
+			[ 'status' => 429 ]
 		);
+	}
 
-		// Disparar email de notificación al centro receptor. The message says what really happened:
-		// the proposal is stored either way, and the receiving school sees it in its panel.
-		$notification = NotificationService::send_proposal_email( $colaboracion_id );
-		$messages     = [
-			NotificationService::SENT     => __( '¡Propuesta de match enviada con éxito! La emisora receptora recibirá una notificación para comenzar a coordinar el proyecto.', 'radioedu-conecta' ),
-			NotificationService::DISABLED => __( '¡Propuesta de match enviada con éxito! La emisora receptora la verá en su panel de Colaboraciones.', 'radioedu-conecta' ),
-			NotificationService::FAILED   => __( '¡Propuesta de match enviada con éxito! No se ha podido enviar el aviso por correo, pero la emisora receptora la verá en su panel de Colaboraciones.', 'radioedu-conecta' ),
-		];
+	/**
+	 * Takes the user's rate lock, waiting for another request that holds it.
+	 *
+	 * A MySQL/MariaDB named lock (GET_LOCK) belongs to the database connection, and the server
+	 * releases it if the request dies. Within one request it is counted, so a nested proposal does
+	 * not release it for the outer one.
+	 *
+	 * @param int $user_id Sending user.
+	 * @return bool True when this request holds the lock.
+	 */
+	private static function lock_rate( int $user_id ): bool {
+		global $wpdb;
+		if ( ( self::$rate_locks[ $user_id ] ?? 0 ) > 0 ) {
+			++self::$rate_locks[ $user_id ];
+			return true;
+		}
 
-		return new WP_REST_Response(
-			[
-				'success'      => true,
-				'message'      => $messages[ $notification ] ?? $messages[ NotificationService::FAILED ],
-				'id'           => $colaboracion_id,
-				'notificacion' => $notification,
-			],
-			201
-		);
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Named lock tied to this connection; no core API provides one.
+		if ( '1' !== (string) $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK( %s, %d )', self::rate_lock_name( $user_id ), self::RATE_LOCK_WAIT ) ) ) {
+			return false;
+		}
+
+		self::$rate_locks[ $user_id ] = 1;
+		return true;
+	}
+
+	/**
+	 * Releases the user's rate lock once the outermost proposal of this request is done.
+	 *
+	 * @param int $user_id Sending user.
+	 */
+	private static function unlock_rate( int $user_id ): void {
+		global $wpdb;
+		if ( ( self::$rate_locks[ $user_id ] ?? 0 ) <= 0 ) {
+			return;
+		}
+
+		if ( --self::$rate_locks[ $user_id ] > 0 ) {
+			return;
+		}
+
+		unset( self::$rate_locks[ $user_id ] );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Releases the named lock taken in lock_rate().
+		$wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK( %s )', self::rate_lock_name( $user_id ) ) );
+	}
+
+	/**
+	 * Returns the name of the rate lock of a user on the current site.
+	 *
+	 * Named locks are shared by every database on the server, and each site keeps its own counter,
+	 * so the name hashes the database and the site's table prefix. It stays under 64 characters.
+	 *
+	 * @since 1.1
+	 *
+	 * @param int $user_id Sending user.
+	 * @return string Lock name.
+	 */
+	public static function rate_lock_name( int $user_id ): string {
+		global $wpdb;
+		$database = defined( 'DB_NAME' ) ? (string) constant( 'DB_NAME' ) : '';
+
+		return 'radioedu_conecta_rate_' . substr( md5( $database . '|' . $wpdb->prefix ), 0, 12 ) . '_' . $user_id;
 	}
 
 	/**
