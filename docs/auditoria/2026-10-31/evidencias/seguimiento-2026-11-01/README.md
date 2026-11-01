@@ -8,5 +8,6 @@ Scripts de Playwright con Edge usados para verificar las correcciones que no cub
 | `e2e-map-all.js` | F-12 | Con 66 centros con coordenadas, cuenta las tarjetas y los marcadores del mapa. Las teselas de OpenStreetMap se bloquean. | 24 tarjetas y 66 marcadores, con una petición extra de 100 resultados. |
 | `e2e-reflow.js` | F-13 | A 320 px de ancho, lista los elementos del directorio que salen del viewport. | Ninguno, con Twenty Twenty-Five y con YOOtheme. |
 | `e2e-nojs.js` | F-16 | Con JavaScript desactivado, comprueba el contador, el aviso y el enlace al listado. Con JavaScript, que el aviso se oculte. | Contador real (66), aviso visible con enlace a `/centros-radioedu/`, y aviso oculto con JavaScript. |
+| `e2e-block-json.js` | Q-02 | En el editor de una página nueva, lee el tipo de bloque registrado e inserta el bloque. | Título, categoría y palabras clave de `block.json`, una sola instancia, y vista previa del servidor visible. |
 
 Los 60 centros extra de F-12 y F-16 eran datos ficticios del entorno de QA. Se borraron en la prueba de desinstalación de F-20.

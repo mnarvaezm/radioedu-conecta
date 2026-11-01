@@ -368,6 +368,9 @@ Antes de corregir se contrastó el informe con el código. Los 24 hallazgos se c
 | F-16 | P3 | Corregido | `361b008` | Test PHP, y navegador con JavaScript desactivado y activado |
 | F-20 | P3 | Corregido | `63d9fbc` | Desinstalación real en el entorno de QA |
 | Q-04 | Calidad | Ejecutado | — | Ver «Verificación del estado final» |
+| Q-01 | Requisito | Norma ajustada | `da10b82` | AGENTS.md §6: cadenas de origen en español con las cuatro traducciones; identificadores en inglés; comentarios nuevos en inglés |
+| Q-03 | Requisito | Excepciones inventariadas | `08a7ee5` | AGENTS.md §1: tabla cerrada de identificadores con el prefijo corto y qué se rompería al renombrarlos; todo lo nuevo usa `radioedu_conecta_` |
+| Q-02 | Requisito | Corregido | `040fcc3` | `blocks/directorio/block.json`; test de registro; el editor del entorno de QA muestra el bloque y su vista previa |
 
 Dos commits son correcciones de seguimiento:
 
@@ -436,11 +439,7 @@ Los scripts de navegador están en `evidencias/seguimiento-2026-11-01/`. Usan el
   - varias redes;
   - sitios con privacidad adicional;
   - consumo a gran escala.
-- Las desviaciones frente a AGENTS.md:
-  - Q-01: idioma base en inglés;
-  - Q-02: `block.json`;
-  - Q-03: prefijos históricos;
-  - Q-05: pruebas y recomendación para versiones de PHP con soporte.
+- La desviación Q-05 frente a AGENTS.md: pruebas y recomendación para versiones de PHP con soporte. Q-01, Q-02 y Q-03 se resolvieron después; ver la tabla de estado.
 - Las recomendaciones de endurecimiento:
   - Cursor estable: hecho en el listado de propuestas y en la revisión de fichas huérfanas. La sincronización por lotes sigue usando `offset`.
   - Clave de idempotencia al crear propuestas: pendiente.
