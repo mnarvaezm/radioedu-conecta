@@ -194,8 +194,25 @@ function radioedu_conecta_uninstall(): void {
 		$has_more = count( $site_ids ) === 100;
 	} while ( $has_more );
 
-	// Network option of the network sync ("give the Author role" choice).
-	delete_site_option( 'radioedu_conecta_sync_grant_author' );
+	// Network option of the network sync ("give the Author role" choice), on every network: the sites
+	// above were removed on all of them, and an installation can hold more than one network.
+	$offset = 0;
+	do {
+		$network_ids = get_networks(
+			[
+				'fields'  => 'ids',
+				'number'  => 100,
+				'offset'  => $offset,
+				'orderby' => 'id',
+				'order'   => 'ASC',
+			]
+		);
+		foreach ( $network_ids as $network_id ) {
+			delete_network_option( (int) $network_id, 'radioedu_conecta_sync_grant_author' );
+		}
+		$offset  += 100;
+		$has_more = count( $network_ids ) === 100;
+	} while ( $has_more );
 }
 
 radioedu_conecta_uninstall();
