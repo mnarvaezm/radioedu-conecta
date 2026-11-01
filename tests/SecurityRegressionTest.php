@@ -289,8 +289,20 @@ class SecurityRegressionTest extends WP_UnitTestCase {
 
 	public function test_activation_does_not_publish_demo_content(): void {
 		$before = wp_count_posts( CentroPostType::POST_TYPE )->publish;
+		$pages  = wp_count_posts( 'page' )->publish;
 		Plugin::activate( false );
 		$this->assertSame( $before, wp_count_posts( CentroPostType::POST_TYPE )->publish );
+		$this->assertSame( $pages, wp_count_posts( 'page' )->publish, 'The directory page is created by the demo import or by hand, never on activation.' );
+		$this->assertSame( 0, (int) get_option( 'radioedu_conecta_directory_page_id' ) );
+	}
+
+	public function test_demo_import_creates_the_directory_page_with_the_block(): void {
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
+		DemoDataImporter::import_demo_centers();
+		$page = (int) get_option( 'radioedu_conecta_directory_page_id' );
+		$this->assertSame( 'traspasando-fronteras', get_post_field( 'post_name', $page ) );
+		$this->assertSame( '<!-- wp:radioedu-conecta/directorio /-->', get_post_field( 'post_content', $page ) );
+		$this->assertSame( '1', get_post_meta( $page, '_radioedu_conecta_demo', true ) );
 	}
 
 	public function test_demo_import_does_not_overwrite_user_content(): void {
@@ -325,7 +337,7 @@ class SecurityRegressionTest extends WP_UnitTestCase {
 
 	public function test_demo_import_records_an_existing_directory_page_without_claiming_it(): void {
 		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
-		$page = self::factory()->post->create( [ 'post_type' => 'page', 'post_name' => 'traspasando-fronteras', 'post_content' => '<!-- wp:shortcode -->[radioedu_directorio]<!-- /wp:shortcode -->' ] );
+		$page = self::factory()->post->create( [ 'post_type' => 'page', 'post_name' => 'traspasando-fronteras', 'post_content' => '<!-- wp:radioedu-conecta/directorio /-->' ] );
 		DemoDataImporter::import_demo_centers();
 		$this->assertSame( $page, (int) get_option( 'radioedu_conecta_directory_page_id' ) );
 		$this->assertSame( '', get_post_meta( $page, '_radioedu_conecta_demo', true ), 'Uninstall deletes marked pages, and this one may be hand-made.' );

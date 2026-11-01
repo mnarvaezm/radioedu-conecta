@@ -44,7 +44,7 @@
 ## Instalación
 
 1. Sube el archivo `radioedu-conecta_1.1.zip` desde **Plugins → Añadir nuevo plugin → Subir plugin** en WordPress, o descomprime la carpeta `radioedu-conecta` en `/wp-content/plugins/`.
-2. Activa el plugin desde el menú **Plugins**. La activación no publica contenido: si quieres las 6 emisoras de demostración y la página `/traspasando-fronteras/` con el shortcode `[radioedu_directorio]`, cárgalas desde **RadioEdu Centros → Ajustes**.
+2. Activa el plugin desde el menú **Plugins**. La activación no publica contenido: si quieres las 6 emisoras de demostración y la página `/traspasando-fronteras/` con el bloque del directorio, cárgalas desde **RadioEdu Centros → Ajustes**.
 3. Para mostrar el directorio en cualquier otra página, inserta el bloque **Directorio Traspasando Fronteras** (categoría *Widgets*) o el shortcode `[radioedu_directorio]`. Solo puede haber un directorio por página.
 4. Gestiona los centros desde **RadioEdu Centros** (los datos de cada emisora están en la barra lateral del editor, pestaña **Centro de Radio**), responde a propuestas desde **RadioEdu Centros → Colaboraciones (Matches)** y configura el mapa, las notificaciones o el número de radios por usuario en **RadioEdu Centros → Ajustes**.
 
@@ -126,7 +126,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * La página pública de cada centro ya no repite encima de la ficha el título, el autor y la fecha ni la imagen destacada del tema: el plugin aporta su plantilla (una plantilla de bloques editable en el Editor del sitio, o una plantilla PHP con la cabecera y el pie del tema en los temas clásicos), que el tema puede sustituir.
 * Los datos del centro pasan de la caja meta, plegada al pie del editor, a tres paneles de la barra lateral (**Datos de la emisora**, **Ubicación en el mapa** y **Coordinación**). La caja meta solo aparece con el Editor Clásico.
 * Metadatos del centro registrados con `register_post_meta()`: se sanean en cualquier escritura. La REST del core solo los muestra en modo edición a quien puede editar el centro (nunca en las respuestas públicas) y XML-RPC no puede modificarlos.
-* La activación ya no crea contenido de demostración: las emisoras de ejemplo y la página del directorio se importan solo desde **RadioEdu Centros → Ajustes** y nunca sobrescriben un centro real. Sus descripciones se crean como bloques de párrafo, no como un bloque clásico.
+* La activación ya no crea contenido de demostración: las emisoras de ejemplo y la página del directorio se importan solo desde **RadioEdu Centros → Ajustes** y nunca sobrescriben un centro real. Sus descripciones se crean como bloques de párrafo, no como un bloque clásico, y la página lleva el bloque del directorio, con su vista previa en el editor, en vez del shortcode.
 * Seguridad: las propuestas exigen una capacidad de RadioEdu, solo el centro receptor puede responderlas y los centros protegidos con contraseña quedan fuera del directorio y de las propuestas.
 * El directorio ordena por afinidad antes de paginar, cancela las búsquedas obsoletas, anuncia los errores de carga con opción de reintentar y funciona con enlaces permanentes simples.
 * La exportación y el borrado de datos personales se hacen por lotes, y las tareas de red recorren los sitios en lotes de 100.

@@ -9,6 +9,7 @@ declare( strict_types=1 );
 
 namespace RadioEdu\Conecta\Admin;
 
+use RadioEdu\Conecta\Frontend\DirectorioShortcode;
 use RadioEdu\Conecta\PostTypes\CentroPostType;
 use RadioEdu\Conecta\Support\BlockMarkup;
 use RadioEdu\Conecta\Taxonomies\TaxonomiesRegistrar;
@@ -268,8 +269,8 @@ class DemoDataImporter {
 			++$count;
 		}
 
-		// Asegurar que existe una página con el shortcode [radioedu_directorio].
-		$page_content  = '<!-- wp:shortcode -->[radioedu_directorio]<!-- /wp:shortcode -->';
+		// Make sure a page holds the directory block, so the editor shows its preview.
+		$page_content  = get_comment_delimited_block_content( DirectorioShortcode::BLOCK_NAME, [], '' );
 		$existing_page = get_page_by_path( 'traspasando-fronteras' );
 		if ( ! $existing_page ) {
 			$page_id = wp_insert_post(
