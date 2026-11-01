@@ -148,6 +148,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * Los coordinadores ven las propuestas de todas las emisoras que gestionan, sean cuantas sean, y los editores ven todas las propuestas. El selector de centro emisor muestra hasta 500 en lugar de 50 o 100.
 * Los mensajes al enviar o responder una propuesta dicen qué ha pasado con el correo: enviado, desactivado en los ajustes o no enviado. Antes siempre prometían una notificación.
 * Con el orden *Más afines*, administradores y editores, que no tienen emisora propia, ya no ven los resultados ordenados según los términos de la primera emisora por orden alfabético.
+* La vista de mapa muestra todos los resultados de la búsqueda, hasta 500 marcadores, en lugar de solo las 24 tarjetas cargadas, y avisa cuando el límite deja alguno fuera.
 * Pruebas E2E con Playwright y `wp-env` (datos del centro en los paneles del editor de WordPress 7.1, incluido el logo, y bloque del directorio).
 
 ### 1.0.0

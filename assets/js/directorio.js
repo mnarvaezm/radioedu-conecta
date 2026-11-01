@@ -64,6 +64,12 @@ import { speak } from '@wordpress/a11y';
 				'Colaboradores de OpenStreetMap',
 				'radioedu-conecta'
 			),
+			mapPartial:
+				/* translators: 1: number of centros on the map, 2: number of results. */
+				__(
+					'El mapa muestra %1$s de %2$s centros. Usa los filtros para acotar la búsqueda.',
+					'radioedu-conecta'
+				),
 		};
 
 		// Elementos del DOM.
@@ -166,8 +172,14 @@ import { speak } from '@wordpress/a11y';
 		let currentCentros = [];
 		let currentPage = 1;
 		let totalPages = 1;
+		let totalResults = 0;
 		let directoryRequest = null;
+		let mapRequest = null;
 		let submitting = false;
+
+		// The map shows every result, not only the pages of cards already loaded, up to this ceiling.
+		const MAP_MAX_CENTROS = 500;
+		const mapNote = document.getElementById( 'radioedu-map-note' );
 
 		try {
 			hasMapConsent =
@@ -241,6 +253,147 @@ import { speak } from '@wordpress/a11y';
 			}
 		}
 
+		/**
+		 * URL of the centros endpoint with the active filters.
+		 *
+		 * @param {number} page    Page to request.
+		 * @param {number} perPage Results per page.
+		 * @param {string} orden   Sort order.
+		 * @return {string} Absolute URL.
+		 */
+		function centrosUrl( page, perPage, orden ) {
+			const endpoint = new URL(
+				restUrl + 'centros',
+				window.location.href
+			);
+			endpoint.searchParams.set( 'page', String( page ) );
+			endpoint.searchParams.set( 'per_page', String( perPage ) );
+			endpoint.searchParams.set( 'orden', orden );
+
+			// No afines_a: the endpoint picks the user's own centro itself, and skips it for global
+			// managers, whose first "managed" centro (userCenterId) is an arbitrary one.
+			const filters = {
+				ubicacion: filterUbicacion,
+				idioma: filterIdioma,
+				etapa: filterEtapa,
+				tematica: filterTematica,
+				formato: filterFormato,
+			};
+			Object.keys( filters ).forEach( function ( key ) {
+				if ( filters[ key ] && filters[ key ].value ) {
+					endpoint.searchParams.set( key, filters[ key ].value );
+				}
+			} );
+			if ( filterSearch && filterSearch.value.trim() ) {
+				endpoint.searchParams.set(
+					'search',
+					filterSearch.value.trim()
+				);
+			}
+
+			return endpoint.href;
+		}
+
+		/**
+		 * Request headers: the REST nonce for signed-in users.
+		 *
+		 * @return {Object} Headers.
+		 */
+		function fetchHeaders() {
+			const headers = {};
+			if (
+				config.isLoggedIn &&
+				restNonce &&
+				typeof restNonce === 'string' &&
+				restNonce.trim().length > 0
+			) {
+				headers[ 'X-WP-Nonce' ] = restNonce.trim();
+			}
+			return headers;
+		}
+
+		/**
+		 * Shows on the map every result of the current search, up to MAP_MAX_CENTROS.
+		 *
+		 * The cards load 24 at a time, so the map fetches the results itself, 100 per request, and
+		 * says so when the ceiling leaves some out.
+		 */
+		function refreshMapCentros() {
+			if ( ! isMapView || ! leafletMap ) {
+				return;
+			}
+			if ( mapRequest ) {
+				mapRequest.abort();
+			}
+			const wanted = Math.min( totalResults, MAP_MAX_CENTROS );
+			if ( currentCentros.length >= wanted ) {
+				showMapCentros( currentCentros.slice( 0, MAP_MAX_CENTROS ) );
+				return;
+			}
+
+			const request = new AbortController();
+			mapRequest = request;
+			const collected = [];
+			const loadPage = function ( page ) {
+				return fetch( centrosUrl( page, 100, 'alfa' ), {
+					headers: fetchHeaders(),
+					signal: request.signal,
+				} )
+					.then( function ( response ) {
+						if ( ! response.ok ) {
+							throw new Error( 'HTTP ' + response.status );
+						}
+						return response.json();
+					} )
+					.then( function ( data ) {
+						const fetched = Array.isArray( data.centros )
+							? data.centros
+							: [];
+						fetched.forEach( ( centro ) =>
+							collected.push( centro )
+						);
+						if (
+							page < Number( data.total_pages || 1 ) &&
+							collected.length < MAP_MAX_CENTROS
+						) {
+							return loadPage( page + 1 );
+						}
+					} );
+			};
+
+			loadPage( 1 )
+				.then( function () {
+					if ( ! request.signal.aborted ) {
+						showMapCentros( collected.slice( 0, MAP_MAX_CENTROS ) );
+					}
+				} )
+				.catch( function () {
+					// Keep what the cards already loaded rather than an empty map.
+					if ( ! request.signal.aborted ) {
+						showMapCentros( currentCentros );
+					}
+				} );
+		}
+
+		/**
+		 * Draws the markers and tells when the map leaves some results out.
+		 *
+		 * @param {Array} centros Centros to show.
+		 */
+		function showMapCentros( centros ) {
+			updateMapMarkers( centros );
+			if ( ! mapNote ) {
+				return;
+			}
+			const partial = centros.length < totalResults;
+			mapNote.hidden = ! partial;
+			mapNote.textContent = partial
+				? String( i18n.mapPartial || '' )
+						.replace( '%1$s', String( centros.length ) )
+						.replace( '%2$s', String( totalResults ) )
+				: '';
+		}
+
 		// Consulta a la REST API con los filtros activos.
 		function fetchCentros( appendPage ) {
 			const isAppend = Boolean( appendPage );
@@ -269,54 +422,17 @@ import { speak } from '@wordpress/a11y';
 			}
 			loadingState.style.display = 'block';
 
-			const params = new URLSearchParams( {
-				page: String( requestedPage ),
-				per_page: '24',
-				orden: sortSelect ? sortSelect.value : 'afines',
-			} );
-
-			// No afines_a: the endpoint picks the user's own centro itself, and skips it for global
-			// managers, whose first "managed" centro (userCenterId) is an arbitrary one.
-			if ( filterUbicacion && filterUbicacion.value ) {
-				params.append( 'ubicacion', filterUbicacion.value );
-			}
-			if ( filterIdioma && filterIdioma.value ) {
-				params.append( 'idioma', filterIdioma.value );
-			}
-			if ( filterEtapa && filterEtapa.value ) {
-				params.append( 'etapa', filterEtapa.value );
-			}
-			if ( filterTematica && filterTematica.value ) {
-				params.append( 'tematica', filterTematica.value );
-			}
-			if ( filterFormato && filterFormato.value ) {
-				params.append( 'formato', filterFormato.value );
-			}
-			if ( filterSearch && filterSearch.value.trim() ) {
-				params.append( 'search', filterSearch.value.trim() );
-			}
-
-			const fetchHeaders = {};
-			if (
-				config.isLoggedIn &&
-				restNonce &&
-				typeof restNonce === 'string' &&
-				restNonce.trim().length > 0
-			) {
-				fetchHeaders[ 'X-WP-Nonce' ] = restNonce.trim();
-			}
-
-			const endpoint = new URL(
-				restUrl + 'centros',
-				window.location.href
-			);
-			params.forEach( ( value, key ) =>
-				endpoint.searchParams.set( key, value )
-			);
-			fetch( endpoint.href, {
-				headers: fetchHeaders,
-				signal: request.signal,
-			} )
+			fetch(
+				centrosUrl(
+					requestedPage,
+					24,
+					sortSelect ? sortSelect.value : 'afines'
+				),
+				{
+					headers: fetchHeaders(),
+					signal: request.signal,
+				}
+			)
 				.then( function ( response ) {
 					if ( ! response.ok ) {
 						throw new Error( 'HTTP ' + response.status );
@@ -345,6 +461,7 @@ import { speak } from '@wordpress/a11y';
 							? data.total
 							: currentCentros.length
 					);
+					totalResults = Number( totalCount );
 					if ( countNumber ) {
 						countNumber.textContent = totalCount;
 					}
@@ -376,8 +493,8 @@ import { speak } from '@wordpress/a11y';
 						}
 					}
 
-					if ( isMapView && leafletMap ) {
-						updateMapMarkers( currentCentros );
+					if ( ! isAppend ) {
+						refreshMapCentros();
 					}
 				} )
 				.catch( function ( err ) {
@@ -913,7 +1030,7 @@ import { speak } from '@wordpress/a11y';
 			} else if ( leafletMap ) {
 				leafletMap.invalidateSize();
 			}
-			updateMapMarkers( currentCentros );
+			refreshMapCentros();
 		}
 
 		if ( btnAcceptMap ) {

@@ -1051,44 +1051,44 @@ msgstr "Bidalitako testuak eta kontuarekiko lotura ezabatu dira. Ikastetxeak, da
 msgid "No se han podido eliminar todos los datos. Reintente la solicitud de borrado."
 msgstr "Ezin izan dira datu guztiak ezabatu. Egin berriro ezabatze-eskaera."
 
-#: src/Rest/CentrosController.php:351
+#: src/Rest/CentrosController.php:343
 #: src/Rest/ColaboracionesController.php:572
 msgid "Número de página de resultados."
 msgstr "Emaitzen orri-zenbakia."
 
-#: src/Rest/CentrosController.php:359
+#: src/Rest/CentrosController.php:351
 msgid "Número de centros por página."
 msgstr "Orri bakoitzeko ikastetxe kopurua."
 
-#: src/Rest/CentrosController.php:368
+#: src/Rest/CentrosController.php:360
 msgid "Término de búsqueda por nombre o palabra clave."
 msgstr "Izenaren edo gako-hitzaren araberako bilaketa-terminoa."
 
-#: src/Rest/CentrosController.php:375
+#: src/Rest/CentrosController.php:367
 msgid "Criterio de ordenación."
 msgstr "Ordenatzeko irizpidea."
 
-#: src/Rest/CentrosController.php:383
+#: src/Rest/CentrosController.php:375
 msgid "ID del centro de referencia para calcular afinidad."
 msgstr "Afinitatea kalkulatzeko erreferentziako ikastetxearen IDa."
 
-#: src/Rest/CentrosController.php:390
+#: src/Rest/CentrosController.php:382
 msgid "Slug de etapa educativa."
 msgstr "Hezkuntza-etaparen slug-a."
 
-#: src/Rest/CentrosController.php:396
+#: src/Rest/CentrosController.php:388
 msgid "Slug de idioma."
 msgstr "Hizkuntzaren slug-a."
 
-#: src/Rest/CentrosController.php:402
+#: src/Rest/CentrosController.php:394
 msgid "Slug de temática."
 msgstr "Gaiaren slug-a."
 
-#: src/Rest/CentrosController.php:408
+#: src/Rest/CentrosController.php:400
 msgid "Slug de formato de programa."
 msgstr "Programa-formatuaren slug-a."
 
-#: src/Rest/CentrosController.php:414
+#: src/Rest/CentrosController.php:406
 msgid "Slug de ubicación geográfica."
 msgstr "Kokapen geografikoaren slug-a."
 
@@ -1557,23 +1557,23 @@ msgstr "Mapa kartografikoa kargatzean, OpenStreetMap Foundation-en kanpoko zerbi
 msgid "Aceptar y mostrar el mapa interactivo"
 msgstr "Onartu eta erakutsi mapa interaktiboa"
 
-#: templates/directorio.php:210
+#: templates/directorio.php:211
 msgid "Cargar más centros"
 msgstr "Kargatu ikastetxe gehiago"
 
-#: templates/directorio.php:217
+#: templates/directorio.php:218
 msgid "Buscando centros afines en la red..."
 msgstr "Antzeko ikastetxeak bilatzen sarean..."
 
-#: templates/directorio.php:223
+#: templates/directorio.php:224
 msgid "No se han encontrado emisoras con estos filtros"
 msgstr "Ez da irratirik aurkitu iragazki hauekin"
 
-#: templates/directorio.php:224
+#: templates/directorio.php:225
 msgid "Prueba a seleccionar otros temas, idiomas o restablecer la búsqueda."
 msgstr "Saiatu beste gai edo hizkuntza batzuk hautatzen, edo berrezarri bilaketa."
 
-#: templates/directorio.php:226
+#: templates/directorio.php:227
 msgid "Limpiar todos los filtros"
 msgstr "Garbitu iragazki guztiak"
 
@@ -1976,3 +1976,9 @@ msgstr "Match proposamena bidali da! Irrati hartzaileak bere Lankidetzak panelea
 #: src/Rest/ColaboracionesController.php:456
 msgid "¡Propuesta de match enviada con éxito! No se ha podido enviar el aviso por correo, pero la emisora receptora la verá en su panel de Colaboraciones."
 msgstr "Match proposamena bidali da! Ezin izan da abisua posta elektronikoz bidali, baina irrati hartzaileak bere Lankidetzak panelean ikusiko du."
+
+#. translators: 1: number of centros on the map, 2: number of results.
+#: build/directorio.js:4
+#, js-format
+msgid "El mapa muestra %1$s de %2$s centros. Usa los filtros para acotar la búsqueda."
+msgstr "Mapak %2$s ikastetxetatik %1$s erakusten ditu. Erabili iragazkiak bilaketa zehazteko."

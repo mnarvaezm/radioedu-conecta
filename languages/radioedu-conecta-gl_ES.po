@@ -1051,44 +1051,44 @@ msgstr "Elimináronse os textos enviados e a vinculación coa conta. Os centros,
 msgid "No se han podido eliminar todos los datos. Reintente la solicitud de borrado."
 msgstr "Non se puideron eliminar todos os datos. Volva facer a solicitude de borrado."
 
-#: src/Rest/CentrosController.php:351
+#: src/Rest/CentrosController.php:343
 #: src/Rest/ColaboracionesController.php:572
 msgid "Número de página de resultados."
 msgstr "Número de páxina de resultados."
 
-#: src/Rest/CentrosController.php:359
+#: src/Rest/CentrosController.php:351
 msgid "Número de centros por página."
 msgstr "Número de centros por páxina."
 
-#: src/Rest/CentrosController.php:368
+#: src/Rest/CentrosController.php:360
 msgid "Término de búsqueda por nombre o palabra clave."
 msgstr "Termo de busca por nome ou palabra clave."
 
-#: src/Rest/CentrosController.php:375
+#: src/Rest/CentrosController.php:367
 msgid "Criterio de ordenación."
 msgstr "Criterio de ordenación."
 
-#: src/Rest/CentrosController.php:383
+#: src/Rest/CentrosController.php:375
 msgid "ID del centro de referencia para calcular afinidad."
 msgstr "ID do centro de referencia para calcular a afinidade."
 
-#: src/Rest/CentrosController.php:390
+#: src/Rest/CentrosController.php:382
 msgid "Slug de etapa educativa."
 msgstr "Slug de etapa educativa."
 
-#: src/Rest/CentrosController.php:396
+#: src/Rest/CentrosController.php:388
 msgid "Slug de idioma."
 msgstr "Slug de idioma."
 
-#: src/Rest/CentrosController.php:402
+#: src/Rest/CentrosController.php:394
 msgid "Slug de temática."
 msgstr "Slug de temática."
 
-#: src/Rest/CentrosController.php:408
+#: src/Rest/CentrosController.php:400
 msgid "Slug de formato de programa."
 msgstr "Slug de formato de programa."
 
-#: src/Rest/CentrosController.php:414
+#: src/Rest/CentrosController.php:406
 msgid "Slug de ubicación geográfica."
 msgstr "Slug de localización xeográfica."
 
@@ -1557,23 +1557,23 @@ msgstr "Ao cargar o mapa cartográfico establecerase conexión cos servidores ex
 msgid "Aceptar y mostrar el mapa interactivo"
 msgstr "Aceptar e amosar o mapa interactivo"
 
-#: templates/directorio.php:210
+#: templates/directorio.php:211
 msgid "Cargar más centros"
 msgstr "Cargar máis centros"
 
-#: templates/directorio.php:217
+#: templates/directorio.php:218
 msgid "Buscando centros afines en la red..."
 msgstr "Buscando centros afíns na rede..."
 
-#: templates/directorio.php:223
+#: templates/directorio.php:224
 msgid "No se han encontrado emisoras con estos filtros"
 msgstr "Non se atoparon emisoras con estes filtros"
 
-#: templates/directorio.php:224
+#: templates/directorio.php:225
 msgid "Prueba a seleccionar otros temas, idiomas o restablecer la búsqueda."
 msgstr "Proba a seleccionar outros temas ou idiomas, ou restablece a busca."
 
-#: templates/directorio.php:226
+#: templates/directorio.php:227
 msgid "Limpiar todos los filtros"
 msgstr "Limpar todos os filtros"
 
@@ -1976,3 +1976,9 @@ msgstr "Enviouse a proposta de match! A emisora receptora vaina ver no seu panel
 #: src/Rest/ColaboracionesController.php:456
 msgid "¡Propuesta de match enviada con éxito! No se ha podido enviar el aviso por correo, pero la emisora receptora la verá en su panel de Colaboraciones."
 msgstr "Enviouse a proposta de match! Non se puido enviar o aviso por correo, pero a emisora receptora vaina ver no seu panel de Colaboracións."
+
+#. translators: 1: number of centros on the map, 2: number of results.
+#: build/directorio.js:4
+#, js-format
+msgid "El mapa muestra %1$s de %2$s centros. Usa los filtros para acotar la búsqueda."
+msgstr "O mapa mostra %1$s de %2$s centros. Usa os filtros para acoutar a busca."

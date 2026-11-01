@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-31T23:53:00+00:00\n"
+"POT-Creation-Date: 2026-11-01T00:03:47+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: radioedu-conecta\n"
@@ -1075,44 +1075,44 @@ msgstr ""
 msgid "No se han podido eliminar todos los datos. Reintente la solicitud de borrado."
 msgstr ""
 
-#: src/Rest/CentrosController.php:351
+#: src/Rest/CentrosController.php:343
 #: src/Rest/ColaboracionesController.php:572
 msgid "Número de página de resultados."
 msgstr ""
 
-#: src/Rest/CentrosController.php:359
+#: src/Rest/CentrosController.php:351
 msgid "Número de centros por página."
 msgstr ""
 
-#: src/Rest/CentrosController.php:368
+#: src/Rest/CentrosController.php:360
 msgid "Término de búsqueda por nombre o palabra clave."
 msgstr ""
 
-#: src/Rest/CentrosController.php:375
+#: src/Rest/CentrosController.php:367
 msgid "Criterio de ordenación."
 msgstr ""
 
-#: src/Rest/CentrosController.php:383
+#: src/Rest/CentrosController.php:375
 msgid "ID del centro de referencia para calcular afinidad."
 msgstr ""
 
-#: src/Rest/CentrosController.php:390
+#: src/Rest/CentrosController.php:382
 msgid "Slug de etapa educativa."
 msgstr ""
 
-#: src/Rest/CentrosController.php:396
+#: src/Rest/CentrosController.php:388
 msgid "Slug de idioma."
 msgstr ""
 
-#: src/Rest/CentrosController.php:402
+#: src/Rest/CentrosController.php:394
 msgid "Slug de temática."
 msgstr ""
 
-#: src/Rest/CentrosController.php:408
+#: src/Rest/CentrosController.php:400
 msgid "Slug de formato de programa."
 msgstr ""
 
-#: src/Rest/CentrosController.php:414
+#: src/Rest/CentrosController.php:406
 msgid "Slug de ubicación geográfica."
 msgstr ""
 
@@ -1597,23 +1597,23 @@ msgstr ""
 msgid "Aceptar y mostrar el mapa interactivo"
 msgstr ""
 
-#: templates/directorio.php:210
+#: templates/directorio.php:211
 msgid "Cargar más centros"
 msgstr ""
 
-#: templates/directorio.php:217
+#: templates/directorio.php:218
 msgid "Buscando centros afines en la red..."
 msgstr ""
 
-#: templates/directorio.php:223
+#: templates/directorio.php:224
 msgid "No se han encontrado emisoras con estos filtros"
 msgstr ""
 
-#: templates/directorio.php:224
+#: templates/directorio.php:225
 msgid "Prueba a seleccionar otros temas, idiomas o restablecer la búsqueda."
 msgstr ""
 
-#: templates/directorio.php:226
+#: templates/directorio.php:227
 msgid "Limpiar todos los filtros"
 msgstr ""
 
@@ -1830,6 +1830,12 @@ msgstr ""
 
 #: build/directorio.js:3
 msgid "Colaboradores de OpenStreetMap"
+msgstr ""
+
+#. translators: 1: number of centros on the map, 2: number of results.
+#: build/directorio.js:4
+#, js-format
+msgid "El mapa muestra %1$s de %2$s centros. Usa los filtros para acotar la búsqueda."
 msgstr ""
 
 #: build/network-sync.js:1

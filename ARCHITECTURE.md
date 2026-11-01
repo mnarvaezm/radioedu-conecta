@@ -154,6 +154,7 @@ c:\radioedu-conecta\
 ### 3.3 Strict Output Escaping, Zero `innerHTML`, and URL Validation
 * **Server-side (PHP):** Strict "Late Escaping" rule. Variables are escaped at the exact moment of output using `esc_html()`, `esc_attr()`, `esc_url()`, `wp_kses_post()`, or `wp_json_encode()`. All SQL queries use `$wpdb->prepare()` with `%i` identifier placeholders for table names.
 * **Client-side (JavaScript):** `assets/js/directorio.js` (compiled to `build/directorio.js`) prohibits `innerHTML` and HTML string concatenation. All dynamic card nodes, badges, and Leaflet map popups (`marker.bindPopup(popupNode)`) are assembled using `document.createElement()` and `textContent`. All external URLs are validated via `sanitizeHttpUrl()` (`http:` / `https:` whitelist) and escaped before CSS `url(...)` injection. Icons the script needs (favourite stars, send) are server-rendered SVGs inside `<template id="radioedu-icon-templates">` that the script clones with `cloneNode()`. Server-side, the profile cover URL is percent-encoded for CSS context (`DirectorioShortcode::css_safe_url()`) because `esc_url()` keeps quotes and parentheses that the browser decodes before parsing CSS.
+* **Map markers:** the cards load 24 at a time, so the map view fetches the results of the current search itself, 100 per request, and draws up to 500 markers (`MAP_MAX_CENTROS` in `directorio.js`). A `role="status"` note says how many are shown when the ceiling leaves some out. A new search cancels the pending map requests.
 
 
 ### 3.4 Landmarks

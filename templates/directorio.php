@@ -197,6 +197,7 @@ defined( 'ABSPATH' ) || exit;
 					</button>
 				</div>
 				<div id="radioedu-leaflet-map" style="display: none; height: 520px; width: 100%; border-radius: 16px;"></div>
+				<p id="radioedu-map-note" class="radioedu-map-note" role="status" hidden></p>
 			</div>
 
 			<!-- Cuadrícula de Tarjetas -->
