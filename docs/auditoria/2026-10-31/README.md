@@ -3,7 +3,7 @@
 ## Documentos
 
 1. [Plan de revisión](PLAN-DE-REVISION.md): 165 puntos, creado antes del análisis. Las marcas indican revisión, no conformidad; 10 puntos conservan validaciones parciales/pendientes.
-2. [Informe](INFORME.md): 2 hallazgos de seguridad de severidad baja y 22 defectos funcionales/de cumplimiento, con prioridades, causas, reproducción y propuestas de corrección. Su última sección, [Seguimiento de correcciones](INFORME.md#seguimiento-de-correcciones-2026-11-01) (2026-11-01), recoge el estado de cada hallazgo, los commits, la verificación, los matices y lo pendiente.
+2. [Informe](INFORME.md): 2 hallazgos de seguridad de severidad baja y 22 defectos funcionales/de cumplimiento, con prioridades, causas, reproducción y propuestas de corrección. Su última sección, [Seguimiento de correcciones](INFORME.md#seguimiento-de-correcciones-2026-11-01) (2026-11-01), recoge el estado de cada hallazgo, las decisiones sobre Q-01 a Q-03, los problemas que encontró una segunda revisión independiente (R-01 a R-05) y su corrección, la verificación final, los matices y lo pendiente.
 3. [Cobertura](COBERTURA.md): 23 superficies, métodos, límites y verificaciones pendientes.
 4. [Arquitectura y pruebas](ANEXO-ARQUITECTURA-Y-PRUEBAS.md): modelo de datos, hooks, endpoints, capacidades, herramientas y preparación de una entrega posterior.
 

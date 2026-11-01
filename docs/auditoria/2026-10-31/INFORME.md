@@ -1,9 +1,18 @@
 # Informe de auditoría — RadioEdu Conecta
 
-> **Actualización 2026-11-01.** Después de la auditoría se trataron todos los hallazgos, con un commit por hallazgo en `feat/wp71-apis` (de `fbb1942` a `63d9fbc`, sin publicar):
+> **Actualización 2026-11-01.** Después de la auditoría se trataron todos sus hallazgos, con un commit por hallazgo en `feat/wp71-apis`. El código corregido final es `aedfd3d`:
 >
-> - **F-02 y F-22:** se cerraron por decisión del responsable y quedaron documentados.
-> - **S-02:** se aceptó, con el límite elevado a 20 propuestas por hora.
+> - **24 hallazgos:**
+>   - 21 corregidos;
+>   - F-02 y F-22 cerrados por decisión del responsable y documentados;
+>   - S-02 aceptado, con el límite elevado a 20 propuestas por hora.
+> - **Desviaciones frente a AGENTS.md:**
+>   - Q-02 y Q-06 corregidas;
+>   - Q-01 resuelta ajustando la norma;
+>   - Q-03 resuelta con un inventario de excepciones;
+>   - Q-04 ejecutada;
+>   - queda pendiente Q-05.
+> - **Segunda revisión independiente:** confirmó cinco problemas en las correcciones (R-01 a R-05), también corregidos.
 >
 > El estado, la verificación, los matices y lo pendiente están en [Seguimiento de correcciones](#seguimiento-de-correcciones-2026-11-01). El resto del informe describe el código auditado: `922c042` con los cambios locales que después fueron `dc245a9`. Sus referencias de línea ya no coinciden con el código corregido.
 
@@ -318,7 +327,16 @@ Claude (asistente de programación) hizo las correcciones a petición del respon
 - su entrada en el changelog de `readme.txt` y `README.md`;
 - cambios en `ARCHITECTURE.md` y `TESTING-PROTOCOL.md` cuando procedía.
 
-Las cadenas nuevas o modificadas se tradujeron al catalán, valenciano, gallego y euskera. Los commits solo están en local: la rama no se ha publicado y el ZIP no se ha regenerado.
+Las cadenas nuevas o modificadas se tradujeron al catalán, valenciano, gallego y euskera. Todo el código corregido (hasta `aedfd3d`) está publicado en la rama `feat/wp71-apis` de GitHub, que todavía no se ha fusionado con `main`. El ZIP no se ha regenerado.
+
+**Resumen:**
+
+| Grupo | Total | Resultado |
+| --- | --- | --- |
+| Hallazgos de la auditoría (S-01, S-02, F-01 a F-22) | 24 | 21 corregidos; F-02 y F-22 cerrados por decisión documentada; S-02 aceptado con el límite a 20 por hora |
+| Desviaciones frente a AGENTS.md (Q-01 a Q-06) | 6 | Q-02 y Q-06 corregidas; Q-01 con la norma ajustada; Q-03 con excepciones inventariadas; Q-04 ejecutada; **Q-05 pendiente** |
+| Segunda revisión (R-01 a R-05) | 5 | Los 5 corregidos |
+| Candidatos por validar y recomendaciones de endurecimiento | 4 y 8 | Sin abordar, salvo parte de dos recomendaciones (ver «Pendiente») |
 
 ### Ajustes a la revisión inicial
 
@@ -352,18 +370,18 @@ Antes de corregir se contrastó el informe con el código. Los 24 hallazgos se c
 | F-11 | P1 | Corregido | `183c697` | Navegador con respuesta retrasada: falla con el build anterior y pasa con el nuevo |
 | F-02 | P1 → decisión | Se mantiene; documentado | `d78e419` | — |
 | F-22 | P2 → decisión | Sin purga automática; documentado | `53bcda0` | Párrafo de conservación en el texto sugerido de la política de privacidad |
-| S-01 | Baja | Corregido | `8810283` | Tres tests en `CentroLimitTest`; los dos de evasión fallan sin el arreglo |
+| S-01 | Baja | Corregido | `8810283`, `0db0982` | Tres tests en `CentroLimitTest`; los dos de evasión fallan sin el arreglo. El editor clásico se cubrió después (R-01). |
 | S-02 | Baja | Aceptado; límite a 20/h | `8cd26ec` | `test_proposals_are_limited_to_twenty_per_hour` |
-| F-05 | P2 | Corregido | `3f48467`, `4ca647d` | `ProposalPaginationTest` |
+| F-05 | P2 | Corregido | `3f48467`, `4ca647d`, `aedfd3d` | `ProposalPaginationTest`. Una página enorme se resolvió después (R-05). |
 | F-06 | P2 | Corregido | `72f9279`, `4ca647d` | `ManagedCentersTest`: 53 centros, email sin distinguir mayúsculas, editores |
 | F-08 | P2 | Corregido | `00547fc` | `NotificationResultTest` |
 | F-09 | P2 | Corregido | `646d532` | `test_global_managers_get_no_affinity_from_an_arbitrary_centro`; falla sin el arreglo |
-| F-12 | P2 | Corregido | `95db313` | Navegador: 66 marcadores para 66 resultados (antes, 24) |
+| F-12 | P2 | Corregido | `95db313`, `ab17b8a` | Navegador: 66 marcadores para 66 resultados (antes, 24). Los filtros mezclados entre páginas se resolvieron después (R-04). |
 | F-13 | P2 | Corregido | `8968551` | Navegador a 320 px con Twenty Twenty-Five y YOOtheme: nada desborda |
-| F-14 | P2 | Corregido | `1cb7cec` | `DirectoryUrlTest` |
+| F-14 | P2 | Corregido | `1cb7cec`, `6e6454d` | `DirectoryUrlTest`. Los patrones sincronizados se cubrieron después (R-03). |
 | F-15 | P2 | Corregido | `3953f46` | `test_the_profile_keeps_the_embedded_players_of_the_description`; falla sin el arreglo |
 | F-18 | P2 | Corregido | `b88ece8`, `eccd3a7` | Test multisitio en los dos sentidos; falla sin el arreglo |
-| F-19 | P2 | Corregido | `0042b4e` | Test con una segunda sincronización intercalada; falla sin el bloqueo |
+| F-19 | P2 | Corregido | `0042b4e`, `818593d` | Test con una segunda sincronización intercalada; falla sin el bloqueo. El bloqueo pasó a `GET_LOCK` después (R-02). |
 | F-21 | P2 | Corregido | `c5d9c28` | Test con 1.001 fichas; falla con la consulta anterior |
 | F-16 | P3 | Corregido | `361b008` | Test PHP, y navegador con JavaScript desactivado y activado |
 | F-20 | P3 | Corregido | `63d9fbc` | Desinstalación real en el entorno de QA |
@@ -407,28 +425,34 @@ Dos commits son correcciones de seguimiento:
   - `NotificationService` devuelve `sent`, `failed` o `disabled`;
   - `get_demo_image_url()` recibe el ID del centro.
 
+  Además, `NetworkSync::LOCK_PREFIX` pasa a ser el prefijo del nombre del bloqueo de base de datos, ya no de una opción.
+
   También hay novedades:
   - esquema 1.0.3;
   - campo `notificacion` en las respuestas REST de propuestas;
   - `page` y `per_page` en `GET /colaboraciones`;
-  - el filtro `radioedu_conecta_directory_url`.
+  - el filtro `radioedu_conecta_directory_url`;
+  - `blocks/directorio/block.json`;
+  - `NetworkSync::lock_name()`.
 
 ### Verificación del estado final
 
-Sobre `63d9fbc`, en el entorno de QA local (WordPress 7.1.4, PHP 8.1, MariaDB 10.11):
+Sobre `aedfd3d`, el último commit con cambios de código, en el entorno de QA local (WordPress 7.1.4, PHP 8.1, MariaDB 10.11):
 
 | Verificación | Resultado |
 | --- | --- |
-| PHPUnit, sitio único | 139 tests: 119 ejecutados sin fallos y 20 omitidos por ser solo de multisitio |
-| PHPUnit, multisitio | 139 tests sin fallos |
+| PHPUnit, sitio único | 144 tests: 123 ejecutados sin fallos y 21 omitidos por ser solo de multisitio |
+| PHPUnit, multisitio | 144 tests sin fallos (928 aserciones) |
 | PHPCS (WordPress, Extra, Docs, PHPCompatibilityWP 8.1+) | Sin errores; PHPCompatibilityWP también sobre `tests/` |
 | PHPStan nivel 6 | Sin errores |
 | Lint JS y CSS | Sin errores |
 | Plugin Check 2.1.0 | Sin errores ni avisos, sobre la copia distribuible |
-| Navegador (Edge con Playwright) | F-11, F-12, F-13 y F-16 |
+| Pruebas de la segunda revisión | 8 de 9 pasan; la que falla modela el bloqueo con caducidad que R-02 sustituyó a propósito (ver más abajo) |
+| Navegador (Edge con Playwright) | Repetidas sobre el código final: F-11 (panel), F-13 (320 px), F-16 (sin JavaScript), Q-02 (bloque en el editor) y R-04 (mapa con 210 radios y filtros). F-12 se comprobó con 66 radios en su commit, y el mapa completo vuelve a cubrirlo R-04. |
 | Desinstalación | Real, en el entorno de QA (F-20) |
+| Migración | Esquema 1.0.2 → 1.0.3 sobre una tabla real en el entorno de QA (F-01, F-04) |
 
-Los scripts de navegador están en `evidencias/seguimiento-2026-11-01/`. Usan el entorno desechable del puerto 8091 y su cuenta de pruebas, y no deben ejecutarse contra otros sitios.
+La suite E2E del propio repositorio (`tests/e2e`) no se ha vuelto a ejecutar en local tras los cambios; la ejecutará la CI. Los scripts de navegador están en `evidencias/seguimiento-2026-11-01/`. Usan el entorno desechable del puerto 8091 y su cuenta de pruebas, y no deben ejecutarse contra otros sitios.
 
 ### Segunda revisión: R-01 a R-05
 
@@ -444,10 +468,12 @@ Otra sesión revisó de forma independiente el estado `63d9fbc`; su trabajo est�
 
 Con el código actual, de las 9 pruebas de su fichero solo falla `test_old_lock_owner_does_not_release_replacement_lock`. Esa prueba exige que una segunda sincronización pueda sustituir un bloqueo «caducado» de la misma petición, algo que el diseño nuevo impide a propósito: el bloqueo ya no caduca y solo lo libera la conexión que lo tiene. Lo que esa prueba quería proteger (que la petición antigua no libere el bloqueo de la nueva) se comprueba en `test_a_slow_sync_keeps_its_lock_until_it_ends`.
 
-Estado tras estas correcciones (`aedfd3d`):
+Esa segunda revisión seguía en curso al cerrar este seguimiento: puede aportar más hallazgos. Sus cuatro candidatos sin confirmar quedaron así:
 
-- PHPUnit: 144 tests, sin fallos en sitio único (21 omitidos, solo de multisitio) y en multisitio.
-- PHPCS, PHPStan, lint JS y Plugin Check: sin errores.
+- **Comprobación del esquema basada solo en nombres de columnas.** Su propia prueba con un esquema antiguo real pasa.
+- **Liberación del bloqueo sin comprobar quién lo tiene.** Confirmado y corregido en R-02.
+- **Vías fuera de REST para saltarse el cupo.** Confirmado y corregido en R-01.
+- **Fidelidad del estado del aviso cuando se envían varios correos.** Cada acción envía un solo correo, así que no aplica hoy.
 
 ### Pendiente
 
@@ -471,16 +497,21 @@ Estado tras estas correcciones (`aedfd3d`):
 
 **Derivado de las correcciones:**
 
-- Pasar las comprobaciones de navegador de F-11, F-12, F-13 y F-16 a `tests/e2e` (Playwright).
+- Pasar las comprobaciones de navegador de F-11, F-12, F-13, F-16, Q-02 y R-04 a `tests/e2e` (Playwright), para que la CI las ejecute.
 - Automatizar la prueba de desinstalación de F-20 en un entorno desechable.
 - Avisar en el escritorio cuando falla la migración (F-04).
 - Crear una herramienta para revisar las respuestas sin autor anteriores a 1.1 (F-01).
 - Fusionar de forma asistida las fichas duplicadas que ya existan (F-19).
 - Revisar el plazo de conservación de propuestas con el responsable del tratamiento (F-22).
+- Incorporar las conclusiones finales de la segunda revisión cuando termine, y adaptar su prueba del bloqueo al diseño de R-02.
 
 **Antes de publicar:**
 
-- Publicar la rama, ejecutar la CI remota y regenerar `radioedu-conecta_1.1.zip`.
-- Pedir una revisión nativa de las traducciones, incluidas las 12 cadenas nuevas o modificadas en este seguimiento.
-- Probar la matriz de PHP 8.2–8.5 y WordPress 7.1.0.
-- Decidir si se versiona `docs/auditoria/`. Las evidencias ya están en UTF-8.
+- Revisar el resultado de la CI remota de la rama, regenerar `radioedu-conecta_1.1.zip` (el actual es del 31/10, anterior a todas las correcciones) y fusionar con `main` mediante un PR.
+- Pedir una revisión nativa de las traducciones, en especial de las 13 cadenas nuevas o modificadas en este seguimiento:
+  - las 12 de las correcciones;
+  - la palabra clave «podcast» del bloque.
+
+  Las demás cadenas de `block.json` reutilizan traducciones que ya existían, ahora con contexto.
+- Probar la matriz de PHP 8.2–8.5 y WordPress 7.1.0. La CI cubre PHP 8.1 y 8.3 con WordPress 7.1 y la última versión.
+- Decidir qué hacer con `docs/auditoria/2026-11-01-revision/`, la carpeta de la segunda revisión, que sigue sin versionar. La de esta auditoría ya está versionada, con las evidencias en UTF-8.
