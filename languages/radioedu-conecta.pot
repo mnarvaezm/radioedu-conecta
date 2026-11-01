@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-01T00:03:47+00:00\n"
+"POT-Creation-Date: 2026-11-01T00:33:22+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: radioedu-conecta\n"
@@ -735,31 +735,31 @@ msgstr ""
 msgid "RadioEdu Conecta - Traspasando Fronteras"
 msgstr ""
 
-#: src/Frontend/DirectorioShortcode.php:85
+#: src/Frontend/DirectorioShortcode.php:90
 msgid "Ficha de centro de radio"
 msgstr ""
 
-#: src/Frontend/DirectorioShortcode.php:86
+#: src/Frontend/DirectorioShortcode.php:91
 msgid "Perfil público de un centro: cabecera y pie del tema alrededor de la ficha, sin repetir su título, autor, fecha ni imagen de cabecera."
 msgstr ""
 
-#: src/Frontend/DirectorioShortcode.php:234
+#: src/Frontend/DirectorioShortcode.php:239
 msgid "Directorio Traspasando Fronteras"
 msgstr ""
 
-#: src/Frontend/DirectorioShortcode.php:235
+#: src/Frontend/DirectorioShortcode.php:240
 msgid "Directorio interactivo de radios escolares con filtros, mapa y propuestas de colaboración."
 msgstr ""
 
-#: src/Frontend/DirectorioShortcode.php:239
+#: src/Frontend/DirectorioShortcode.php:244
 msgid "radio escolar"
 msgstr ""
 
-#: src/Frontend/DirectorioShortcode.php:240
+#: src/Frontend/DirectorioShortcode.php:245
 msgid "directorio"
 msgstr ""
 
-#: src/Frontend/DirectorioShortcode.php:241
+#: src/Frontend/DirectorioShortcode.php:246
 msgid "colaboración"
 msgstr ""
 
@@ -799,7 +799,11 @@ msgstr ""
 msgid "Enviar"
 msgstr ""
 
-#: src/Network/NetworkSync.php:317
+#: src/Network/NetworkSync.php:210
+msgid "Otra sincronización está actualizando la ficha de este sitio. Vuelve a sincronizar dentro de un momento."
+msgstr ""
+
+#: src/Network/NetworkSync.php:393
 msgid "El sitio no existe."
 msgstr ""
 

@@ -727,31 +727,31 @@ msgstr "Podes acceder á plataforma para coordinar os seguintes pasos coa emisor
 msgid "RadioEdu Conecta - Traspasando Fronteras"
 msgstr "RadioEdu Conecta - Traspasando Fronteras"
 
-#: src/Frontend/DirectorioShortcode.php:85
+#: src/Frontend/DirectorioShortcode.php:90
 msgid "Ficha de centro de radio"
 msgstr "Ficha de centro de radio"
 
-#: src/Frontend/DirectorioShortcode.php:86
+#: src/Frontend/DirectorioShortcode.php:91
 msgid "Perfil público de un centro: cabecera y pie del tema alrededor de la ficha, sin repetir su título, autor, fecha ni imagen de cabecera."
 msgstr "Perfil público dun centro: cabeceira e pé do tema arredor da ficha, sen repetir o seu título, autor, data nin imaxe de cabeceira."
 
-#: src/Frontend/DirectorioShortcode.php:234
+#: src/Frontend/DirectorioShortcode.php:239
 msgid "Directorio Traspasando Fronteras"
 msgstr "Directorio Traspasando Fronteras"
 
-#: src/Frontend/DirectorioShortcode.php:235
+#: src/Frontend/DirectorioShortcode.php:240
 msgid "Directorio interactivo de radios escolares con filtros, mapa y propuestas de colaboración."
 msgstr "Directorio interactivo de radios escolares con filtros, mapa e propostas de colaboración."
 
-#: src/Frontend/DirectorioShortcode.php:239
+#: src/Frontend/DirectorioShortcode.php:244
 msgid "radio escolar"
 msgstr "radio escolar"
 
-#: src/Frontend/DirectorioShortcode.php:240
+#: src/Frontend/DirectorioShortcode.php:245
 msgid "directorio"
 msgstr "directorio"
 
-#: src/Frontend/DirectorioShortcode.php:241
+#: src/Frontend/DirectorioShortcode.php:246
 msgid "colaboración"
 msgstr "colaboración"
 
@@ -791,7 +791,7 @@ msgstr "Micrófono"
 msgid "Enviar"
 msgstr "Enviar"
 
-#: src/Network/NetworkSync.php:317
+#: src/Network/NetworkSync.php:393
 msgid "El sitio no existe."
 msgstr "O sitio non existe."
 
@@ -1982,3 +1982,7 @@ msgstr "Enviouse a proposta de match! Non se puido enviar o aviso por correo, pe
 #, js-format
 msgid "El mapa muestra %1$s de %2$s centros. Usa los filtros para acotar la búsqueda."
 msgstr "O mapa mostra %1$s de %2$s centros. Usa os filtros para acoutar a busca."
+
+#: src/Network/NetworkSync.php:210
+msgid "Otra sincronización está actualizando la ficha de este sitio. Vuelve a sincronizar dentro de un momento."
+msgstr "Outra sincronización está a actualizar a ficha deste sitio. Volve sincronizar dentro dun momento."

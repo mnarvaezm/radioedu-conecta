@@ -727,31 +727,31 @@ msgstr "Pots accedir a la plataforma per coordinar els passos següents amb l'em
 msgid "RadioEdu Conecta - Traspasando Fronteras"
 msgstr "RadioEdu Conecta - Traspasando Fronteras"
 
-#: src/Frontend/DirectorioShortcode.php:85
+#: src/Frontend/DirectorioShortcode.php:90
 msgid "Ficha de centro de radio"
 msgstr "Fitxa de centre de ràdio"
 
-#: src/Frontend/DirectorioShortcode.php:86
+#: src/Frontend/DirectorioShortcode.php:91
 msgid "Perfil público de un centro: cabecera y pie del tema alrededor de la ficha, sin repetir su título, autor, fecha ni imagen de cabecera."
 msgstr "Perfil públic d'un centre: capçalera i peu del tema al voltant de la fitxa, sense repetir-ne el títol, l'autor, la data ni la imatge de capçalera."
 
-#: src/Frontend/DirectorioShortcode.php:234
+#: src/Frontend/DirectorioShortcode.php:239
 msgid "Directorio Traspasando Fronteras"
 msgstr "Directori Traspasando Fronteras"
 
-#: src/Frontend/DirectorioShortcode.php:235
+#: src/Frontend/DirectorioShortcode.php:240
 msgid "Directorio interactivo de radios escolares con filtros, mapa y propuestas de colaboración."
 msgstr "Directori interactiu de ràdios escolars amb filtres, mapa i propostes de col·laboració."
 
-#: src/Frontend/DirectorioShortcode.php:239
+#: src/Frontend/DirectorioShortcode.php:244
 msgid "radio escolar"
 msgstr "ràdio escolar"
 
-#: src/Frontend/DirectorioShortcode.php:240
+#: src/Frontend/DirectorioShortcode.php:245
 msgid "directorio"
 msgstr "directori"
 
-#: src/Frontend/DirectorioShortcode.php:241
+#: src/Frontend/DirectorioShortcode.php:246
 msgid "colaboración"
 msgstr "col·laboració"
 
@@ -791,7 +791,7 @@ msgstr "Micròfon"
 msgid "Enviar"
 msgstr "Envia"
 
-#: src/Network/NetworkSync.php:317
+#: src/Network/NetworkSync.php:393
 msgid "El sitio no existe."
 msgstr "El lloc no existeix."
 
@@ -1982,3 +1982,7 @@ msgstr "S'ha enviat la proposta de match! No s'ha pogut enviar l'avís per corre
 #, js-format
 msgid "El mapa muestra %1$s de %2$s centros. Usa los filtros para acotar la búsqueda."
 msgstr "El mapa mostra %1$s de %2$s centres. Utilitza els filtres per acotar la cerca."
+
+#: src/Network/NetworkSync.php:210
+msgid "Otra sincronización está actualizando la ficha de este sitio. Vuelve a sincronizar dentro de un momento."
+msgstr "Una altra sincronització està actualitzant la fitxa d'aquest lloc. Torna a sincronitzar d'aquí a una estona."

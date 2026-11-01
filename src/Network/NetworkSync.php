@@ -27,6 +27,8 @@ defined( 'ABSPATH' ) || exit;
  * Author role (or a higher one) on the main site get it, so they can edit their ficha.
  *
  * Every method must run on the main site, as the REST endpoint guarantees.
+ *
+ * @phpstan-type SiteData array{name: string, tagline: string, url: string, icon: string, admin_email: string, admin_id: int}
  */
 final class NetworkSync {
 
@@ -49,6 +51,16 @@ final class NetworkSync {
 	 * Most fichas checked for a missing source site.
 	 */
 	private const MAX_ORPHAN_CHECK = 1000;
+
+	/**
+	 * Prefix of the option that locks the sync of one site, followed by the site ID.
+	 */
+	public const LOCK_PREFIX = 'radioedu_conecta_sync_lock_';
+
+	/**
+	 * Seconds after which a lock left by a request that died is ignored.
+	 */
+	private const LOCK_TTL = 60;
 
 	/**
 	 * Returns the number of sites processed per request.
@@ -195,6 +207,29 @@ final class NetworkSync {
 			return $data;
 		}
 
+		// Two syncs at once (two tabs, two administrators) would both find no ficha and create two.
+		if ( ! self::acquire_site_lock( $blog_id ) ) {
+			return new WP_Error( 'radioedu_sync_busy', __( 'Otra sincronización está actualizando la ficha de este sitio. Vuelve a sincronizar dentro de un momento.', 'radioedu-conecta' ) );
+		}
+
+		try {
+			return self::sync_locked_site( $blog_id, $data, $grant_author_role );
+		} finally {
+			self::release_site_lock( $blog_id );
+		}
+	}
+
+	/**
+	 * Creates, updates or reuses the ficha of one site, while holding its lock.
+	 *
+	 * @param int   $blog_id           Source site ID.
+	 * @param array $data              Site data from read_site().
+	 * @param bool  $grant_author_role Whether the ficha author gets the Author role on the main site.
+	 * @phpstan-param SiteData $data
+	 * @return array{post_id: int, site_url: string, outcome: 'created'|'updated'|'reused'|'skipped', author_added: bool}|WP_Error Same as sync_site().
+	 */
+	private static function sync_locked_site( int $blog_id, array $data, bool $grant_author_role ): array|WP_Error {
+
 		[ $post_id, $outcome ] = self::find_ficha( $blog_id, $data['url'] );
 
 		// A ficha an administrator sent to the trash is neither touched nor created again.
@@ -249,6 +284,50 @@ final class NetworkSync {
 			'outcome'      => $outcome,
 			'author_added' => $grant_author_role && self::grant_author_access( (int) get_post_field( 'post_author', $post_id ) ),
 		];
+	}
+
+	/**
+	 * Takes the sync lock of one site.
+	 *
+	 * INSERT IGNORE on the options table is atomic, unlike add_option(), which updates an existing
+	 * row; core's WP_Upgrader::create_lock() works the same way. A lock older than LOCK_TTL was
+	 * left by a request that died, so it is replaced.
+	 *
+	 * @param int $blog_id Source site ID.
+	 * @return bool True when this request holds the lock.
+	 */
+	private static function acquire_site_lock( int $blog_id ): bool {
+		global $wpdb;
+		$name = self::LOCK_PREFIX . $blog_id;
+
+		for ( $attempt = 0; $attempt < 2; ++$attempt ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- An atomic lock needs INSERT IGNORE; the Options API overwrites existing rows and caches values.
+			if ( 1 === (int) $wpdb->query( $wpdb->prepare( 'INSERT IGNORE INTO %i (option_name, option_value, autoload) VALUES (%s, %s, %s)', $wpdb->options, $name, (string) time(), 'off' ) ) ) {
+				return true;
+			}
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Reads the lock row written above, which the options cache does not know about.
+			$since = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT option_value FROM %i WHERE option_name = %s', $wpdb->options, $name ) );
+			if ( $since > time() - self::LOCK_TTL ) {
+				return false;
+			}
+			// Remove the stale lock only if nobody replaced it in the meantime, then try again.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Compare-and-delete of the lock row.
+			$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE option_name = %s AND option_value = %s', $wpdb->options, $name, (string) $since ) );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Releases the sync lock of one site.
+	 *
+	 * @param int $blog_id Source site ID.
+	 */
+	private static function release_site_lock( int $blog_id ): void {
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Deletes the lock row written with INSERT IGNORE.
+		$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE option_name = %s', $wpdb->options, self::LOCK_PREFIX . $blog_id ) );
 	}
 
 	/**

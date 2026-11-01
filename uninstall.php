@@ -100,14 +100,16 @@ function radioedu_conecta_uninstall_single_site(): void {
 	delete_option( 'radioedu_conecta_db_version' );
 	delete_option( 'rewrite_rules' );
 
-	// 5. Eliminar los transients del plugin (radioedu_rate_{user_id} y radioedu_conecta_schema_retry).
-	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Transients with dynamic keys cannot be enumerated through the Options API.
+	// 5. Eliminar los transients del plugin (radioedu_rate_{user_id} y radioedu_conecta_schema_retry)
+	// y los bloqueos de sincronización que dejara una petición interrumpida.
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Transients and locks with dynamic keys cannot be enumerated through the Options API.
 	$wpdb->query(
 		$wpdb->prepare(
-			'DELETE FROM %i WHERE option_name LIKE %s OR option_name LIKE %s',
+			'DELETE FROM %i WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s',
 			$wpdb->options,
 			$wpdb->esc_like( '_transient_radioedu_' ) . '%',
-			$wpdb->esc_like( '_transient_timeout_radioedu_' ) . '%'
+			$wpdb->esc_like( '_transient_timeout_radioedu_' ) . '%',
+			$wpdb->esc_like( 'radioedu_conecta_sync_lock_' ) . '%'
 		)
 	);
 

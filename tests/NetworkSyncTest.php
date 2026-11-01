@@ -364,4 +364,49 @@ class NetworkSyncTest extends WP_UnitTestCase {
 		restore_current_blog();
 		$this->assertSame( 404, $on_subsite );
 	}
+
+	public function test_a_second_sync_of_the_same_site_at_once_does_not_duplicate_its_ficha(): void {
+		$blog_id = $this->site( 'Radio Concurrente', $this->teacher() );
+		$started = false;
+		$second  = null;
+		// The second sync arrives between the first one's lookup and its insert.
+		$interleave = static function ( array $data ) use ( $blog_id, &$started, &$second ): array {
+			if ( ! $started && CentroPostType::POST_TYPE === $data['post_type'] ) {
+				$started = true;
+				$second  = NetworkSync::sync_site( $blog_id );
+			}
+			return $data;
+		};
+
+		add_filter( 'wp_insert_post_data', $interleave );
+		try {
+			$first = NetworkSync::sync_site( $blog_id );
+		} finally {
+			remove_filter( 'wp_insert_post_data', $interleave );
+		}
+
+		$this->assertSame( 'created', $first['outcome'] );
+		$this->assertWPError( $second );
+		$this->assertSame( 'radioedu_sync_busy', $second->get_error_code() );
+		$fichas = get_posts(
+			[
+				'post_type'   => CentroPostType::POST_TYPE,
+				'post_status' => 'any',
+				'meta_key'    => NetworkSync::SOURCE_META,
+				'meta_value'  => $blog_id,
+				'fields'      => 'ids',
+			]
+		);
+		$this->assertCount( 1, $fichas );
+
+		// The lock is released afterwards.
+		$this->assertNotWPError( NetworkSync::sync_site( $blog_id ) );
+	}
+
+	public function test_a_lock_left_by_a_request_that_died_does_not_block_the_sync(): void {
+		$blog_id = $this->site( 'Radio Bloqueada', $this->teacher() );
+		add_option( NetworkSync::LOCK_PREFIX . $blog_id, (string) ( time() - 120 ), '', false );
+
+		$this->assertSame( 'created', NetworkSync::sync_site( $blog_id )['outcome'] );
+	}
 }
