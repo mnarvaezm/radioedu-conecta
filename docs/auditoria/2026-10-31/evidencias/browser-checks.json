@@ -1,0 +1,81 @@
+[
+  {
+    "name": "directory",
+    "data": {
+      "cards": 24,
+      "heading": "Resultados (60 centros)",
+      "tilesBeforeConsent": 0
+    }
+  },
+  {
+    "name": "map_before_consent",
+    "data": {
+      "tiles": 0
+    }
+  },
+  {
+    "name": "map_loaded",
+    "data": {
+      "markers": 24,
+      "loadMoreVisible": false,
+      "heading": "Resultados (60 centros)",
+      "tileAttempts": 9
+    }
+  },
+  {
+    "name": "drawer_race",
+    "data": {
+      "oldId": "4",
+      "newId": "5",
+      "newLabel": "Audit B",
+      "idAfterDelayedSuccess": "4",
+      "labelAfterDelayedSuccess": "Audit B",
+      "originalRequest": 4
+    }
+  },
+  {
+    "name": "mobile_320",
+    "data": {
+      "viewport": 320,
+      "documentWidth": 366,
+      "gridWidth": 228,
+      "cardWidth": 320
+    }
+  },
+  {
+    "name": "http_nonces",
+    "data": {
+      "missing": {
+        "status": 401,
+        "body": {
+          "code": "rest_forbidden",
+          "message": "Sorry, you are not allowed to do that.",
+          "data": {
+            "status": 401
+          }
+        }
+      },
+      "invalid": {
+        "status": 403,
+        "body": {
+          "code": "rest_cookie_invalid_nonce",
+          "message": "Cookie check failed",
+          "data": {
+            "status": 403
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "http_errors",
+    "data": []
+  },
+  {
+    "name": "no_javascript",
+    "data": {
+      "cards": 0,
+      "text": "Resultados (0 centros)"
+    }
+  }
+]

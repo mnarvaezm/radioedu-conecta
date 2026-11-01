@@ -1,0 +1,34 @@
+﻿[
+    {
+        "File":  "admin.asset.php",
+        "Equal":  true
+    },
+    {
+        "File":  "admin.js",
+        "Equal":  true
+    },
+    {
+        "File":  "centro-panel.asset.php",
+        "Equal":  true
+    },
+    {
+        "File":  "centro-panel.js",
+        "Equal":  true
+    },
+    {
+        "File":  "directorio.asset.php",
+        "Equal":  true
+    },
+    {
+        "File":  "directorio.js",
+        "Equal":  true
+    },
+    {
+        "File":  "network-sync.asset.php",
+        "Equal":  true
+    },
+    {
+        "File":  "network-sync.js",
+        "Equal":  true
+    }
+]

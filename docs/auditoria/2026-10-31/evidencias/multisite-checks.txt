@@ -1,0 +1,8 @@
+cross_site_limit_cache: {"site_created_table":true,"main_empty_over_limit":false,"subsite_with_one_cached_over_limit":false,"subsite_after_cache_flush":true,"current_blog":1}
+site_admin_sync_denied: 200
+anonymous_sync_denied: 401
+sequential_sync: {"first":{"post_id":84,"site_url":"http:\/\/localhost:8092\/audit-two\/","outcome":"updated","author_added":false},"second":{"post_id":84,"site_url":"http:\/\/localhost:8092\/audit-two\/","outcome":"updated","author_added":false},"current_blog":1}
+subsite_sync_denied: 404
+sync_interleaving: {"outer":{"post_id":86,"site_url":"http:\/\/localhost:8092\/audit-race\/","outcome":"created","author_added":false},"inner":{"post_id":85,"site_url":"http:\/\/localhost:8092\/audit-race\/","outcome":"created","author_added":false},"ficha_ids":[85,86]}
+delete_site_table: {"table":"wp_3_radioedu_colaboraciones","still_exists":false,"current_blog":1}
+network_deactivation_retains_data: {"main_table":true,"main_centros":3,"current_blog":1}

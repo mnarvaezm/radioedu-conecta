@@ -1,0 +1,3 @@
+site_admin_actual: {"is_super_admin":false,"can_manage_network_options":false,"status":403}
+individual_activation: {"error":false,"table_exists":true,"author_capability":true}
+new_site_without_network_activation: {"table_exists":false}

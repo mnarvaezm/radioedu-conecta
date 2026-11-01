@@ -1,0 +1,108 @@
+
+Running 2 tests using 1 worker
+
+
+node : (node:37060) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+En línea: 2 Carácter: 212
++ ... audit-e2e'; node node_modules/@playwright/test/cli.js test --workers= ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:37060) Wa... env being set.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[1/2] [chromium] › tests\e2e\centro-logo.spec.js:41:2 › Datos del centro en el panel lateral del editor › se rellenan en el panel, se guardan y se muestran en la ficha
+[chromium] › tests\e2e\centro-logo.spec.js:41:2 › Datos del centro en el panel lateral del editor › se rellenan en el 
+panel, se guardan y se muestran en la ficha
+Failed to load resource: the server responded with a status of 404 (Not Found)
+
+  1) [chromium] › tests\e2e\centro-logo.spec.js:41:2 › Datos del centro en el panel lateral del editor › se rellenan en el panel, se guardan y se muestran en la ficha 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    + ]
+
+      139 | 		);
+      140 |
+    > 141 | 		expect( consoleProblems ).toEqual( [] );
+          | 		                          ^
+      142 | 	} );
+      143 | } );
+      144 |
+        at C:\radioedu-conecta\tests\e2e\centro-logo.spec.js:141:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    artifacts\audit-e2e\test-results\centro-logo-Datos-del-cent-b17b9-n-y-se-muestran-en-la-ficha-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: artifacts\audit-e2e\test-results\centro-logo-Datos-del-cent-b17b9-n-y-se-muestran-en-la-ficha-chromium\error-context.md
+
+    Error Context: artifacts\audit-e2e\test-results\centro-logo-Datos-del-cent-b17b9-n-y-se-muestran-en-la-ficha-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    artifacts\audit-e2e\test-results\centro-logo-Datos-del-cent-b17b9-n-y-se-muestran-en-la-ficha-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace artifacts\audit-e2e\test-results\centro-logo-Datos-del-cent-b17b9-n-y-se-muestran-en-la-ficha-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+(node:35204) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[2/2] [chromium] › tests\e2e\directorio-block.spec.js:39:2 › Bloque Directorio Traspasando Fronteras › se inserta sin JavaScript propio, se previsualiza en el editor y funciona en la web
+[chromium] › tests\e2e\directorio-block.spec.js:39:2 › Bloque Directorio Traspasando Fronteras › se inserta sin 
+JavaScript propio, se previsualiza en el editor y funciona en la web
+Failed to load resource: the server responded with a status of 404 (Not Found)
+
+  2) [chromium] › tests\e2e\directorio-block.spec.js:39:2 › Bloque Directorio Traspasando Fronteras › se inserta sin JavaScript propio, se previsualiza en el editor y funciona en la web 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.radioedu-card').filter({ hasText: 'Centro E2E del directorio' }).locator('.radioedu-btn-match .radioedu-svg-icon--send')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.radioedu-card').filter({ hasText: 'Centro E2E del directorio' }).locator('.radioedu-btn-match .radioedu-svg-icon--send') with timeout 5000ms
+      - waiting for locator('.radioedu-card').filter({ hasText: 'Centro E2E del directorio' }).locator('.radioedu-btn-match .radioedu-svg-icon--send')
+
+
+      75 | 		await expect(
+      76 | 			card.locator( '.radioedu-btn-match .radioedu-svg-icon--send' )
+    > 77 | 		).toBeVisible();
+         | 		  ^
+      78 |
+      79 | 		// The favourite button swaps icons cloned from the server-rendered <template>.
+      80 | 		const favorite = card.locator( '.radioedu-card-fav-btn' );
+        at C:\radioedu-conecta\tests\e2e\directorio-block.spec.js:77:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    artifacts\audit-e2e\test-results\directorio-block-Bloque-Di-80139-editor-y-funciona-en-la-web-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: artifacts\audit-e2e\test-results\directorio-block-Bloque-Di-80139-editor-y-funciona-en-la-web-chromium\error-context.md
+
+    Error Context: artifacts\audit-e2e\test-results\directorio-block-Bloque-Di-80139-editor-y-funciona-en-la-web-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    artifacts\audit-e2e\test-results\directorio-block-Bloque-Di-80139-editor-y-funciona-en-la-web-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace artifacts\audit-e2e\test-results\directorio-block-Bloque-Di-80139-editor-y-funciona-en-la-web-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2 failed
+    [chromium] › tests\e2e\centro-logo.spec.js:41:2 › Datos del centro en el panel lateral del editor › se rellenan en el panel, se guardan y se muestran en la ficha 
+    [chromium] › tests\e2e\directorio-block.spec.js:39:2 › Bloque Directorio Traspasando Fronteras › se inserta sin JavaScript propio, se previsualiza en el editor y funciona en la web 

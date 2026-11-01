@@ -1,0 +1,21 @@
+composer : PHP Warning:  Module "openssl" is already loaded in Unknown on line 0
+En línea: 3 Carácter: 1
++ composer audit --locked --format=json *> docs/auditoria/2026-10-31/ev ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (PHP Warning:  M...known on line 0:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+Warning: Module "openssl" is already loaded in Unknown on line 0
+Cannot create cache directory C:/Users/manuel.narvaez/AppData/Local/Composer/repo/https---repo.packagist.org/, or 
+directory is not writable. Proceeding without cache. See also cache-read-only config if your filesystem is read-only.
+
+In CurlDownloader.php line 401:
+                                                                                                                       
+  curl error 7 while downloading https://repo.packagist.org/packages.json: Failed to connect to 127.0.0.1 port 9 afte  
+  r 2030 ms: Couldn't connect to server                                                                                
+                                                                                                                       
+
+audit [--no-dev] [-f|--format FORMAT] [--locked] [--abandoned ABANDONED] [--ignore-severity IGNORE-SEVERITY] 
+[--ignore-unreachable]
+

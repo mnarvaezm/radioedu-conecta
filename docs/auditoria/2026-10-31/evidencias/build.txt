@@ -1,0 +1,26 @@
+
+> radioedu-conecta@1.1.0 build
+> wp-scripts build assets/js/admin.js assets/js/centro-panel.js assets/js/directorio.js assets/js/network-sync.js --output-path artifacts/audit-build
+
+assets by path *.js 28.2 KiB
+  asset directorio.js 14.7 KiB [emitted] [minimized] (name: directorio)
+  asset network-sync.js 6.41 KiB [emitted] [minimized] (name: network-sync)
+  asset centro-panel.js 5.6 KiB [emitted] [minimized] (name: centro-panel)
+  asset admin.js 1.45 KiB [emitted] [minimized] (name: admin)
+assets by path *.php 631 bytes
+  asset centro-panel.asset.php 263 bytes [emitted] (name: centro-panel)
+  asset network-sync.asset.php 151 bytes [emitted] (name: network-sync)
+  asset directorio.asset.php 115 bytes [emitted] (name: directorio)
+  asset admin.asset.php 102 bytes [emitted] (name: admin)
+Entrypoint admin 1.55 KiB = admin.js 1.45 KiB admin.asset.php 102 bytes
+Entrypoint centro-panel 5.85 KiB = centro-panel.js 5.6 KiB centro-panel.asset.php 263 bytes
+Entrypoint directorio 14.8 KiB = directorio.js 14.7 KiB directorio.asset.php 115 bytes
+Entrypoint network-sync 6.55 KiB = network-sync.js 6.41 KiB network-sync.asset.php 151 bytes
+orphan modules 546 bytes [orphan] 13 modules
+runtime modules 649 bytes 3 modules
+built modules 53.5 KiB [built]
+  ./assets/js/admin.js + 1 modules 2.63 KiB [not cacheable] [built] [code generated]
+  ./assets/js/centro-panel.js + 10 modules 9.88 KiB [not cacheable] [built] [code generated]
+  ./assets/js/directorio.js + 2 modules 31.6 KiB [not cacheable] [built] [code generated]
+  ./assets/js/network-sync.js + 4 modules 9.4 KiB [not cacheable] [built] [code generated]
+webpack 5.112.2 compiled successfully in 1496 ms
