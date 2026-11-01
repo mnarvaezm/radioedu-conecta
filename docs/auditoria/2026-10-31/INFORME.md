@@ -519,6 +519,7 @@ La 1.2 se desarrolla en la rama `feat/1.2`:
 - **Q-05** (`b78f548`, `3fb54fb`). La CI ejecuta PHPUnit con PHP 8.1 a 8.5 sobre la última versión de WordPress, y con PHP 8.1 sobre WordPress 7.1.0. Antes, sus ejes `7.1` y `latest` instalaban la misma 7.1.4. Para probar la 7.1.0 hubo que corregir `bin/install-wp-tests.sh`, que buscaba la etiqueta `7.1` de `wordpress-develop` cuando las etiquetas conservan el `.0`. El original de WP-CLI tiene el mismo fallo. PHP 8.1 sigue siendo el mínimo, y el readme recomienda PHP 8.3 o superior, porque la 8.1 ya no recibe parches y la 8.2 solo hasta finales de 2026. En local, la suite pasa con PHP 8.2, 8.3, 8.4 y 8.5.12, y con WordPress 7.1.0, en sitio único y en multisitio.
 - **Distribución** (`a7871de`). El plugin no se publicará en WordPress.org, así que declara `Update URI`, como pide AGENTS.md §1. Plugin Check marca esa cabecera con `plugin_updater_detected`, y solo ese código se ignora, en la CI y en el protocolo de pruebas. `Contributors` del readme queda como dato informativo.
 - **Versión 1.2** (`4f1ed4f`).
+- **Interactivity API.** El directorio y el panel de propuesta pasan a ser un *store* de la Interactivity API. El servidor renderiza la primera página de resultados, así que el directorio funciona sin JavaScript: busca por GET y pagina con enlaces. Leaflet se descarga solo al aceptar el mapa, lo que cubre parte de la recomendación de carga reducida. Antes, la REST de centros pasa a devolver los nombres sin entidades HTML.
 
 ### Pendiente
 
@@ -532,7 +533,7 @@ La 1.2 se desarrolla en la rama `feat/1.2`:
   - Cursor estable: pendiente. El listado de propuestas y la revisión de fichas huérfanas tienen un orden determinista (fecha e ID, o ID), pero paginan por desplazamiento (`OFFSET`, `paged`), igual que la sincronización por lotes. Si el conjunto cambia entre dos páginas, un elemento puede saltarse o repetirse. Una versión anterior de este seguimiento lo daba por hecho; era inexacto.
   - Clave de idempotencia al crear propuestas: pendiente.
   - Favoritos por sitio y retirada del consentimiento del mapa: pendiente.
-  - Carga reducida del mapa, `prefers-reduced-motion` y prueba con lector de pantalla: pendiente.
+  - Carga reducida del mapa, `prefers-reduced-motion` y prueba con lector de pantalla: parcial. Desde la 1.2, Leaflet solo se descarga cuando el visitante acepta el mapa; siguen pendientes `prefers-reduced-motion` y la prueba con lector de pantalla.
   - Respuestas demasiado largas en el escritorio, que se truncan en vez de rechazarse: pendiente.
   - Paginación de términos en el render y en la desinstalación: pendiente.
   - Entorno y CI reproducibles, y revisión de `bin/install-wp-tests.sh`: parcial. En la 1.2 se corrigió que no instalara las pruebas de una versión x.y.0 (`b78f548`). Siguen los puntos de la auditoría: HTTP para resolver `latest`, descargas sin comprobar el hash, rutas sin comillas en `rm` y reutilización de una instalación sin comprobar su versión.
