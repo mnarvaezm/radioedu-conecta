@@ -78,7 +78,7 @@ docker exec radioedu-wordpress wp db query "DESCRIBE wp_radioedu_colaboraciones;
 ## 5. Fase 4: Desinstalación Limpia (`uninstall.php`)
 
 1. En **Plugins → Plugins instalados**, desactiva **RadioEdu Conecta** y pulsa **Borrar**.
-2. Verifica en la base de datos que se han eliminado la tabla `wp_radioedu_colaboraciones`, los posts `radioedu_centro`, los términos de las 5 taxonomías, las opciones, los transients y las capacidades personalizadas.
+2. Verifica en la base de datos que se han eliminado la tabla `wp_radioedu_colaboraciones`, los posts `radioedu_centro`, los términos de las 5 taxonomías, las opciones, los transients y las capacidades personalizadas. En las preferencias del editor de cada usuario (`wp_usermeta`, clave `wp_persisted_preferences`) ya no aparece el ámbito `radioedu-conecta`, y las demás preferencias se conservan.
 3. En Multisite, al borrar un sitio de la red su tabla `wp_{ID}_radioedu_colaboraciones` se elimina automáticamente (filtro `wpmu_drop_tables`).
 
 ### Sincronización de fichas de la red (Multisite)

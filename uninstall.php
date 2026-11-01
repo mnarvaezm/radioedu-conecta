@@ -136,6 +136,32 @@ function radioedu_conecta_uninstall_single_site(): void {
 			}
 		}
 	}
+
+	// 7. Quitar de las preferencias del editor de cada usuario solo el ámbito del plugin
+	// ("radioedu-conecta", con centroPanelOpened); las de core y otros plugins se conservan.
+	$preferences_key = $wpdb->get_blog_prefix() . 'persisted_preferences';
+	$last_user       = 0;
+	do {
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Finds, in batches by user ID, the users whose stored preferences mention the plugin scope.
+		$user_ids = $wpdb->get_col(
+			$wpdb->prepare(
+				'SELECT user_id FROM %i WHERE meta_key = %s AND meta_value LIKE %s AND user_id > %d ORDER BY user_id ASC LIMIT 500',
+				$wpdb->usermeta,
+				$preferences_key,
+				'%' . $wpdb->esc_like( 'radioedu-conecta' ) . '%',
+				$last_user
+			)
+		);
+		foreach ( $user_ids as $user_id ) {
+			$last_user   = (int) $user_id;
+			$preferences = get_user_meta( $last_user, $preferences_key, true );
+			if ( is_array( $preferences ) && isset( $preferences['radioedu-conecta'] ) ) {
+				unset( $preferences['radioedu-conecta'] );
+				update_user_meta( $last_user, $preferences_key, $preferences );
+			}
+		}
+		$more_users = 500 === count( $user_ids );
+	} while ( $more_users );
 }
 
 /**

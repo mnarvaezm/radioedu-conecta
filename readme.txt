@@ -131,6 +131,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * Multisite: two network syncs at once no longer create two profiles for the same site; the second one reports that the site is busy.
 * Multisite: the final sync summary lists every profile whose site is gone, not only those among the first 1,000.
 * Without JavaScript, the directory shows the real number of stations and a link to their list instead of "0 centros".
+* Uninstall also removes the plugin's own editor preference (whether the station panel was opened) from each user, keeping the preferences of WordPress and other plugins.
 
 = 1.0.0 =
 * Interactive `[radioedu_directorio]` directory with faceted filters, affinity sorting, pagination and a locally bundled Leaflet map with prior consent for OpenStreetMap tiles.
