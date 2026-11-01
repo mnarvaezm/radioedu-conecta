@@ -61,6 +61,20 @@ class TranslationsTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * URL a compiled script has once the plugin is installed.
+	 *
+	 * load_script_textdomain() finds the JSON file by the MD5 of the script path inside the plugin
+	 * folder ("build/admin.js"), which it reads from the script URL. The suite loads the plugin from
+	 * wherever the checkout is (in CI, /home/runner/work/...), and that URL only gives the same path
+	 * when the checkout sits one folder deep, so the scripts are registered as an installed copy.
+	 *
+	 * @param string $file Script file name, without extension.
+	 */
+	private static function installed_script_url( string $file ): string {
+		return plugins_url( 'radioedu-conecta/build/' . $file . '.js' );
+	}
+
+	/**
 	 * One source string of each compiled script, with the script file name as key.
 	 *
 	 * @return array<string, string>
@@ -158,7 +172,7 @@ class TranslationsTest extends WP_UnitTestCase {
 
 		foreach ( self::scripts() as $file => $source ) {
 			$handle = 'radioedu-test-' . $file;
-			wp_register_script( $handle, RADIOEDU_CONECTA_URL . 'build/' . $file . '.js', [], '1', true );
+			wp_register_script( $handle, self::installed_script_url( $file ), [], '1', true );
 
 			$json = load_script_textdomain( $handle, self::DOMAIN, RADIOEDU_CONECTA_DIR . 'languages' );
 			$this->assertIsString( $json, "No translations for build/{$file}.js in {$locale}." );
@@ -171,7 +185,7 @@ class TranslationsTest extends WP_UnitTestCase {
 
 	public function test_plural_forms_reach_the_scripts(): void {
 		$this->use_locale( 'ca' );
-		wp_register_script( 'radioedu-test-network-sync', RADIOEDU_CONECTA_URL . 'build/network-sync.js', [], '1', true );
+		wp_register_script( 'radioedu-test-network-sync', self::installed_script_url( 'network-sync' ), [], '1', true );
 
 		$json     = (string) load_script_textdomain( 'radioedu-test-network-sync', self::DOMAIN, RADIOEDU_CONECTA_DIR . 'languages' );
 		$messages = json_decode( $json, true )['locale_data']['messages'];
