@@ -394,12 +394,12 @@ Dos commits son correcciones de seguimiento:
 - **F-14.** Si el directorio está en varias páginas, se guarda la primera que se muestre, mientras siga siendo válida.
 - **F-15.** La descripción se imprime como `the_content()`, así que depende de que el core filtre con kses al guardar. Quien tiene `unfiltered_html` puede publicar cualquier HTML, como en el resto de WordPress.
 - **F-16.** La alternativa sin JavaScript es un enlace al archivo del tipo de contenido, que genera el tema. No es un directorio paginado con filtros.
-- **F-19.** El bloqueo caduca a los 60 segundos. Las fichas duplicadas que ya existan no se fusionan.
+- **F-19.** Desde R-02, el bloqueo es un bloqueo con nombre de MySQL/MariaDB (`GET_LOCK`) ligado a la conexión, sin caducidad.
+  - Los proxies de base de datos que comparten conexiones entre peticiones, como ProxySQL con multiplexación, deben mantener cada petición en una sola conexión.
+  - Las fichas duplicadas que ya existan no se fusionan.
 - **F-21.** La revisión completa se hace en la última petición de la sincronización. No se midió el tiempo en redes muy grandes.
 - **F-22.** Las propuestas no caducan. El responsable lo decidió de forma provisional («en principio»), y el texto sugerido de la política de privacidad lo indica.
-- **S-01.** No cubre dos casos:
-  - el editor clásico al guardar un borrador automático abierto antes de llegar al límite;
-  - dos creaciones exactamente simultáneas.
+- **S-01.** Hasta R-01 no cubría el editor clásico. Desde entonces, solo queda sin cubrir el caso de dos creaciones exactamente simultáneas.
 - **S-02.** El contador sigue sin ser atómico: envíos simultáneos pueden superar el límite en alguno.
 - **Contratos.** Cambian firmas públicas que podría usar un desarrollo externo:
   - `respond_to_proposal()` devuelve el estado del aviso;
@@ -429,6 +429,25 @@ Sobre `63d9fbc`, en el entorno de QA local (WordPress 7.1.4, PHP 8.1, MariaDB 10
 | Desinstalación | Real, en el entorno de QA (F-20) |
 
 Los scripts de navegador están en `evidencias/seguimiento-2026-11-01/`. Usan el entorno desechable del puerto 8091 y su cuenta de pruebas, y no deben ejecutarse contra otros sitios.
+
+### Segunda revisión: R-01 a R-05
+
+Otra sesión revisó de forma independiente el estado `63d9fbc`; su trabajo está en `docs/auditoria/2026-11-01-revision/`, sin versionar y en curso. Confirmó cinco problemas en las correcciones. Sus propias pruebas (`evidencias/SecondReviewTest.php` de esa carpeta) fallaban con el código de entonces, y R-04 se reprodujo en el navegador. Se corrigieron con un commit cada uno:
+
+| ID | Origen | Problema | Commit | Corrección y verificación |
+| --- | --- | --- | --- | --- |
+| R-01 | S-01 | El editor clásico publicaba un borrador automático abierto antes de llegar al límite. | `0db0982` | `keep_uncounted_status()` (`wp_insert_post_data`) mantiene el estado sin contar en todo guardado que no venga de REST, y la pantalla de edición muestra el aviso. Pasan su prueba y la nueva de `CentroLimitTest`. |
+| R-02 | F-19 | El bloqueo caducaba a los 60 s aunque su petición siguiera viva, y se liberaba sin comprobar quién lo tenía. | `818593d` | Bloqueo `GET_LOCK` ligado a la conexión, sin caducidad. Los tests usan una segunda conexión como otra petición. Pasa su prueba de duplicados. |
+| R-03 | F-14 | No encontraba el directorio dentro de un patrón sincronizado. | `6e6454d` | Se abren los patrones sincronizados, hasta cinco niveles y sin bucles. Pasan su prueba y tres nuevas. |
+| R-04 | F-12 (y "Cargar más") | Las páginas del mapa y de tarjetas leían los filtros del formulario en ese momento. | `ab17b8a` | Cada búsqueda guarda sus filtros y su orden; una búsqueda nueva cancela el mapa. En el navegador con 210 radios: 210 marcadores; con el build anterior, 100. |
+| R-05 | F-05 | Un número de página enorme provocaba un `TypeError`. | `aedfd3d` | Una página posterior a la última devuelve una lista vacía. Pasan su prueba y la nueva de `ProposalPaginationTest`. |
+
+Con el código actual, de las 9 pruebas de su fichero solo falla `test_old_lock_owner_does_not_release_replacement_lock`. Esa prueba exige que una segunda sincronización pueda sustituir un bloqueo «caducado» de la misma petición, algo que el diseño nuevo impide a propósito: el bloqueo ya no caduca y solo lo libera la conexión que lo tiene. Lo que esa prueba quería proteger (que la petición antigua no libere el bloqueo de la nueva) se comprueba en `test_a_slow_sync_keeps_its_lock_until_it_ends`.
+
+Estado tras estas correcciones (`aedfd3d`):
+
+- PHPUnit: 144 tests, sin fallos en sitio único (21 omitidos, solo de multisitio) y en multisitio.
+- PHPCS, PHPStan, lint JS y Plugin Check: sin errores.
 
 ### Pendiente
 

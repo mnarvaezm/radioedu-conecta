@@ -19,7 +19,7 @@ La carpeta `evidencias/` conserva inventarios/hash, salidas de comandos, sondas 
 - Calidad: salidas WPCS, PCP, lint, build, E2E, Composer/npm audit. Los intentos fallidos iniciales se conservan y están explicados.
 - Traducciones: comparación POT, PO/MO/JSON y `.l10n.php`; 444 mensajes más cabecera en cada catálogo.
 - Integridad: inventario inicial, comparación final de fuentes y comparación de los 100 archivos del ZIP.
-- Seguimiento (2026-11-01): `seguimiento-2026-11-01/`, con los scripts de navegador que verificaron F-11, F-12, F-13, F-16 y Q-02.
+- Seguimiento (2026-11-01): `seguimiento-2026-11-01/`, con los scripts de navegador que verificaron F-11, F-12, F-13, F-16, Q-02 y R-04.
 
 Las trazas completas de Playwright y el build aislado están también en `artifacts/audit-e2e*` y `artifacts/audit-build`. Son artefactos locales ignorados por Git. Las capturas y resultados principales se copiaron a esta carpeta.
 
