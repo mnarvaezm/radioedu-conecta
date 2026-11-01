@@ -1,6 +1,6 @@
 # Informe de auditoría — RadioEdu Conecta
 
-> **Actualización 2026-11-01.** Después de la auditoría se trataron todos sus hallazgos, con un commit por hallazgo en `feat/wp71-apis`. El código corregido final es `aedfd3d`:
+> **Actualización 2026-11-01.** Después de la auditoría se trataron todos sus hallazgos, con un commit por hallazgo en `feat/wp71-apis`. El código corregido final es `7c9c6d7`:
 >
 > - **24 hallazgos:**
 >   - 21 corregidos;
@@ -13,6 +13,7 @@
 >   - Q-04 ejecutada;
 >   - queda pendiente Q-05.
 > - **Segunda revisión independiente:** confirmó cinco problemas en las correcciones (R-01 a R-05), también corregidos.
+> - **Verificación reiniciada:** una tercera revisión dejó abiertos S-01 (creaciones simultáneas), F-04 (índices), F-06 (selector), una opción en instalaciones con varias redes, una afirmación sobre el «cursor estable» y el ZIP. Todos están corregidos o rectificados; S-02 sigue aceptado.
 >
 > El estado, la verificación, los matices y lo pendiente están en [Seguimiento de correcciones](#seguimiento-de-correcciones-2026-11-01). El resto del informe describe el código auditado: `922c042` con los cambios locales que después fueron `dc245a9`. Sus referencias de línea ya no coinciden con el código corregido.
 
@@ -327,7 +328,7 @@ Claude (asistente de programación) hizo las correcciones a petición del respon
 - su entrada en el changelog de `readme.txt` y `README.md`;
 - cambios en `ARCHITECTURE.md` y `TESTING-PROTOCOL.md` cuando procedía.
 
-Las cadenas nuevas o modificadas se tradujeron al catalán, valenciano, gallego y euskera. Todo el código corregido (hasta `aedfd3d`) está publicado en la rama `feat/wp71-apis` de GitHub, que todavía no se ha fusionado con `main`. El ZIP no se ha regenerado.
+Las cadenas nuevas o modificadas se tradujeron al catalán, valenciano, gallego y euskera. Las correcciones están en la rama `feat/wp71-apis`, que todavía no se ha fusionado con `main`. El ZIP `radioedu-conecta_1.1.zip` se regeneró con el código de `7c9c6d7`.
 
 **Resumen:**
 
@@ -336,7 +337,9 @@ Las cadenas nuevas o modificadas se tradujeron al catalán, valenciano, gallego 
 | Hallazgos de la auditoría (S-01, S-02, F-01 a F-22) | 24 | 21 corregidos; F-02 y F-22 cerrados por decisión documentada; S-02 aceptado con el límite a 20 por hora |
 | Desviaciones frente a AGENTS.md (Q-01 a Q-06) | 6 | Q-02 y Q-06 corregidas; Q-01 con la norma ajustada; Q-03 con excepciones inventariadas; Q-04 ejecutada; **Q-05 pendiente** |
 | Segunda revisión (R-01 a R-05) | 5 | Los 5 corregidos |
-| Candidatos por validar y recomendaciones de endurecimiento | 4 y 8 | Sin abordar, salvo parte de la de E2E (ver «Pendiente») |
+| Verificación reiniciada (S-01, F-04, F-06, varias redes, cursor, ZIP) | 6 | Corregidos, salvo el cursor, que se rectificó en la documentación; S-02 sigue aceptado |
+| Candidatos por validar | 4 | El de varias redes, confirmado y corregido; los otros 3, sin abordar |
+| Recomendaciones de endurecimiento | 8 | Sin abordar, salvo parte de la de E2E (ver «Pendiente») |
 
 ### Ajustes a la revisión inicial
 
@@ -364,16 +367,16 @@ Antes de corregir se contrastó el informe con el código. Los 24 hallazgos se c
 | F-17 | P1 | Corregido | `64bf6a8` | `assets/leaflet-LICENSE.txt` con la licencia de la etiqueta v1.9.4 |
 | F-10 | P1 (revisada) | Corregido | `c677eb9` | `test_demo_images_only_fill_in_for_marked_demo_centros` |
 | F-03 | P1 | Corregido | `9fdb109` | Tres tests en `SecurityRegressionTest`: demo de 1.0.0, ficha real con slug y URL de demo, página existente |
-| F-04 | P1 | Corregido | `ca97e73` | `test_a_failed_schema_update_is_not_recorded_and_is_retried`; migración 1.0.2 → 1.0.3 sobre una tabla real en el entorno de QA |
+| F-04 | P1 | Corregido | `ca97e73`, `bb0c834` | `test_a_failed_schema_update_is_not_recorded_and_is_retried`; migración 1.0.2 → 1.0.3 sobre una tabla real en el entorno de QA. Los índices se exigen desde V-01. |
 | F-01 | P1 | Corregido | `164d53b` | `PrivacyRepliesTest` |
 | F-07 | P2 | Corregido | `6e58016` | `test_a_storage_error_while_answering_is_not_reported_as_already_answered` |
 | F-11 | P1 | Corregido | `183c697` | Navegador con respuesta retrasada: falla con el build anterior y pasa con el nuevo |
 | F-02 | P1 → decisión | Se mantiene; documentado | `d78e419` | — |
 | F-22 | P2 → decisión | Sin purga automática; documentado | `53bcda0` | Párrafo de conservación en el texto sugerido de la política de privacidad |
-| S-01 | Baja | Corregido | `8810283`, `0db0982` | Tres tests en `CentroLimitTest`; los dos de evasión fallan sin el arreglo. El editor clásico se cubrió después (R-01). |
+| S-01 | Baja | Corregido | `8810283`, `0db0982`, `0814b22` | Tres tests en `CentroLimitTest`; los dos de evasión fallan sin el arreglo. El editor clásico se cubrió después (R-01), y las creaciones simultáneas con un bloqueo por autor (verificación reiniciada). |
 | S-02 | Baja | Aceptado; límite a 20/h | `8cd26ec` | `test_proposals_are_limited_to_twenty_per_hour` |
 | F-05 | P2 | Corregido | `3f48467`, `4ca647d`, `aedfd3d` | `ProposalPaginationTest`. Una página enorme se resolvió después (R-05). |
-| F-06 | P2 | Corregido | `72f9279`, `4ca647d` | `ManagedCentersTest`: 53 centros, email sin distinguir mayúsculas, editores |
+| F-06 | P2 | Corregido | `72f9279`, `4ca647d`, `89f13e1` | `ManagedCentersTest`: 53 centros, email sin distinguir mayúsculas, editores y una red de 1.001 radios en el selector (tope de 2.000). |
 | F-08 | P2 | Corregido | `00547fc` | `NotificationResultTest` |
 | F-09 | P2 | Corregido | `646d532` | `test_global_managers_get_no_affinity_from_an_arbitrary_centro`; falla sin el arreglo |
 | F-12 | P2 | Corregido | `95db313`, `ab17b8a` | Navegador: 66 marcadores para 66 resultados (antes, 24). Los filtros mezclados entre páginas se resolvieron después (R-04). |
@@ -403,11 +406,11 @@ Dos commits son correcciones de seguimiento:
   - El exportador no las incluye.
 - **F-02.** Tras un borrado de datos, los avisos y el contacto compartido al aceptar usan el correo de la cuenta del autor de la ficha. Es una decisión del responsable, no una corrección.
 - **F-03.** Las demos de 1.0.0 se reconocen por `_radioedu_cover_url`, un metadato interno que solo escribe el importador. Una página del directorio creada por 1.0.0 ya no se adopta como demo, así que la desinstalación la deja.
-- **F-04.** El fallo de migración solo queda registrado con `WP_DEBUG_LOG`; no hay aviso en el escritorio. Mientras la base de datos rechace el cambio, se reintenta como mucho cada 5 minutos.
+- **F-04.** La versión solo se guarda con todas las columnas y todos los índices (V-01). El fallo de migración solo queda registrado con `WP_DEBUG_LOG`; no hay aviso en el escritorio. Mientras la base de datos rechace el cambio, se reintenta como mucho cada 5 minutos.
 - **F-05.** Tras responder una propuesta desde el escritorio se vuelve a la primera página del listado.
-- **F-06.** Hay un cambio de comportamiento: los editores ven todas las propuestas, coherente con que ya podían responderlas. El selector de centro emisor tiene un tope de 500, sin búsqueda.
+- **F-06.** Hay un cambio de comportamiento: los editores ven todas las propuestas, coherente con que ya podían responderlas. El selector de centro emisor tiene un tope de 2.000, el doble de la red más grande prevista (unas 1.000 radios), y no tiene buscador.
 - **F-08.** `sent` significa que `wp_mail()` aceptó el correo, no que llegara. No hay cola ni reintento.
-- **F-12.** El mapa muestra hasta 500 marcadores, sin agrupación ni carga por zona.
+- **F-12.** El mapa muestra hasta 1.000 marcadores, el tamaño de la red más grande prevista, sin agrupación ni carga por zona. Por encima, una nota indica cuántos se muestran.
 - **F-13.** Se comprobó a 320 px. No se probó el zoom al 400 % por separado ni se hizo una auditoría WCAG completa.
 - **F-14.** Si el directorio está en varias páginas, se guarda la primera que se muestre, mientras siga siendo válida.
 - **F-15.** La descripción se imprime como `the_content()`, así que depende de que el core filtre con kses al guardar. Quien tiene `unfiltered_html` puede publicar cualquier HTML, como en el resto de WordPress.
@@ -417,7 +420,7 @@ Dos commits son correcciones de seguimiento:
   - Las fichas duplicadas que ya existan no se fusionan.
 - **F-21.** La revisión completa se hace en la última petición de la sincronización. No se midió el tiempo en redes muy grandes.
 - **F-22.** Las propuestas no caducan. El responsable lo decidió de forma provisional («en principio»), y el texto sugerido de la política de privacidad lo indica.
-- **S-01.** Hasta R-01 no cubría el editor clásico. Desde entonces, solo queda sin cubrir el caso de dos creaciones exactamente simultáneas.
+- **S-01.** Las comprobaciones y escrituras simultáneas del mismo autor se serializan con un bloqueo `GET_LOCK` por autor y sitio. Una petición espera hasta 10 segundos a la otra y, si no termina, rechaza el guardado. Con un proxy de base de datos que comparta conexiones aplica la misma condición que en F-19.
 - **S-02.** El contador sigue sin ser atómico: envíos simultáneos pueden superar el límite en alguno.
 - **Contratos.** Cambian firmas públicas que podría usar un desarrollo externo:
   - `respond_to_proposal()` devuelve el estado del aviso;
@@ -433,21 +436,23 @@ Dos commits son correcciones de seguimiento:
   - `page` y `per_page` en `GET /colaboraciones`;
   - el filtro `radioedu_conecta_directory_url`;
   - `blocks/directorio/block.json`;
-  - `NetworkSync::lock_name()`.
+  - `NetworkSync::lock_name()` y `CentroLimit::quota_lock_name()`;
+  - topes de 2.000 centros en el selector y 1.000 marcadores en el mapa.
 
 ### Verificación del estado final
 
-Sobre `aedfd3d`, el último commit con cambios de código, en el entorno de QA local (WordPress 7.1.4, PHP 8.1, MariaDB 10.11):
+Sobre `7c9c6d7`, el último commit con cambios de código, en el entorno de QA local (WordPress 7.1.4, PHP 8.1, MariaDB 10.11):
 
 | Verificación | Resultado |
 | --- | --- |
-| PHPUnit, sitio único | 144 tests: 123 ejecutados sin fallos y 21 omitidos por ser solo de multisitio |
-| PHPUnit, multisitio | 144 tests sin fallos (928 aserciones) |
+| PHPUnit, sitio único | 148 tests: 127 ejecutados sin fallos y 21 omitidos por ser solo de multisitio |
+| PHPUnit, multisitio | 148 tests sin fallos (941 aserciones) |
 | PHPCS (WordPress, Extra, Docs, PHPCompatibilityWP 8.1+) | Sin errores; PHPCompatibilityWP también sobre `tests/` |
 | PHPStan nivel 6 | Sin errores |
 | Lint JS y CSS | Sin errores |
-| Plugin Check 2.1.0 | Sin errores ni avisos, sobre la copia distribuible |
-| Pruebas de la segunda revisión | 8 de 9 pasan; la que falla modela el bloqueo con caducidad que R-02 sustituyó a propósito (ver más abajo) |
+| Plugin Check 2.1.0 | Sin errores ni avisos, sobre el plugin instalado desde el ZIP regenerado |
+| Pruebas de la verificación reiniciada | Pasan las de S-01, F-04, F-06 y varias redes; solo falla, a propósito, la de S-02, riesgo aceptado |
+| ZIP | `radioedu-conecta_1.1.zip` regenerado: 102 ficheros, idénticos byte a byte a `HEAD`, con la licencia de Leaflet y `block.json`, sin `docs`, `tests` ni `vendor`; instalado en QA desde el propio ZIP |
 | Navegador (Edge con Playwright) | Repetidas sobre el código final: F-11 (panel), F-13 (320 px), F-16 (sin JavaScript), Q-02 (bloque en el editor) y R-04 (mapa con 210 radios y filtros). F-12 se comprobó con 66 radios en su commit, y el mapa completo vuelve a cubrirlo R-04. |
 | Desinstalación | Real, en el entorno de QA (F-20) |
 | Migración | Esquema 1.0.2 → 1.0.3 sobre una tabla real en el entorno de QA (F-01, F-04) |
@@ -475,13 +480,28 @@ Esa segunda revisión seguía en curso al cerrar este seguimiento: puede aportar
 - **Vías fuera de REST para saltarse el cupo.** Confirmado y corregido en R-01.
 - **Fidelidad del estado del aviso cuando se envían varios correos.** Cada acción envía un solo correo, así que no aplica hoy.
 
+### Verificación reiniciada: V-01 a V-03 y cierres parciales
+
+Una tercera revisión independiente (`docs/auditoria/2026-11-01-reinicio/`, sin versionar) verificó el estado `70cba6a`. Confirmó R-01 a R-05 y señaló seis puntos abiertos. Sus pruebas se reprodujeron con el código de entonces y se corrigieron con un commit cada uno:
+
+| Punto | Problema | Commit | Corrección y verificación |
+| --- | --- | --- | --- |
+| S-01 | Dos creaciones simultáneas con una sola plaza dejaban dos radios. | `0814b22` | Bloqueo `GET_LOCK` por autor y sitio alrededor de la comprobación y la escritura, más reservas en memoria dentro de la misma petición. La prueba de la revisión da 201 y 403 con una sola radio. |
+| F-04 (V-01) | Si fallaba solo el índice nuevo, la migración se daba por hecha. | `bb0c834` | `has_current_schema()` exige también los índices (`SHOW INDEX`). Pasan la prueba de la revisión y una nueva que comprueba el reintento. |
+| F-06 | El selector omitía las emisoras a partir de la 501. | `89f13e1` | Tope de 2.000, el doble de las unas 1.000 radios previstas. Test con 1.001 radios; pasa la prueba de la revisión. |
+| Mapa (F-12) | Con 1.000 radios, el mapa solo dibujaba 500. | `55acf5b` | Tope de 1.000 marcadores; comprobado en el navegador. |
+| Desinstalación (V-03) | La opción de red quedaba en la segunda red de una instalación con varias. | `7c9c6d7` | Se borra en todas las redes (`get_networks()`, `delete_network_option()`). Pasa la prueba de la revisión, que se ejecuta fuera de la suite principal porque lanza `uninstall.php`. |
+| Documentación (V-02) | Se afirmaba un «cursor estable», pero se pagina por desplazamiento. | `33d18c8` | ARCHITECTURE.md y este seguimiento describen ahora orden determinista con `OFFSET`/`paged`; el cursor estable vuelve a «Pendiente». |
+| Distribución | El ZIP era anterior a las correcciones. | — | Regenerado e instalado en QA desde el propio paquete (ver «Verificación del estado final»). El ZIP no se versiona. |
+
+S-02 sigue siendo un riesgo aceptado: la prueba de la revisión que exige un límite estricto falla, como se espera. También quedan pendientes las validaciones de compatibilidad.
+
 ### Pendiente
 
 **De la auditoría, sin abordar:**
 
-- Los cuatro candidatos que necesitan validación:
+- Tres de los cuatro candidatos que necesitan validación (el de varias redes se confirmó y corrigió en V-03):
   - titularidad de las fichas reutilizadas;
-  - varias redes;
   - sitios con privacidad adicional;
   - consumo a gran escala.
 - La desviación Q-05 frente a AGENTS.md: pruebas y recomendación para versiones de PHP con soporte. Q-01, Q-02 y Q-03 se resolvieron después; ver la tabla de estado.
@@ -507,7 +527,7 @@ Esa segunda revisión seguía en curso al cerrar este seguimiento: puede aportar
 
 **Antes de publicar:**
 
-- Revisar el resultado de la CI remota de la rama, regenerar `radioedu-conecta_1.1.zip` (el actual es del 31/10, anterior a todas las correcciones) y fusionar con `main` mediante un PR.
+- Revisar el resultado de la CI remota de la rama y fusionar con `main` mediante un PR. El ZIP ya está regenerado con el código de `7c9c6d7`; si cambia el código, hay que volver a generarlo.
 - Pedir una revisión nativa de las traducciones, en especial de las 13 cadenas nuevas o modificadas en este seguimiento:
   - las 12 de las correcciones;
   - la palabra clave «podcast» del bloque.
