@@ -10,6 +10,7 @@ declare( strict_types=1 );
 namespace RadioEdu\Conecta\Tests;
 
 use RadioEdu\Conecta\Frontend\DirectorioShortcode;
+use RadioEdu\Conecta\PostTypes\CentroPostType;
 use WP_Block_Type_Registry;
 use WP_HTML_Tag_Processor;
 use WP_UnitTestCase;
@@ -66,6 +67,18 @@ class DirectorioBlockTest extends WP_UnitTestCase {
 		$grid         = strpos( $html, 'id="radioedu-cards-container"' );
 		$this->assertGreaterThan( $region_start, $grid );
 		$this->assertGreaterThan( $grid, strrpos( $html, '</section>' ) );
+	}
+
+	public function test_without_javascript_the_directory_shows_the_real_count_and_a_list_link(): void {
+		self::factory()->post->create_many( 3, [ 'post_type' => CentroPostType::POST_TYPE, 'post_status' => 'publish' ] );
+		self::factory()->post->create( [ 'post_type' => CentroPostType::POST_TYPE, 'post_status' => 'publish', 'post_password' => 'secret' ] );
+		self::factory()->post->create( [ 'post_type' => CentroPostType::POST_TYPE, 'post_status' => 'draft' ] );
+
+		$html = DirectorioShortcode::render_shortcode();
+
+		$this->assertStringContainsString( '<span id="radioedu-count-number">3</span>', $html );
+		$this->assertStringContainsString( 'id="radioedu-js-fallback"', $html );
+		$this->assertStringContainsString( 'href="' . esc_url( get_post_type_archive_link( CentroPostType::POST_TYPE ) ) . '"', $html );
 	}
 
 	public function test_styles_are_enqueued_early_for_pages_with_the_block(): void {

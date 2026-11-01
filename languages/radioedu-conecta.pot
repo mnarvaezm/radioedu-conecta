@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-01T00:33:22+00:00\n"
+"POT-Creation-Date: 2026-11-01T00:51:18+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: radioedu-conecta\n"
@@ -799,11 +799,11 @@ msgstr ""
 msgid "Enviar"
 msgstr ""
 
-#: src/Network/NetworkSync.php:210
+#: src/Network/NetworkSync.php:212
 msgid "Otra sincronización está actualizando la ficha de este sitio. Vuelve a sincronizar dentro de un momento."
 msgstr ""
 
-#: src/Network/NetworkSync.php:393
+#: src/Network/NetworkSync.php:426
 msgid "El sitio no existe."
 msgstr ""
 
@@ -1486,138 +1486,144 @@ msgstr ""
 msgid "Ubicaciones"
 msgstr ""
 
-#: templates/directorio.php:31
+#: templates/directorio.php:33
 msgid "Traspasando Fronteras"
 msgstr ""
 
-#: templates/directorio.php:33
+#: templates/directorio.php:35
 msgid "Conectamos radios escolares de Extremadura con otras emisoras de España y del mundo."
 msgstr ""
 
-#: templates/directorio.php:38
+#: templates/directorio.php:40
 msgid "Diferentes voces, un mismo mundo"
 msgstr ""
 
-#: templates/directorio.php:39
+#: templates/directorio.php:41
 msgid "RADIOS ESCOLARES QUE HACEN UN MUNDO MÁS GRANDE 🌍"
 msgstr ""
 
-#: templates/directorio.php:45
+#: templates/directorio.php:47
 msgid "Filtros del directorio"
 msgstr ""
 
-#: templates/directorio.php:51
+#: templates/directorio.php:53
 msgid "Ubicación"
 msgstr ""
 
-#: templates/directorio.php:54
+#: templates/directorio.php:56
 msgid "Cualquier lugar"
 msgstr ""
 
-#: templates/directorio.php:68
+#: templates/directorio.php:70
 msgid "Idioma"
 msgstr ""
 
-#: templates/directorio.php:71
+#: templates/directorio.php:73
 msgid "Cualquier idioma"
 msgstr ""
 
-#: templates/directorio.php:85
+#: templates/directorio.php:87
 msgid "Etapa educativa"
 msgstr ""
 
-#: templates/directorio.php:88
+#: templates/directorio.php:90
 msgid "Cualquiera"
 msgstr ""
 
-#: templates/directorio.php:102
+#: templates/directorio.php:104
 msgid "Temas"
 msgstr ""
 
-#: templates/directorio.php:105
+#: templates/directorio.php:107
 msgid "Cualquier tema"
 msgstr ""
 
-#: templates/directorio.php:119
+#: templates/directorio.php:121
 msgid "Formato"
 msgstr ""
 
-#: templates/directorio.php:122
+#: templates/directorio.php:124
 msgid "Cualquier formato"
 msgstr ""
 
-#: templates/directorio.php:136
+#: templates/directorio.php:138
 msgid "Busca colaboración con..."
 msgstr ""
 
-#: templates/directorio.php:138
+#: templates/directorio.php:140
 msgid "Cualquier centro o temática..."
 msgstr ""
 
-#: templates/directorio.php:144
+#: templates/directorio.php:146
 msgid "Buscar centros"
 msgstr ""
 
 #. translators: %s: Number of schools found.
-#: templates/directorio.php:159
+#: templates/directorio.php:161
 #: build/directorio.js:3
 #, php-format,js-format
 msgid "Resultados (%s centros)"
 msgstr ""
 
-#: templates/directorio.php:170
+#: templates/directorio.php:172
 msgid "Vista de mapa"
 msgstr ""
 
-#: templates/directorio.php:175
+#: templates/directorio.php:177
 msgid "Ordenar por"
 msgstr ""
 
-#: templates/directorio.php:177
+#: templates/directorio.php:179
 msgid "Más afines"
 msgstr ""
 
-#: templates/directorio.php:178
+#: templates/directorio.php:180
 msgid "Más recientes"
 msgstr ""
 
-#: templates/directorio.php:179
+#: templates/directorio.php:181
 msgid "Alfabético (A-Z)"
 msgstr ""
 
-#: templates/directorio.php:187
+#: templates/directorio.php:189
 msgid "No se han podido cargar los centros. Vuelve a pulsar Buscar centros para reintentar."
 msgstr ""
 
-#: templates/directorio.php:193
+#. translators: 1: opening link tag to the list of radios, 2: closing link tag.
+#: templates/directorio.php:195
+#, php-format
+msgid "El buscador del directorio necesita JavaScript. Mientras tanto, puedes ver el %1$slistado completo de radios%2$s."
+msgstr ""
+
+#: templates/directorio.php:207
 msgid "Mapa geográfico interactivo (OpenStreetMap)"
 msgstr ""
 
-#: templates/directorio.php:194
+#: templates/directorio.php:208
 msgid "Al cargar el mapa cartográfico se establecerá conexión con los servidores externos de OpenStreetMap Foundation para descargar las imágenes del mapa."
 msgstr ""
 
-#: templates/directorio.php:196
+#: templates/directorio.php:210
 msgid "Aceptar y mostrar el mapa interactivo"
 msgstr ""
 
-#: templates/directorio.php:211
+#: templates/directorio.php:225
 msgid "Cargar más centros"
 msgstr ""
 
-#: templates/directorio.php:218
+#: templates/directorio.php:232
 msgid "Buscando centros afines en la red..."
 msgstr ""
 
-#: templates/directorio.php:224
+#: templates/directorio.php:238
 msgid "No se han encontrado emisoras con estos filtros"
 msgstr ""
 
-#: templates/directorio.php:225
+#: templates/directorio.php:239
 msgid "Prueba a seleccionar otros temas, idiomas o restablecer la búsqueda."
 msgstr ""
 
-#: templates/directorio.php:227
+#: templates/directorio.php:241
 msgid "Limpiar todos los filtros"
 msgstr ""
 

@@ -3,5 +3,5 @@
 		'wp-a11y',
 		'wp-i18n'
 	),
-	'version' => 'd414733a4ce278c2da22'
+	'version' => '5ab21a82fc3d2591bbd6'
 );

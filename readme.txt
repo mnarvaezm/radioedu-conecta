@@ -105,7 +105,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * Security: proposals require a RadioEdu capability, only the receiving school can answer them, and password-protected schools are excluded from the directory and from proposals.
 * The directory sorts by affinity before paginating, cancels outdated searches, announces loading errors with a retry option and works with plain permalinks.
 * Personal data export and erasure run in batches, and network-wide tasks process sites in batches of 100.
-* Scripts are compiled with `@wordpress/scripts` and translated with `wp_set_script_translations()`. Without `build/`, pages still load, without interactivity.
+* Scripts are compiled with `@wordpress/scripts` and translated with `wp_set_script_translations()`. Without `build/` or without JavaScript, pages still load: the directory shows the number of stations and a link to their list (the `/centros-radioedu/` archive).
 * Bundled Catalan, Valencian, Galician and Basque translations for PHP and scripts. Official language packs, when available, take priority.
 * Accessibility: visible focus outlines, AA contrast for the accent and status colours, and the "Subir / Elegir Logo" button keeps its own text as its accessible name.
 * Accessibility: every page has a single main landmark. The directory no longer adds a nested `<main>` or a `<header>` inside the content, and its results are a named region. With classic themes, the profile page provides `<main>` and the skip link target only when the theme's header does not.
@@ -130,6 +130,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * Multisite: the "Radios por usuario" count is cached per site, so code that checks several sites in one request no longer reuses another site's count.
 * Multisite: two network syncs at once no longer create two profiles for the same site; the second one reports that the site is busy.
 * Multisite: the final sync summary lists every profile whose site is gone, not only those among the first 1,000.
+* Without JavaScript, the directory shows the real number of stations and a link to their list instead of "0 centros".
 
 = 1.0.0 =
 * Interactive `[radioedu_directorio]` directory with faceted filters, affinity sorting, pagination and a locally bundled Leaflet map with prior consent for OpenStreetMap tiles.

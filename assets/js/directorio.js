@@ -181,6 +181,12 @@ import { speak } from '@wordpress/a11y';
 		const MAP_MAX_CENTROS = 500;
 		const mapNote = document.getElementById( 'radioedu-map-note' );
 
+		// The script runs, so the notice for browsers without it is no longer needed.
+		const jsFallback = document.getElementById( 'radioedu-js-fallback' );
+		if ( jsFallback ) {
+			jsFallback.hidden = true;
+		}
+
 		try {
 			hasMapConsent =
 				sessionStorage.getItem( 'radioedu_osm_consent' ) === '1';

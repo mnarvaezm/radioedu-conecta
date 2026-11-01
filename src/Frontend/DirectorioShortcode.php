@@ -679,6 +679,20 @@ class DirectorioShortcode {
 		$drawer_receptor_id    = 0;
 		$drawer_receptor_label = '';
 
+		// Shown before the script runs, and kept when it cannot run: the real count, and a link to the
+		// post type archive, which the theme lists without JavaScript.
+		$total_query   = new \WP_Query(
+			[
+				'post_type'      => CentroPostType::POST_TYPE,
+				'post_status'    => 'publish',
+				'has_password'   => false,
+				'posts_per_page' => 1,
+				'fields'         => 'ids',
+			]
+		);
+		$total_centros = (int) $total_query->found_posts;
+		$archive_url   = (string) get_post_type_archive_link( CentroPostType::POST_TYPE );
+
 		ob_start();
 		include RADIOEDU_CONECTA_DIR . 'templates/directorio.php';
 		return (string) ob_get_clean();

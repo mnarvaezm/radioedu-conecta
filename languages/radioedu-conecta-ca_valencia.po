@@ -791,7 +791,7 @@ msgstr "Micròfon"
 msgid "Enviar"
 msgstr "Envia"
 
-#: src/Network/NetworkSync.php:393
+#: src/Network/NetworkSync.php:426
 msgid "El sitio no existe."
 msgstr "El lloc no existix."
 
@@ -1442,138 +1442,138 @@ msgstr "Nom de la ubicació"
 msgid "Ubicaciones"
 msgstr "Ubicacions"
 
-#: templates/directorio.php:31
+#: templates/directorio.php:33
 msgid "Traspasando Fronteras"
 msgstr "Traspasando Fronteras"
 
-#: templates/directorio.php:33
+#: templates/directorio.php:35
 msgid "Conectamos radios escolares de Extremadura con otras emisoras de España y del mundo."
 msgstr "Connectem ràdios escolars d'Extremadura amb altres emissores d'Espanya i del món."
 
-#: templates/directorio.php:38
+#: templates/directorio.php:40
 msgid "Diferentes voces, un mismo mundo"
 msgstr "Veus diferents, un mateix món"
 
-#: templates/directorio.php:39
+#: templates/directorio.php:41
 msgid "RADIOS ESCOLARES QUE HACEN UN MUNDO MÁS GRANDE 🌍"
 msgstr "RÀDIOS ESCOLARS QUE FAN UN MÓN MÉS GRAN 🌍"
 
-#: templates/directorio.php:45
+#: templates/directorio.php:47
 msgid "Filtros del directorio"
 msgstr "Filtres del directori"
 
-#: templates/directorio.php:51
+#: templates/directorio.php:53
 msgid "Ubicación"
 msgstr "Ubicació"
 
-#: templates/directorio.php:54
+#: templates/directorio.php:56
 msgid "Cualquier lugar"
 msgstr "Qualsevol lloc"
 
-#: templates/directorio.php:68
+#: templates/directorio.php:70
 msgid "Idioma"
 msgstr "Idioma"
 
-#: templates/directorio.php:71
+#: templates/directorio.php:73
 msgid "Cualquier idioma"
 msgstr "Qualsevol idioma"
 
-#: templates/directorio.php:85
+#: templates/directorio.php:87
 msgid "Etapa educativa"
 msgstr "Etapa educativa"
 
-#: templates/directorio.php:88
+#: templates/directorio.php:90
 msgid "Cualquiera"
 msgstr "Qualsevol"
 
-#: templates/directorio.php:102
+#: templates/directorio.php:104
 msgid "Temas"
 msgstr "Temes"
 
-#: templates/directorio.php:105
+#: templates/directorio.php:107
 msgid "Cualquier tema"
 msgstr "Qualsevol tema"
 
-#: templates/directorio.php:119
+#: templates/directorio.php:121
 msgid "Formato"
 msgstr "Format"
 
-#: templates/directorio.php:122
+#: templates/directorio.php:124
 msgid "Cualquier formato"
 msgstr "Qualsevol format"
 
-#: templates/directorio.php:136
+#: templates/directorio.php:138
 msgid "Busca colaboración con..."
 msgstr "Busca col·laboració amb..."
 
-#: templates/directorio.php:138
+#: templates/directorio.php:140
 msgid "Cualquier centro o temática..."
 msgstr "Qualsevol centre o temàtica..."
 
-#: templates/directorio.php:144
+#: templates/directorio.php:146
 msgid "Buscar centros"
 msgstr "Busca centres"
 
 #. translators: %s: Number of schools found.
-#: templates/directorio.php:159
+#: templates/directorio.php:161
 #: build/directorio.js:3
 #, php-format,js-format
 msgid "Resultados (%s centros)"
 msgstr "Resultats (%s centres)"
 
-#: templates/directorio.php:170
+#: templates/directorio.php:172
 msgid "Vista de mapa"
 msgstr "Vista de mapa"
 
-#: templates/directorio.php:175
+#: templates/directorio.php:177
 msgid "Ordenar por"
 msgstr "Ordena per"
 
-#: templates/directorio.php:177
+#: templates/directorio.php:179
 msgid "Más afines"
 msgstr "Més afins"
 
-#: templates/directorio.php:178
+#: templates/directorio.php:180
 msgid "Más recientes"
 msgstr "Més recents"
 
-#: templates/directorio.php:179
+#: templates/directorio.php:181
 msgid "Alfabético (A-Z)"
 msgstr "Alfabètic (A-Z)"
 
-#: templates/directorio.php:187
+#: templates/directorio.php:189
 msgid "No se han podido cargar los centros. Vuelve a pulsar Buscar centros para reintentar."
 msgstr "No s'han pogut carregar els centres. Torna a polsar Busca centres per a intentar-ho de nou."
 
-#: templates/directorio.php:193
+#: templates/directorio.php:207
 msgid "Mapa geográfico interactivo (OpenStreetMap)"
 msgstr "Mapa geogràfic interactiu (OpenStreetMap)"
 
-#: templates/directorio.php:194
+#: templates/directorio.php:208
 msgid "Al cargar el mapa cartográfico se establecerá conexión con los servidores externos de OpenStreetMap Foundation para descargar las imágenes del mapa."
 msgstr "En carregar el mapa cartogràfic s'establirà connexió amb els servidors externs de l'OpenStreetMap Foundation per a descarregar les imatges del mapa."
 
-#: templates/directorio.php:196
+#: templates/directorio.php:210
 msgid "Aceptar y mostrar el mapa interactivo"
 msgstr "Accepta i mostra el mapa interactiu"
 
-#: templates/directorio.php:211
+#: templates/directorio.php:225
 msgid "Cargar más centros"
 msgstr "Carrega més centres"
 
-#: templates/directorio.php:218
+#: templates/directorio.php:232
 msgid "Buscando centros afines en la red..."
 msgstr "S'estan buscant centres afins en la xarxa..."
 
-#: templates/directorio.php:224
+#: templates/directorio.php:238
 msgid "No se han encontrado emisoras con estos filtros"
 msgstr "No s'han trobat emissores amb estos filtres"
 
-#: templates/directorio.php:225
+#: templates/directorio.php:239
 msgid "Prueba a seleccionar otros temas, idiomas o restablecer la búsqueda."
 msgstr "Prova de seleccionar altres temes o idiomes, o restablix la busca."
 
-#: templates/directorio.php:227
+#: templates/directorio.php:241
 msgid "Limpiar todos los filtros"
 msgstr "Neteja tots els filtres"
 
@@ -1983,6 +1983,12 @@ msgstr "S'ha enviat la proposta de match! No s'ha pogut enviar l'avís per corre
 msgid "El mapa muestra %1$s de %2$s centros. Usa los filtros para acotar la búsqueda."
 msgstr "El mapa mostra %1$s de %2$s centres. Utilitza els filtres per a acotar la busca."
 
-#: src/Network/NetworkSync.php:210
+#: src/Network/NetworkSync.php:212
 msgid "Otra sincronización está actualizando la ficha de este sitio. Vuelve a sincronizar dentro de un momento."
 msgstr "Una altra sincronització està actualitzant la fitxa d'este lloc. Torna a sincronitzar d'ací a una estona."
+
+#. translators: 1: opening link tag to the list of radios, 2: closing link tag.
+#: templates/directorio.php:195
+#, php-format
+msgid "El buscador del directorio necesita JavaScript. Mientras tanto, puedes ver el %1$slistado completo de radios%2$s."
+msgstr "El cercador del directori necessita JavaScript. Mentrestant, pots vore el %1$sllistat complet de ràdios%2$s."

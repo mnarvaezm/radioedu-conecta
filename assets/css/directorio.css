@@ -306,6 +306,13 @@
 	color: #475569;
 }
 
+.radioedu-js-fallback {
+	padding: 16px;
+	border: 1px solid var(--radioedu-border);
+	border-radius: var(--radioedu-radius-md);
+	background: #fff;
+}
+
 .radioedu-sort-select {
 	height: 38px;
 	max-width: 100%;

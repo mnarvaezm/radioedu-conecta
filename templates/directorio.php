@@ -14,6 +14,8 @@
  * @var array<int, array{id: int, nombre: string}> $user_centers_list
  * @var int            $drawer_receptor_id
  * @var string         $drawer_receptor_label
+ * @var int            $total_centros
+ * @var string         $archive_url
  */
 
 declare( strict_types=1 );
@@ -157,7 +159,7 @@ defined( 'ABSPATH' ) || exit;
 					printf(
 						/* translators: %s: Number of schools found. */
 						esc_html__( 'Resultados (%s centros)', 'radioedu-conecta' ),
-						'<span id="radioedu-count-number">0</span>'
+						'<span id="radioedu-count-number">' . esc_html( number_format_i18n( $total_centros ) ) . '</span>'
 					);
 					?>
 				</h2>
@@ -185,6 +187,18 @@ defined( 'ABSPATH' ) || exit;
 		<!-- 4. CONTENIDO PRINCIPAL: CUADRÍCULA DE TARJETAS Y MAPA -->
 		<div class="radioedu-main-layout">
 			<p id="radioedu-directory-error" role="alert" hidden><?php esc_html_e( 'No se han podido cargar los centros. Vuelve a pulsar Buscar centros para reintentar.', 'radioedu-conecta' ); ?></p>
+			<?php if ( '' !== $archive_url ) : ?>
+				<p id="radioedu-js-fallback" class="radioedu-js-fallback">
+					<?php
+					printf(
+						/* translators: 1: opening link tag to the list of radios, 2: closing link tag. */
+						esc_html__( 'El buscador del directorio necesita JavaScript. Mientras tanto, puedes ver el %1$slistado completo de radios%2$s.', 'radioedu-conecta' ),
+						'<a href="' . esc_url( $archive_url ) . '">',
+						'</a>'
+					);
+					?>
+				</p>
+			<?php endif; ?>
 
 			<!-- Vista Mapa Interactivo (oculta por defecto, con aviso RGPD previo a cargar teselas de OpenStreetMap) -->
 			<div id="radioedu-map-view" class="radioedu-map-view" style="display: none;" aria-hidden="true">

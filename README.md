@@ -130,7 +130,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * Seguridad: las propuestas exigen una capacidad de RadioEdu, solo el centro receptor puede responderlas y los centros protegidos con contraseña quedan fuera del directorio y de las propuestas.
 * El directorio ordena por afinidad antes de paginar, cancela las búsquedas obsoletas, anuncia los errores de carga con opción de reintentar y funciona con enlaces permanentes simples.
 * La exportación y el borrado de datos personales se hacen por lotes, y las tareas de red recorren los sitios en lotes de 100.
-* Scripts compilados con `@wordpress/scripts` y traducidos con `wp_set_script_translations()`. Sin `build/`, las páginas cargan igualmente, sin interactividad.
+* Scripts compilados con `@wordpress/scripts` y traducidos con `wp_set_script_translations()`. Sin `build/` o sin JavaScript, las páginas cargan igualmente: el directorio muestra el número de emisoras y un enlace a su listado (el archivo `/centros-radioedu/`).
 * Traducciones incluidas al catalán, valenciano, gallego y euskera, para PHP y para los scripts. Los paquetes de idioma oficiales, si existen, tienen prioridad.
 * Accesibilidad: foco visible, contraste AA en el color de acento y en los estados, y el botón *Subir / Elegir Logo* conserva su texto como nombre accesible (WCAG 2.5.3).
 * Accesibilidad de la estructura: cada página tiene un único `main`. El directorio ya no añade un segundo `<main>` ni un `<header>` dentro del contenido; sus resultados forman una región con nombre. En temas clásicos, la ficha aporta el `<main>` y el destino del enlace «Saltar al contenido» solo cuando la cabecera del tema no los tiene (probado con Twenty Twenty, Twenty Twenty-One y YOOtheme). «Ordenar por» y «Volver al directorio» alcanzan el contraste AA sobre cualquier fondo claro.
@@ -155,6 +155,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * Multisite: el recuento de *Radios por usuario* se guarda en caché por sitio, así que el código que comprueba varios sitios en una misma petición ya no reutiliza el recuento de otro sitio.
 * Multisite: dos sincronizaciones de red simultáneas ya no crean dos fichas del mismo sitio; la segunda indica que el sitio está ocupado.
 * Multisite: el resumen final de la sincronización lista todas las fichas cuyo sitio ya no existe, no solo las de las 1.000 primeras.
+* Sin JavaScript, el directorio muestra el número real de emisoras y un enlace a su listado en lugar de «0 centros».
 * Pruebas E2E con Playwright y `wp-env` (datos del centro en los paneles del editor de WordPress 7.1, incluido el logo, y bloque del directorio).
 
 ### 1.0.0
