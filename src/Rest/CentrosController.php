@@ -242,7 +242,7 @@ class CentrosController extends WP_REST_Controller {
 	 * @return array<string, mixed>
 	 */
 	private function prepare_centro_data( int $post_id ): array {
-		$title     = get_the_title( $post_id );
+		$title     = self::plain_text( get_the_title( $post_id ) );
 		$logo_id   = (int) get_post_meta( $post_id, '_radioedu_logo_id', true );
 		$logo_url  = $logo_id ? (string) wp_get_attachment_image_url( $logo_id, 'thumbnail' ) : (string) get_post_meta( $post_id, '_radioedu_logo_url', true );
 		$thumb_url = (string) get_the_post_thumbnail_url( $post_id, 'medium_large' );
@@ -273,7 +273,7 @@ class CentrosController extends WP_REST_Controller {
 		if ( ! empty( $formatos ) && ! is_wp_error( $formatos ) ) {
 			foreach ( $formatos as $term ) {
 				$tags[] = [
-					'name'  => $term->name,
+					'name'  => self::plain_text( $term->name ),
 					'slug'  => $term->slug,
 					'type'  => 'formato',
 					'color' => 'mint',
@@ -285,7 +285,7 @@ class CentrosController extends WP_REST_Controller {
 		if ( ! empty( $tematicas ) && ! is_wp_error( $tematicas ) ) {
 			foreach ( $tematicas as $term ) {
 				$tags[] = [
-					'name'  => $term->name,
+					'name'  => self::plain_text( $term->name ),
 					'slug'  => $term->slug,
 					'type'  => 'tematica',
 					'color' => 'coral',
@@ -297,7 +297,7 @@ class CentrosController extends WP_REST_Controller {
 		if ( ! empty( $etapas ) && ! is_wp_error( $etapas ) ) {
 			foreach ( $etapas as $term ) {
 				$tags[] = [
-					'name'  => $term->name,
+					'name'  => self::plain_text( $term->name ),
 					'slug'  => $term->slug,
 					'type'  => 'etapa',
 					'color' => 'blue',
@@ -310,7 +310,7 @@ class CentrosController extends WP_REST_Controller {
 		$localizaciones  = get_the_terms( $post_id, TaxonomiesRegistrar::TAX_LOCALIZACION );
 		if ( ! empty( $localizaciones ) && ! is_wp_error( $localizaciones ) ) {
 			$loc_names       = wp_list_pluck( $localizaciones, 'name' );
-			$ubicacion_texto = implode( ', ', array_reverse( $loc_names ) );
+			$ubicacion_texto = self::plain_text( implode( ', ', array_reverse( $loc_names ) ) );
 		}
 
 		return [
@@ -330,6 +330,21 @@ class CentrosController extends WP_REST_Controller {
 			'tags'          => $tags,
 			'enlace_perfil' => esc_url_raw( (string) get_permalink( $post_id ) ),
 		];
+	}
+
+	/**
+	 * Decodes the HTML entities of a rendered title or term name.
+	 *
+	 * Rendered titles (get_the_title()) and term names carry entities (&#8217;, &amp;), but the
+	 * directory writes these values as text, which shows an entity as it is.
+	 *
+	 * @since 1.2
+	 *
+	 * @param string $text Rendered text.
+	 * @return string Plain text.
+	 */
+	private static function plain_text( string $text ): string {
+		return html_entity_decode( $text, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 	}
 
 	/**

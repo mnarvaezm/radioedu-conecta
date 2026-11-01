@@ -121,6 +121,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 ### 1.2
 * El plugin declara la cabecera `Update URI`: se distribuye fuera del directorio de WordPress.org, así que WordPress nunca le ofrece la actualización de otro plugin del directorio con el mismo slug.
 * Probado con PHP 8.1 a 8.5 y con WordPress 7.1.0. PHP 8.1 sigue siendo el mínimo, pero en producción se recomienda PHP 8.3 o superior.
+* La REST de centros devuelve el nombre, la ubicación y las etiquetas como texto plano: una emisora con un apóstrofo o un «&» en el nombre ya no muestra `&#8217;` o `&amp;` en su tarjeta.
 
 ### 1.1
 * Requiere WordPress 7.1.

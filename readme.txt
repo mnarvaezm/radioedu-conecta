@@ -99,6 +99,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 = 1.2 =
 * The plugin declares an `Update URI` header: it is distributed outside the WordPress.org directory, so WordPress never offers it the update of a directory plugin with the same slug.
 * Tested on PHP 8.1 to 8.5 and on WordPress 7.1.0. PHP 8.1 remains the minimum, but PHP 8.3 or later is recommended in production.
+* The centros REST endpoint returns names, places and tags as plain text: a station with an apostrophe or an "&" in its name no longer shows `&#8217;` or `&amp;` on its card.
 
 = 1.1 =
 * Requires WordPress 7.1.
