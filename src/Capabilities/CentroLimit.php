@@ -60,6 +60,7 @@ final class CentroLimit {
 		add_filter( 'user_has_cap', [ self::class, 'grant_create_cap' ], 10, 4 );
 		add_filter( 'rest_pre_insert_' . CentroPostType::POST_TYPE, [ self::class, 'check_rest_status_change' ], 10, 2 );
 		add_filter( 'pre_untrash_post', [ self::class, 'check_untrash' ], 10, 2 );
+		add_filter( 'wp_insert_post_data', [ self::class, 'keep_uncounted_status' ], 10, 2 );
 		add_action( 'clean_post_cache', [ self::class, 'flush_count_cache_for_post' ], 10, 2 );
 		add_action( 'admin_notices', [ self::class, 'render_limit_notice' ] );
 	}
@@ -109,6 +110,34 @@ final class CentroLimit {
 
 		// wp_untrash_post() restores to draft, or to the previous status through a filter; both count.
 		return self::status_change_exceeds_limit( $post->ID, 'trash', 'draft' ) ? false : $untrash;
+	}
+
+	/**
+	 * Applies the limit to every other save that would make an existing centro count.
+	 *
+	 * Covers the classic editor, Quick Edit, XML-RPC and code calling wp_update_post(), which
+	 * reach neither the REST filter nor pre_untrash_post. The centro keeps its current status
+	 * (auto-draft or trash), so what was typed is saved but does not count, and the edit screen
+	 * explains why. New centros are not handled here: creating one needs CREATE_CAP.
+	 *
+	 * @since 1.1
+	 *
+	 * @param array<string, mixed> $data    Sanitized post data about to be saved.
+	 * @param array<string, mixed> $postarr Post data passed to wp_insert_post().
+	 * @return array<string, mixed> The data, with the status kept when the change would exceed the limit.
+	 */
+	public static function keep_uncounted_status( array $data, array $postarr ): array {
+		$post_id = isset( $postarr['ID'] ) ? (int) $postarr['ID'] : 0;
+		if ( $post_id <= 0 || CentroPostType::POST_TYPE !== ( $data['post_type'] ?? '' ) ) {
+			return $data;
+		}
+
+		$old_status = (string) get_post_status( $post_id );
+		if ( self::status_change_exceeds_limit( $post_id, $old_status, (string) ( $data['post_status'] ?? '' ) ) ) {
+			$data['post_status'] = $old_status;
+		}
+
+		return $data;
 	}
 
 	/**
@@ -168,18 +197,24 @@ final class CentroLimit {
 	/**
 	 * Shows coordinators at the limit why they cannot add another centro.
 	 *
-	 * Only on the centros list screen.
+	 * On the centros list, and on the edit screen of a centro that does not count yet (an
+	 * auto-draft), which keep_uncounted_status() will not let them publish.
 	 *
 	 * @since 1.1
 	 */
 	public static function render_limit_notice(): void {
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		if ( null === $screen || 'edit-' . CentroPostType::POST_TYPE !== $screen->id
+		if ( null === $screen || CentroPostType::POST_TYPE !== $screen->post_type
 			|| ! current_user_can( 'edit_radioedu_centros' ) || ! self::has_reached_limit( get_current_user_id() ) ) {
 			return;
 		}
 
-		wp_admin_notice( esc_html( self::get_limit_message() ), [ 'type' => 'info' ] );
+		$post = 'post' === $screen->base ? get_post() : null;
+		if ( 'edit' !== $screen->base && ! ( $post instanceof WP_Post && ! in_array( $post->post_status, self::COUNTED_STATUSES, true ) ) ) {
+			return;
+		}
+
+		wp_admin_notice( esc_html( self::get_limit_message() ), [ 'type' => 'edit' === $screen->base ? 'info' : 'warning' ] );
 	}
 
 	/**

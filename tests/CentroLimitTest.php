@@ -202,6 +202,33 @@ class CentroLimitTest extends WP_UnitTestCase {
 		$this->assertSame( '', Settings::sanitize_settings( [] )[ CentroLimit::SETTING ] );
 	}
 
+	public function test_the_classic_editor_cannot_publish_an_old_auto_draft_at_the_limit(): void {
+		require_once ABSPATH . 'wp-admin/includes/post.php';
+		require_once ABSPATH . 'wp-admin/includes/class-wp-screen.php';
+		require_once ABSPATH . 'wp-admin/includes/screen.php';
+		$this->set_limit( '1' );
+		$author = $this->user( 'author' );
+		$tab    = $this->centro( $author, 'auto-draft' );
+		$this->centro( $author );
+		wp_set_current_user( $author );
+
+		edit_post( [ 'post_ID' => $tab, 'post_title' => 'Second classic tab', 'post_status' => 'publish' ] );
+		$this->assertSame( 'auto-draft', get_post_status( $tab ) );
+		$this->assertSame( 'Second classic tab', get_the_title( $tab ), 'What was typed is kept.' );
+
+		// The edit screen of that centro explains why.
+		$GLOBALS['post'] = get_post( $tab );
+		WP_Screen::get( CentroPostType::POST_TYPE )->set_current_screen();
+		ob_start();
+		CentroLimit::render_limit_notice();
+		$this->assertStringContainsString( 'Has alcanzado el máximo de 1 radio por usuario', (string) ob_get_clean() );
+
+		// Editors have no limit.
+		wp_set_current_user( $this->user( 'editor' ) );
+		edit_post( [ 'post_ID' => $tab, 'post_status' => 'publish' ] );
+		$this->assertSame( 'publish', get_post_status( $tab ) );
+	}
+
 	public function test_the_centros_list_explains_the_limit_to_coordinators(): void {
 		require_once ABSPATH . 'wp-admin/includes/class-wp-screen.php';
 		require_once ABSPATH . 'wp-admin/includes/screen.php';

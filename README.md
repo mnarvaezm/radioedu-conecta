@@ -142,7 +142,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * Privacidad: la respuesta a una propuesta registra quién la escribe (esquema 1.0.3), así que se exporta y se borra para esa persona. Las respuestas anteriores a la 1.1 no tienen autor: el borrado las conserva y lo indica.
 * Un error de base de datos al responder una propuesta devuelve un error reintentable en lugar de «ya respondida».
 * En el directorio, la respuesta tardía a una propuesta enviada antes de cerrar el panel ya no cambia el panel abierto para otra emisora.
-* El límite de *Radios por usuario* también se aplica cuando un coordinador restaura una emisora desde la papelera o guarda una segunda pestaña de *Añadir nuevo* abierta antes de llegar al límite.
+* El límite de *Radios por usuario* también se aplica cuando un coordinador restaura una emisora desde la papelera o guarda una segunda pestaña de *Añadir nuevo* abierta antes de llegar al límite, en el editor de bloques o en el clásico.
 * Cada coordinador puede enviar hasta 20 propuestas por hora en lugar de 10. Es un límite contra el spam: varias peticiones simultáneas pueden superarlo en alguna.
 * El listado de propuestas tiene paginación: el endpoint REST acepta `page` y `per_page` y devuelve `X-WP-Total`, y la pantalla de administración muestra 20 propuestas por página. Antes, las propuestas posteriores a las 100 más recientes no se podían ver ni responder.
 * Los coordinadores ven las propuestas de todas las emisoras que gestionan, sean cuantas sean, y los editores ven todas las propuestas. El selector de centro emisor muestra hasta 500 en lugar de 50 o 100.
