@@ -336,7 +336,7 @@ Las cadenas nuevas o modificadas se tradujeron al catalán, valenciano, gallego 
 | Hallazgos de la auditoría (S-01, S-02, F-01 a F-22) | 24 | 21 corregidos; F-02 y F-22 cerrados por decisión documentada; S-02 aceptado con el límite a 20 por hora |
 | Desviaciones frente a AGENTS.md (Q-01 a Q-06) | 6 | Q-02 y Q-06 corregidas; Q-01 con la norma ajustada; Q-03 con excepciones inventariadas; Q-04 ejecutada; **Q-05 pendiente** |
 | Segunda revisión (R-01 a R-05) | 5 | Los 5 corregidos |
-| Candidatos por validar y recomendaciones de endurecimiento | 4 y 8 | Sin abordar, salvo parte de dos recomendaciones (ver «Pendiente») |
+| Candidatos por validar y recomendaciones de endurecimiento | 4 y 8 | Sin abordar, salvo parte de la de E2E (ver «Pendiente») |
 
 ### Ajustes a la revisión inicial
 
@@ -486,7 +486,7 @@ Esa segunda revisión seguía en curso al cerrar este seguimiento: puede aportar
   - consumo a gran escala.
 - La desviación Q-05 frente a AGENTS.md: pruebas y recomendación para versiones de PHP con soporte. Q-01, Q-02 y Q-03 se resolvieron después; ver la tabla de estado.
 - Las recomendaciones de endurecimiento:
-  - Cursor estable: hecho en el listado de propuestas y en la revisión de fichas huérfanas. La sincronización por lotes sigue usando `offset`.
+  - Cursor estable: pendiente. El listado de propuestas y la revisión de fichas huérfanas tienen un orden determinista (fecha e ID, o ID), pero paginan por desplazamiento (`OFFSET`, `paged`), igual que la sincronización por lotes. Si el conjunto cambia entre dos páginas, un elemento puede saltarse o repetirse. Una versión anterior de este seguimiento lo daba por hecho; era inexacto.
   - Clave de idempotencia al crear propuestas: pendiente.
   - Favoritos por sitio y retirada del consentimiento del mapa: pendiente.
   - Carga reducida del mapa, `prefers-reduced-motion` y prueba con lector de pantalla: pendiente.
