@@ -123,7 +123,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * Coordinators see the proposals of every station they manage, however many they have, and editors see every proposal. The sender selector lists up to 2,000 stations instead of 50 or 100, twice the largest expected network.
 * Proposal and answer messages say what happened to the email: sent, turned off in the settings, or not sent. Before, they always promised a notification.
 * With "Más afines" sorting, administrators and editors, who have no station of their own, no longer get results ranked by the terms of the first station in alphabetical order.
-* The map view shows every result of the search, up to 500 markers, instead of only the 24 loaded cards, and says so when the limit leaves some out.
+* The map view shows every result of the search, up to 1,000 markers, instead of only the 24 loaded cards, and says so when the limit leaves some out.
 * Accessibility: at 320 px wide (or 400% zoom) the directory no longer scrolls sideways; cards fit the available width and the controls wrap (WCAG 1.4.10).
 * The "Volver al directorio" link of the profiles goes to the page where the directory block or shortcode really is, not only to a page with the "traspasando-fronteras" slug. The new `radioedu_conecta_directory_url` filter can change it.
 * The profile no longer strips embedded players (YouTube, podcasts…) from the description: it prints the content as WordPress filters it, like any theme.

@@ -148,7 +148,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * Los coordinadores ven las propuestas de todas las emisoras que gestionan, sean cuantas sean, y los editores ven todas las propuestas. El selector de centro emisor muestra hasta 2.000 en lugar de 50 o 100, el doble de la red más grande prevista.
 * Los mensajes al enviar o responder una propuesta dicen qué ha pasado con el correo: enviado, desactivado en los ajustes o no enviado. Antes siempre prometían una notificación.
 * Con el orden *Más afines*, administradores y editores, que no tienen emisora propia, ya no ven los resultados ordenados según los términos de la primera emisora por orden alfabético.
-* La vista de mapa muestra todos los resultados de la búsqueda, hasta 500 marcadores, en lugar de solo las 24 tarjetas cargadas, y avisa cuando el límite deja alguno fuera.
+* La vista de mapa muestra todos los resultados de la búsqueda, hasta 1.000 marcadores, en lugar de solo las 24 tarjetas cargadas, y avisa cuando el límite deja alguno fuera.
 * Accesibilidad: a 320 px de ancho (o con zoom del 400 %) el directorio ya no necesita desplazamiento horizontal; las tarjetas se ajustan al ancho disponible y los controles bajan de línea (WCAG 1.4.10).
 * El enlace *Volver al directorio* de las fichas lleva a la página donde está realmente el bloque o el shortcode del directorio, no solo a una página con el slug `traspasando-fronteras`. El nuevo filtro `radioedu_conecta_directory_url` permite cambiarlo.
 * La ficha ya no elimina los reproductores embebidos (YouTube, pódcast…) de la descripción: muestra el contenido tal como lo filtra WordPress, igual que cualquier tema.

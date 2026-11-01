@@ -179,8 +179,9 @@ import { speak } from '@wordpress/a11y';
 		let appliedSearch = { filters: {}, orden: 'afines' };
 		let submitting = false;
 
-		// The map shows every result, not only the pages of cards already loaded, up to this ceiling.
-		const MAP_MAX_CENTROS = 500;
+		// The map shows every result, not only the pages of cards already loaded, up to this ceiling:
+		// the largest expected network has about 1,000 school radios.
+		const MAP_MAX_CENTROS = 1000;
 		const mapNote = document.getElementById( 'radioedu-map-note' );
 
 		// The script runs, so the notice for browsers without it is no longer needed.
