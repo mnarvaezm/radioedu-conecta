@@ -62,6 +62,19 @@ class ProposalPaginationTest extends WP_UnitTestCase {
 		$this->assertCount( 102, array_unique( $ids ) );
 	}
 
+	public function test_a_page_past_the_last_one_is_empty_even_when_huge(): void {
+		$this->proposals( 3 );
+		foreach ( [ 2, PHP_INT_MAX ] as $page ) {
+			$request = new WP_REST_Request( 'GET', '/radioedu-conecta/v1/colaboraciones' );
+			$request->set_param( 'page', $page );
+			$response = rest_do_request( $request );
+			$this->assertSame( 200, $response->get_status(), "Page $page" );
+			$this->assertSame( [], $response->get_data()['colaboraciones'] );
+			$this->assertSame( '3', $response->get_headers()['X-WP-Total'] );
+			$this->assertSame( '1', $response->get_headers()['X-WP-TotalPages'] );
+		}
+	}
+
 	public function test_the_rest_listing_rejects_an_invalid_page_size(): void {
 		$request = new WP_REST_Request( 'GET', '/radioedu-conecta/v1/colaboraciones' );
 		$request->set_param( 'per_page', 500 );

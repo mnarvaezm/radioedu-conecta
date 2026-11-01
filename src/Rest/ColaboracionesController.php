@@ -211,7 +211,10 @@ class ColaboracionesController extends WP_REST_Controller {
 		$per_page = max( 1, min( 100, (int) $request->get_param( 'per_page' ) ) );
 		$page     = max( 1, (int) $request->get_param( 'page' ) );
 		$total    = ColaboracionesTable::count_for_user( $user_id, $all );
-		$rows     = ColaboracionesTable::get_for_user( $user_id, $all, $per_page, ( $page - 1 ) * $per_page );
+		$pages    = max( 1, (int) ceil( $total / $per_page ) );
+		// A page past the last one is empty. It is never turned into an offset, which could overflow
+		// the integer range with a huge page number.
+		$rows = $page > $pages ? [] : ColaboracionesTable::get_for_user( $user_id, $all, $per_page, ( $page - 1 ) * $per_page );
 
 		$items = [];
 		foreach ( $rows as $row ) {
@@ -234,7 +237,7 @@ class ColaboracionesController extends WP_REST_Controller {
 
 		$response = new WP_REST_Response( [ 'colaboraciones' => $items ] );
 		$response->header( 'X-WP-Total', (string) $total );
-		$response->header( 'X-WP-TotalPages', (string) max( 1, (int) ceil( $total / $per_page ) ) );
+		$response->header( 'X-WP-TotalPages', (string) $pages );
 
 		return $response;
 	}
