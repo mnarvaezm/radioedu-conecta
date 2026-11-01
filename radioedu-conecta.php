@@ -3,8 +3,8 @@
  * Plugin Name:       RadioEdu Conecta
  * Plugin URI:        https://radioedu.educarex.es/conecta
  * Description:       Directorio interactivo y sistema colaborativo ("Traspasando Fronteras") para la red de radios escolares de Extremadura y del mundo.
- * Version:           1.0.0
- * Requires at least: 6.5
+ * Version:           1.1
+ * Requires at least: 7.1
  * Requires PHP:      8.1
  * Author:            RadioEdu - Consejería de Educación, Ciencia y Formación Profesional (Junta de Extremadura)
  * Author URI:        https://radioedu.educarex.es
@@ -16,11 +16,13 @@
  * @package RadioEdu\Conecta
  */
 
+declare( strict_types=1 );
+
 defined( 'ABSPATH' ) || exit;
 
 // Plugin constants.
-define( 'RADIOEDU_CONECTA_VERSION', '1.0.0' );
-define( 'RADIOEDU_CONECTA_MIN_WP', '6.5' );
+define( 'RADIOEDU_CONECTA_VERSION', '1.1' );
+define( 'RADIOEDU_CONECTA_MIN_WP', '7.1' );
 define( 'RADIOEDU_CONECTA_MIN_PHP', '8.1' );
 define( 'RADIOEDU_CONECTA_FILE', __FILE__ );
 define( 'RADIOEDU_CONECTA_DIR', plugin_dir_path( __FILE__ ) );
@@ -66,13 +68,12 @@ function radioedu_conecta_check_requirements(): bool {
 		add_action(
 			'admin_notices',
 			static function (): void {
-				printf(
-					'<div class="notice notice-error"><p>%s</p></div>',
+				radioedu_conecta_requirements_notice(
 					sprintf(
 						/* translators: 1: Required PHP version, 2: Current PHP version */
-						esc_html__( 'RadioEdu Conecta requires PHP version %1$s or higher. Your server is running PHP %2$s.', 'radioedu-conecta' ),
-						esc_html( RADIOEDU_CONECTA_MIN_PHP ),
-						esc_html( PHP_VERSION )
+						__( 'RadioEdu Conecta requires PHP version %1$s or higher. Your server is running PHP %2$s.', 'radioedu-conecta' ),
+						RADIOEDU_CONECTA_MIN_PHP,
+						PHP_VERSION
 					)
 				);
 			}
@@ -85,13 +86,12 @@ function radioedu_conecta_check_requirements(): bool {
 			'admin_notices',
 			static function (): void {
 				global $wp_version;
-				printf(
-					'<div class="notice notice-error"><p>%s</p></div>',
+				radioedu_conecta_requirements_notice(
 					sprintf(
 						/* translators: 1: Required WordPress version, 2: Current WordPress version */
-						esc_html__( 'RadioEdu Conecta requires WordPress %1$s or higher. You are using WordPress %2$s.', 'radioedu-conecta' ),
-						esc_html( RADIOEDU_CONECTA_MIN_WP ),
-						esc_html( $wp_version )
+						__( 'RadioEdu Conecta requires WordPress %1$s or higher. You are using WordPress %2$s.', 'radioedu-conecta' ),
+						RADIOEDU_CONECTA_MIN_WP,
+						$wp_version
 					)
 				);
 			}
@@ -100,6 +100,25 @@ function radioedu_conecta_check_requirements(): bool {
 	}
 
 	return true;
+}
+
+/**
+ * Prints an unmet-requirement error notice.
+ *
+ * This check is precisely what runs on outdated sites, so it falls back to the classic
+ * markup on WordPress versions older than 6.4, which lack wp_admin_notice().
+ *
+ * @since 1.1
+ *
+ * @param string $message Plain-text message.
+ */
+function radioedu_conecta_requirements_notice( string $message ): void {
+	if ( function_exists( 'wp_admin_notice' ) ) {
+		wp_admin_notice( esc_html( $message ), [ 'type' => 'error' ] );
+		return;
+	}
+
+	printf( '<div class="notice notice-error"><p>%s</p></div>', esc_html( $message ) );
 }
 
 /**
@@ -127,6 +146,20 @@ function radioedu_conecta_deactivate( bool $network_wide = false ): void {
 register_deactivation_hook( __FILE__, 'radioedu_conecta_deactivate' );
 
 /**
+ * Registers the bundled translations in the plugin's languages folder.
+ *
+ * WordPress loads them just in time and looks in wp-content/languages/plugins
+ * first, so language packs, when they exist, take priority over these files.
+ *
+ * @since 1.1
+ */
+function radioedu_conecta_load_textdomain(): void {
+	// phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- The ca, ca_valencia, gl_ES and eu translations ship with the plugin, not as language packs, and WordPress only looks for them in a folder registered here.
+	load_plugin_textdomain( 'radioedu-conecta', false, dirname( RADIOEDU_CONECTA_BASENAME ) . '/languages' );
+}
+add_action( 'init', 'radioedu_conecta_load_textdomain', 0 );
+
+/**
  * Bootstrap the plugin on plugins_loaded.
  */
 function radioedu_conecta_bootstrap(): void {
@@ -146,6 +179,10 @@ add_action( 'plugins_loaded', 'radioedu_conecta_bootstrap' );
  * @return array<string, string> Updated links array.
  */
 function radioedu_conecta_action_links( array $links ): array {
+	if ( ! current_user_can( 'manage_radioedu' ) ) {
+		return $links;
+	}
+
 	$settings_url  = admin_url( 'edit.php?post_type=radioedu_centro&page=radioedu-conecta-settings' );
 	$settings_link = sprintf(
 		'<a href="%s">%s</a>',

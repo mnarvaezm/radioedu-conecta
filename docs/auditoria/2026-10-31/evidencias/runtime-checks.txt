@@ -1,0 +1,15 @@
+anonymous_proposal: 401
+subscriber_proposal: 403
+other_author_sender: 403
+own_proposal: 201
+sender_response_forbidden: 403
+recipient_response: 200
+repeat_response: 409
+recipient_privacy: {"export_contains_response":false,"response_after_erase":"Audit B authored personal response","erase":{"items_removed":true,"items_retained":false,"messages":[],"done":true},"resolved_contact_after_erase":"author-b@example.invalid"}
+limit_restore: {"trash_status":200,"create_status":201,"restore_status":200,"active_count":2}
+managed_center_cap: {"actual_published":53,"listed":51,"omitted":[56,57],"can_manage_omitted":true}
+proposal_pagination: {"rows":100,"page_2_identical":true,"database_rows":102}
+core_other_edit_meta: {"status":403,"private_key_present":false}
+public_privacy: {"private_post_present":false,"contact_present":false}
+demo_ownership: {"title_after_import":"IES Sierra de Gata Radio","original_content_retained":false,"marked_demo":"1"}
+failed_migration: {"table_exists":false,"persisted_version":"1.0.2"}

@@ -4,6 +4,9 @@
 .distignore
 .agents
 AGENTS.md
+docs
+.env
+.env.*
 BRIEFING.md
 ARCHITECTURE.md
 TESTING-PROTOCOL.md
@@ -27,3 +30,7 @@ README.md
 vendor
 dist
 .phpunit.result.cache
+playwright.config.js
+eslint.config.cjs
+.wp-env.json
+artifacts

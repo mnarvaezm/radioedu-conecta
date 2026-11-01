@@ -1,0 +1,3 @@
+Set up multisite database tables.
+Added multisite constants to 'wp-config.php'.
+Success: Network installed. Don't forget to set up rewrite rules (and a .htaccess file, if using Apache).

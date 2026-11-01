@@ -11,6 +11,7 @@ namespace RadioEdu\Conecta\Admin;
 
 use RadioEdu\Conecta\Database\ColaboracionesTable;
 use RadioEdu\Conecta\Emails\NotificationService;
+use RadioEdu\Conecta\Icons;
 use RadioEdu\Conecta\PostTypes\CentroPostType;
 use RadioEdu\Conecta\Rest\ColaboracionesController;
 
@@ -26,18 +27,51 @@ class ColaboracionesAdminPage {
 	public const PAGE_SLUG    = 'radioedu-conecta-colaboraciones';
 
 	/**
+	 * Proposals shown on each page of the listing.
+	 */
+	public const PER_PAGE = 20;
+
+	/**
+	 * Hook suffix of the submenu page, used to load its stylesheet only there.
+	 *
+	 * @var string
+	 */
+	private static string $hook_suffix = '';
+
+	/**
 	 * Registra los hooks del submenú y procesamiento de respuestas.
 	 */
 	public static function register(): void {
 		add_action( 'admin_menu', [ self::class, 'add_submenu_page' ] );
 		add_action( 'admin_post_radioedu_respond_match', [ self::class, 'handle_respond_match' ] );
+		add_action( 'admin_enqueue_scripts', [ self::class, 'enqueue_assets' ] );
+	}
+
+	/**
+	 * Loads the admin stylesheet (status icons) only on the Colaboraciones screen.
+	 *
+	 * @since 1.1
+	 *
+	 * @param string $hook_suffix Current admin screen.
+	 */
+	public static function enqueue_assets( string $hook_suffix ): void {
+		if ( '' === self::$hook_suffix || self::$hook_suffix !== $hook_suffix ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'radioedu-conecta-admin-css',
+			RADIOEDU_CONECTA_URL . 'assets/css/admin.css',
+			[],
+			RADIOEDU_CONECTA_VERSION
+		);
 	}
 
 	/**
 	 * Añade el submenú 'Colaboraciones (Matches)' dentro de 'RadioEdu Centros'.
 	 */
 	public static function add_submenu_page(): void {
-		add_submenu_page(
+		self::$hook_suffix = (string) add_submenu_page(
 			'edit.php?post_type=' . CentroPostType::POST_TYPE,
 			__( 'Propuestas de Colaboración (Matches)', 'radioedu-conecta' ),
 			__( 'Colaboraciones (Matches)', 'radioedu-conecta' ),
@@ -57,7 +91,7 @@ class ColaboracionesAdminPage {
 
 		check_admin_referer( self::NONCE_ACTION, self::NONCE_NAME );
 
-		$colab_id  = isset( $_POST['colaboracion_id'] ) ? absint( $_POST['colaboracion_id'] ) : 0;
+		$colab_id  = isset( $_POST['colaboracion_id'] ) && is_scalar( $_POST['colaboracion_id'] ) ? absint( wp_unslash( $_POST['colaboracion_id'] ) ) : 0;
 		$estado    = isset( $_POST['estado'] ) ? sanitize_key( wp_unslash( $_POST['estado'] ) ) : '';
 		$respuesta = isset( $_POST['respuesta_mensaje'] ) ? sanitize_textarea_field( wp_unslash( $_POST['respuesta_mensaje'] ) ) : '';
 		$respuesta = mb_substr( $respuesta, 0, ColaboracionesTable::MAX_RESPUESTA_LENGTH );
@@ -72,8 +106,9 @@ class ColaboracionesAdminPage {
 		}
 
 		$result = ColaboracionesController::respond_to_proposal( $colab_id, $estado, $respuesta );
-		if ( null !== $result ) {
-			wp_die( esc_html( $result->get_error_message() ), '', [ 'response' => 409 ] );
+		if ( is_wp_error( $result ) ) {
+			$error_data = $result->get_error_data();
+			wp_die( esc_html( $result->get_error_message() ), '', [ 'response' => is_array( $error_data ) ? (int) $error_data['status'] : 500 ] );
 		}
 
 		$redirect_url = add_query_arg(
@@ -81,6 +116,7 @@ class ColaboracionesAdminPage {
 				'post_type'     => CentroPostType::POST_TYPE,
 				'page'          => self::PAGE_SLUG,
 				'match_updated' => $estado,
+				'match_notice'  => $result,
 			],
 			admin_url( 'edit.php' )
 		);
@@ -98,17 +134,26 @@ class ColaboracionesAdminPage {
 		}
 
 		$user_id = get_current_user_id();
-		$rows    = ColaboracionesTable::get_for_user(
-			$user_id,
-			ColaboracionesController::get_user_managed_center_ids( $user_id ),
-			current_user_can( 'manage_radioedu' )
-		);
+		$all     = ColaboracionesController::user_manages_all_centers( $user_id );
+		$total   = ColaboracionesTable::count_for_user( $user_id, $all );
+		$pages   = max( 1, (int) ceil( $total / self::PER_PAGE ) );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only page number of the listing.
+		$paged = isset( $_GET['paged'] ) ? min( $pages, max( 1, absint( wp_unslash( $_GET['paged'] ) ) ) ) : 1;
+		$rows  = ColaboracionesTable::get_for_user( $user_id, $all, self::PER_PAGE, ( $paged - 1 ) * self::PER_PAGE );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only flag used to display a notice after the nonce-protected redirect.
 		$updated_status = isset( $_GET['match_updated'] ) ? sanitize_key( wp_unslash( $_GET['match_updated'] ) ) : '';
 		if ( ! in_array( $updated_status, ColaboracionesTable::RESPONSE_STATUSES, true ) ) {
 			$updated_status = '';
 		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only flag used to display a notice after the nonce-protected redirect.
+		$notification = isset( $_GET['match_notice'] ) ? sanitize_key( wp_unslash( $_GET['match_notice'] ) ) : NotificationService::SENT;
+		$notices      = [
+			NotificationService::SENT     => [ 'success', __( 'La respuesta a la propuesta de colaboración se ha guardado correctamente y se ha notificado al centro emisor.', 'radioedu-conecta' ) ],
+			NotificationService::DISABLED => [ 'success', __( 'La respuesta a la propuesta de colaboración se ha guardado correctamente.', 'radioedu-conecta' ) ],
+			NotificationService::FAILED   => [ 'warning', __( 'La respuesta a la propuesta de colaboración se ha guardado, pero no se ha podido enviar el aviso por correo al centro emisor.', 'radioedu-conecta' ) ],
+		];
+		$notice       = $notices[ $notification ] ?? $notices[ NotificationService::SENT ];
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Propuestas de Colaboración (Matches) - Traspasando Fronteras', 'radioedu-conecta' ); ?></h1>
@@ -116,13 +161,17 @@ class ColaboracionesAdminPage {
 				<?php esc_html_e( 'Consulta las solicitudes de hermanamiento recibidas o enviadas por tu emisora escolar y coordina proyectos conjuntos.', 'radioedu-conecta' ); ?>
 			</p>
 
-			<?php if ( '' !== $updated_status ) : ?>
-				<div class="notice notice-success is-dismissible" style="margin-top: 15px;">
-					<p>
-						<?php esc_html_e( 'La respuesta a la propuesta de colaboración se ha guardado correctamente y se ha notificado al centro emisor.', 'radioedu-conecta' ); ?>
-					</p>
-				</div>
-			<?php endif; ?>
+			<?php
+			if ( '' !== $updated_status ) {
+				wp_admin_notice(
+					esc_html( $notice[1] ),
+					[
+						'type'        => $notice[0],
+						'dismissible' => true,
+					]
+				);
+			}
+			?>
 
 			<?php if ( empty( $rows ) ) : ?>
 				<div class="card" style="max-width: 720px; margin-top: 20px; padding: 20px;">
@@ -179,11 +228,11 @@ class ColaboracionesAdminPage {
 								</td>
 								<td>
 									<?php if ( 'aceptada' === $estado ) : ?>
-										<span style="color: #1b5e20; font-weight: 600;">✔ <?php esc_html_e( 'Aceptada', 'radioedu-conecta' ); ?></span>
+										<span class="radioedu-status radioedu-status--aceptada"><?php Icons::render( 'core/check' ); ?> <?php esc_html_e( 'Aceptada', 'radioedu-conecta' ); ?></span>
 									<?php elseif ( 'rechazada' === $estado ) : ?>
-										<span style="color: #b71c1c; font-weight: 600;">✖ <?php esc_html_e( 'Declinada', 'radioedu-conecta' ); ?></span>
+										<span class="radioedu-status radioedu-status--rechazada"><?php Icons::render( 'radioedu-conecta/close' ); ?> <?php esc_html_e( 'Declinada', 'radioedu-conecta' ); ?></span>
 									<?php else : ?>
-										<span style="color: #e65100; font-weight: 600;">⏳ <?php esc_html_e( 'Pendiente', 'radioedu-conecta' ); ?></span>
+										<span class="radioedu-status radioedu-status--pendiente"><?php Icons::render( 'core/scheduled' ); ?> <?php esc_html_e( 'Pendiente', 'radioedu-conecta' ); ?></span>
 									<?php endif; ?>
 								</td>
 								<td>
@@ -222,6 +271,24 @@ class ColaboracionesAdminPage {
 						<?php endforeach; ?>
 					</tbody>
 				</table>
+				<?php if ( $pages > 1 ) : ?>
+					<div class="tablenav bottom">
+						<div class="tablenav-pages">
+							<?php
+							echo wp_kses_post(
+								(string) paginate_links(
+									[
+										'base'    => add_query_arg( 'paged', '%#%', remove_query_arg( [ 'match_updated', 'match_notice' ] ) ),
+										'format'  => '',
+										'current' => $paged,
+										'total'   => $pages,
+									]
+								)
+							);
+							?>
+						</div>
+					</div>
+				<?php endif; ?>
 			<?php endif; ?>
 		</div>
 		<?php

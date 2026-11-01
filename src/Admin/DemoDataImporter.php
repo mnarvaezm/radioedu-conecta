@@ -9,7 +9,9 @@ declare( strict_types=1 );
 
 namespace RadioEdu\Conecta\Admin;
 
+use RadioEdu\Conecta\Frontend\DirectorioShortcode;
 use RadioEdu\Conecta\PostTypes\CentroPostType;
+use RadioEdu\Conecta\Support\BlockMarkup;
 use RadioEdu\Conecta\Taxonomies\TaxonomiesRegistrar;
 
 defined( 'ABSPATH' ) || exit;
@@ -21,6 +23,11 @@ class DemoDataImporter {
 
 	public const NONCE_ACTION = 'radioedu_import_demo_nonce_action';
 	public const NONCE_NAME   = 'radioedu_import_demo_nonce';
+
+	/**
+	 * Post meta that marks the centros and the page created by this importer.
+	 */
+	public const DEMO_META = '_radioedu_conecta_demo';
 
 	/**
 	 * Imágenes de ejemplo empaquetadas: fragmento del slug del centro => sufijo del fichero.
@@ -37,12 +44,18 @@ class DemoDataImporter {
 	/**
 	 * Devuelve la URL de la imagen empaquetada de un centro de ejemplo.
 	 *
-	 * @param string $post_name Slug del centro.
-	 * @param string $type      'header' (portada) o 'logo'.
+	 * Only centros marked by this importer get one: real schools often share a slug fragment
+	 * with a demo centro (a "CEIP San José", an "IES La Marisma") and must not show its images.
+	 *
+	 * @since 1.1 Takes the centro ID and requires the demo marker.
+	 *
+	 * @param int    $post_id ID del centro.
+	 * @param string $type    'header' (portada) o 'logo'.
 	 * @return string URL de la imagen o cadena vacía si el centro no es de ejemplo.
 	 */
-	public static function get_demo_image_url( string $post_name, string $type ): string {
-		if ( '' === $post_name || ! in_array( $type, [ 'header', 'logo' ], true ) ) {
+	public static function get_demo_image_url( int $post_id, string $type ): string {
+		$post_name = (string) get_post_field( 'post_name', $post_id );
+		if ( '' === $post_name || ! in_array( $type, [ 'header', 'logo' ], true ) || '1' !== get_post_meta( $post_id, self::DEMO_META, true ) ) {
 			return '';
 		}
 
@@ -94,6 +107,10 @@ class DemoDataImporter {
 	 * @return int Número de emisoras creadas o actualizadas.
 	 */
 	public static function import_demo_centers(): int {
+		if ( ! current_user_can( 'manage_radioedu' ) ) {
+			return 0;
+		}
+
 		$plugin_url = RADIOEDU_CONECTA_URL;
 
 		$centros = [
@@ -207,26 +224,31 @@ class DemoDataImporter {
 			// Comprobar si ya existe por slug.
 			$existing = get_page_by_path( $data['slug'], OBJECT, CentroPostType::POST_TYPE );
 			$post_id  = $existing ? $existing->ID : 0;
+			// A matching slug does not establish ownership of existing content.
+			if ( $post_id > 0 && ! self::is_demo_centro( $post_id, $data['cover'] ) ) {
+				continue;
+			}
 
 			$post_args = [
 				'post_title'   => $data['nombre'],
 				'post_name'    => $data['slug'],
 				'post_excerpt' => $data['descripcion'],
-				'post_content' => $data['descripcion'] . "\n\nSomos una emisora escolar comprometida con la red Traspasando Fronteras.",
+				'post_content' => BlockMarkup::paragraphs( $data['descripcion'], 'Somos una emisora escolar comprometida con la red Traspasando Fronteras.' ),
 				'post_status'  => 'publish',
 				'post_type'    => CentroPostType::POST_TYPE,
 			];
 
 			if ( $post_id > 0 ) {
 				$post_args['ID'] = $post_id;
-				wp_update_post( $post_args );
+				$post_id         = wp_update_post( $post_args, true );
 			} else {
-				$post_id = wp_insert_post( $post_args );
+				$post_id = wp_insert_post( $post_args, true );
 			}
 
-			if ( ! $post_id ) {
+			if ( is_wp_error( $post_id ) ) {
 				continue;
 			}
+			update_post_meta( $post_id, self::DEMO_META, '1' );
 
 			update_post_meta( $post_id, '_radioedu_bandera', $data['bandera'] );
 			update_post_meta( $post_id, '_radioedu_lat', $data['lat'] );
@@ -247,20 +269,56 @@ class DemoDataImporter {
 			++$count;
 		}
 
-		// Asegurar que existe una página con el shortcode [radioedu_directorio].
+		// Make sure a page holds the directory block, so the editor shows its preview.
+		$page_content  = get_comment_delimited_block_content( DirectorioShortcode::BLOCK_NAME, [], '' );
 		$existing_page = get_page_by_path( 'traspasando-fronteras' );
 		if ( ! $existing_page ) {
-			wp_insert_post(
+			$page_id = wp_insert_post(
 				[
 					'post_title'   => 'Traspasando Fronteras',
 					'post_name'    => 'traspasando-fronteras',
-					'post_content' => '<!-- wp:shortcode -->[radioedu_directorio]<!-- /wp:shortcode -->',
+					'post_content' => $page_content,
 					'post_status'  => 'publish',
 					'post_type'    => 'page',
-				]
+				],
+				true
 			);
+			if ( ! is_wp_error( $page_id ) ) {
+				update_post_meta( $page_id, self::DEMO_META, '1' );
+				update_option( 'radioedu_conecta_directory_page_id', $page_id, false );
+			}
+		} elseif ( '1' !== get_post_meta( $existing_page->ID, self::DEMO_META, true ) && trim( $existing_page->post_content ) === $page_content ) {
+			// The same slug and content may come from a page made by hand, so it is only recorded as
+			// the directory page. Without the demo marker, uninstall leaves it in place.
+			update_option( 'radioedu_conecta_directory_page_id', $existing_page->ID, false );
 		}
 
 		return $count;
+	}
+
+	/**
+	 * Tells whether an existing centro was created by this importer.
+	 *
+	 * Centros imported before the demo marker existed are recognised by their internal cover URL,
+	 * which only this importer writes and no user can edit. A slug or podcast URL match is not
+	 * enough: coordinators enter their own podcast URL, and the demo ones point to the real
+	 * radioedu.educarex.es domain.
+	 *
+	 * @since 1.1
+	 *
+	 * @param int    $post_id        Existing centro ID.
+	 * @param string $demo_cover_url Cover URL that the importer assigns to this demo centro.
+	 * @return bool True when the importer may overwrite the centro.
+	 */
+	private static function is_demo_centro( int $post_id, string $demo_cover_url ): bool {
+		if ( '1' === get_post_meta( $post_id, self::DEMO_META, true ) ) {
+			return true;
+		}
+
+		// Compare paths only: the site may have moved to another domain since the import.
+		$cover_path = (string) wp_parse_url( (string) get_post_meta( $post_id, '_radioedu_cover_url', true ), PHP_URL_PATH );
+		$demo_file  = '/assets/images/demo/' . basename( (string) wp_parse_url( $demo_cover_url, PHP_URL_PATH ) );
+
+		return str_ends_with( $cover_path, $demo_file );
 	}
 }

@@ -1,0 +1,313 @@
+/**
+ * Directory behaviour fixed after the 2026-10-31 audit: the match panel with a late reply
+ * (F-11), the map with every result (F-12), "Cargar más" and the map keeping the filters of
+ * the search being shown (R-04), reflow at 320 px (F-13) and the page without JavaScript (F-16).
+ *
+ * Map tiles are blocked, so nothing is sent to OpenStreetMap, and the proposal request of the
+ * match panel is answered by the test, so no proposal is stored and no email is sent.
+ */
+const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
+
+const PREFIX = 'Radio E2E robustez';
+const COUNT = 30;
+const CARDS_PER_PAGE = 24;
+
+test.describe( 'Directorio: robustez', () => {
+	const centroIds = [];
+	let pageId = 0;
+	let directoryUrl = '';
+
+	test.beforeAll( async ( { requestUtils } ) => {
+		await requestUtils.activatePlugin( 'radioedu-conecta' );
+		// More stations with coordinates than fit on the first page of cards.
+		for ( let i = 1; i <= COUNT; i++ ) {
+			const centro = await requestUtils.rest( {
+				method: 'POST',
+				path: '/wp/v2/centros',
+				data: {
+					title: `${ PREFIX } ${ String( i ).padStart( 2, '0' ) }`,
+					status: 'publish',
+					meta: {
+						_radioedu_lat: String( 38 + i / 100 ),
+						_radioedu_lng: String( -6.5 + i / 100 ),
+					},
+				},
+			} );
+			centroIds.push( centro.id );
+		}
+		const directoryPage = await requestUtils.rest( {
+			method: 'POST',
+			path: '/wp/v2/pages',
+			data: {
+				title: 'Directorio E2E robustez',
+				status: 'publish',
+				content: '<!-- wp:radioedu-conecta/directorio /-->',
+			},
+		} );
+		pageId = directoryPage.id;
+		directoryUrl = directoryPage.link;
+	} );
+
+	test.afterAll( async ( { requestUtils } ) => {
+		if ( pageId ) {
+			await requestUtils.rest( {
+				method: 'DELETE',
+				path: `/wp/v2/pages/${ pageId }`,
+				params: { force: true },
+			} );
+		}
+		for ( const id of centroIds ) {
+			await requestUtils.rest( {
+				method: 'DELETE',
+				path: `/wp/v2/centros/${ id }`,
+				params: { force: true },
+			} );
+		}
+	} );
+
+	test.beforeEach( async ( { page } ) => {
+		await page.route( '**/tile.openstreetmap.org/**', ( route ) =>
+			route.abort()
+		);
+	} );
+
+	test( 'el mapa muestra todos los resultados, no solo las tarjetas cargadas', async ( {
+		page,
+	} ) => {
+		const tileRequests = [];
+		page.on( 'request', ( request ) => {
+			if ( request.url().includes( 'tile.openstreetmap.org' ) ) {
+				tileRequests.push( request.url() );
+			}
+		} );
+
+		await page.goto( directoryUrl );
+		await expect( page.locator( '.radioedu-card' ) ).toHaveCount(
+			CARDS_PER_PAGE
+		);
+		await expect( page.locator( '#radioedu-js-fallback' ) ).toBeHidden();
+
+		await page.click( '#radioedu-btn-toggle-map' );
+		// No tile is requested before the visitor accepts the map.
+		expect( tileRequests ).toHaveLength( 0 );
+		await page.click( '#radioedu-btn-accept-map' );
+
+		await expect
+			.poll( () => page.locator( '.leaflet-marker-icon' ).count(), {
+				timeout: 30_000,
+			} )
+			.toBeGreaterThanOrEqual( COUNT );
+		await expect( page.locator( '#radioedu-map-note' ) ).toBeHidden();
+	} );
+
+	test( '«Cargar más» conserva los filtros de la búsqueda mostrada', async ( {
+		page,
+	} ) => {
+		await page.goto( directoryUrl );
+		await expect( page.locator( '.radioedu-card' ) ).toHaveCount(
+			CARDS_PER_PAGE
+		);
+
+		// A term typed without pressing "Buscar" belongs to no search yet.
+		await page.fill( '#radioedu-filter-search', 'ZZZ-SIN-RESULTADOS' );
+		const nextPage = page.waitForRequest(
+			( request ) =>
+				request.url().includes( '/radioedu-conecta/v1/centros' ) &&
+				'2' === new URL( request.url() ).searchParams.get( 'page' )
+		);
+		await page.click( '#radioedu-btn-load-more' );
+
+		expect(
+			new URL( ( await nextPage ).url() ).searchParams.get( 'search' )
+		).toBeNull();
+		await expect
+			.poll( () => page.locator( '.radioedu-card' ).count() )
+			.toBeGreaterThan( CARDS_PER_PAGE );
+	} );
+
+	test( 'el mapa pide sus resultados con los filtros de la búsqueda mostrada', async ( {
+		page,
+	} ) => {
+		await page.goto( directoryUrl );
+		await page.fill( '#radioedu-filter-search', PREFIX );
+		await page.click( '#radioedu-btn-buscar' );
+		await expect( page.locator( '.radioedu-card' ) ).toHaveCount(
+			CARDS_PER_PAGE
+		);
+
+		// Edited after searching: the map must keep showing the search above.
+		await page.fill( '#radioedu-filter-search', 'ZZZ-SIN-RESULTADOS' );
+		const mapPage = page.waitForRequest(
+			( request ) =>
+				request.url().includes( '/radioedu-conecta/v1/centros' ) &&
+				'100' ===
+					new URL( request.url() ).searchParams.get( 'per_page' )
+		);
+		await page.click( '#radioedu-btn-toggle-map' );
+		await page.click( '#radioedu-btn-accept-map' );
+
+		expect(
+			new URL( ( await mapPage ).url() ).searchParams.get( 'search' )
+		).toBe( PREFIX );
+		await expect
+			.poll( () => page.locator( '.leaflet-marker-icon' ).count(), {
+				timeout: 30_000,
+			} )
+			.toBe( COUNT );
+	} );
+
+	test( 'una respuesta tardía no cambia el panel abierto para otra radio', async ( {
+		page,
+	} ) => {
+		let release;
+		const held = new Promise( ( resolve ) => ( release = resolve ) );
+		let posted = null;
+		await page.route(
+			'**/radioedu-conecta/v1/colaboraciones**',
+			async ( route ) => {
+				if ( 'POST' !== route.request().method() ) {
+					return route.continue();
+				}
+				posted = route.request().postDataJSON();
+				await held;
+				await route.fulfill( {
+					status: 201,
+					contentType: 'application/json',
+					body: JSON.stringify( {
+						success: true,
+						message: 'Enviada a la radio A',
+						id: 999,
+					} ),
+				} );
+			}
+		);
+
+		await page.goto( directoryUrl );
+		const cardA = page.locator( '.radioedu-card', {
+			hasText: `${ PREFIX } 01`,
+		} );
+		const cardB = page.locator( '.radioedu-card', {
+			hasText: `${ PREFIX } 02`,
+		} );
+		const idA = await cardA.getAttribute( 'data-id' );
+		const idB = await cardB.getAttribute( 'data-id' );
+
+		// Send to A and close the panel while the request is still pending.
+		await cardA.locator( '.radioedu-btn-match' ).click();
+		await expect( page.locator( '#radioedu-match-drawer' ) ).toHaveClass(
+			/is-open/
+		);
+		const sender = page.locator( 'select#radioedu-match-emisor' );
+		if ( await sender.count() ) {
+			const options = await sender
+				.locator( 'option' )
+				.evaluateAll(
+					( nodes, skip ) =>
+						nodes
+							.map( ( node ) => node.value )
+							.filter( ( value ) => value && value !== skip ),
+					idA
+				);
+			await sender.selectOption( options[ 0 ] );
+		}
+		await page.fill( '#radioedu-match-idea', 'Idea para la radio A' );
+		await page.click( '#radioedu-btn-submit-match' );
+		await expect.poll( () => posted ).not.toBeNull();
+		await page.click( '#radioedu-btn-close-drawer' );
+
+		// Open it for B straight away, inside the closing animation, and start a draft.
+		await cardB.locator( '.radioedu-btn-match' ).click();
+		await page.fill( '#radioedu-match-idea', 'Borrador para la radio B' );
+
+		// The reply for A arrives now.
+		const reply = page.waitForResponse(
+			( response ) =>
+				response
+					.url()
+					.includes( '/radioedu-conecta/v1/colaboraciones' ) &&
+				'POST' === response.request().method()
+		);
+		release();
+		await reply;
+
+		expect( String( posted.centro_receptor_id ) ).toBe( idA );
+		await expect( page.locator( '#radioedu-match-drawer' ) ).toBeVisible();
+		await expect( page.locator( '#radioedu-match-receptor' ) ).toHaveValue(
+			idB
+		);
+		await expect(
+			page.locator( '#radioedu-match-receptor-txt' )
+		).toHaveValue( new RegExp( `^${ PREFIX } 02` ) );
+		await expect( page.locator( '#radioedu-match-idea' ) ).toHaveValue(
+			'Borrador para la radio B'
+		);
+		await expect(
+			page.locator( '#radioedu-drawer-feedback' )
+		).not.toContainText( 'Enviada a la radio A' );
+		await expect(
+			page.locator( '#radioedu-btn-submit-match' )
+		).toBeEnabled();
+	} );
+
+	test( 'a 320 px de ancho no hay desplazamiento horizontal', async ( {
+		page,
+	} ) => {
+		await page.setViewportSize( { width: 320, height: 800 } );
+		await page.goto( directoryUrl );
+		await expect( page.locator( '.radioedu-card' ).first() ).toBeVisible();
+
+		const layout = await page.evaluate( () => {
+			const width = document.documentElement.clientWidth;
+			const outside = [];
+			document
+				.querySelectorAll( '#radioedu-conecta-app *' )
+				.forEach( ( element ) => {
+					const box = element.getBoundingClientRect();
+					if (
+						box.width > 0 &&
+						( box.right > width + 1 || box.left < -1 )
+					) {
+						outside.push(
+							String( element.className ).split( ' ' )[ 0 ]
+						);
+					}
+				} );
+			return {
+				width,
+				scrollWidth: document.documentElement.scrollWidth,
+				outside: [ ...new Set( outside ) ],
+			};
+		} );
+
+		expect( layout.outside ).toEqual( [] );
+		expect( layout.scrollWidth ).toBeLessThanOrEqual( layout.width );
+	} );
+
+	test( 'sin JavaScript muestra el número real de radios y un enlace al listado', async ( {
+		browser,
+		requestUtils,
+	} ) => {
+		const directory = await requestUtils.rest( {
+			path: '/radioedu-conecta/v1/centros',
+			params: { per_page: 1 },
+		} );
+
+		const context = await browser.newContext( {
+			javaScriptEnabled: false,
+		} );
+		try {
+			const noScript = await context.newPage();
+			await noScript.goto( directoryUrl );
+			await expect(
+				noScript.locator( '#radioedu-count-number' )
+			).toHaveText( String( directory.total ) );
+
+			const link = noScript.locator( '#radioedu-js-fallback a' );
+			await expect( link ).toBeVisible();
+			await noScript.goto( await link.getAttribute( 'href' ) );
+			await expect( noScript.locator( 'body' ) ).toContainText( PREFIX );
+		} finally {
+			await context.close();
+		}
+	} );
+} );

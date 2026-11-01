@@ -1,0 +1,142 @@
+[
+  {
+    "locale": "ca",
+    "potEntries": 444,
+    "poEntries": 444,
+    "missing": [],
+    "empty": [],
+    "moMismatches": [],
+    "fuzzy": 0,
+    "js": [
+      {
+        "script": "admin",
+        "entries": 4,
+        "locale": "ca",
+        "mismatches": []
+      },
+      {
+        "script": "centro-panel",
+        "entries": 28,
+        "locale": "ca",
+        "mismatches": []
+      },
+      {
+        "script": "directorio",
+        "entries": 18,
+        "locale": "ca",
+        "mismatches": []
+      },
+      {
+        "script": "network-sync",
+        "entries": 28,
+        "locale": "ca",
+        "mismatches": []
+      }
+    ]
+  },
+  {
+    "locale": "ca_valencia",
+    "potEntries": 444,
+    "poEntries": 444,
+    "missing": [],
+    "empty": [],
+    "moMismatches": [],
+    "fuzzy": 0,
+    "js": [
+      {
+        "script": "admin",
+        "entries": 4,
+        "locale": "ca_valencia",
+        "mismatches": []
+      },
+      {
+        "script": "centro-panel",
+        "entries": 28,
+        "locale": "ca_valencia",
+        "mismatches": []
+      },
+      {
+        "script": "directorio",
+        "entries": 18,
+        "locale": "ca_valencia",
+        "mismatches": []
+      },
+      {
+        "script": "network-sync",
+        "entries": 28,
+        "locale": "ca_valencia",
+        "mismatches": []
+      }
+    ]
+  },
+  {
+    "locale": "gl_ES",
+    "potEntries": 444,
+    "poEntries": 444,
+    "missing": [],
+    "empty": [],
+    "moMismatches": [],
+    "fuzzy": 0,
+    "js": [
+      {
+        "script": "admin",
+        "entries": 4,
+        "locale": "gl_ES",
+        "mismatches": []
+      },
+      {
+        "script": "centro-panel",
+        "entries": 28,
+        "locale": "gl_ES",
+        "mismatches": []
+      },
+      {
+        "script": "directorio",
+        "entries": 18,
+        "locale": "gl_ES",
+        "mismatches": []
+      },
+      {
+        "script": "network-sync",
+        "entries": 28,
+        "locale": "gl_ES",
+        "mismatches": []
+      }
+    ]
+  },
+  {
+    "locale": "eu",
+    "potEntries": 444,
+    "poEntries": 444,
+    "missing": [],
+    "empty": [],
+    "moMismatches": [],
+    "fuzzy": 0,
+    "js": [
+      {
+        "script": "admin",
+        "entries": 4,
+        "locale": "eu",
+        "mismatches": []
+      },
+      {
+        "script": "centro-panel",
+        "entries": 28,
+        "locale": "eu",
+        "mismatches": []
+      },
+      {
+        "script": "directorio",
+        "entries": 18,
+        "locale": "eu",
+        "mismatches": []
+      },
+      {
+        "script": "network-sync",
+        "entries": 28,
+        "locale": "eu",
+        "mismatches": []
+      }
+    ]
+  }
+]

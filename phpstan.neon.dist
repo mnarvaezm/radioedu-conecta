@@ -9,3 +9,5 @@ parameters:
         - tests/phpstan-bootstrap.php
     dynamicConstantNames:
         - RADIOEDU_CONECTA_URL
+        # The requirement check compares it with the PHP version of the site, not the analyser's.
+        - RADIOEDU_CONECTA_MIN_PHP

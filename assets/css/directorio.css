@@ -8,7 +8,7 @@
 	--radioedu-teal-primary: #00838f;
 	--radioedu-teal-light: #e0f7fa;
 	--radioedu-teal-hover: #004d40;
-	--radioedu-coral: #e91e63;
+	--radioedu-coral: #ad1457;
 	--radioedu-coral-bg: #fce4ec;
 	--radioedu-mint: #00796b;
 	--radioedu-mint-bg: #e0f2f1;
@@ -39,6 +39,55 @@
 
 .radioedu-app-container * {
 	box-sizing: border-box;
+}
+
+.radioedu-app-container :focus-visible,
+.radioedu-single-profile :focus-visible {
+	outline: 3px solid #006978;
+	outline-offset: 3px;
+}
+
+.radioedu-drawer-form [aria-invalid="true"] {
+	border: 2px solid #b71c1c;
+}
+
+/* Iconos SVG de la API de iconos de WordPress.
+ * wp_get_icon() no fija el color de relleno. */
+.radioedu-svg-icon {
+	width: 1.25em;
+	height: 1.25em;
+	flex-shrink: 0;
+	fill: currentcolor;
+	vertical-align: middle;
+}
+
+.radioedu-filter-label .radioedu-svg-icon,
+.radioedu-form-label .radioedu-svg-icon,
+.radioedu-no-results-icon,
+.radioedu-profile-meta-icon,
+.radioedu-profile-logo-placeholder {
+	color: var(--radioedu-teal-primary);
+}
+
+.radioedu-btn-close .radioedu-svg-icon {
+	display: block;
+	width: 1em;
+	height: 1em;
+}
+
+.radioedu-status-dot {
+	display: inline-block;
+	width: 0.6em;
+	height: 0.6em;
+	margin-right: 2px;
+	border-radius: 50%;
+	background: #2e7d32;
+	vertical-align: middle;
+}
+
+.is-unavailable .radioedu-status-dot {
+	background: #fff;
+	box-shadow: inset 0 0 0 1px #64748b;
 }
 
 /* 1. HERO BANNER */
@@ -158,7 +207,7 @@
 .radioedu-filter-select:focus,
 .radioedu-filter-input:focus {
 	border-color: var(--radioedu-teal-primary);
-	outline: none;
+	outline: 2px solid var(--radioedu-teal-dark);
 	box-shadow: 0 0 0 3px rgba(0, 131, 143, 0.15);
 }
 
@@ -210,6 +259,7 @@
 .radioedu-controls-right {
 	display: flex;
 	align-items: center;
+	flex-wrap: wrap;
 	gap: 16px;
 }
 
@@ -238,16 +288,34 @@
 .radioedu-sort-wrapper {
 	display: flex;
 	align-items: center;
+	flex-wrap: wrap;
+	min-width: 0;
 	gap: 8px;
 }
 
+/* Sits on the theme background, not on a white card: the muted grey
+   falls below 4.5:1 on tinted backgrounds. */
 .radioedu-sort-label {
 	font-size: 0.88rem;
-	color: var(--radioedu-text-muted);
+	color: #475569;
+}
+
+.radioedu-map-note {
+	margin: 12px 0 0;
+	font-size: 0.88rem;
+	color: #475569;
+}
+
+.radioedu-js-fallback {
+	padding: 16px;
+	border: 1px solid var(--radioedu-border);
+	border-radius: var(--radioedu-radius-md);
+	background: #fff;
 }
 
 .radioedu-sort-select {
 	height: 38px;
+	max-width: 100%;
 	border: 1px solid #cbd5e1;
 	border-radius: var(--radioedu-radius-md);
 	padding: 0 10px;
@@ -258,7 +326,10 @@
 /* 4. CARDS GRID */
 .radioedu-cards-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+
+	/* min() keeps one column in containers narrower than 320px
+	   (WCAG 1.4.10 reflow). */
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
 	gap: 24px;
 }
 
@@ -571,7 +642,7 @@
 .radioedu-form-select:focus,
 .radioedu-form-textarea:focus {
 	border-color: var(--radioedu-teal-primary);
-	outline: none;
+	outline: 2px solid var(--radioedu-teal-dark);
 	box-shadow: 0 0 0 3px rgba(0, 131, 143, 0.15);
 }
 
@@ -641,6 +712,14 @@
 	color: var(--radioedu-text-muted);
 }
 
+.radioedu-guide-step .radioedu-svg-icon {
+	display: block;
+	width: 1.75rem;
+	height: 1.75rem;
+	margin: 0 auto 4px;
+	color: var(--radioedu-teal-primary);
+}
+
 .radioedu-guide-arrow {
 	color: #94a3b8;
 	font-size: 0.9rem;
@@ -694,11 +773,11 @@
    6. VISTA DE PERFIL INDIVIDUAL DE EMISORA ESCOLAR (single-radioedu_centro)
    ========================================================================== */
 
-body.single-radioedu_centro .wp-block-post-title,
-body.single-radioedu_centro .wp-block-post-date,
-body.single-radioedu_centro .entry-header,
-body.single-radioedu_centro main > .wp-block-separator {
-	display: none !important;
+/* The profile page templates print only the theme header and footer
+ * around the profile, so the theme's title, meta and featured image
+ * are not repeated (no CSS hiding needed). */
+.radioedu-profile-page {
+	padding: 0 16px;
 }
 
 .radioedu-single-profile {
@@ -706,7 +785,7 @@ body.single-radioedu_centro main > .wp-block-separator {
 	color: var(--radioedu-text-dark);
 	max-width: 980px !important;
 	width: 100%;
-	margin: 0 auto 48px auto;
+	margin: 32px auto 48px auto;
 	box-sizing: border-box;
 }
 
@@ -724,7 +803,7 @@ body.single-radioedu_centro main > .wp-block-separator {
 	gap: 6px;
 	font-size: 0.92rem;
 	font-weight: 600;
-	color: var(--radioedu-teal-primary);
+	color: var(--radioedu-teal-dark); /* 5.7:1 on the light teal; the primary teal is 4.1:1. */
 	text-decoration: none;
 	padding: 6px 12px;
 	border-radius: var(--radioedu-radius-md);
@@ -734,7 +813,7 @@ body.single-radioedu_centro main > .wp-block-separator {
 
 .radioedu-profile-back-link:hover {
 	background: #b2ebf2;
-	color: var(--radioedu-teal-dark);
+	color: var(--radioedu-teal-hover);
 }
 
 .radioedu-profile-card {

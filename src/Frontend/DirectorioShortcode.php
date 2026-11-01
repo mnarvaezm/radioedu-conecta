@@ -14,6 +14,8 @@ use RadioEdu\Conecta\Admin\Settings;
 use RadioEdu\Conecta\PostTypes\CentroPostType;
 use RadioEdu\Conecta\Rest\ColaboracionesController;
 use RadioEdu\Conecta\Taxonomies\TaxonomiesRegistrar;
+use WP_HTML_Tag_Processor;
+use WP_Post;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -28,6 +30,21 @@ class DirectorioShortcode {
 	public const SHORTCODE_TAG = 'radioedu_directorio';
 
 	/**
+	 * Name of the directory block, an editor-friendly equivalent of the shortcode.
+	 */
+	public const BLOCK_NAME = 'radioedu-conecta/directorio';
+
+	/**
+	 * Option with the ID of the page that shows the directory.
+	 */
+	public const DIRECTORY_PAGE_OPTION = 'radioedu_conecta_directory_page_id';
+
+	/**
+	 * Name of the profile page block template (plugin namespace + hierarchy slug).
+	 */
+	public const PROFILE_BLOCK_TEMPLATE = 'radioedu-conecta//single-radioedu_centro';
+
+	/**
 	 * Controla que window.radioeduConectaData no se inyecte más de una vez por petición.
 	 *
 	 * @var bool
@@ -35,24 +52,353 @@ class DirectorioShortcode {
 	private static bool $inline_data_added = false;
 
 	/**
-	 * Registra el shortcode y el filtro de perfil individual en WordPress.
+	 * Registra el shortcode, el bloque y el filtro de perfil individual en WordPress.
 	 */
 	public static function register(): void {
 		add_shortcode( self::SHORTCODE_TAG, [ self::class, 'render_shortcode' ] );
-		add_action( 'wp_enqueue_scripts', [ self::class, 'register_assets' ] );
+		// Assets are registered on init so the block can declare its stylesheet for the editor.
+		add_action( 'init', [ self::class, 'register_assets' ] );
+		add_action( 'init', [ self::class, 'register_block' ] );
+		add_action( 'wp_enqueue_scripts', [ self::class, 'enqueue_assets' ] );
 		add_filter( 'the_content', [ self::class, 'render_single_centro_profile' ], 20 );
+		// The profile page shows only the theme header and footer around the profile, without the
+		// theme's post title, author/date meta and featured image, which the profile already has.
+		add_action( 'init', [ self::class, 'register_profile_block_template' ] );
+		add_filter( 'template_include', [ self::class, 'use_profile_page_template' ], 20 );
+		// The profile uses the featured image as its cover, so the theme must not print it again.
+		add_filter( 'has_post_thumbnail', [ self::class, 'hide_theme_featured_image' ], 10, 2 );
+		add_filter( 'post_thumbnail_html', [ self::class, 'hide_theme_featured_image_html' ], 10, 2 );
+	}
+
+	/**
+	 * Registers the profile page template for block themes.
+	 *
+	 * It is the most specific template of the hierarchy for centros (single-radioedu_centro),
+	 * so it replaces the theme's single template. A theme template with the same slug, or a
+	 * version edited in the Site Editor, takes precedence.
+	 *
+	 * @since 1.1
+	 */
+	public static function register_profile_block_template(): void {
+		if ( ! wp_is_block_theme() ) {
+			return;
+		}
+
+		register_block_template(
+			self::PROFILE_BLOCK_TEMPLATE,
+			[
+				'title'       => __( 'Ficha de centro de radio', 'radioedu-conecta' ),
+				'description' => __( 'Perfil público de un centro: cabecera y pie del tema alrededor de la ficha, sin repetir su título, autor, fecha ni imagen de cabecera.', 'radioedu-conecta' ),
+				'content'     => '<!-- wp:template-part {"slug":"header","tagName":"header"} /-->'
+					. '<!-- wp:group {"tagName":"main","layout":{"type":"constrained","contentSize":"980px"}} -->'
+					. '<main class="wp-block-group"><!-- wp:post-content /--></main>'
+					. '<!-- /wp:group -->'
+					. '<!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->',
+			]
+		);
+	}
+
+	/**
+	 * Uses the plugin's profile page template with classic themes.
+	 *
+	 * Only replaces the generic templates (single.php, singular.php, index.php): a theme template
+	 * made for centros or a page builder template is kept. Themes can override the plugin file
+	 * with radioedu-conecta/single-radioedu_centro.php.
+	 *
+	 * @since 1.1
+	 *
+	 * @param string $template Template file chosen by WordPress.
+	 * @return string Template file to load.
+	 */
+	public static function use_profile_page_template( string $template ): string {
+		if ( wp_is_block_theme() || is_embed() || ! is_singular( CentroPostType::POST_TYPE )
+			|| ! in_array( basename( $template ), [ 'single.php', 'singular.php', 'index.php' ], true ) ) {
+			return $template;
+		}
+
+		$theme_override = locate_template( 'radioedu-conecta/single-' . CentroPostType::POST_TYPE . '.php' );
+
+		return '' !== $theme_override ? $theme_override : RADIOEDU_CONECTA_DIR . 'templates/theme-single-centro.php';
+	}
+
+	/**
+	 * Works out the <main> landmark the classic profile template must provide.
+	 *
+	 * The template replaces the theme's single template, which is where most classic themes open
+	 * <main> (Twenty Twenty, for example); a few open it in header.php (Twenty Twenty-One). The
+	 * template opens <main> only when the header left none open, and gives it the target of the
+	 * theme's skip link when the header does not contain that target.
+	 *
+	 * @since 1.1
+	 *
+	 * @param string $header_html Markup printed by the theme's get_header().
+	 * @return array{main: bool, id: string} Whether to open <main>, and its id ('' for none).
+	 */
+	public static function profile_main_landmark( string $header_html ): array {
+		$tags        = new WP_HTML_Tag_Processor( $header_html );
+		$open_main   = 0;
+		$ids         = [];
+		$skip_target = '';
+
+		while ( $tags->next_tag( [ 'tag_closers' => 'visit' ] ) ) {
+			if ( 'MAIN' === $tags->get_tag() ) {
+				$open_main += $tags->is_tag_closer() ? -1 : 1;
+				continue;
+			}
+			if ( $tags->is_tag_closer() ) {
+				continue;
+			}
+
+			$id = $tags->get_attribute( 'id' );
+			if ( is_string( $id ) ) {
+				$ids[ $id ] = true;
+			}
+
+			$href = $tags->get_attribute( 'href' );
+			if ( '' === $skip_target && 'A' === $tags->get_tag() && $tags->has_class( 'skip-link' ) && is_string( $href ) && str_starts_with( $href, '#' ) ) {
+				$skip_target = substr( $href, 1 );
+			}
+		}
+
+		if ( $open_main > 0 ) {
+			return [
+				'main' => false,
+				'id'   => '',
+			];
+		}
+
+		return [
+			'main' => true,
+			'id'   => '' !== $skip_target && ! isset( $ids[ $skip_target ] ) ? $skip_target : '',
+		];
+	}
+
+	/**
+	 * Tells the theme that the centro shown on its profile page has no featured image.
+	 *
+	 * The profile template reads the cover with get_the_post_thumbnail_url(), which these filters
+	 * do not affect.
+	 *
+	 * @since 1.1
+	 *
+	 * @param bool  $has_thumbnail Whether the post has a featured image.
+	 * @param mixed $post          Post ID, object or null for the current post.
+	 * @return bool False for the centro of the current profile page.
+	 */
+	public static function hide_theme_featured_image( bool $has_thumbnail, mixed $post = null ): bool {
+		return $has_thumbnail && ! self::is_profile_centro( $post );
+	}
+
+	/**
+	 * Removes the theme's featured image markup on the centro profile page.
+	 *
+	 * Covers themes that print the image without checking has_post_thumbnail() first, and the
+	 * Post Featured Image block of block themes.
+	 *
+	 * @since 1.1
+	 *
+	 * @param string $html    Featured image markup.
+	 * @param mixed  $post_id Post ID.
+	 * @return string Empty for the centro of the current profile page.
+	 */
+	public static function hide_theme_featured_image_html( string $html, mixed $post_id = null ): string {
+		return self::is_profile_centro( $post_id ) ? '' : $html;
+	}
+
+	/**
+	 * Checks whether a post is the centro of the profile page being rendered.
+	 *
+	 * The page <head> is excluded, so Open Graph and SEO plugins keep the image.
+	 *
+	 * @param mixed $post Post ID, object or null for the current post.
+	 * @return bool Whether the post is the queried centro of a front-end profile page.
+	 */
+	private static function is_profile_centro( mixed $post ): bool {
+		if ( is_admin() || doing_action( 'wp_head' ) || ! is_singular( CentroPostType::POST_TYPE ) ) {
+			return false;
+		}
+
+		$post = get_post( $post instanceof WP_Post ? $post : ( is_numeric( $post ) ? (int) $post : null ) );
+
+		return $post instanceof WP_Post && get_queried_object_id() === $post->ID;
+	}
+
+	/**
+	 * Registra el bloque del directorio a partir de blocks/directorio/block.json.
+	 *
+	 * The metadata (title, description, keywords, supports and style) lives in block.json, and
+	 * WordPress translates it with the plugin text domain. There is no editor JavaScript: with
+	 * `autoRegister` (WordPress 7.0+) the editor registers the block itself and previews it with
+	 * ServerSideRender, so the block and the shortcode share the same rendering. The directory
+	 * uses fixed IDs in its markup, which is why block.json allows one instance per post.
+	 *
+	 * @since 1.1
+	 */
+	public static function register_block(): void {
+		register_block_type(
+			RADIOEDU_CONECTA_DIR . 'blocks/directorio',
+			[
+				'render_callback' => [ self::class, 'render_block' ],
+			]
+		);
+	}
+
+	/**
+	 * Renderiza el bloque del directorio reutilizando la salida del shortcode.
+	 *
+	 * @since 1.1
+	 *
+	 * @return string Salida HTML del bloque.
+	 */
+	public static function render_block(): string {
+		return sprintf( '<div %s>%s</div>', get_block_wrapper_attributes(), self::render_shortcode() );
+	}
+
+	/**
+	 * Returns the URL of the directory, for the "Volver al directorio" link of the profiles.
+	 *
+	 * Uses the recorded directory page while it is published and still shows the directory, then
+	 * the page with the demo slug, then the home page.
+	 *
+	 * @since 1.1
+	 *
+	 * @return string Directory URL.
+	 */
+	public static function get_directory_url(): string {
+		$page_id = (int) get_option( self::DIRECTORY_PAGE_OPTION, 0 );
+		if ( ! self::is_directory_page( $page_id ) ) {
+			$fallback = get_page_by_path( 'traspasando-fronteras' );
+			$page_id  = $fallback && self::is_directory_page( $fallback->ID ) ? $fallback->ID : 0;
+		}
+		$url = $page_id > 0 ? (string) get_permalink( $page_id ) : home_url( '/' );
+
+		/**
+		 * Filters the URL of the "Volver al directorio" link on the station profiles.
+		 *
+		 * @since 1.1
+		 *
+		 * @param string $url     Directory URL.
+		 * @param int    $page_id ID of the directory page, or 0 when none was found.
+		 */
+		return (string) apply_filters( 'radioedu_conecta_directory_url', $url, $page_id );
+	}
+
+	/**
+	 * Remembers the page that shows the directory, when no valid one is recorded yet.
+	 *
+	 * Runs when the shortcode or the block renders, so the profiles link back to wherever the
+	 * directory was placed. A recorded page that still shows the directory is kept.
+	 *
+	 * @since 1.1
+	 */
+	private static function remember_directory_page(): void {
+		$page_id = is_singular() ? (int) get_queried_object_id() : 0;
+		if ( $page_id <= 0 || ! self::is_directory_page( $page_id ) || self::is_directory_page( (int) get_option( self::DIRECTORY_PAGE_OPTION, 0 ) ) ) {
+			return;
+		}
+
+		update_option( self::DIRECTORY_PAGE_OPTION, $page_id, false );
+	}
+
+	/**
+	 * Tells whether a post is published, public and shows the directory.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return bool True for a published post without password that holds the shortcode or the block.
+	 */
+	private static function is_directory_page( int $post_id ): bool {
+		$post = $post_id > 0 ? get_post( $post_id ) : null;
+		if ( ! $post instanceof \WP_Post || 'publish' !== $post->post_status || '' !== $post->post_password ) {
+			return false;
+		}
+
+		return self::content_shows_directory( $post->post_content, [] );
+	}
+
+	/**
+	 * Tells whether content holds the directory, directly or inside synced patterns.
+	 *
+	 * A page may show the directory through a synced pattern (a core/block that references a
+	 * wp_block post). Those are opened too, up to five levels, and each one only once.
+	 *
+	 * @since 1.1
+	 *
+	 * @param string          $content Post content.
+	 * @param array<int, int> $opened  IDs of the synced patterns already opened.
+	 * @return bool True when the shortcode or the block is found.
+	 */
+	private static function content_shows_directory( string $content, array $opened ): bool {
+		if ( has_shortcode( $content, self::SHORTCODE_TAG ) || has_block( self::BLOCK_NAME, $content ) ) {
+			return true;
+		}
+		if ( count( $opened ) >= 5 || ! has_block( 'core/block', $content ) ) {
+			return false;
+		}
+
+		foreach ( self::synced_pattern_ids( parse_blocks( $content ) ) as $pattern_id ) {
+			if ( in_array( $pattern_id, $opened, true ) ) {
+				continue;
+			}
+			$pattern = get_post( $pattern_id );
+			if ( $pattern instanceof \WP_Post && 'wp_block' === $pattern->post_type && 'publish' === $pattern->post_status
+				&& self::content_shows_directory( $pattern->post_content, array_merge( $opened, [ $pattern_id ] ) ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Lists the synced patterns referenced by some blocks, including nested ones.
+	 *
+	 * @param array<int, array<string, mixed>> $blocks Parsed blocks.
+	 * @return array<int, int> Referenced wp_block IDs.
+	 */
+	private static function synced_pattern_ids( array $blocks ): array {
+		$ids = [];
+		foreach ( $blocks as $block ) {
+			$attrs = isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : [];
+			if ( 'core/block' === ( $block['blockName'] ?? '' ) && ! empty( $attrs['ref'] ) ) {
+				$ids[] = (int) $attrs['ref'];
+			}
+			if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
+				$ids = array_merge( $ids, self::synced_pattern_ids( $block['innerBlocks'] ) );
+			}
+		}
+
+		return $ids;
+	}
+
+	/**
+	 * Encola en el <head> los estilos de las páginas que muestran el directorio o una ficha.
+	 *
+	 * Los renderizadores también encolan sus assets, pero hacerlo aquí evita que la página se
+	 * pinte sin estilos en los temas clásicos, que procesan el contenido después de wp_head.
+	 *
+	 * @since 1.1
+	 */
+	public static function enqueue_assets(): void {
+		if ( is_singular( CentroPostType::POST_TYPE ) ) {
+			wp_enqueue_style( 'radioedu-directorio-css' );
+			wp_enqueue_script( 'radioedu-directorio-js' );
+		}
+
+		$post = get_post();
+		if ( $post instanceof \WP_Post && ( has_shortcode( $post->post_content, self::SHORTCODE_TAG ) || has_block( self::BLOCK_NAME, $post ) ) ) {
+			wp_enqueue_style( 'radioedu-leaflet-css' );
+			wp_enqueue_style( 'radioedu-directorio-css' );
+		}
 	}
 
 	/**
 	 * Registra los assets de front-end para su posterior encolado condicional.
 	 */
 	public static function register_assets(): void {
-		$css_ver = file_exists( RADIOEDU_CONECTA_DIR . 'assets/css/directorio.css' )
+		$css_ver    = file_exists( RADIOEDU_CONECTA_DIR . 'assets/css/directorio.css' )
 			? (string) filemtime( RADIOEDU_CONECTA_DIR . 'assets/css/directorio.css' )
 			: RADIOEDU_CONECTA_VERSION;
-		$js_ver  = file_exists( RADIOEDU_CONECTA_DIR . 'assets/js/directorio.js' )
-			? (string) filemtime( RADIOEDU_CONECTA_DIR . 'assets/js/directorio.js' )
-			: RADIOEDU_CONECTA_VERSION;
+		$asset_file = RADIOEDU_CONECTA_DIR . 'build/directorio.asset.php';
 
 		wp_register_style(
 			'radioedu-directorio-css',
@@ -80,23 +426,24 @@ class DirectorioShortcode {
 			]
 		);
 
-		// Leaflet no es dependencia: directorio.js comprueba su presencia al activar el mapa,
-		// así la ficha individual no descarga la librería del mapa.
-		wp_register_script(
-			'radioedu-directorio-js',
-			RADIOEDU_CONECTA_URL . 'assets/js/directorio.js',
-			[ 'wp-a11y' ],
-			$js_ver,
-			[
-				'in_footer' => true,
-				'strategy'  => 'defer',
-			]
-		);
+		// The source uses ES imports, so only the compiled bundle can run. Without a build the
+		// script is skipped and the page degrades to static markup instead of a fatal error.
+		if ( is_readable( $asset_file ) ) {
+			$asset = require $asset_file;
 
-		// Encolar estilos y script del drawer en la página de perfil individual de una emisora.
-		if ( is_singular( CentroPostType::POST_TYPE ) ) {
-			wp_enqueue_style( 'radioedu-directorio-css' );
-			wp_enqueue_script( 'radioedu-directorio-js' );
+			// Leaflet no es dependencia: directorio.js comprueba su presencia al activar el mapa,
+			// así la ficha individual no descarga la librería del mapa.
+			wp_register_script(
+				'radioedu-directorio-js',
+				RADIOEDU_CONECTA_URL . 'build/directorio.js',
+				$asset['dependencies'],
+				$asset['version'],
+				[
+					'in_footer' => true,
+					'strategy'  => 'defer',
+				]
+			);
+			wp_set_script_translations( 'radioedu-directorio-js', 'radioedu-conecta', RADIOEDU_CONECTA_DIR . 'languages' );
 		}
 	}
 
@@ -142,27 +489,7 @@ class DirectorioShortcode {
 					'lng'  => (float) Settings::get( 'default_lng', '-6.3708' ),
 					'zoom' => (int) Settings::get( 'default_zoom', 8 ),
 				],
-				'i18n'           => [
-					/* translators: %s: Number of schools found. */
-					'resultsCount'     => __( 'Resultados (%s centros)', 'radioedu-conecta' ),
-					'noResults'        => __( 'No se encontraron centros con los filtros seleccionados.', 'radioedu-conecta' ),
-					'loading'          => __( 'Cargando centros...', 'radioedu-conecta' ),
-					'viewProfile'      => __( 'Ver perfil', 'radioedu-conecta' ),
-					'proposeMatch'     => __( 'Proponer match', 'radioedu-conecta' ),
-					'submitProposal'   => __( 'Enviar propuesta', 'radioedu-conecta' ),
-					'unavailable'      => __( 'No disponible', 'radioedu-conecta' ),
-					'favorite'         => __( 'Añadir a favoritos', 'radioedu-conecta' ),
-					'unfavorite'       => __( 'Quitar de favoritos', 'radioedu-conecta' ),
-					'defaultLocation'  => __( 'Extremadura', 'radioedu-conecta' ),
-					'sending'          => __( 'Enviando propuesta...', 'radioedu-conecta' ),
-					'sendSuccess'      => __( '¡Propuesta enviada con éxito!', 'radioedu-conecta' ),
-					'loginRequired'    => __( 'Debes iniciar sesión con tu cuenta de coordinador de centro para enviar propuestas de colaboración.', 'radioedu-conecta' ),
-					'noPermission'     => __( 'Tu cuenta actual no dispone de permisos de coordinador para proponer colaboraciones.', 'radioedu-conecta' ),
-					'selectYourCenter' => __( 'Por favor, selecciona tu centro escolar.', 'radioedu-conecta' ),
-					'errorOccurred'    => __( 'Ha ocurrido un error al procesar la solicitud.', 'radioedu-conecta' ),
-					'logIn'            => __( 'Iniciar sesión', 'radioedu-conecta' ),
-					'mapAttribution'   => __( 'Colaboradores de OpenStreetMap', 'radioedu-conecta' ),
-				],
+
 			];
 
 			wp_add_inline_script(
@@ -212,7 +539,7 @@ class DirectorioShortcode {
 		}
 
 		$post_id = (int) get_the_ID();
-		if ( $post_id <= 0 ) {
+		if ( $post_id <= 0 || post_password_required( $post_id ) ) {
 			return $content;
 		}
 
@@ -234,12 +561,11 @@ class DirectorioShortcode {
 		}
 
 		// Fallback para centros de ejemplo si no tienen imagen personalizada asignada.
-		$post_name = (string) get_post_field( 'post_name', $post_id );
 		if ( '' === $cover_url ) {
-			$cover_url = DemoDataImporter::get_demo_image_url( $post_name, 'header' );
+			$cover_url = DemoDataImporter::get_demo_image_url( $post_id, 'header' );
 		}
 		if ( '' === $logo_url ) {
-			$logo_url = DemoDataImporter::get_demo_image_url( $post_name, 'logo' );
+			$logo_url = DemoDataImporter::get_demo_image_url( $post_id, 'logo' );
 		}
 		$cover_url = self::css_safe_url( $cover_url );
 
@@ -285,9 +611,7 @@ class DirectorioShortcode {
 			}
 		}
 
-		// URL de retorno al directorio Traspasando Fronteras.
-		$directorio_page = get_page_by_path( 'traspasando-fronteras' );
-		$directorio_url  = $directorio_page ? (string) get_permalink( $directorio_page->ID ) : home_url( '/' );
+		$directorio_url = self::get_directory_url();
 
 		$raw_description_html = $content;
 
@@ -340,7 +664,9 @@ class DirectorioShortcode {
 	 * @param array<string, mixed>|string $atts Atributos del shortcode.
 	 * @return string Salida HTML del directorio.
 	 */
-	public static function render_shortcode( $atts = [] ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+	public static function render_shortcode( array|string $atts = [] ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- WordPress supplies shortcode attributes.
+		self::remember_directory_page();
+
 		if ( ! wp_style_is( 'radioedu-directorio-css', 'registered' ) ) {
 			self::register_assets();
 		}
@@ -391,6 +717,20 @@ class DirectorioShortcode {
 		// El receptor del panel lateral se rellena desde JS al pulsar "Proponer match" en una tarjeta.
 		$drawer_receptor_id    = 0;
 		$drawer_receptor_label = '';
+
+		// Shown before the script runs, and kept when it cannot run: the real count, and a link to the
+		// post type archive, which the theme lists without JavaScript.
+		$total_query   = new \WP_Query(
+			[
+				'post_type'      => CentroPostType::POST_TYPE,
+				'post_status'    => 'publish',
+				'has_password'   => false,
+				'posts_per_page' => 1,
+				'fields'         => 'ids',
+			]
+		);
+		$total_centros = (int) $total_query->found_posts;
+		$archive_url   = (string) get_post_type_archive_link( CentroPostType::POST_TYPE );
 
 		ob_start();
 		include RADIOEDU_CONECTA_DIR . 'templates/directorio.php';

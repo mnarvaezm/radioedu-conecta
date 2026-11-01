@@ -1,0 +1,4 @@
+{"locale":"ca","php_entries":444,"mo_entries":444,"mismatches":[]}
+{"locale":"ca_valencia","php_entries":444,"mo_entries":444,"mismatches":[]}
+{"locale":"gl_ES","php_entries":444,"mo_entries":444,"mismatches":[]}
+{"locale":"eu","php_entries":444,"mo_entries":444,"mismatches":[]}

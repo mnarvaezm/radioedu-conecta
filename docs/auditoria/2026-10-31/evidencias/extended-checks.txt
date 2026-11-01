@@ -1,0 +1,6 @@
+rate_interleaving: {"start_count":9,"outer_status":201,"inner_status":201,"counter":{"count":10,"expires":1793477019},"distinct_ids":[2,1]}
+notification_disabled_message: "¡Propuesta de match enviada con éxito! La emisora receptora recibirá una notificación para comenzar a coordinar el proyecto."
+failed_response: {"code":"radioedu_already_resolved","status":409,"stored_state":"pendiente"}
+admin_default_affinity: {"expected_alphabetic":[74,75,76],"actual_relative_order":[74,76,75]}
+unmarked_demo_image: {"marker":"","logo":"http:\/\/localhost:8092\/wp-content\/plugins\/radioedu-conecta\/assets\/images\/demo\/logo-san-jose.jpg"}
+rendered_embed_kses: {"before":"<figure><iframe src=\"https:\/\/example.invalid\/embed\" title=\"Podcast\"><\/iframe><\/figure>","after":"<figure><\/figure>"}

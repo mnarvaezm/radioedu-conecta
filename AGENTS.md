@@ -54,6 +54,26 @@ radioedu-conecta/
 - **Namespaces y Prefijos**:
   - Namespace PHP único para clases: `RadioEdu\Conecta\...` (con autoload PSR-4 de Composer).
   - Prefijo único para funciones globales, constantes, hooks (`actions`/`filters`) y opciones en la BD: `radioedu_conecta_` (mínimo 4–5 caracteres, nunca `wp_` ni `__`).
+  - **Excepciones heredadas (inventario cerrado).** Estos identificadores se crearon con el prefijo corto `radioedu_` (o `radioedu-`) antes de esta regla. Se mantienen porque renombrarlos rompería datos guardados, enlaces, capacidades asignadas o integraciones. El prefijo sigue siendo propio del proyecto y no choca con WordPress. **No se añaden identificadores nuevos con el prefijo corto**: todo lo nuevo usa `radioedu_conecta_` (o `radioedu-conecta` en handles, slugs y ámbitos). Si alguna vez se renombran, hará falta una migración de datos y un periodo de compatibilidad.
+
+    | Tipo | Identificadores | Qué se rompería al renombrar |
+    | --- | --- | --- |
+    | Tipo de contenido y taxonomías | `radioedu_centro`; `radioedu_etapa`, `radioedu_idioma`, `radioedu_tematica`, `radioedu_formato`, `radioedu_localizacion` | Posts y términos guardados, URL públicas y plantillas de tema |
+    | Metadatos de centro | `_radioedu_bandera`, `_radioedu_lat`, `_radioedu_lng`, `_radioedu_edades`, `_radioedu_podcast_url`, `_radioedu_web_centro`, `_radioedu_coordinador_email`, `_radioedu_coordinador_nombre`, `_radioedu_disponible_colaborar`, `_radioedu_logo_id`, `_radioedu_logo_url`, `_radioedu_cover_url`, `_radioedu_source_blog_id` | Datos de todas las fichas existentes |
+    | Capacidades | `manage_radioedu`, `propose_radioedu_colaboracion`, `create_radioedu_centros` (dinámica) y las del tipo de contenido (`edit_radioedu_centros`, `edit_others_radioedu_centros`, `publish_radioedu_centros`, `delete_radioedu_centros`…) | Roles ya asignados en cada sitio |
+    | Tabla propia | `{prefix}radioedu_colaboraciones` | Todas las propuestas guardadas |
+    | Shortcode | `radioedu_directorio` | Páginas que ya lo usan |
+    | Transient | `radioedu_rate_{user_id}` | Ninguno grave: caduca en una hora |
+    | Acciones `admin-post`, nonces y secciones de ajustes | `radioedu_import_demo_data`, `radioedu_respond_match`; `radioedu_import_demo_nonce(_action)`, `radioedu_respond_match_nonce(_action)`, `radioedu_centro_meta_nonce(_action)`; `radioedu_map_section`, `radioedu_email_section`, `radioedu_coordinators_section`; caja de metadatos `radioedu_centro_detalles` | Formularios abiertos durante una actualización |
+    | Nombres de campos de formulario | `radioedu_bandera`, `radioedu_lat`, `radioedu_lng`, `radioedu_edades`, `radioedu_podcast_url`, `radioedu_web_centro`, `radioedu_coordinador_email`, `radioedu_coordinador_nombre`, `radioedu_disponible_colaborar`, `radioedu_logo_id` (metabox) y `radioedu_max_centros_per_user` (ajustes) | Nada persistente; se mantienen por coherencia con los metadatos |
+    | Códigos de error REST | `radioedu_forbidden`, `radioedu_rate_limit`, `radioedu_already_resolved`, `radioedu_centro_limit`, `radioedu_sync_busy`, `radioedu_db_error`… | Clientes que comprueban el código del error |
+    | Handles de scripts y estilos | `radioedu-directorio-js`, `radioedu-directorio-css`, `radioedu-leaflet-js`, `radioedu-leaflet-css`, `radioedu-network-sync` | Temas o plugins que los desencolan o dependen de ellos |
+    | Claves del navegador | `radioedu_favoritos` (localStorage), `radioedu_osm_consent` (sessionStorage) | Favoritos y consentimiento del mapa ya guardados |
+    | Parámetros de URL del escritorio | `match_updated`, `match_notice` (pantalla Colaboraciones), `demo_imported` (Ajustes) | Nada persistente; solo se leen en las páginas del plugin |
+    | Grupos e ítems de exportación de datos personales | `radioedu_centros`, `radioedu_colaboraciones`; `radioedu-centro-{id}`, `radioedu-colab-{id}` | Comparación con exportaciones anteriores |
+    | Clases CSS e ids HTML | `radioedu-*` | Personalizaciones de tema; no son identificadores globales de PHP |
+
+    Los DocBlocks antiguos no siempre tienen `@since`: se añade al tocar ese código, y todo lo nuevo lo lleva desde el principio.
 - **Bootstrap ligero**: Enganchar la inicialización en el hook `plugins_loaded`. No ejecutar lógica pesada al incluir el fichero principal.
 - **Activación y Desactivación**:
   - `register_activation_hook` y `register_deactivation_hook` deben registrarse en el fichero principal.
@@ -170,7 +190,11 @@ radioedu-conecta/
 - Sustituciones dinámicas mediante `sprintf()` o `printf()`, incluyendo comentario aclaratorio para traductores: `/* translators: ... */`.
 - En JavaScript: usar `@wordpress/i18n` (`wp.i18n`) y registrar traducciones con `wp_set_script_translations()`.
 - Generar plantilla de traducción `.pot` mediante `wp i18n make-pot`.
-- El idioma base del código y los comentarios debe ser el inglés.
+- **Idioma base**:
+  - **Cadenas de origen (`msgid`):** en español, el idioma del público del plugin (centros educativos de Extremadura). El plugin incluye traducciones al catalán (`ca`), valenciano (`ca_valencia`), gallego (`gl_ES`) y euskera (`eu`). Toda cadena nueva o modificada se traduce a esos cuatro idiomas en el mismo cambio (`.po`, `.mo`, `.l10n.php` y, si es de JavaScript, los `.json`).
+  - **Identificadores:** en inglés (clases, métodos, variables, hooks, claves de arrays).
+  - **Comentarios y DocBlocks:** en inglés en el código nuevo. Los comentarios en español que ya existen se mantienen y se traducen solo al reescribir ese código.
+  - **Si se publica en WordPress.org:** translate.wordpress.org trabajará a partir de las cadenas en español. Pasarlas al inglés obligaría a cambiar todos los `msgid` y rehacer las traducciones; sería una decisión aparte.
 
 ---
 

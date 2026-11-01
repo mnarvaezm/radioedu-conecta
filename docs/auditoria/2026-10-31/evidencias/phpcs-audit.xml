@@ -1,0 +1,71 @@
+﻿<?xml version="1.0"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="RadioEdu Conecta Coding Standards" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/PHPCSStandards/PHP_CodeSniffer/master/phpcs.xsd">
+	<description>WordPress Coding Standards configuration for RadioEdu Conecta.</description>
+
+	<file>/var/www/html/wp-content/plugins/radioedu-conecta/radioedu-conecta.php</file>
+	<file>/var/www/html/wp-content/plugins/radioedu-conecta/uninstall.php</file>
+	<file>/var/www/html/wp-content/plugins/radioedu-conecta/src</file>
+	<file>/var/www/html/wp-content/plugins/radioedu-conecta/templates</file>
+
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/tests/*</exclude-pattern>
+
+	<arg value="sp"/>
+	<arg name="basepath" value="."/>
+	<arg name="colors"/>
+	<arg name="extensions" value="php"/>
+	<arg name="parallel" value="8"/>
+
+	<config name="testVersion" value="8.1-"/>
+	<config name="minimum_wp_version" value="7.1"/>
+
+	<rule ref="WordPress">
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
+		<exclude name="Universal.Operators.DisallowShortTernary"/>
+	</rule>
+	<rule ref="WordPress-Extra"/>
+	<rule ref="WordPress-Docs"/>
+	<!-- PHPCompatibilityWP unavailable in installed PCP tools; WPCS-only audit run. -->
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="radioedu-conecta"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- Custom capabilities registered by RoleCapabilities::add_capabilities(). -->
+	<rule ref="WordPress.WP.Capabilities">
+		<properties>
+			<property name="custom_capabilities" type="array">
+				<element value="manage_radioedu"/>
+				<element value="edit_radioedu_centros"/>
+				<element value="edit_others_radioedu_centros"/>
+				<element value="edit_published_radioedu_centros"/>
+				<element value="edit_private_radioedu_centros"/>
+				<element value="publish_radioedu_centros"/>
+				<element value="read_private_radioedu_centros"/>
+				<element value="delete_radioedu_centros"/>
+				<element value="delete_private_radioedu_centros"/>
+				<element value="delete_published_radioedu_centros"/>
+				<element value="delete_others_radioedu_centros"/>
+				<element value="propose_radioedu_colaboracion"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="radioedu_conecta"/>
+				<element value="RadioEdu\Conecta"/>
+			</property>
+		</properties>
+	</rule>
+</ruleset>
+
+

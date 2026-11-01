@@ -1,0 +1,19 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "radioedu-conecta/directorio",
+	"title": "Directorio Traspasando Fronteras",
+	"category": "widgets",
+	"icon": "microphone",
+	"description": "Directorio interactivo de radios escolares con filtros, mapa y propuestas de colaboración.",
+	"keywords": [ "radio escolar", "directorio", "colaboración", "podcast" ],
+	"textdomain": "radioedu-conecta",
+	"attributes": {},
+	"supports": {
+		"autoRegister": true,
+		"html": false,
+		"multiple": false,
+		"align": [ "wide", "full" ]
+	},
+	"style": "radioedu-directorio-css"
+}

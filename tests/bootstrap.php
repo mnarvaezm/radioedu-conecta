@@ -27,18 +27,15 @@ if ( file_exists( "{$_tests_dir}/includes/functions.php" ) ) {
 	 */
 	function _radioedu_conecta_manually_load_plugin(): void {
 		require dirname( __DIR__ ) . '/radioedu-conecta.php';
+		// Integration tests must never deliver real email.
+		add_filter( 'pre_wp_mail', '__return_true' );
 	}
 
 	tests_add_filter( 'muplugins_loaded', '_radioedu_conecta_manually_load_plugin' );
 
 	require "{$_tests_dir}/includes/bootstrap.php";
 } else {
-	// Standalone fallback stubs when running unit tests without the full WP test library.
-	if ( ! defined( 'ABSPATH' ) ) {
-		define( 'ABSPATH', dirname( __DIR__ ) . '/' );
-	}
-	if ( ! defined( 'HOUR_IN_SECONDS' ) ) {
-		define( 'HOUR_IN_SECONDS', 3600 );
-	}
+	fwrite( STDERR, "The WordPress test library is required. Run bin/install-wp-tests.sh and set WP_TESTS_DIR.\n" );
+	exit( 1 );
 }
 

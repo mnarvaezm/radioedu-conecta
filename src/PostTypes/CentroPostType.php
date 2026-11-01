@@ -9,6 +9,8 @@ declare( strict_types=1 );
 
 namespace RadioEdu\Conecta\PostTypes;
 
+use RadioEdu\Conecta\Capabilities\CentroLimit;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -65,12 +67,16 @@ class CentroPostType {
 				'with_front' => false,
 			],
 			'capability_type'    => [ 'radioedu_centro', 'radioedu_centros' ],
+			// Granted on the fly while the user is under the "Radios por usuario" limit (CentroLimit).
+			'capabilities'       => [ 'create_posts' => CentroLimit::CREATE_CAP ],
 			'map_meta_cap'       => true,
 			'has_archive'        => 'centros-radioedu',
 			'hierarchical'       => false,
 			'menu_position'      => 20,
 			'menu_icon'          => 'dashicons-format-audio',
-			'supports'           => [ 'title', 'editor', 'thumbnail', 'excerpt', 'author' ],
+			// custom-fields: the REST API only exposes registered meta (edit context, see CentroMeta) for
+			// post types that support it. The plugin keys are protected, so the Custom Fields panel hides them.
+			'supports'           => [ 'title', 'editor', 'thumbnail', 'excerpt', 'author', 'custom-fields' ],
 			'show_in_rest'       => true,
 			'rest_base'          => 'centros',
 		];

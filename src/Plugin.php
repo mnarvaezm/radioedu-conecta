@@ -9,17 +9,22 @@ declare( strict_types=1 );
 
 namespace RadioEdu\Conecta;
 
+use RadioEdu\Conecta\Admin\CentroEditorPanel;
 use RadioEdu\Conecta\Admin\CentroMetaBoxes;
 use RadioEdu\Conecta\Admin\ColaboracionesAdminPage;
 use RadioEdu\Conecta\Admin\DemoDataImporter;
+use RadioEdu\Conecta\Admin\NetworkSyncPage;
 use RadioEdu\Conecta\Admin\Settings;
+use RadioEdu\Conecta\Capabilities\CentroLimit;
 use RadioEdu\Conecta\Capabilities\RoleCapabilities;
 use RadioEdu\Conecta\Database\ColaboracionesTable;
 use RadioEdu\Conecta\Frontend\DirectorioShortcode;
+use RadioEdu\Conecta\PostTypes\CentroMeta;
 use RadioEdu\Conecta\PostTypes\CentroPostType;
 use RadioEdu\Conecta\Privacy\PrivacyPolicy;
 use RadioEdu\Conecta\Rest\CentrosController;
 use RadioEdu\Conecta\Rest\ColaboracionesController;
+use RadioEdu\Conecta\Rest\NetworkSyncController;
 use RadioEdu\Conecta\Taxonomies\TaxonomiesRegistrar;
 use WP_Site;
 
@@ -29,6 +34,11 @@ defined( 'ABSPATH' ) || exit;
  * Singleton orquestador que coordina todos los módulos del plugin.
  */
 final class Plugin {
+
+	/**
+	 * Transient that delays the next schema update attempt after a failed one.
+	 */
+	public const SCHEMA_RETRY_TRANSIENT = 'radioedu_conecta_schema_retry';
 
 	/**
 	 * Instancia única (Singleton).
@@ -58,22 +68,35 @@ final class Plugin {
 	 * Inicializa los hooks principales del ciclo de vida de WordPress.
 	 */
 	public function init(): void {
+		// Provision every site before frontend or REST use, including large networks.
+		add_action( 'init', [ $this, 'maybe_update_db_schema' ], 1 );
 		// 1. Traducciones: WordPress las carga bajo demanda (just-in-time) desde los paquetes de idioma.
 
 		// 2. Registrar CPT y Taxonomías en init.
 		add_action( 'init', [ CentroPostType::class, 'register' ], 5 );
+		add_action( 'init', [ CentroMeta::class, 'register' ], 5 );
+		add_filter( 'rest_prepare_' . CentroPostType::POST_TYPE, [ CentroMeta::class, 'hide_private_meta' ], 10, 2 );
+		add_filter( 'rest_pre_insert_' . CentroPostType::POST_TYPE, [ CentroMeta::class, 'validate_rest_logo' ], 10, 2 );
 		add_action( 'init', [ TaxonomiesRegistrar::class, 'register_all' ], 5 );
+		// Core registers its icon collection on init priority 0, before the plugin's collection.
+		add_action( 'init', [ Icons::class, 'register' ] );
 
 		// 3. Registrar herramientas de Privacidad / RGPD.
 		PrivacyPolicy::register();
 
+		// Limit on the radios each coordinator can create; capability checks also run in REST requests.
+		CentroLimit::register();
+
 		// 4. Registrar Meta Boxes, Gestión de Colaboraciones y Ajustes del panel de administración.
 		if ( is_admin() ) {
+			CentroEditorPanel::register();
 			CentroMetaBoxes::register();
 			ColaboracionesAdminPage::register();
 			Settings::register();
 			DemoDataImporter::register();
-			add_action( 'admin_init', [ $this, 'maybe_update_db_schema' ] );
+			if ( is_multisite() ) {
+				NetworkSyncPage::register();
+			}
 		}
 
 		// 5. Registrar endpoints de la REST API.
@@ -98,6 +121,11 @@ final class Plugin {
 
 		$colaboraciones_controller = new ColaboracionesController();
 		$colaboraciones_controller->register_routes();
+
+		if ( is_multisite() ) {
+			$network_sync_controller = new NetworkSyncController();
+			$network_sync_controller->register_routes();
+		}
 	}
 
 	/**
@@ -105,9 +133,12 @@ final class Plugin {
 	 */
 	public function maybe_update_db_schema(): void {
 		$installed_ver = get_option( 'radioedu_conecta_db_version', '0' );
-		if ( version_compare( (string) $installed_ver, ColaboracionesTable::DB_VERSION, '<' ) ) {
+		if ( version_compare( (string) $installed_ver, ColaboracionesTable::DB_VERSION, '<' ) && false === get_transient( self::SCHEMA_RETRY_TRANSIENT ) ) {
 			RoleCapabilities::add_capabilities();
-			ColaboracionesTable::create_table();
+			if ( ! ColaboracionesTable::create_table() ) {
+				// While the database refuses the change, retry every few minutes instead of on every request.
+				set_transient( self::SCHEMA_RETRY_TRANSIENT, 1, 5 * MINUTE_IN_SECONDS );
+			}
 		}
 	}
 
@@ -126,8 +157,11 @@ final class Plugin {
 		}
 
 		switch_to_blog( (int) $new_site->blog_id );
-		self::activate_single_site( false );
-		restore_current_blog();
+		try {
+			self::activate_single_site();
+		} finally {
+			restore_current_blog();
+		}
 	}
 
 	/**
@@ -147,20 +181,23 @@ final class Plugin {
 			// Los sitios que superen el lote se aprovisionan de forma diferida en maybe_update_db_schema().
 			foreach ( $site_ids as $site_id ) {
 				switch_to_blog( (int) $site_id );
-				self::activate_single_site( false );
-				restore_current_blog();
+				try {
+					self::activate_single_site();
+				} finally {
+					restore_current_blog();
+				}
 			}
 		} else {
-			self::activate_single_site( true );
+			self::activate_single_site();
 		}
 	}
 
 	/**
 	 * Activación para un sitio individual.
 	 *
-	 * @param bool $seed_demo Si se deben importar las emisoras demo cuando el sitio no tiene centros.
+	 * Demo content is imported only by an explicit administrator request.
 	 */
-	private static function activate_single_site( bool $seed_demo = true ): void {
+	private static function activate_single_site(): void {
 		// Crear tabla de colaboraciones con dbDelta.
 		ColaboracionesTable::create_table();
 
@@ -170,15 +207,6 @@ final class Plugin {
 		// Registrar tipos de contenido y taxonomías antes del flush.
 		CentroPostType::register();
 		TaxonomiesRegistrar::register_all();
-
-		// Cargar automáticamente las 6 emisoras de ejemplo sólo en activación individual si aún no existen centros.
-		if ( $seed_demo ) {
-			$existing_count = wp_count_posts( CentroPostType::POST_TYPE );
-			$published      = isset( $existing_count->publish ) ? (int) $existing_count->publish : 0;
-			if ( 0 === $published ) {
-				DemoDataImporter::import_demo_centers();
-			}
-		}
 
 		self::reset_rewrite_rules();
 	}
@@ -210,18 +238,28 @@ final class Plugin {
 	 */
 	public static function deactivate( bool $network_wide = false ): void {
 		if ( is_multisite() && $network_wide ) {
-			$site_ids = get_sites(
-				[
-					'fields' => 'ids',
-					'number' => 500,
-				]
-			);
-
-			foreach ( $site_ids as $site_id ) {
-				switch_to_blog( (int) $site_id );
-				delete_option( 'rewrite_rules' );
-				restore_current_blog();
-			}
+			$offset = 0;
+			do {
+				$site_ids = get_sites(
+					[
+						'fields'  => 'ids',
+						'number'  => 100,
+						'offset'  => $offset,
+						'orderby' => 'id',
+						'order'   => 'ASC',
+					]
+				);
+				foreach ( $site_ids as $site_id ) {
+					switch_to_blog( (int) $site_id );
+					try {
+						delete_option( 'rewrite_rules' );
+					} finally {
+						restore_current_blog();
+					}
+				}
+				$offset  += 100;
+				$has_more = count( $site_ids ) === 100;
+			} while ( $has_more );
 		} else {
 			delete_option( 'rewrite_rules' );
 		}

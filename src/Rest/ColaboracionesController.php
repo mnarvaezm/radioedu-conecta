@@ -27,8 +27,38 @@ class ColaboracionesController extends WP_REST_Controller {
 
 	/**
 	 * Número máximo de propuestas que un usuario puede enviar por hora.
+	 *
+	 * A strict limit: the counter is read, the proposal stored and the counter written under the
+	 * user's lock, so proposals sent at the same moment cannot exceed it (audit finding S-02).
 	 */
-	private const RATE_LIMIT_PER_HOUR = 10;
+	public const RATE_LIMIT_PER_HOUR = 20;
+
+	/**
+	 * Seconds a proposal waits for another one of the same user that holds the rate lock.
+	 */
+	private const RATE_LOCK_WAIT = 10;
+
+	/**
+	 * Proposals of each user that this request is still storing.
+	 *
+	 * @var array<int, int>
+	 */
+	private static array $rate_pending = [];
+
+	/**
+	 * Depth of the rate lock this request holds, by user.
+	 *
+	 * @var array<int, int>
+	 */
+	private static array $rate_locks = [];
+
+	/**
+	 * Most centros listed for one user in the match panel's sender selector.
+	 *
+	 * Twice the largest expected network (about 1,000 school radios), so administrators and editors,
+	 * who manage every centro, find all of them in the selector.
+	 */
+	public const MAX_MANAGED_CENTERS = 2000;
 
 	/**
 	 * Namespace de la REST API de RadioEdu Conecta.
@@ -63,7 +93,7 @@ class ColaboracionesController extends WP_REST_Controller {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_items' ],
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
-					'args'                => [],
+					'args'                => $this->get_collection_params(),
 				],
 			]
 		);
@@ -121,7 +151,7 @@ class ColaboracionesController extends WP_REST_Controller {
 		}
 
 		$uid = $user_id > 0 ? $user_id : get_current_user_id();
-		if ( $uid <= 0 ) {
+		if ( $uid <= 0 || ( ! user_can( $uid, 'manage_radioedu' ) && ! user_can( $uid, 'propose_radioedu_colaboracion' ) && ! user_can( $uid, 'edit_radioedu_centros' ) ) ) {
 			return false;
 		}
 
@@ -174,7 +204,7 @@ class ColaboracionesController extends WP_REST_Controller {
 	 * @return bool
 	 */
 	public function update_item_permissions_check( $request ): bool {
-		if ( ! is_user_logged_in() ) {
+		if ( ! is_user_logged_in() || ( ! current_user_can( 'manage_radioedu' ) && ! current_user_can( 'propose_radioedu_colaboracion' ) && ! current_user_can( 'edit_radioedu_centros' ) ) ) {
 			return false;
 		}
 
@@ -194,15 +224,18 @@ class ColaboracionesController extends WP_REST_Controller {
 	 * Obtiene la lista de propuestas de colaboración asociadas al usuario actual (o todas si es administrador).
 	 *
 	 * @param WP_REST_Request $request Objeto de la petición.
-	 * @return WP_REST_Response|WP_Error
+	 * @return WP_REST_Response
 	 */
-	public function get_items( $request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass
-		$user_id = get_current_user_id();
-		$rows    = ColaboracionesTable::get_for_user(
-			$user_id,
-			self::get_user_managed_center_ids( $user_id ),
-			current_user_can( 'manage_radioedu' )
-		);
+	public function get_items( $request ): WP_REST_Response {
+		$user_id  = get_current_user_id();
+		$all      = self::user_manages_all_centers( $user_id );
+		$per_page = max( 1, min( 100, (int) $request->get_param( 'per_page' ) ) );
+		$page     = max( 1, (int) $request->get_param( 'page' ) );
+		$total    = ColaboracionesTable::count_for_user( $user_id, $all );
+		$pages    = max( 1, (int) ceil( $total / $per_page ) );
+		// A page past the last one is empty. It is never turned into an offset, which could overflow
+		// the integer range with a huge page number.
+		$rows = $page > $pages ? [] : ColaboracionesTable::get_for_user( $user_id, $all, $per_page, ( $page - 1 ) * $per_page );
 
 		$items = [];
 		foreach ( $rows as $row ) {
@@ -223,68 +256,87 @@ class ColaboracionesController extends WP_REST_Controller {
 			];
 		}
 
-		return rest_ensure_response( [ 'colaboraciones' => $items ] );
+		$response = new WP_REST_Response( [ 'colaboraciones' => $items ] );
+		$response->header( 'X-WP-Total', (string) $total );
+		$response->header( 'X-WP-TotalPages', (string) $pages );
+
+		return $response;
 	}
 
 	/**
-	 * Devuelve los IDs de los centros que un usuario coordina o puede editar.
+	 * Tells whether a user manages every centro, and so sees and answers every proposal.
+	 *
+	 * Matches user_can_manage_center(): `manage_radioedu`, or editing any centro.
+	 *
+	 * @since 1.1
+	 *
+	 * @param int $user_id ID del usuario.
+	 * @return bool True for plugin managers and editors.
+	 */
+	public static function user_manages_all_centers( int $user_id ): bool {
+		return $user_id > 0 && ( user_can( $user_id, 'manage_radioedu' ) || user_can( $user_id, 'edit_others_radioedu_centros' ) );
+	}
+
+	/**
+	 * Devuelve los IDs de los centros publicados que un usuario coordina o puede editar.
+	 *
+	 * Feeds the sender selector of the match panel and the default affinity reference, sorted by
+	 * title. MAX_MANAGED_CENTERS is a safety ceiling above the largest expected network; the
+	 * proposal listings do not depend on this list.
+	 *
+	 * @since 1.1 Up to MAX_MANAGED_CENTERS centros instead of 50 or 100, sorted by title.
 	 *
 	 * @param int $user_id ID del usuario.
 	 * @return array<int, int> Lista de IDs de centros.
 	 */
 	public static function get_user_managed_center_ids( int $user_id ): array {
-		if ( $user_id <= 0 ) {
+		if ( $user_id <= 0 || ( ! user_can( $user_id, 'manage_radioedu' ) && ! user_can( $user_id, 'propose_radioedu_colaboracion' ) && ! user_can( $user_id, 'edit_radioedu_centros' ) ) ) {
 			return [];
 		}
 
-		if ( user_can( $user_id, 'manage_radioedu' ) || user_can( $user_id, 'edit_others_radioedu_centros' ) ) {
-			$all_ids = get_posts(
-				[
-					'post_type'      => CentroPostType::POST_TYPE,
-					'post_status'    => 'publish',
-					'posts_per_page' => 100,
-					'fields'         => 'ids',
-					'orderby'        => 'title',
-					'order'          => 'ASC',
-					'no_found_rows'  => true,
-				]
-			);
-			return array_map( 'intval', $all_ids );
+		// Full posts, so the callers' get_the_title() calls hit the cache.
+		$query = [
+			'post_type'              => CentroPostType::POST_TYPE,
+			'post_status'            => 'publish',
+			'posts_per_page'         => self::MAX_MANAGED_CENTERS,
+			'orderby'                => 'title',
+			'order'                  => 'ASC',
+			'no_found_rows'          => true,
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
+		];
+
+		if ( self::user_manages_all_centers( $user_id ) ) {
+			return array_map( 'intval', wp_list_pluck( get_posts( $query ), 'ID' ) );
 		}
 
-		$by_author = get_posts(
-			[
-				'post_type'      => CentroPostType::POST_TYPE,
-				'post_status'    => 'publish',
-				'author'         => $user_id,
-				'posts_per_page' => 50,
-				'fields'         => 'ids',
-				'no_found_rows'  => true,
-			]
-		);
-
-		$by_email = [];
-		$user     = get_userdata( $user_id );
+		$centros = get_posts( array_merge( $query, [ 'author' => $user_id ] ) );
+		$user    = get_userdata( $user_id );
 		if ( $user && ! empty( $user->user_email ) ) {
-			$by_email = get_posts(
-				[
-					'post_type'      => CentroPostType::POST_TYPE,
-					'post_status'    => 'publish',
-					'posts_per_page' => 50,
-					'fields'         => 'ids',
-					'no_found_rows'  => true,
-					// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Bounded lookup (max 50) by coordinator email.
-					'meta_query'     => [
-						[
-							'key'   => '_radioedu_coordinador_email',
-							'value' => $user->user_email,
+			$coordinated = get_posts(
+				array_merge(
+					$query,
+					[
+						// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Bounded lookup (MAX_MANAGED_CENTERS) by coordinator email.
+						'meta_query' => [
+							[
+								'key'   => '_radioedu_coordinador_email',
+								'value' => $user->user_email,
+							],
 						],
-					],
-				]
+					]
+				)
 			);
+			$centros     = array_merge( $centros, $coordinated );
 		}
 
-		return array_values( array_unique( array_map( 'intval', array_merge( $by_author, $by_email ) ) ) );
+		$titles = [];
+		foreach ( $centros as $centro ) {
+			$titles[ (int) $centro->ID ] = $centro->post_title;
+		}
+		asort( $titles, SORT_NATURAL | SORT_FLAG_CASE );
+
+		return array_slice( array_keys( $titles ), 0, self::MAX_MANAGED_CENTERS );
 	}
 
 	/**
@@ -293,9 +345,61 @@ class ColaboracionesController extends WP_REST_Controller {
 	 * @param WP_REST_Request $request Objeto de la petición.
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function create_item( $request ) {
+	public function create_item( $request ): WP_REST_Response|WP_Error {
+		if ( ! $this->create_item_permissions_check( $request ) ) {
+			return new WP_Error( 'radioedu_forbidden', __( 'No tienes permisos para realizar esta acción.', 'radioedu-conecta' ), [ 'status' => 403 ] );
+		}
+
 		$user_id = get_current_user_id();
 
+		// The hourly limit is checked, the proposal stored and the counter updated under the user's
+		// lock, so two proposals sent at once cannot both take the last place. If another request of
+		// the same user does not finish in time, this one is refused as over the limit.
+		if ( ! self::lock_rate( $user_id ) ) {
+			return self::rate_limit_error();
+		}
+		try {
+			$colaboracion_id = $this->store_proposal( $request, $user_id );
+		} finally {
+			self::unlock_rate( $user_id );
+		}
+		if ( $colaboracion_id instanceof WP_Error ) {
+			return $colaboracion_id;
+		}
+
+		// Disparar email de notificación al centro receptor. The message says what really happened:
+		// the proposal is stored either way, and the receiving school sees it in its panel.
+		$notification = NotificationService::send_proposal_email( $colaboracion_id );
+		$messages     = [
+			NotificationService::SENT     => __( '¡Propuesta de match enviada con éxito! La emisora receptora recibirá una notificación para comenzar a coordinar el proyecto.', 'radioedu-conecta' ),
+			NotificationService::DISABLED => __( '¡Propuesta de match enviada con éxito! La emisora receptora la verá en su panel de Colaboraciones.', 'radioedu-conecta' ),
+			NotificationService::FAILED   => __( '¡Propuesta de match enviada con éxito! No se ha podido enviar el aviso por correo, pero la emisora receptora la verá en su panel de Colaboraciones.', 'radioedu-conecta' ),
+		];
+
+		return new WP_REST_Response(
+			[
+				'success'      => true,
+				'message'      => $messages[ $notification ] ?? $messages[ NotificationService::FAILED ],
+				'id'           => $colaboracion_id,
+				'notificacion' => $notification,
+			],
+			201
+		);
+	}
+
+	/**
+	 * Checks the hourly limit, validates and stores a proposal, and counts it.
+	 *
+	 * Runs while holding the user's rate lock (see create_item()). Proposals this request is still
+	 * storing count too, for a second proposal sent within the same request.
+	 *
+	 * @since 1.1
+	 *
+	 * @param WP_REST_Request $request Objeto de la petición.
+	 * @param int             $user_id Sending user.
+	 * @return int|WP_Error ID of the stored proposal, or the error.
+	 */
+	private function store_proposal( WP_REST_Request $request, int $user_id ): int|WP_Error {
 		// Protección Rate Limiting con ventana fija de 1 hora por usuario.
 		$transient_key = 'radioedu_rate_' . $user_id;
 		$rate_data     = get_transient( $transient_key );
@@ -309,12 +413,8 @@ class ColaboracionesController extends WP_REST_Controller {
 			$rate_ttl   = HOUR_IN_SECONDS;
 		}
 
-		if ( $rate_count >= self::RATE_LIMIT_PER_HOUR ) {
-			return new WP_Error(
-				'radioedu_rate_limit',
-				__( 'Has alcanzado el límite de propuestas por hora. Por favor, inténtalo más tarde.', 'radioedu-conecta' ),
-				[ 'status' => 429 ]
-			);
+		if ( $rate_count + ( self::$rate_pending[ $user_id ] ?? 0 ) >= self::RATE_LIMIT_PER_HOUR ) {
+			return self::rate_limit_error();
 		}
 
 		$centro_emisor_id   = absint( $request->get_param( 'centro_emisor_id' ) );
@@ -345,7 +445,9 @@ class ColaboracionesController extends WP_REST_Controller {
 			CentroPostType::POST_TYPE !== get_post_type( $centro_emisor_id ) ||
 			CentroPostType::POST_TYPE !== get_post_type( $centro_receptor_id ) ||
 			'publish' !== get_post_status( $centro_emisor_id ) ||
-			'publish' !== get_post_status( $centro_receptor_id )
+			'publish' !== get_post_status( $centro_receptor_id ) ||
+			'' !== get_post_field( 'post_password', $centro_emisor_id ) ||
+			'' !== get_post_field( 'post_password', $centro_receptor_id )
 		) {
 			return new WP_Error(
 				'radioedu_invalid_center',
@@ -375,55 +477,131 @@ class ColaboracionesController extends WP_REST_Controller {
 		global $wpdb;
 		$now = current_time( 'mysql' );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table write.
-		$inserted = $wpdb->insert(
-			ColaboracionesTable::get_table_name(),
-			[
-				'centro_emisor_id'   => $centro_emisor_id,
-				'centro_receptor_id' => $centro_receptor_id,
-				'usuario_emisor_id'  => $user_id,
-				'idea_proyecto'      => $idea_proyecto,
-				'curso_edades'       => $curso_edades,
-				'idiomas'            => $idiomas,
-				'fechas_aprox'       => $fechas_aprox,
-				'estado'             => 'pendiente',
-				'created_at'         => $now,
-				'updated_at'         => $now,
-			],
-			[ '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ]
-		);
-
-		if ( false === $inserted ) {
-			return new WP_Error(
-				'radioedu_db_error',
-				__( 'No se pudo registrar la propuesta en la base de datos.', 'radioedu-conecta' ),
-				[ 'status' => 500 ]
+		// Count this proposal while it is being written, for another one sent within this request.
+		self::$rate_pending[ $user_id ] = ( self::$rate_pending[ $user_id ] ?? 0 ) + 1;
+		try {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table write.
+			$inserted = $wpdb->insert(
+				ColaboracionesTable::get_table_name(),
+				[
+					'centro_emisor_id'   => $centro_emisor_id,
+					'centro_receptor_id' => $centro_receptor_id,
+					'usuario_emisor_id'  => $user_id,
+					'idea_proyecto'      => $idea_proyecto,
+					'curso_edades'       => $curso_edades,
+					'idiomas'            => $idiomas,
+					'fechas_aprox'       => $fechas_aprox,
+					'estado'             => 'pendiente',
+					'created_at'         => $now,
+					'updated_at'         => $now,
+				],
+				[ '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ]
 			);
+
+			if ( false === $inserted ) {
+				return new WP_Error(
+					'radioedu_db_error',
+					__( 'No se pudo registrar la propuesta en la base de datos.', 'radioedu-conecta' ),
+					[ 'status' => 500 ]
+				);
+			}
+
+			$colaboracion_id = (int) $wpdb->insert_id;
+
+			// Actualizar contador del rate limiting conservando la expiración de la ventana actual. It is
+			// read again: another proposal of this request may have been counted meanwhile.
+			$current = get_transient( $transient_key );
+			$count   = is_array( $current ) && isset( $current['count'], $current['expires'] ) && $current['expires'] > $now_ts ? (int) $current['count'] : $rate_count;
+			set_transient(
+				$transient_key,
+				[
+					'count'   => $count + 1,
+					'expires' => $now_ts + $rate_ttl,
+				],
+				$rate_ttl
+			);
+		} finally {
+			--self::$rate_pending[ $user_id ];
 		}
 
-		$colaboracion_id = (int) $wpdb->insert_id;
+		return $colaboracion_id;
+	}
 
-		// Actualizar contador del rate limiting conservando la expiración de la ventana actual.
-		set_transient(
-			$transient_key,
-			[
-				'count'   => $rate_count + 1,
-				'expires' => $now_ts + $rate_ttl,
-			],
-			$rate_ttl
+	/**
+	 * Error returned when the user has reached the hourly proposal limit.
+	 *
+	 * @return WP_Error 429 error.
+	 */
+	private static function rate_limit_error(): WP_Error {
+		return new WP_Error(
+			'radioedu_rate_limit',
+			__( 'Has alcanzado el límite de propuestas por hora. Por favor, inténtalo más tarde.', 'radioedu-conecta' ),
+			[ 'status' => 429 ]
 		);
+	}
 
-		// Disparar email de notificación al centro receptor.
-		NotificationService::send_proposal_email( $colaboracion_id );
+	/**
+	 * Takes the user's rate lock, waiting for another request that holds it.
+	 *
+	 * A MySQL/MariaDB named lock (GET_LOCK) belongs to the database connection, and the server
+	 * releases it if the request dies. Within one request it is counted, so a nested proposal does
+	 * not release it for the outer one.
+	 *
+	 * @param int $user_id Sending user.
+	 * @return bool True when this request holds the lock.
+	 */
+	private static function lock_rate( int $user_id ): bool {
+		global $wpdb;
+		if ( ( self::$rate_locks[ $user_id ] ?? 0 ) > 0 ) {
+			++self::$rate_locks[ $user_id ];
+			return true;
+		}
 
-		return new WP_REST_Response(
-			[
-				'success' => true,
-				'message' => __( '¡Propuesta de match enviada con éxito! La emisora receptora recibirá una notificación para comenzar a coordinar el proyecto.', 'radioedu-conecta' ),
-				'id'      => $colaboracion_id,
-			],
-			201
-		);
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Named lock tied to this connection; no core API provides one.
+		if ( '1' !== (string) $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK( %s, %d )', self::rate_lock_name( $user_id ), self::RATE_LOCK_WAIT ) ) ) {
+			return false;
+		}
+
+		self::$rate_locks[ $user_id ] = 1;
+		return true;
+	}
+
+	/**
+	 * Releases the user's rate lock once the outermost proposal of this request is done.
+	 *
+	 * @param int $user_id Sending user.
+	 */
+	private static function unlock_rate( int $user_id ): void {
+		global $wpdb;
+		if ( ( self::$rate_locks[ $user_id ] ?? 0 ) <= 0 ) {
+			return;
+		}
+
+		if ( --self::$rate_locks[ $user_id ] > 0 ) {
+			return;
+		}
+
+		unset( self::$rate_locks[ $user_id ] );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Releases the named lock taken in lock_rate().
+		$wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK( %s )', self::rate_lock_name( $user_id ) ) );
+	}
+
+	/**
+	 * Returns the name of the rate lock of a user on the current site.
+	 *
+	 * Named locks are shared by every database on the server, and each site keeps its own counter,
+	 * so the name hashes the database and the site's table prefix. It stays under 64 characters.
+	 *
+	 * @since 1.1
+	 *
+	 * @param int $user_id Sending user.
+	 * @return string Lock name.
+	 */
+	public static function rate_lock_name( int $user_id ): string {
+		global $wpdb;
+		$database = defined( 'DB_NAME' ) ? (string) constant( 'DB_NAME' ) : '';
+
+		return 'radioedu_conecta_rate_' . substr( md5( $database . '|' . $wpdb->prefix ), 0, 12 ) . '_' . $user_id;
 	}
 
 	/**
@@ -432,7 +610,7 @@ class ColaboracionesController extends WP_REST_Controller {
 	 * @param WP_REST_Request $request Objeto de la petición.
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function update_item( $request ) {
+	public function update_item( $request ): WP_REST_Response|WP_Error {
 		$id     = absint( $request->get_param( 'id' ) );
 		$estado = sanitize_key( (string) $request->get_param( 'estado' ) );
 		$result = self::respond_to_proposal(
@@ -441,15 +619,16 @@ class ColaboracionesController extends WP_REST_Controller {
 			sanitize_textarea_field( (string) $request->get_param( 'respuesta' ) )
 		);
 
-		if ( null !== $result ) {
+		if ( is_wp_error( $result ) ) {
 			return $result;
 		}
 
 		return new WP_REST_Response(
 			[
-				'success' => true,
-				'message' => __( 'Estado de la colaboración actualizado correctamente.', 'radioedu-conecta' ),
-				'estado'  => $estado,
+				'success'      => true,
+				'message'      => __( 'Estado de la colaboración actualizado correctamente.', 'radioedu-conecta' ),
+				'estado'       => $estado,
+				'notificacion' => $result,
 			]
 		);
 	}
@@ -463,9 +642,16 @@ class ColaboracionesController extends WP_REST_Controller {
 	 * @param int    $id        ID de la colaboración.
 	 * @param string $estado    Nuevo estado: 'aceptada' o 'rechazada'.
 	 * @param string $respuesta Mensaje de respuesta ya sanitizado.
-	 * @return WP_Error|null Null si se resolvió correctamente; WP_Error en caso contrario.
+	 * @since 1.1 Returns the result of the notification instead of null on success.
+	 *
+	 * @return WP_Error|string NotificationService::SENT, FAILED or DISABLED when the proposal was
+	 *                         answered; WP_Error otherwise.
 	 */
-	public static function respond_to_proposal( int $id, string $estado, string $respuesta ): ?WP_Error {
+	public static function respond_to_proposal( int $id, string $estado, string $respuesta ): WP_Error|string {
+		if ( ! current_user_can( 'manage_radioedu' ) && ! current_user_can( 'propose_radioedu_colaboracion' ) && ! current_user_can( 'edit_radioedu_centros' ) ) {
+			return new WP_Error( 'radioedu_forbidden', __( 'No tienes permisos para realizar esta acción.', 'radioedu-conecta' ), [ 'status' => 403 ] );
+		}
+
 		if ( ! in_array( $estado, ColaboracionesTable::RESPONSE_STATUSES, true ) ) {
 			return new WP_Error(
 				'radioedu_invalid_status',
@@ -483,7 +669,21 @@ class ColaboracionesController extends WP_REST_Controller {
 			);
 		}
 
-		if ( 'pendiente' !== $colab->estado || ! ColaboracionesTable::resolve_pending( $id, $estado, $respuesta ) ) {
+		if ( ! current_user_can( 'manage_radioedu' ) && ! self::user_can_manage_center( (int) $colab->centro_receptor_id ) ) {
+			return new WP_Error( 'radioedu_forbidden_center', __( 'No tienes permisos para responder a las propuestas de este centro.', 'radioedu-conecta' ), [ 'status' => 403 ] );
+		}
+
+		$respuesta = sanitize_textarea_field( $respuesta );
+		if ( mb_strlen( $respuesta ) > ColaboracionesTable::MAX_RESPUESTA_LENGTH ) {
+			return new WP_Error( 'radioedu_invalid_response', __( 'El mensaje de respuesta es demasiado largo.', 'radioedu-conecta' ), [ 'status' => 400 ] );
+		}
+
+		$resolved = 'pendiente' === $colab->estado ? ColaboracionesTable::resolve_pending( $id, $estado, $respuesta, get_current_user_id() ) : 0;
+		if ( false === $resolved ) {
+			// The proposal is still pending, so answering again is safe.
+			return new WP_Error( 'radioedu_db_error', __( 'No se pudo guardar la respuesta. Inténtalo de nuevo.', 'radioedu-conecta' ), [ 'status' => 500 ] );
+		}
+		if ( 1 !== $resolved ) {
 			return new WP_Error(
 				'radioedu_already_resolved',
 				__( 'Esta propuesta ya ha sido respondida y no puede modificarse.', 'radioedu-conecta' ),
@@ -491,9 +691,38 @@ class ColaboracionesController extends WP_REST_Controller {
 			);
 		}
 
-		NotificationService::send_status_update_email( $id, $estado );
+		return NotificationService::send_status_update_email( $id, $estado );
+	}
 
-		return null;
+	/**
+	 * Pagination arguments of the proposals listing.
+	 *
+	 * The default page size stays at 100, the size of the listing before it was paginated.
+	 *
+	 * @since 1.1
+	 *
+	 * @return array<string, array<string, mixed>>
+	 */
+	public function get_collection_params(): array {
+		return [
+			'page'     => [
+				'description'       => __( 'Número de página de resultados.', 'radioedu-conecta' ),
+				'type'              => 'integer',
+				'default'           => 1,
+				'minimum'           => 1,
+				'sanitize_callback' => 'absint',
+				'validate_callback' => 'rest_validate_request_arg',
+			],
+			'per_page' => [
+				'description'       => __( 'Número de propuestas por página.', 'radioedu-conecta' ),
+				'type'              => 'integer',
+				'default'           => 100,
+				'minimum'           => 1,
+				'maximum'           => 100,
+				'sanitize_callback' => 'absint',
+				'validate_callback' => 'rest_validate_request_arg',
+			],
+		];
 	}
 
 	/**

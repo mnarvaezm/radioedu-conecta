@@ -1,0 +1,102 @@
+uninstall.php:17: * @global wpdb $wpdb
+uninstall.php:20:	global $wpdb;
+uninstall.php:52:	$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . 'radioedu_colaboraciones' ) );
+uninstall.php:56:		$centro_ids = get_posts(
+uninstall.php:105:	$wpdb->query(
+uninstall.php:106:		$wpdb->prepare(
+uninstall.php:108:			$wpdb->options,
+uninstall.php:109:			$wpdb->esc_like( '_transient_radioedu_' ) . '%',
+uninstall.php:110:			$wpdb->esc_like( '_transient_timeout_radioedu_' ) . '%'
+uninstall.php:160:			switch_to_blog( (int) $site_id );
+uninstall.php:164:				restore_current_blog();
+radioedu-conecta.php:37:	require_once RADIOEDU_CONECTA_DIR . 'vendor/autoload.php';
+radioedu-conecta.php:53:				require_once $file;
+radioedu-conecta.php:60: * Checks platform requirements (PHP & WP version).
+radioedu-conecta.php:62: * @return bool True if requirements are satisfied, false otherwise.
+radioedu-conecta.php:64:function radioedu_conecta_check_requirements(): bool {
+radioedu-conecta.php:71:				radioedu_conecta_requirements_notice(
+radioedu-conecta.php:74:						__( 'RadioEdu Conecta requires PHP version %1$s or higher. Your server is running PHP %2$s.', 'radioedu-conecta' ),
+radioedu-conecta.php:89:				radioedu_conecta_requirements_notice(
+radioedu-conecta.php:92:						__( 'RadioEdu Conecta requires WordPress %1$s or higher. You are using WordPress %2$s.', 'radioedu-conecta' ),
+radioedu-conecta.php:106: * Prints an unmet-requirement error notice.
+radioedu-conecta.php:115:function radioedu_conecta_requirements_notice( string $message ): void {
+radioedu-conecta.php:130:	if ( ! radioedu_conecta_check_requirements() ) {
+radioedu-conecta.php:166:	if ( ! radioedu_conecta_check_requirements() ) {
+templates\directorio.php:241:	<?php require __DIR__ . '/match-drawer.php'; ?>
+templates\single-centro.php:160:	<?php require __DIR__ . '/match-drawer.php'; ?>
+templates\match-drawer.php:37:				<select id="radioedu-match-emisor" name="centro_emisor_id" class="radioedu-form-select" required>
+templates\match-drawer.php:67:			<textarea id="radioedu-match-idea" name="idea_proyecto" class="radioedu-form-textarea" rows="4" maxlength="5000" placeholder="<?php esc_attr_e( 'Ejemplo: Queremos crear un podcast conjunto sobre la vida en entornos rurales, con entrevistas a estudiantes de ambos centros...', 'radioedu-conecta' ); ?>" required></textarea>
+src\Admin\CentroEditorPanel.php:55:		$asset = require $asset_file;
+src\Database\ColaboracionesTable.php:49:		global $wpdb;
+src\Database\ColaboracionesTable.php:50:		return $wpdb->prefix . self::TABLE_NAME;
+src\Database\ColaboracionesTable.php:57:		global $wpdb;
+src\Database\ColaboracionesTable.php:60:		$charset_collate = $wpdb->get_charset_collate();
+src\Database\ColaboracionesTable.php:86:		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+src\Database\ColaboracionesTable.php:96:		global $wpdb;
+src\Database\ColaboracionesTable.php:99:		$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $table_name ) );
+src\Database\ColaboracionesTable.php:121:		global $wpdb;
+src\Database\ColaboracionesTable.php:128:		$row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', self::get_table_name(), $id ) );
+src\Database\ColaboracionesTable.php:143:		global $wpdb;
+src\Database\ColaboracionesTable.php:149:			$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i ORDER BY created_at DESC LIMIT %d', $table_name, $limit ) );
+src\Database\ColaboracionesTable.php:152:			$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE usuario_emisor_id = %d ORDER BY created_at DESC LIMIT %d', $table_name, $user_id, $limit ) );
+src\Database\ColaboracionesTable.php:159:			$rows = $wpdb->get_results(
+src\Database\ColaboracionesTable.php:160:				$wpdb->prepare(
+src\Database\ColaboracionesTable.php:183:		global $wpdb;
+src\Database\ColaboracionesTable.php:186:		$updated = $wpdb->update(
+src\Admin\CentroMetaBoxes.php:113:		$asset = require $asset_file;
+src\Capabilities\CentroLimit.php:196:				get_posts(
+src\Emails\NotificationService.php:125:		return wp_mail( $email_dest, $subject, implode( "\n", $lines ), self::HEADERS );
+src\Emails\NotificationService.php:210:		return wp_mail( $email_dest, $subject, implode( "\n", $lines ), self::HEADERS );
+src\Admin\NetworkSyncPage.php:82:		$asset = require $asset_file;
+src\Frontend\DirectorioShortcode.php:62:		add_filter( 'template_include', [ self::class, 'use_profile_page_template' ], 20 );
+src\Frontend\DirectorioShortcode.php:327:			$asset = require $asset_file;
+src\Frontend\DirectorioShortcode.php:437:		if ( $post_id <= 0 || post_password_required( $post_id ) ) {
+src\Frontend\DirectorioShortcode.php:521:		include RADIOEDU_CONECTA_DIR . 'templates/single-centro.php';
+src\Frontend\DirectorioShortcode.php:618:		include RADIOEDU_CONECTA_DIR . 'templates/directorio.php';
+src\Network\NetworkSync.php:264:		$ids = get_posts(
+src\Network\NetworkSync.php:320:		switch_to_blog( $blog_id );
+src\Network\NetworkSync.php:330:			restore_current_blog();
+src\Network\NetworkSync.php:386:		$synced = get_posts(
+src\Network\NetworkSync.php:406:		$manual = get_posts(
+src\Plugin.php:145:			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+src\Plugin.php:151:		switch_to_blog( (int) $new_site->blog_id );
+src\Plugin.php:155:			restore_current_blog();
+src\Plugin.php:175:				switch_to_blog( (int) $site_id );
+src\Plugin.php:179:					restore_current_blog();
+src\Plugin.php:209:	 * Dentro de switch_to_blog() el objeto global $wp_rewrite conserva la estructura de enlaces
+src\Plugin.php:245:					switch_to_blog( (int) $site_id );
+src\Plugin.php:249:						restore_current_blog();
+src\Privacy\PrivacyPolicy.php:102:		$centros = get_posts(
+src\Privacy\PrivacyPolicy.php:110:				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Core privacy requests require a bounded lookup by contact email.
+src\Privacy\PrivacyPolicy.php:146:			global $wpdb;
+src\Privacy\PrivacyPolicy.php:150:			$colabs = $wpdb->get_results(
+src\Privacy\PrivacyPolicy.php:151:				$wpdb->prepare(
+src\Privacy\PrivacyPolicy.php:239:		$centros = get_posts(
+src\Privacy\PrivacyPolicy.php:269:			global $wpdb;
+src\Privacy\PrivacyPolicy.php:273:			$updated = $wpdb->query(
+src\Privacy\PrivacyPolicy.php:274:				$wpdb->prepare(
+src\Rest\CentrosController.php:20:use WP_Query;
+src\Rest\CentrosController.php:103:		// Ordenación base en WP_Query.
+src\Rest\CentrosController.php:141:			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Faceted search requires taxonomy filtering; results are paginated.
+src\Rest\CentrosController.php:156:			$affinity_filter                   = static function ( array $clauses, WP_Query $query ) use ( $afines_a, $term_ids ): array {
+src\Rest\CentrosController.php:160:				global $wpdb;
+src\Rest\CentrosController.php:162:					$wpdb->prepare( 'CASE WHEN EXISTS (SELECT 1 FROM %i AS availability WHERE availability.post_id = %i.ID AND availability.meta_key = %s AND availability.meta_value = %s) THEN 0 ELSE 1 END DESC', $wpdb->postmeta, $wpdb->posts, '_radioedu_disponible_colaborar', '0' ),
+src\Rest\CentrosController.php:163:					$wpdb->prepare( '(%i.ID = %d) ASC', $wpdb->posts, $afines_a ),
+src\Rest\CentrosController.php:168:					$order[] = $wpdb->prepare( "(SELECT COUNT(*) FROM %i AS affinity WHERE affinity.object_id = %i.ID AND affinity.term_taxonomy_id IN ({$placeholders})) DESC", array_merge( [ $wpdb->term_relationships, $wpdb->posts ], $term_ids ) );
+src\Rest\CentrosController.php:170:				$order[]            = $wpdb->prepare( '%i.post_title ASC, %i.ID ASC', $wpdb->posts, $wpdb->posts );
+src\Rest\CentrosController.php:177:			$query = new WP_Query( $args );
+src\Rest\ColaboracionesController.php:85:							'required'          => true,
+src\Rest\ColaboracionesController.php:93:							'required'          => true,
+src\Rest\ColaboracionesController.php:199:	public function get_items( $request ): WP_REST_Response { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClass -- WordPress requires this argument.
+src\Rest\ColaboracionesController.php:241:			$all_ids = get_posts(
+src\Rest\ColaboracionesController.php:255:		$by_author = get_posts(
+src\Rest\ColaboracionesController.php:269:			$by_email = get_posts(
+src\Rest\ColaboracionesController.php:381:		global $wpdb;
+src\Rest\ColaboracionesController.php:385:		$inserted = $wpdb->insert(
+src\Rest\ColaboracionesController.php:410:		$colaboracion_id = (int) $wpdb->insert_id;
+src\Rest\ColaboracionesController.php:527:				'required'          => true,
+src\Rest\ColaboracionesController.php:535:				'required'          => true,
+src\Rest\ColaboracionesController.php:543:				'required'          => true,
+src\Rest\NetworkSyncController.php:61:							'required'          => false,
+src\Rest\NetworkSyncController.php:70:							'required'          => false,
+src\Rest\NetworkSyncController.php:94:			return new WP_Error( 'rest_forbidden', __( 'No tienes permiso para sincronizar las fichas de la red.', 'radioedu-conecta' ), [ 'status' => rest_authorization_required_code() ] );

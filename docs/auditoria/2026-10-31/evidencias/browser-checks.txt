@@ -1,0 +1,8 @@
+directory {"cards":24,"heading":"Resultados (60 centros)","tilesBeforeConsent":0}
+map_before_consent {"tiles":0}
+map_loaded {"markers":24,"loadMoreVisible":false,"heading":"Resultados (60 centros)","tileAttempts":9}
+drawer_race {"oldId":"4","newId":"5","newLabel":"Audit B","idAfterDelayedSuccess":"4","labelAfterDelayedSuccess":"Audit B","originalRequest":4}
+mobile_320 {"viewport":320,"documentWidth":366,"gridWidth":228,"cardWidth":320}
+http_nonces {"missing":{"status":401,"body":{"code":"rest_forbidden","message":"Sorry, you are not allowed to do that.","data":{"status":401}}},"invalid":{"status":403,"body":{"code":"rest_cookie_invalid_nonce","message":"Cookie check failed","data":{"status":403}}}}
+http_errors []
+no_javascript {"cards":0,"text":"Resultados (0 centros)"}

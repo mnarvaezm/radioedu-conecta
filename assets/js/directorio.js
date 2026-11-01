@@ -1,3 +1,6 @@
+import { __ } from '@wordpress/i18n';
+import { speak } from '@wordpress/a11y';
+
 /**
  * Lógica interactiva en el frontal de RadioEdu Conecta - Traspasando Fronteras.
  * Cero innerHTML y cero concatenación HTML para prevención estricta de XSS.
@@ -20,7 +23,54 @@
 		const config = window.radioeduConectaData || {};
 		const restUrl = config.restUrl || '/wp-json/radioedu-conecta/v1/';
 		const restNonce = config.restNonce || '';
-		const i18n = config.i18n || {};
+		const i18n = {
+			/* translators: %s: Number of schools found. */
+			resultsCount: __( 'Resultados (%s centros)', 'radioedu-conecta' ),
+			noResults: __(
+				'No se encontraron centros con los filtros seleccionados.',
+				'radioedu-conecta'
+			),
+			loading: __( 'Cargando centros…', 'radioedu-conecta' ),
+			viewProfile: __( 'Ver perfil', 'radioedu-conecta' ),
+			proposeMatch: __( 'Proponer match', 'radioedu-conecta' ),
+			submitProposal: __( 'Enviar propuesta', 'radioedu-conecta' ),
+			unavailable: __( 'No disponible', 'radioedu-conecta' ),
+			favorite: __( 'Añadir a favoritos', 'radioedu-conecta' ),
+			unfavorite: __( 'Quitar de favoritos', 'radioedu-conecta' ),
+			defaultLocation: __( 'Extremadura', 'radioedu-conecta' ),
+			sending: __( 'Enviando propuesta…', 'radioedu-conecta' ),
+			sendSuccess: __(
+				'¡Propuesta enviada con éxito!',
+				'radioedu-conecta'
+			),
+			loginRequired: __(
+				'Debes iniciar sesión con tu cuenta de coordinador de centro para enviar propuestas de colaboración.',
+				'radioedu-conecta'
+			),
+			noPermission: __(
+				'Tu cuenta actual no dispone de permisos de coordinador para proponer colaboraciones.',
+				'radioedu-conecta'
+			),
+			selectYourCenter: __(
+				'Por favor, selecciona tu centro escolar.',
+				'radioedu-conecta'
+			),
+			errorOccurred: __(
+				'Ha ocurrido un error al procesar la solicitud.',
+				'radioedu-conecta'
+			),
+			logIn: __( 'Iniciar sesión', 'radioedu-conecta' ),
+			mapAttribution: __(
+				'Colaboradores de OpenStreetMap',
+				'radioedu-conecta'
+			),
+			mapPartial:
+				/* translators: 1: number of centros on the map, 2: number of results. */
+				__(
+					'El mapa muestra %1$s de %2$s centros. Usa los filtros para acotar la búsqueda.',
+					'radioedu-conecta'
+				),
+		};
 
 		// Elementos del DOM.
 		const cardsContainer = document.getElementById(
@@ -46,6 +96,24 @@
 		const leafletMapEl = document.getElementById( 'radioedu-leaflet-map' );
 		const sortSelect = document.getElementById( 'radioedu-sort-select' );
 		const filtersForm = document.getElementById( 'radioedu-filters-form' );
+		const iconTemplates = document.getElementById(
+			'radioedu-icon-templates'
+		);
+
+		/**
+		 * Clona un icono SVG renderizado en el servidor con la API de iconos de WordPress.
+		 *
+		 * @param {string} slug Nombre del icono sin colección (p. ej. "send").
+		 * @return {?Element} Copia del <svg> o null si la plantilla no lo incluye.
+		 */
+		function createIcon( slug ) {
+			const icon = iconTemplates
+				? iconTemplates.content.querySelector(
+						'.radioedu-svg-icon--' + slug
+					)
+				: null;
+			return icon ? icon.cloneNode( true ) : null;
+		}
 
 		// Drawer de Match.
 		const drawerOverlay = document.getElementById(
@@ -75,6 +143,9 @@
 			? btnSubmitMatch.querySelector( '.radioedu-btn-label' )
 			: null;
 		let lastFocusedElement = null;
+		// Grows on every opening, so a reply to a proposal sent from an earlier opening is ignored.
+		let drawerSession = 0;
+		let drawerCloseTimer = null;
 
 		// Filtros.
 		const filterUbicacion = document.getElementById(
@@ -101,6 +172,23 @@
 		let currentCentros = [];
 		let currentPage = 1;
 		let totalPages = 1;
+		let totalResults = 0;
+		let directoryRequest = null;
+		let mapRequest = null;
+		// Filters and order of the search being shown, captured when it started.
+		let appliedSearch = { filters: {}, orden: 'afines' };
+		let submitting = false;
+
+		// The map shows every result, not only the pages of cards already loaded, up to this ceiling:
+		// the largest expected network has about 1,000 school radios.
+		const MAP_MAX_CENTROS = 1000;
+		const mapNote = document.getElementById( 'radioedu-map-note' );
+
+		// The script runs, so the notice for browsers without it is no longer needed.
+		const jsFallback = document.getElementById( 'radioedu-js-fallback' );
+		if ( jsFallback ) {
+			jsFallback.hidden = true;
+		}
 
 		try {
 			hasMapConsent =
@@ -140,16 +228,8 @@
 		 * @param {string} politeness 'polite' o 'assertive'.
 		 */
 		function announce( message, politeness ) {
-			if (
-				message &&
-				window.wp &&
-				window.wp.a11y &&
-				typeof window.wp.a11y.speak === 'function'
-			) {
-				window.wp.a11y.speak(
-					String( message ),
-					politeness || 'polite'
-				);
+			if ( message ) {
+				speak( String( message ), politeness || 'polite' );
 			}
 		}
 
@@ -182,10 +262,189 @@
 			}
 		}
 
+		/**
+		 * Reads the filters of the form as they are now.
+		 *
+		 * @return {Object} Filter values by request parameter, without the empty ones.
+		 */
+		function readFilters() {
+			const controls = {
+				ubicacion: filterUbicacion,
+				idioma: filterIdioma,
+				etapa: filterEtapa,
+				tematica: filterTematica,
+				formato: filterFormato,
+			};
+			const filters = {};
+			Object.keys( controls ).forEach( function ( key ) {
+				if ( controls[ key ] && controls[ key ].value ) {
+					filters[ key ] = controls[ key ].value;
+				}
+			} );
+			if ( filterSearch && filterSearch.value.trim() ) {
+				filters.search = filterSearch.value.trim();
+			}
+			return filters;
+		}
+
+		/**
+		 * URL of the centros endpoint with the filters of the search being shown.
+		 *
+		 * Every page of a search (more cards, map pages) uses the filters captured when that search
+		 * started, not what the form holds now: the user may have edited it without searching.
+		 *
+		 * @param {number} page    Page to request.
+		 * @param {number} perPage Results per page.
+		 * @param {string} orden   Sort order.
+		 * @return {string} Absolute URL.
+		 */
+		function centrosUrl( page, perPage, orden ) {
+			const endpoint = new URL(
+				restUrl + 'centros',
+				window.location.href
+			);
+			endpoint.searchParams.set( 'page', String( page ) );
+			endpoint.searchParams.set( 'per_page', String( perPage ) );
+			endpoint.searchParams.set( 'orden', orden );
+
+			// No afines_a: the endpoint picks the user's own centro itself, and skips it for global
+			// managers, whose first "managed" centro (userCenterId) is an arbitrary one.
+			const filters = appliedSearch.filters;
+			Object.keys( filters ).forEach( function ( key ) {
+				endpoint.searchParams.set( key, filters[ key ] );
+			} );
+
+			return endpoint.href;
+		}
+
+		/**
+		 * Request headers: the REST nonce for signed-in users.
+		 *
+		 * @return {Object} Headers.
+		 */
+		function fetchHeaders() {
+			const headers = {};
+			if (
+				config.isLoggedIn &&
+				restNonce &&
+				typeof restNonce === 'string' &&
+				restNonce.trim().length > 0
+			) {
+				headers[ 'X-WP-Nonce' ] = restNonce.trim();
+			}
+			return headers;
+		}
+
+		/**
+		 * Shows on the map every result of the current search, up to MAP_MAX_CENTROS.
+		 *
+		 * The cards load 24 at a time, so the map fetches the results itself, 100 per request, and
+		 * says so when the ceiling leaves some out.
+		 */
+		function refreshMapCentros() {
+			if ( ! isMapView || ! leafletMap ) {
+				return;
+			}
+			if ( mapRequest ) {
+				mapRequest.abort();
+			}
+			const wanted = Math.min( totalResults, MAP_MAX_CENTROS );
+			if ( currentCentros.length >= wanted ) {
+				showMapCentros( currentCentros.slice( 0, MAP_MAX_CENTROS ) );
+				return;
+			}
+
+			const request = new AbortController();
+			mapRequest = request;
+			const collected = [];
+			const loadPage = function ( page ) {
+				return fetch( centrosUrl( page, 100, 'alfa' ), {
+					headers: fetchHeaders(),
+					signal: request.signal,
+				} )
+					.then( function ( response ) {
+						if ( ! response.ok ) {
+							throw new Error( 'HTTP ' + response.status );
+						}
+						return response.json();
+					} )
+					.then( function ( data ) {
+						const fetched = Array.isArray( data.centros )
+							? data.centros
+							: [];
+						fetched.forEach( ( centro ) =>
+							collected.push( centro )
+						);
+						if (
+							page < Number( data.total_pages || 1 ) &&
+							collected.length < MAP_MAX_CENTROS
+						) {
+							return loadPage( page + 1 );
+						}
+					} );
+			};
+
+			loadPage( 1 )
+				.then( function () {
+					if ( ! request.signal.aborted ) {
+						showMapCentros( collected.slice( 0, MAP_MAX_CENTROS ) );
+					}
+				} )
+				.catch( function () {
+					// Keep what the cards already loaded rather than an empty map.
+					if ( ! request.signal.aborted ) {
+						showMapCentros( currentCentros );
+					}
+				} );
+		}
+
+		/**
+		 * Draws the markers and tells when the map leaves some results out.
+		 *
+		 * @param {Array} centros Centros to show.
+		 */
+		function showMapCentros( centros ) {
+			updateMapMarkers( centros );
+			if ( ! mapNote ) {
+				return;
+			}
+			const partial = centros.length < totalResults;
+			mapNote.hidden = ! partial;
+			mapNote.textContent = partial
+				? String( i18n.mapPartial || '' )
+						.replace( '%1$s', String( centros.length ) )
+						.replace( '%2$s', String( totalResults ) )
+				: '';
+		}
+
 		// Consulta a la REST API con los filtros activos.
 		function fetchCentros( appendPage ) {
 			const isAppend = Boolean( appendPage );
+			if ( directoryRequest ) {
+				directoryRequest.abort();
+			}
+			const request = new AbortController();
+			directoryRequest = request;
+			const requestedPage = isAppend ? currentPage + 1 : 1;
+			if ( btnLoadMore ) {
+				btnLoadMore.disabled = true;
+			}
+			const errorState = document.getElementById(
+				'radioedu-directory-error'
+			);
+			if ( errorState ) {
+				errorState.hidden = true;
+			}
 			if ( ! isAppend ) {
+				// A new search: capture its filters and order, and drop the map pages of the old one.
+				appliedSearch = {
+					filters: readFilters(),
+					orden: sortSelect ? sortSelect.value : 'afines',
+				};
+				if ( mapRequest ) {
+					mapRequest.abort();
+					mapRequest = null;
+				}
 				currentPage = 1;
 				cardsContainer.style.display = 'none';
 				noResultsState.style.display = 'none';
@@ -195,46 +454,9 @@
 			}
 			loadingState.style.display = 'block';
 
-			const params = new URLSearchParams( {
-				page: String( currentPage ),
-				per_page: '24',
-				orden: sortSelect ? sortSelect.value : 'afines',
-			} );
-
-			if ( config.userCenterId ) {
-				params.append( 'afines_a', String( config.userCenterId ) );
-			}
-			if ( filterUbicacion && filterUbicacion.value ) {
-				params.append( 'ubicacion', filterUbicacion.value );
-			}
-			if ( filterIdioma && filterIdioma.value ) {
-				params.append( 'idioma', filterIdioma.value );
-			}
-			if ( filterEtapa && filterEtapa.value ) {
-				params.append( 'etapa', filterEtapa.value );
-			}
-			if ( filterTematica && filterTematica.value ) {
-				params.append( 'tematica', filterTematica.value );
-			}
-			if ( filterFormato && filterFormato.value ) {
-				params.append( 'formato', filterFormato.value );
-			}
-			if ( filterSearch && filterSearch.value.trim() ) {
-				params.append( 'search', filterSearch.value.trim() );
-			}
-
-			const fetchHeaders = {};
-			if (
-				config.isLoggedIn &&
-				restNonce &&
-				typeof restNonce === 'string' &&
-				restNonce.trim().length > 0
-			) {
-				fetchHeaders[ 'X-WP-Nonce' ] = restNonce.trim();
-			}
-
-			fetch( restUrl + 'centros?' + params.toString(), {
-				headers: fetchHeaders,
+			fetch( centrosUrl( requestedPage, 24, appliedSearch.orden ), {
+				headers: fetchHeaders(),
+				signal: request.signal,
 			} )
 				.then( function ( response ) {
 					if ( ! response.ok ) {
@@ -243,6 +465,10 @@
 					return response.json();
 				} )
 				.then( function ( data ) {
+					if ( request.signal.aborted ) {
+						return;
+					}
+					currentPage = requestedPage;
 					loadingState.style.display = 'none';
 					const fetched = Array.isArray( data.centros )
 						? data.centros
@@ -260,6 +486,7 @@
 							? data.total
 							: currentCentros.length
 					);
+					totalResults = Number( totalCount );
 					if ( countNumber ) {
 						countNumber.textContent = totalCount;
 					}
@@ -291,16 +518,26 @@
 						}
 					}
 
-					if ( isMapView && leafletMap ) {
-						updateMapMarkers( currentCentros );
+					if ( ! isAppend ) {
+						refreshMapCentros();
 					}
 				} )
 				.catch( function ( err ) {
-					// eslint-disable-next-line no-console
-					console.error( 'RadioEdu Conecta API error:', err );
+					if ( err.name === 'AbortError' ) {
+						return;
+					}
 					loadingState.style.display = 'none';
-					if ( ! isAppend ) {
-						noResultsState.style.display = 'block';
+					if ( errorState ) {
+						errorState.hidden = false;
+					}
+					announce( i18n.errorOccurred, 'assertive' );
+				} )
+				.finally( function () {
+					if ( directoryRequest === request ) {
+						directoryRequest = null;
+						if ( btnLoadMore ) {
+							btnLoadMore.disabled = false;
+						}
 					}
 				} );
 		}
@@ -363,7 +600,14 @@
 				// Botón Favorito
 				const favBtn = document.createElement( 'button' );
 				const setFavState = function ( isFav ) {
-					favBtn.textContent = isFav ? '❤️' : '♡';
+					const favIcon = createIcon(
+						isFav ? 'star-filled' : 'star-empty'
+					);
+					if ( favIcon ) {
+						favBtn.replaceChildren( favIcon );
+					} else {
+						favBtn.textContent = isFav ? '★' : '☆';
+					}
 					favBtn.classList.toggle( 'is-active', isFav );
 					favBtn.setAttribute(
 						'aria-pressed',
@@ -457,10 +701,10 @@
 					btnMatch.disabled = true;
 					btnMatch.textContent = i18n.unavailable || 'No disponible';
 				} else {
-					const planeIcon = document.createElement( 'span' );
-					planeIcon.setAttribute( 'aria-hidden', 'true' );
-					planeIcon.textContent = '✈️';
-					btnMatch.appendChild( planeIcon );
+					const planeIcon = createIcon( 'send' );
+					if ( planeIcon ) {
+						btnMatch.appendChild( planeIcon );
+					}
 
 					const matchText = document.createTextNode(
 						' ' + ( i18n.proposeMatch || 'Proponer match' )
@@ -483,6 +727,9 @@
 
 		// Gestión del Drawer de Solicitud de Match.
 		function openMatchDrawer( centro, triggerEl ) {
+			++drawerSession;
+			clearTimeout( drawerCloseTimer );
+			setSubmitState( false );
 			if ( matchReceptorTxt ) {
 				matchReceptorTxt.value =
 					centro.nombre +
@@ -538,7 +785,7 @@
 			drawerPanel.classList.remove( 'is-open' );
 			drawerOverlay.classList.remove( 'is-open' );
 			document.removeEventListener( 'keydown', onDrawerKeydown );
-			setTimeout( function () {
+			drawerCloseTimer = setTimeout( function () {
 				drawerPanel.style.display = 'none';
 			}, 350 );
 			if (
@@ -635,6 +882,7 @@
 		 * @param {boolean} sending Si la petición está en curso.
 		 */
 		function setSubmitState( sending ) {
+			submitting = sending;
 			if ( ! btnSubmitMatch ) {
 				return;
 			}
@@ -652,8 +900,31 @@
 
 		// Envío asíncrono del formulario de Match.
 		if ( matchForm ) {
+			matchForm.addEventListener( 'input', function ( event ) {
+				event.target.removeAttribute( 'aria-invalid' );
+				event.target.removeAttribute( 'aria-describedby' );
+			} );
+			matchForm.addEventListener(
+				'invalid',
+				function ( event ) {
+					event.target.setAttribute( 'aria-invalid', 'true' );
+					event.target.setAttribute(
+						'aria-describedby',
+						'radioedu-drawer-feedback'
+					);
+					showDrawerFeedback( event.target.validationMessage, false );
+				},
+				true
+			);
 			matchForm.addEventListener( 'submit', function ( e ) {
 				e.preventDefault();
+				if (
+					submitting ||
+					! config.isLoggedIn ||
+					! config.canPropose
+				) {
+					return;
+				}
 
 				const emisorId = matchEmisorId
 					? matchEmisorId.value
@@ -678,6 +949,11 @@
 				}
 
 				setSubmitState( true );
+				// The panel may be closed and opened for another centro before the reply arrives.
+				const session = drawerSession;
+				const receptorLabel = matchReceptorTxt
+					? matchReceptorTxt.value
+					: '';
 
 				fetch( restUrl + 'colaboraciones', {
 					method: 'POST',
@@ -700,6 +976,9 @@
 						} );
 					} )
 					.then( function ( payload ) {
+						if ( session !== drawerSession ) {
+							return;
+						}
 						setSubmitState( false );
 
 						if ( payload.ok && payload.result.success ) {
@@ -709,9 +988,6 @@
 									'',
 								true
 							);
-							const receptorLabel = matchReceptorTxt
-								? matchReceptorTxt.value
-								: '';
 							matchForm.reset();
 							// reset() vacía también el receptor preseleccionado: se restaura.
 							if ( matchReceptorId ) {
@@ -720,8 +996,34 @@
 							if ( matchReceptorTxt ) {
 								matchReceptorTxt.value = receptorLabel;
 							}
-							setTimeout( closeMatchDrawer, 3000 );
 						} else {
+							const errors =
+								payload.result.data &&
+								payload.result.data.params;
+							if ( errors ) {
+								Object.keys( errors ).forEach(
+									function ( name ) {
+										const field =
+											matchForm.elements.namedItem(
+												name
+											);
+										if (
+											field &&
+											typeof field.setAttribute ===
+												'function'
+										) {
+											field.setAttribute(
+												'aria-invalid',
+												'true'
+											);
+											field.setAttribute(
+												'aria-describedby',
+												'radioedu-drawer-feedback'
+											);
+										}
+									}
+								);
+							}
 							showDrawerFeedback(
 								payload.result.message ||
 									i18n.errorOccurred ||
@@ -731,6 +1033,9 @@
 						}
 					} )
 					.catch( function () {
+						if ( session !== drawerSession ) {
+							return;
+						}
 						setSubmitState( false );
 						showDrawerFeedback( i18n.errorOccurred || '', false );
 					} );
@@ -750,7 +1055,7 @@
 			} else if ( leafletMap ) {
 				leafletMap.invalidateSize();
 			}
-			updateMapMarkers( currentCentros );
+			refreshMapCentros();
 		}
 
 		if ( btnAcceptMap ) {
@@ -806,21 +1111,32 @@
 				lng: -6.3708,
 				zoom: 8,
 			};
-			leafletMap = L.map( 'radioedu-leaflet-map' ).setView(
+			leafletMap = L.map( 'radioedu-leaflet-map', {
+				attributionControl: false,
+			} ).setView(
 				[ mapSettings.lat, mapSettings.lng ],
 				mapSettings.zoom
 			);
 
-			// Leaflet inserta la atribución como HTML: el texto traducido se escapa vía textContent.
-			const attributionText = document.createElement( 'span' );
-			attributionText.textContent =
-				i18n.mapAttribution || 'OpenStreetMap';
+			// Build attribution with DOM nodes, including translated text.
+			const attribution = L.control( { position: 'bottomright' } );
+			attribution.onAdd = function () {
+				const container = document.createElement( 'div' );
+				container.className = 'leaflet-control-attribution';
+				const link = document.createElement( 'a' );
+				link.href = 'https://www.openstreetmap.org/copyright';
+				link.target = '_blank';
+				link.rel = 'noopener noreferrer';
+				link.textContent = i18n.mapAttribution;
+				container.append(
+					document.createTextNode( 'Leaflet | © ' ),
+					link
+				);
+				return container;
+			};
+			attribution.addTo( leafletMap );
 			L.tileLayer( 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 				maxZoom: 18,
-				attribution:
-					'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">' +
-					attributionText.innerHTML +
-					'</a>',
 			} ).addTo( leafletMap );
 		}
 
@@ -838,7 +1154,12 @@
 					const latNum = parseFloat( centro.lat );
 					const lngNum = parseFloat( centro.lng );
 
-					if ( ! isNaN( latNum ) && ! isNaN( lngNum ) ) {
+					if (
+						Number.isFinite( latNum ) &&
+						Number.isFinite( lngNum ) &&
+						Math.abs( latNum ) <= 90 &&
+						Math.abs( lngNum ) <= 180
+					) {
 						const marker = L.marker( [ latNum, lngNum ] ).addTo(
 							leafletMap
 						);
@@ -888,7 +1209,6 @@
 		if ( btnLoadMore ) {
 			btnLoadMore.addEventListener( 'click', function () {
 				if ( currentPage < totalPages ) {
-					currentPage += 1;
 					fetchCentros( true );
 				}
 			} );

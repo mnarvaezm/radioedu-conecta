@@ -9,6 +9,7 @@ declare( strict_types=1 );
 
 namespace RadioEdu\Conecta\Admin;
 
+use RadioEdu\Conecta\Capabilities\CentroLimit;
 use RadioEdu\Conecta\PostTypes\CentroPostType;
 
 defined( 'ABSPATH' ) || exit;
@@ -104,6 +105,25 @@ class Settings {
 			'radioedu-conecta-settings',
 			'radioedu_email_section'
 		);
+
+		// Sección: Coordinadores.
+		add_settings_section(
+			'radioedu_coordinators_section',
+			__( 'Coordinadores', 'radioedu-conecta' ),
+			static function (): void {
+				echo '<p>' . esc_html__( 'Controla cuántas radios puede dar de alta cada coordinador (rol Autor). Los administradores y editores no tienen límite.', 'radioedu-conecta' ) . '</p>';
+			},
+			'radioedu-conecta-settings'
+		);
+
+		add_settings_field(
+			CentroLimit::SETTING,
+			__( 'Radios por usuario', 'radioedu-conecta' ),
+			[ self::class, 'render_max_centros_field' ],
+			'radioedu-conecta-settings',
+			'radioedu_coordinators_section',
+			[ 'label_for' => 'radioedu_max_centros_per_user' ]
+		);
 	}
 
 	/**
@@ -118,6 +138,7 @@ class Settings {
 			'default_zoom'       => '8',
 			'notify_on_proposal' => '1',
 			'notify_on_status'   => '1',
+			CentroLimit::SETTING => '', // Empty: no limit.
 		];
 	}
 
@@ -174,8 +195,24 @@ class Settings {
 			$sanitized['default_zoom'] = (string) ( $zoom >= 1 && $zoom <= 18 ? $zoom : 8 );
 		}
 
-		$sanitized['notify_on_proposal'] = ! empty( $input['notify_on_proposal'] ) ? '1' : '0';
-		$sanitized['notify_on_status']   = ! empty( $input['notify_on_status'] ) ? '1' : '0';
+		$sanitized['notify_on_proposal'] = isset( $input['notify_on_proposal'] ) && in_array( $input['notify_on_proposal'], [ '1', 1, true ], true ) ? '1' : '0';
+		$sanitized['notify_on_status']   = isset( $input['notify_on_status'] ) && in_array( $input['notify_on_status'], [ '1', 1, true ], true ) ? '1' : '0';
+
+		// Radios per user: empty for no limit, or a whole number (0 or more). An invalid value
+		// keeps the current one instead of silently removing the limit.
+		$max = isset( $input[ CentroLimit::SETTING ] ) && is_scalar( $input[ CentroLimit::SETTING ] ) ? trim( sanitize_text_field( (string) $input[ CentroLimit::SETTING ] ) ) : '';
+		if ( '' === $max || ctype_digit( $max ) ) {
+			$sanitized[ CentroLimit::SETTING ] = '' === $max ? '' : (string) (int) $max;
+		} else {
+			$sanitized[ CentroLimit::SETTING ] = (string) self::get( CentroLimit::SETTING, '' );
+			if ( function_exists( 'add_settings_error' ) ) {
+				add_settings_error(
+					self::OPTION_KEY,
+					'radioedu_conecta_invalid_max_centros',
+					__( 'El número de radios por usuario debe ser un número entero igual o mayor que 0, o quedar vacío. Se mantiene el valor anterior.', 'radioedu-conecta' )
+				);
+			}
+		}
 
 		return $sanitized;
 	}
@@ -223,6 +260,21 @@ class Settings {
 	}
 
 	/**
+	 * Renderiza el campo del número de radios por usuario.
+	 *
+	 * @since 1.1
+	 */
+	public static function render_max_centros_field(): void {
+		$max = (string) self::get( CentroLimit::SETTING, '' );
+		?>
+		<input type="number" id="radioedu_max_centros_per_user" name="<?php echo esc_attr( self::OPTION_KEY . '[' . CentroLimit::SETTING . ']' ); ?>" value="<?php echo esc_attr( $max ); ?>" min="0" step="1" class="small-text" aria-describedby="radioedu_max_centros_per_user_help" />
+		<p class="description" id="radioedu_max_centros_per_user_help">
+			<?php esc_html_e( 'Número máximo de radios que puede crear cada coordinador. Déjalo vacío para no poner límite. Con 0 no pueden crear ninguna y solo editan las que les asigne un administrador. Las radios en la papelera no cuentan.', 'radioedu-conecta' ); ?>
+		</p>
+		<?php
+	}
+
+	/**
 	 * Renderiza la vista de la página de ajustes.
 	 */
 	public static function render_settings_page(): void {
@@ -238,20 +290,24 @@ class Settings {
 
 			<?php settings_errors(); ?>
 
-			<?php // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only counter shown after the nonce-protected import redirect. ?>
-			<?php if ( isset( $_GET['demo_imported'] ) ) : ?>
-				<div class="notice notice-success is-dismissible" style="margin-top: 15px;">
-					<p>
-						<?php
-						printf(
+			<?php
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only counter shown after the nonce-protected import redirect.
+			if ( isset( $_GET['demo_imported'] ) ) {
+				wp_admin_notice(
+					esc_html(
+						sprintf(
 							/* translators: %d: number of imported centers */
-							esc_html__( '¡Se han cargado o sincronizado con éxito %d emisoras de ejemplo con sus imágenes, taxonomías y coordenadas en el mapa!', 'radioedu-conecta' ),
-							absint( $_GET['demo_imported'] ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only integer.
-						);
-						?>
-					</p>
-				</div>
-			<?php endif; ?>
+							__( '¡Se han cargado o sincronizado con éxito %d emisoras de ejemplo con sus imágenes, taxonomías y coordenadas en el mapa!', 'radioedu-conecta' ),
+							is_scalar( $_GET['demo_imported'] ) ? absint( wp_unslash( $_GET['demo_imported'] ) ) : 0 // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only integer.
+						)
+					),
+					[
+						'type'        => 'success',
+						'dismissible' => true,
+					]
+				);
+			}
+			?>
 
 			<form method="post" action="options.php">
 				<?php

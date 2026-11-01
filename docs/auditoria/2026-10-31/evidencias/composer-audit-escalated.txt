@@ -1,0 +1,13 @@
+composer : PHP Warning:  Module "openssl" is already loaded in Unknown on line 0
+En línea: 2 Carácter: 1
++ composer audit --locked --format=json *> docs/auditoria/2026-10-31/ev ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (PHP Warning:  M...known on line 0:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+Warning: Module "openssl" is already loaded in Unknown on line 0
+{
+    "advisories": [],
+    "abandoned": []
+}

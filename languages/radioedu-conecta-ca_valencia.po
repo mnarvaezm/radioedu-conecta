@@ -1,0 +1,2004 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: RadioEdu Conecta 1.1\n"
+"Report-Msgid-Bugs-To: https://radioedu.educarex.es\n"
+"Last-Translator: RadioEdu <radioedu@educarex.es>\n"
+"Language-Team: Catalan (Valencian)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-10-31T15:33:36+00:00\n"
+"PO-Revision-Date: 2026-11-01 00:30+0100\n"
+"Language: ca_valencia\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: radioedu-conecta\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. Plugin Name of the plugin
+#: radioedu-conecta.php
+#: src/Admin/NetworkSyncPage.php:58
+#: src/Icons.php:39
+msgid "RadioEdu Conecta"
+msgstr "RadioEdu Conecta"
+
+#. Plugin URI of the plugin
+#: radioedu-conecta.php
+msgid "https://radioedu.educarex.es/conecta"
+msgstr "https://radioedu.educarex.es/conecta"
+
+#. Description of the plugin
+#: radioedu-conecta.php
+msgid "Directorio interactivo y sistema colaborativo (\"Traspasando Fronteras\") para la red de radios escolares de Extremadura y del mundo."
+msgstr "Directori interactiu i sistema col·laboratiu (\"Traspasando Fronteras\") per a la xarxa de ràdios escolars d'Extremadura i del món."
+
+#. Author of the plugin
+#: radioedu-conecta.php
+msgid "RadioEdu - Consejería de Educación, Ciencia y Formación Profesional (Junta de Extremadura)"
+msgstr "RadioEdu - Consejería de Educación, Ciencia y Formación Profesional (Junta de Extremadura)"
+
+#. Author URI of the plugin
+#: radioedu-conecta.php
+msgid "https://radioedu.educarex.es"
+msgstr "https://radioedu.educarex.es"
+
+#. translators: 1: Required PHP version, 2: Current PHP version
+#: radioedu-conecta.php:74
+#, php-format
+msgid "RadioEdu Conecta requires PHP version %1$s or higher. Your server is running PHP %2$s."
+msgstr "RadioEdu Conecta necessita PHP %1$s o superior. El teu servidor utilitza PHP %2$s."
+
+#. translators: 1: Required WordPress version, 2: Current WordPress version
+#: radioedu-conecta.php:92
+#, php-format
+msgid "RadioEdu Conecta requires WordPress %1$s or higher. You are using WordPress %2$s."
+msgstr "RadioEdu Conecta necessita WordPress %1$s o superior. Estàs utilitzant WordPress %2$s."
+
+#: radioedu-conecta.php:190
+#: src/Admin/Settings.php:52
+msgid "Ajustes"
+msgstr "Paràmetres"
+
+#: src/Admin/CentroEditorPanel.php:89
+#: src/Admin/CentroMetaBoxes.php:206
+msgid "-- Selecciona región o país --"
+msgstr "-- Selecciona una regió o un país --"
+
+#: src/Admin/CentroMetaBoxes.php:48
+msgid "Extremadura (España)"
+msgstr "Extremadura (Espanya)"
+
+#: src/Admin/CentroMetaBoxes.php:49
+msgid "Andalucía (España)"
+msgstr "Andalusia (Espanya)"
+
+#: src/Admin/CentroMetaBoxes.php:50
+msgid "Aragón (España)"
+msgstr "Aragó (Espanya)"
+
+#: src/Admin/CentroMetaBoxes.php:51
+msgid "Asturias (España)"
+msgstr "Astúries (Espanya)"
+
+#: src/Admin/CentroMetaBoxes.php:52
+msgid "Cantabria (España)"
+msgstr "Cantàbria (Espanya)"
+
+#: src/Admin/CentroMetaBoxes.php:53
+msgid "Castilla y León (España)"
+msgstr "Castella i Lleó (Espanya)"
+
+#: src/Admin/CentroMetaBoxes.php:54
+msgid "Castilla-La Mancha (España)"
+msgstr "Castella-la Manxa (Espanya)"
+
+#: src/Admin/CentroMetaBoxes.php:55
+msgid "Cataluña (España)"
+msgstr "Catalunya (Espanya)"
+
+#: src/Admin/CentroMetaBoxes.php:56
+msgid "Comunidad Valenciana (España)"
+msgstr "Comunitat Valenciana (Espanya)"
+
+#: src/Admin/CentroMetaBoxes.php:57
+msgid "Galicia (España)"
+msgstr "Galícia (Espanya)"
+
+#: src/Admin/CentroMetaBoxes.php:58
+msgid "Islas Baleares (España)"
+msgstr "Illes Balears (Espanya)"
+
+#: src/Admin/CentroMetaBoxes.php:59
+msgid "Islas Canarias (España)"
+msgstr "Illes Canàries (Espanya)"
+
+#: src/Admin/CentroMetaBoxes.php:60
+msgid "La Rioja (España)"
+msgstr "La Rioja (Espanya)"
+
+#: src/Admin/CentroMetaBoxes.php:61
+msgid "Madrid (España)"
+msgstr "Madrid (Espanya)"
+
+#: src/Admin/CentroMetaBoxes.php:62
+msgid "Murcia (España)"
+msgstr "Múrcia (Espanya)"
+
+#: src/Admin/CentroMetaBoxes.php:63
+msgid "Navarra (España)"
+msgstr "Navarra (Espanya)"
+
+#: src/Admin/CentroMetaBoxes.php:64
+msgid "País Vasco (España)"
+msgstr "País Basc (Espanya)"
+
+#: src/Admin/CentroMetaBoxes.php:65
+msgid "España (General)"
+msgstr "Espanya (general)"
+
+#: src/Admin/CentroMetaBoxes.php:66
+msgid "Portugal"
+msgstr "Portugal"
+
+#: src/Admin/CentroMetaBoxes.php:67
+msgid "Francia"
+msgstr "França"
+
+#: src/Admin/CentroMetaBoxes.php:68
+msgid "Italia"
+msgstr "Itàlia"
+
+#: src/Admin/CentroMetaBoxes.php:69
+msgid "Irlanda"
+msgstr "Irlanda"
+
+#: src/Admin/CentroMetaBoxes.php:70
+msgid "Reino Unido"
+msgstr "Regne Unit"
+
+#: src/Admin/CentroMetaBoxes.php:71
+msgid "Alemania"
+msgstr "Alemanya"
+
+#: src/Admin/CentroMetaBoxes.php:72
+msgid "Unión Europea / Internacional"
+msgstr "Unió Europea / Internacional"
+
+#: src/Admin/CentroMetaBoxes.php:73
+msgid "México"
+msgstr "Mèxic"
+
+#: src/Admin/CentroMetaBoxes.php:74
+msgid "Argentina"
+msgstr "Argentina"
+
+#: src/Admin/CentroMetaBoxes.php:75
+msgid "Colombia"
+msgstr "Colòmbia"
+
+#: src/Admin/CentroMetaBoxes.php:76
+msgid "Chile"
+msgstr "Xile"
+
+#: src/Admin/CentroMetaBoxes.php:77
+msgid "Otro / Internacional"
+msgstr "Altres / Internacional"
+
+#: src/Admin/CentroMetaBoxes.php:138
+msgid "Datos de la Emisora y Coordinación (Traspasando Fronteras)"
+msgstr "Dades de l'emissora i coordinació (Traspasando Fronteras)"
+
+#: src/Admin/CentroMetaBoxes.php:181
+#: build/centro-panel.js:1
+msgid "Logo de la Radio Escolar"
+msgstr "Logotip de la ràdio escolar"
+
+#: src/Admin/CentroMetaBoxes.php:186
+#: build/admin.js:1
+#: build/centro-panel.js:1
+msgid "Logo de la radio"
+msgstr "Logotip de la ràdio"
+
+#: src/Admin/CentroMetaBoxes.php:188
+#: build/admin.js:1
+#: build/centro-panel.js:1
+msgid "No hay logo asignado. Se mostrará un icono por defecto."
+msgstr "No hi ha cap logotip assignat. Es mostrarà una icona per defecte."
+
+#: src/Admin/CentroMetaBoxes.php:192
+#: build/centro-panel.js:1
+msgid "Subir / Elegir Logo"
+msgstr "Puja / Tria el logotip"
+
+#: src/Admin/CentroMetaBoxes.php:193
+#: build/centro-panel.js:1
+msgid "Eliminar logo"
+msgstr "Elimina el logotip"
+
+#: src/Admin/CentroMetaBoxes.php:195
+#: build/centro-panel.js:1
+msgid "Imagen circular distintiva de la emisora escolar (recomendado 300x300 px formato PNG o JPG)."
+msgstr "Imatge circular distintiva de l'emissora escolar (es recomana 300x300 px en format PNG o JPG)."
+
+#: src/Admin/CentroMetaBoxes.php:202
+#: build/centro-panel.js:1
+msgid "Bandera / Región"
+msgstr "Bandera / Regió"
+
+#: src/Admin/CentroMetaBoxes.php:213
+#: build/centro-panel.js:1
+msgid "Determina la bandera mostrada en la tarjeta de resultados y filtros geográficos."
+msgstr "Determina la bandera que es mostra en la targeta de resultats i en els filtres geogràfics."
+
+#: src/Admin/CentroMetaBoxes.php:219
+msgid "Coordenadas para el Mapa"
+msgstr "Coordenades per al mapa"
+
+#: src/Admin/CentroMetaBoxes.php:221
+msgid "Latitud:"
+msgstr "Latitud:"
+
+#: src/Admin/CentroMetaBoxes.php:224
+msgid "Longitud:"
+msgstr "Longitud:"
+
+#: src/Admin/CentroMetaBoxes.php:227
+#: build/centro-panel.js:1
+msgid "Coordenadas decimales para ubicar el centro en el mapa interactivo (ej. Cáceres: 39.4699, -6.3708)."
+msgstr "Coordenades decimals per a situar el centre en el mapa interactiu (p. ex. Càceres: 39.4699, -6.3708)."
+
+#: src/Admin/CentroMetaBoxes.php:234
+#: build/centro-panel.js:1
+msgid "URL de Podcast / Streaming"
+msgstr "URL del pòdcast / streaming"
+
+#: src/Admin/CentroMetaBoxes.php:238
+#: build/centro-panel.js:1
+msgid "Enlace donde se pueden escuchar las grabaciones o emisiones del centro escolar."
+msgstr "Enllaç on es poden escoltar les gravacions o emissions del centre escolar."
+
+#: src/Admin/CentroMetaBoxes.php:245
+#: build/centro-panel.js:1
+msgid "Web Oficial del Centro"
+msgstr "Web oficial del centre"
+
+#: src/Admin/CentroMetaBoxes.php:255
+#: build/centro-panel.js:1
+msgid "Cursos / Edades del Alumnado"
+msgstr "Cursos / edats de l'alumnat"
+
+#: src/Admin/CentroMetaBoxes.php:259
+#: build/centro-panel.js:1
+msgid "Informa a otros centros sobre el grupo de edad de los alumnos que participan en la radio."
+msgstr "Informa altres centres sobre el grup d'edat de l'alumnat que participa en la ràdio."
+
+#: src/Admin/CentroMetaBoxes.php:266
+#: build/centro-panel.js:1
+msgid "Coordinador/a Responsable"
+msgstr "Coordinador/a responsable"
+
+#: src/Admin/CentroMetaBoxes.php:269
+#: build/centro-panel.js:1
+msgid "Nombre del docente coordinador"
+msgstr "Nom del docent coordinador"
+
+#: src/Admin/CentroMetaBoxes.php:271
+msgid "Email:"
+msgstr "Correu electrònic:"
+
+#: src/Admin/CentroMetaBoxes.php:275
+#: build/centro-panel.js:1
+msgid "Aviso de Privacidad (RGPD):"
+msgstr "Avís de privacitat (RGPD):"
+
+#: src/Admin/CentroMetaBoxes.php:276
+#: build/centro-panel.js:1
+msgid "El correo NO se publicará en el directorio público. Se emplea exclusivamente para avisos internos del sistema cuando otro centro envíe una propuesta de colaboración."
+msgstr "El correu NO es publicarà en el directori públic. S'utilitza exclusivament per als avisos interns del sistema quan un altre centre envie una proposta de col·laboració."
+
+#: src/Admin/CentroMetaBoxes.php:283
+msgid "Estado de Colaboración"
+msgstr "Estat de col·laboració"
+
+#: src/Admin/CentroMetaBoxes.php:288
+#: build/centro-panel.js:1
+msgid "Disponible para recibir propuestas de match y proyectos conjuntos"
+msgstr "Disponible per a rebre propostes de match i projectes conjunts"
+
+#: src/Admin/ColaboracionesAdminPage.php:76
+msgid "Propuestas de Colaboración (Matches)"
+msgstr "Propostes de col·laboració (matches)"
+
+#: src/Admin/ColaboracionesAdminPage.php:77
+msgid "Colaboraciones (Matches)"
+msgstr "Col·laboracions (matches)"
+
+#: src/Admin/ColaboracionesAdminPage.php:89
+#: src/Admin/DemoDataImporter.php:83
+#: src/Rest/ColaboracionesController.php:326
+#: src/Rest/ColaboracionesController.php:515
+msgid "No tienes permisos para realizar esta acción."
+msgstr "No tens permisos per a fer esta acció."
+
+#: src/Admin/ColaboracionesAdminPage.php:100
+msgid "Parámetros de respuesta no válidos."
+msgstr "Els paràmetres de resposta no són vàlids."
+
+#: src/Admin/ColaboracionesAdminPage.php:105
+#: src/Rest/ColaboracionesController.php:536
+msgid "No tienes permisos para responder a las propuestas de este centro."
+msgstr "No tens permisos per a respondre les propostes d'este centre."
+
+#: src/Admin/ColaboracionesAdminPage.php:133
+#: src/Admin/NetworkSyncPage.php:109
+#: src/Admin/Settings.php:282
+msgid "No tienes permisos suficientes para acceder a esta página."
+msgstr "No tens permisos suficients per a accedir a esta pàgina."
+
+#: src/Admin/ColaboracionesAdminPage.php:159
+msgid "Propuestas de Colaboración (Matches) - Traspasando Fronteras"
+msgstr "Propostes de col·laboració (matches) - Traspasando Fronteras"
+
+#: src/Admin/ColaboracionesAdminPage.php:161
+msgid "Consulta las solicitudes de hermanamiento recibidas o enviadas por tu emisora escolar y coordina proyectos conjuntos."
+msgstr "Consulta les sol·licituds d'agermanament rebudes o enviades per la teua emissora escolar i coordina projectes conjunts."
+
+#: src/Admin/ColaboracionesAdminPage.php:152
+msgid "La respuesta a la propuesta de colaboración se ha guardado correctamente y se ha notificado al centro emisor."
+msgstr "La resposta a la proposta de col·laboració s'ha guardat correctament i s'ha notificat al centre emissor."
+
+#: src/Admin/ColaboracionesAdminPage.php:178
+msgid "Todavía no hay propuestas de colaboración registradas para tus centros escolares."
+msgstr "Encara no hi ha propostes de col·laboració registrades per als teus centres escolars."
+
+#: src/Admin/ColaboracionesAdminPage.php:184
+#: src/Privacy/PrivacyPolicy.php:195
+msgid "Fecha"
+msgstr "Data"
+
+#: src/Admin/ColaboracionesAdminPage.php:185
+msgid "Centro Emisor"
+msgstr "Centre emissor"
+
+#: src/Admin/ColaboracionesAdminPage.php:186
+msgid "Centro Receptor"
+msgstr "Centre receptor"
+
+#: src/Admin/ColaboracionesAdminPage.php:187
+msgid "Idea del Proyecto y Detalles"
+msgstr "Idea del projecte i detalls"
+
+#: src/Admin/ColaboracionesAdminPage.php:188
+#: src/Privacy/PrivacyPolicy.php:203
+msgid "Estado"
+msgstr "Estat"
+
+#: src/Admin/ColaboracionesAdminPage.php:189
+msgid "Respuesta / Acciones"
+msgstr "Resposta / accions"
+
+#: src/Admin/ColaboracionesAdminPage.php:220
+msgid "Edades:"
+msgstr "Edats:"
+
+#: src/Admin/ColaboracionesAdminPage.php:223
+msgid "Idiomas:"
+msgstr "Idiomes:"
+
+#: src/Admin/ColaboracionesAdminPage.php:226
+msgid "Fechas:"
+msgstr "Dates:"
+
+#: src/Admin/ColaboracionesAdminPage.php:231
+msgid "Aceptada"
+msgstr "Acceptada"
+
+#: src/Admin/ColaboracionesAdminPage.php:233
+msgid "Declinada"
+msgstr "Declinada"
+
+#: src/Admin/ColaboracionesAdminPage.php:235
+msgid "Pendiente"
+msgstr "Pendent"
+
+#: src/Admin/ColaboracionesAdminPage.php:249
+msgid "Mensaje de respuesta"
+msgstr "Missatge de resposta"
+
+#: src/Admin/ColaboracionesAdminPage.php:257
+msgid "Escribe un mensaje para el centro emisor..."
+msgstr "Escriu un missatge per al centre emissor..."
+
+#: src/Admin/ColaboracionesAdminPage.php:260
+msgid "Aceptar"
+msgstr "Accepta"
+
+#: src/Admin/ColaboracionesAdminPage.php:263
+msgid "Declinar"
+msgstr "Declina"
+
+#: src/Admin/ColaboracionesAdminPage.php:267
+msgid "En espera de respuesta del centro receptor."
+msgstr "A l'espera de la resposta del centre receptor."
+
+#: src/Admin/NetworkSyncPage.php:57
+msgid "RadioEdu Conecta: fichas de la red"
+msgstr "RadioEdu Conecta: fitxes de la xarxa"
+
+#: src/Admin/NetworkSyncPage.php:114
+msgid "Nombre del sitio"
+msgstr "Nom del lloc"
+
+#: src/Admin/NetworkSyncPage.php:114
+msgid "Nombre del centro"
+msgstr "Nom del centre"
+
+#: src/Admin/NetworkSyncPage.php:114
+#: src/Admin/NetworkSyncPage.php:115
+#: src/Admin/NetworkSyncPage.php:116
+#: build/network-sync.js:11
+msgid "Sí"
+msgstr "Sí"
+
+#: src/Admin/NetworkSyncPage.php:115
+msgid "URL del sitio"
+msgstr "URL del lloc"
+
+#: src/Admin/NetworkSyncPage.php:115
+msgid "Web oficial"
+msgstr "Web oficial"
+
+#: src/Admin/NetworkSyncPage.php:116
+msgid "Icono del sitio"
+msgstr "Icona del lloc"
+
+#: src/Admin/NetworkSyncPage.php:116
+msgid "Logo"
+msgstr "Logotip"
+
+#: src/Admin/NetworkSyncPage.php:117
+msgid "Descripción corta"
+msgstr "Descripció curta"
+
+#: src/Admin/NetworkSyncPage.php:117
+msgid "Descripción"
+msgstr "Descripció"
+
+#: src/Admin/NetworkSyncPage.php:117
+#: src/Admin/NetworkSyncPage.php:118
+#: src/Admin/NetworkSyncPage.php:119
+msgid "Solo al crearla"
+msgstr "Només en crear-la"
+
+#: src/Admin/NetworkSyncPage.php:118
+msgid "Email de administración"
+msgstr "Correu electrònic d'administració"
+
+#: src/Admin/NetworkSyncPage.php:118
+#: build/centro-panel.js:1
+msgid "Email del coordinador/a"
+msgstr "Correu electrònic del coordinador/a"
+
+#: src/Admin/NetworkSyncPage.php:119
+msgid "Administrador del sitio"
+msgstr "Administrador del lloc"
+
+#: src/Admin/NetworkSyncPage.php:119
+msgid "Autor de la ficha"
+msgstr "Autor de la fitxa"
+
+#. translators: %d: number of network sites (the main site excluded).
+#: src/Admin/NetworkSyncPage.php:129
+#, php-format
+msgid "Crea en el directorio del sitio principal una ficha de radio para el %d sitio de la red, o actualiza la que ya tiene."
+msgid_plural "Crea en el directorio del sitio principal una ficha de radio por cada uno de los %d sitios de la red, o actualiza la que ya tienen."
+msgstr[0] "Crea en el directori del lloc principal una fitxa de ràdio per al %d lloc de la xarxa, o actualitza la que ja té."
+msgstr[1] "Crea en el directori del lloc principal una fitxa de ràdio per a cada un dels %d llocs de la xarxa, o actualitza la que ja tenen."
+
+#: src/Admin/NetworkSyncPage.php:142
+msgid "Datos que la sincronización toma de cada sitio"
+msgstr "Dades que la sincronització pren de cada lloc"
+
+#: src/Admin/NetworkSyncPage.php:145
+msgid "Del sitio"
+msgstr "Del lloc"
+
+#: src/Admin/NetworkSyncPage.php:146
+msgid "A la ficha"
+msgstr "A la fitxa"
+
+#: src/Admin/NetworkSyncPage.php:147
+msgid "¿Se actualiza al volver a sincronizar?"
+msgstr "S'actualitza en tornar a sincronitzar?"
+
+#: src/Admin/NetworkSyncPage.php:162
+msgid "Lo que el coordinador complete después (coordenadas, bandera, etapas, idiomas, temas y podcast) no se modifica nunca. Si ya existe una ficha creada a mano con la misma web, se reutiliza. Las fichas en la papelera no se tocan. Las fichas de sitios que ya no existen no se borran: aparecen en el resumen."
+msgstr "El que el coordinador complete després (coordenades, bandera, etapes, idiomes, temes i pòdcast) no es modifica mai. Si ja existix una fitxa creada a mà amb la mateixa web, es reutilitza. Les fitxes de la paperera no es toquen. Les fitxes de llocs que ja no existixen no s'esborren: apareixen en el resum."
+
+#: src/Admin/NetworkSyncPage.php:168
+msgid "Dar el rol Autor en el sitio principal a los autores de las fichas que no lo tengan, ni tengan otro superior, para que puedan editar su ficha."
+msgstr "Dona el rol Autor en el lloc principal als autors de les fitxes que no el tinguen, ni en tinguen un altre de superior, perquè puguen editar la seua fitxa."
+
+#: src/Admin/NetworkSyncPage.php:174
+msgid "Sincronizar fichas con los sitios de la red"
+msgstr "Sincronitza les fitxes amb els llocs de la xarxa"
+
+#: src/Admin/NetworkSyncPage.php:178
+msgid "La sincronización necesita JavaScript."
+msgstr "La sincronització necessita JavaScript."
+
+#: src/Admin/NetworkSyncPage.php:182
+msgid "Progreso de la sincronización"
+msgstr "Progrés de la sincronització"
+
+#: src/Admin/Settings.php:51
+msgid "Ajustes de RadioEdu Conecta"
+msgstr "Paràmetres de RadioEdu Conecta"
+
+#: src/Admin/Settings.php:76
+msgid "Configuración del Mapa Interactivo"
+msgstr "Configuració del mapa interactiu"
+
+#: src/Admin/Settings.php:78
+msgid "Define el centro geográfico y nivel de zoom inicial al abrir la vista de mapa en el directorio."
+msgstr "Definix el centre geogràfic i el nivell de zoom inicial en obrir la vista de mapa en el directori."
+
+#: src/Admin/Settings.php:85
+msgid "Centro del mapa (Latitud / Longitud)"
+msgstr "Centre del mapa (latitud / longitud)"
+
+#: src/Admin/Settings.php:94
+msgid "Notificaciones por Correo Electrónico"
+msgstr "Notificacions per correu electrònic"
+
+#: src/Admin/Settings.php:96
+msgid "Gestiona las notificaciones automáticas enviadas a los docentes coordinadores de las emisoras."
+msgstr "Gestiona les notificacions automàtiques que s'envien als docents coordinadors de les emissores."
+
+#: src/Admin/Settings.php:103
+msgid "Avisos automáticos"
+msgstr "Avisos automàtics"
+
+#: src/Admin/Settings.php:112
+msgid "Coordinadores"
+msgstr "Coordinadors"
+
+#: src/Admin/Settings.php:114
+msgid "Controla cuántas radios puede dar de alta cada coordinador (rol Autor). Los administradores y editores no tienen límite."
+msgstr "Controla quantes ràdios pot donar d'alta cada coordinador (rol Autor). Els administradors i els editors no tenen límit."
+
+#: src/Admin/Settings.php:121
+msgid "Radios por usuario"
+msgstr "Ràdios per usuari"
+
+#: src/Admin/Settings.php:212
+msgid "El número de radios por usuario debe ser un número entero igual o mayor que 0, o quedar vacío. Se mantiene el valor anterior."
+msgstr "El nombre de ràdios per usuari ha de ser un nombre enter igual o superior a 0, o quedar buit. Es manté el valor anterior."
+
+#: src/Admin/Settings.php:228
+msgid "Lat:"
+msgstr "Lat:"
+
+#: src/Admin/Settings.php:231
+msgid "Lng:"
+msgstr "Lng:"
+
+#: src/Admin/Settings.php:234
+msgid "Zoom inicial (1-18):"
+msgstr "Zoom inicial (1-18):"
+
+#: src/Admin/Settings.php:237
+msgid "Por defecto centrado en Extremadura (39.4699, -6.3708, zoom 8)."
+msgstr "Per defecte, centrat en Extremadura (39.4699, -6.3708, zoom 8)."
+
+#: src/Admin/Settings.php:251
+msgid "Notificar por correo al coordinador del centro receptor cuando reciba una nueva propuesta de colaboración."
+msgstr "Notifica per correu el coordinador del centre receptor quan reba una proposta de col·laboració nova."
+
+#: src/Admin/Settings.php:256
+msgid "Notificar por correo al coordinador emisor cuando su propuesta sea aceptada o rechazada."
+msgstr "Notifica per correu el coordinador emissor quan la seua proposta siga acceptada o rebutjada."
+
+#: src/Admin/Settings.php:272
+msgid "Número máximo de radios que puede crear cada coordinador. Déjalo vacío para no poner límite. Con 0 no pueden crear ninguna y solo editan las que les asigne un administrador. Las radios en la papelera no cuentan."
+msgstr "Nombre màxim de ràdios que pot crear cada coordinador. Deixa-ho buit per a no posar-hi límit. Amb 0 no en poden crear cap i només editen les que els assigne un administrador. Les ràdios de la paperera no compten."
+
+#: src/Admin/Settings.php:288
+msgid "Configuración global del directorio de radios escolares Traspasando Fronteras."
+msgstr "Configuració global del directori de ràdios escolars Traspasando Fronteras."
+
+#. translators: %d: number of imported centers
+#: src/Admin/Settings.php:300
+#, php-format
+msgid "¡Se han cargado o sincronizado con éxito %d emisoras de ejemplo con sus imágenes, taxonomías y coordenadas en el mapa!"
+msgstr "S'han carregat o sincronitzat correctament %d emissores d'exemple amb les seues imatges, taxonomies i coordenades en el mapa!"
+
+#: src/Admin/Settings.php:323
+msgid "Emisoras de Demostración (Traspasando Fronteras)"
+msgstr "Emissores de demostració (Traspasando Fronteras)"
+
+#: src/Admin/Settings.php:325
+msgid "El instalador incluye 6 emisoras completas de ejemplo con fotografías de cabecera, logotipos, edades, formatos, idiomas y coordenadas geográficas. Puedes volver a generarlas o sincronizarlas en cualquier momento con este botón:"
+msgstr "L'instal·lador inclou 6 emissores d'exemple completes amb fotografies de capçalera, logotips, edats, formats, idiomes i coordenades geogràfiques. Pots tornar a generar-les o sincronitzar-les en qualsevol moment amb este botó:"
+
+#: src/Admin/Settings.php:330
+msgid "Sincronizar / Cargar las 6 emisoras de ejemplo"
+msgstr "Sincronitza / Carrega les 6 emissores d'exemple"
+
+#: src/Capabilities/CentroLimit.php:195
+msgid "Las radios las da de alta un administrador. Puedes editar las que tengas asignadas."
+msgstr "Les ràdios les dona d'alta un administrador. Pots editar les que tingues assignades."
+
+#. translators: %d: maximum number of radios per user.
+#: src/Capabilities/CentroLimit.php:200
+#, php-format
+msgid "Has alcanzado el máximo de %d radio por usuario. Para dar de alta otra, contacta con un administrador."
+msgid_plural "Has alcanzado el máximo de %d radios por usuario. Para dar de alta otra, contacta con un administrador."
+msgstr[0] "Has arribat al màxim de %d ràdio per usuari. Per a donar-ne d'alta una altra, contacta amb un administrador."
+msgstr[1] "Has arribat al màxim de %d ràdios per usuari. Per a donar-ne d'alta una altra, contacta amb un administrador."
+
+#. translators: %s: Name of the sending school.
+#: src/Emails/NotificationService.php:99
+#, php-format
+msgid "[RadioEdu Traspasando Fronteras] ¡Nueva propuesta de match de %s!"
+msgstr "[RadioEdu Traspasando Fronteras] Nova proposta de match de %s!"
+
+#: src/Emails/NotificationService.php:104
+#: src/Emails/NotificationService.php:184
+msgid "Hola,"
+msgstr "Hola,"
+
+#. translators: 1: Name of the sending school, 2: Name of the receiving school.
+#: src/Emails/NotificationService.php:108
+#, php-format
+msgid "El centro escolar \"%1$s\" ha seleccionado vuestra emisora (\"%2$s\") para proponer un proyecto de colaboración en la red Traspasando Fronteras."
+msgstr "El centre escolar \"%1$s\" ha seleccionat la vostra emissora (\"%2$s\") per a proposar-vos un projecte de col·laboració en la xarxa Traspasando Fronteras."
+
+#: src/Emails/NotificationService.php:113
+msgid "Idea del proyecto propuesta:"
+msgstr "Idea del projecte proposada:"
+
+#. translators: %s: Course or ages of the participating students.
+#: src/Emails/NotificationService.php:118
+#, php-format
+msgid "Cursos/Edades: %s"
+msgstr "Cursos/edats: %s"
+
+#: src/Emails/NotificationService.php:119
+msgid "No especificado"
+msgstr "No s'ha especificat"
+
+#. translators: %s: Approximate project dates.
+#: src/Emails/NotificationService.php:123
+#, php-format
+msgid "Fechas previstas: %s"
+msgstr "Dates previstes: %s"
+
+#: src/Emails/NotificationService.php:124
+msgid "Por acordar"
+msgstr "Per acordar"
+
+#: src/Emails/NotificationService.php:127
+msgid "Puedes consultar todos los detalles y responder a la propuesta accediendo al panel de RadioEdu:"
+msgstr "Pots consultar tots els detalls i respondre la proposta des del tauler de RadioEdu:"
+
+#: src/Emails/NotificationService.php:131
+msgid "RadioEdu Conecta - Red de Radios Escolares de Extremadura y del Mundo"
+msgstr "RadioEdu Conecta - Xarxa de ràdios escolars d'Extremadura i del món"
+
+#: src/Emails/NotificationService.php:171
+msgid "ACEPTADA"
+msgstr "ACCEPTADA"
+
+#: src/Emails/NotificationService.php:172
+msgid "DECLINADA"
+msgstr "DECLINADA"
+
+#. translators: 1: Name of the receiving school, 2: New status (accepted/declined).
+#: src/Emails/NotificationService.php:176
+#, php-format
+msgid "[RadioEdu Traspasando Fronteras] Tu propuesta a %1$s ha sido %2$s"
+msgstr "[RadioEdu Traspasando Fronteras] La teua proposta a %1$s ha sigut %2$s"
+
+#. translators: 1: Name of the sending school, 2: Name of the receiving school, 3: New status.
+#: src/Emails/NotificationService.php:188
+#, php-format
+msgid "Te informamos de que la propuesta de colaboración enviada por \"%1$s\" al centro \"%2$s\" ha sido marcada como: %3$s."
+msgstr "T'informem que la proposta de col·laboració enviada per \"%1$s\" al centre \"%2$s\" s'ha marcat com a: %3$s."
+
+#: src/Emails/NotificationService.php:194
+msgid "Mensaje o indicaciones del centro:"
+msgstr "Missatge o indicacions del centre:"
+
+#: src/Emails/NotificationService.php:195
+msgid "Sin mensaje adicional."
+msgstr "Sense missatge addicional."
+
+#. translators: 1: Coordinator name of the receiving school, 2: Coordinator email of the receiving school.
+#: src/Emails/NotificationService.php:206
+#, php-format
+msgid "Contacto de coordinación de la emisora: %1$s <%2$s>"
+msgstr "Contacte de coordinació de l'emissora: %1$s <%2$s>"
+
+#: src/Emails/NotificationService.php:214
+msgid "Puedes acceder a la plataforma para coordinar los siguientes pasos con la emisora."
+msgstr "Pots accedir a la plataforma per a coordinar els passos següents amb l'emissora."
+
+#: src/Emails/NotificationService.php:217
+msgid "RadioEdu Conecta - Traspasando Fronteras"
+msgstr "RadioEdu Conecta - Traspasando Fronteras"
+
+#: src/Frontend/DirectorioShortcode.php:90
+msgid "Ficha de centro de radio"
+msgstr "Fitxa de centre de ràdio"
+
+#: src/Frontend/DirectorioShortcode.php:91
+msgid "Perfil público de un centro: cabecera y pie del tema alrededor de la ficha, sin repetir su título, autor, fecha ni imagen de cabecera."
+msgstr "Perfil públic d'un centre: capçalera i peu del tema al voltant de la fitxa, sense repetir-ne el títol, l'autor, la data ni la imatge de capçalera."
+
+#: src/Icons.php:40
+msgid "Iconos del directorio de radios escolares Traspasando Fronteras."
+msgstr "Icones del directori de ràdios escolars Traspasando Fronteras."
+
+#: src/Icons.php:64
+msgid "Cerrar"
+msgstr "Tanca"
+
+#: src/Icons.php:65
+msgid "Globo terráqueo"
+msgstr "Globus terraqüi"
+
+#: src/Icons.php:66
+msgid "Birrete de graduación"
+msgstr "Birret de graduació"
+
+#: src/Icons.php:67
+msgid "Auriculares"
+msgstr "Auriculars"
+
+#: src/Icons.php:68
+msgid "Centro educativo"
+msgstr "Centre educatiu"
+
+#: src/Icons.php:69
+msgid "Mapa"
+msgstr "Mapa"
+
+#: src/Icons.php:70
+msgid "Micrófono"
+msgstr "Micròfon"
+
+#: src/Icons.php:71
+msgid "Enviar"
+msgstr "Envia"
+
+#: src/Network/NetworkSync.php:426
+msgid "El sitio no existe."
+msgstr "El lloc no existix."
+
+#: src/PostTypes/CentroMeta.php:81
+msgid "ID del adjunto de imagen usado como logo de la emisora."
+msgstr "ID de l'adjunt d'imatge que s'utilitza com a logotip de l'emissora."
+
+#: src/PostTypes/CentroMeta.php:87
+msgid "URL del logo de los centros de demostración."
+msgstr "URL del logotip dels centres de demostració."
+
+#: src/PostTypes/CentroMeta.php:93
+msgid "URL de la imagen de cabecera de los centros de demostración."
+msgstr "URL de la imatge de capçalera dels centres de demostració."
+
+#: src/PostTypes/CentroMeta.php:99
+msgid "Código de la bandera o región mostrada en el directorio."
+msgstr "Codi de la bandera o regió que es mostra en el directori."
+
+#: src/PostTypes/CentroMeta.php:105
+msgid "Latitud decimal del centro en el mapa."
+msgstr "Latitud decimal del centre en el mapa."
+
+#: src/PostTypes/CentroMeta.php:111
+msgid "Longitud decimal del centro en el mapa."
+msgstr "Longitud decimal del centre en el mapa."
+
+#: src/PostTypes/CentroMeta.php:117
+msgid "URL del podcast o de la emisión en directo."
+msgstr "URL del pòdcast o de l'emissió en directe."
+
+#: src/PostTypes/CentroMeta.php:123
+msgid "URL de la web oficial del centro."
+msgstr "URL de la web oficial del centre."
+
+#: src/PostTypes/CentroMeta.php:129
+msgid "Cursos o edades del alumnado que participa en la radio."
+msgstr "Cursos o edats de l'alumnat que participa en la ràdio."
+
+#: src/PostTypes/CentroMeta.php:135
+msgid "Nombre del coordinador o coordinadora (dato personal, privado)."
+msgstr "Nom del coordinador o coordinadora (dada personal, privada)."
+
+#: src/PostTypes/CentroMeta.php:141
+msgid "Email del coordinador o coordinadora (dato personal, privado)."
+msgstr "Correu electrònic del coordinador o coordinadora (dada personal, privada)."
+
+#: src/PostTypes/CentroMeta.php:147
+msgid "Disponibilidad para recibir propuestas: \"1\" disponible, \"0\" no disponible."
+msgstr "Disponibilitat per a rebre propostes: \"1\" disponible, \"0\" no disponible."
+
+#: src/PostTypes/CentroMeta.php:153
+msgid "Marca los contenidos creados por el importador de demostración."
+msgstr "Marca els continguts creats per l'importador de demostració."
+
+#: src/PostTypes/CentroMeta.php:159
+msgid "ID del sitio de la red del que la sincronización de red tomó los datos de la ficha."
+msgstr "ID del lloc de la xarxa del qual la sincronització de xarxa va prendre les dades de la fitxa."
+
+#: src/PostTypes/CentroMeta.php:241
+msgid "El logo debe ser una imagen de la biblioteca de medios a la que tengas acceso."
+msgstr "El logotip ha de ser una imatge de la biblioteca de mèdia a la qual tingues accés."
+
+#: src/PostTypes/CentroPostType.php:31
+msgctxt "Post type general name"
+msgid "Centros y Radios"
+msgstr "Centres i ràdios"
+
+#: src/PostTypes/CentroPostType.php:32
+msgctxt "Post type singular name"
+msgid "Centro de Radio"
+msgstr "Centre de ràdio"
+
+#: src/PostTypes/CentroPostType.php:33
+msgctxt "Admin Menu text"
+msgid "RadioEdu Centros"
+msgstr "RadioEdu Centres"
+
+#: src/PostTypes/CentroPostType.php:34
+msgctxt "Add New on Toolbar"
+msgid "Centro de Radio"
+msgstr "Centre de ràdio"
+
+#: src/PostTypes/CentroPostType.php:35
+msgid "Añadir nuevo centro"
+msgstr "Afig un centre nou"
+
+#: src/PostTypes/CentroPostType.php:36
+msgid "Añadir nuevo centro de radio"
+msgstr "Afig un centre de ràdio nou"
+
+#: src/PostTypes/CentroPostType.php:37
+msgid "Nuevo centro"
+msgstr "Centre nou"
+
+#: src/PostTypes/CentroPostType.php:38
+msgid "Editar centro de radio"
+msgstr "Edita el centre de ràdio"
+
+#: src/PostTypes/CentroPostType.php:39
+msgid "Ver ficha de centro"
+msgstr "Mostra la fitxa del centre"
+
+#: src/PostTypes/CentroPostType.php:40
+msgid "Todos los centros"
+msgstr "Tots els centres"
+
+#: src/PostTypes/CentroPostType.php:41
+msgid "Buscar centros de radio"
+msgstr "Busca centres de ràdio"
+
+#: src/PostTypes/CentroPostType.php:42
+msgid "Centro superior:"
+msgstr "Centre superior:"
+
+#: src/PostTypes/CentroPostType.php:43
+msgid "No se encontraron centros."
+msgstr "No s'han trobat centres."
+
+#: src/PostTypes/CentroPostType.php:44
+msgid "No hay centros en la papelera."
+msgstr "No hi ha centres en la paperera."
+
+#: src/PostTypes/CentroPostType.php:45
+msgctxt "Overrides the \"Featured Image\" phrase"
+msgid "Foto de cabecera / Fachada del centro"
+msgstr "Foto de capçalera / Façana del centre"
+
+#: src/PostTypes/CentroPostType.php:46
+msgctxt "Overrides the \"Set featured image\" phrase"
+msgid "Asignar foto de cabecera"
+msgstr "Assigna la foto de capçalera"
+
+#: src/PostTypes/CentroPostType.php:47
+msgctxt "Overrides the \"Remove featured image\" phrase"
+msgid "Quitar foto de cabecera"
+msgstr "Lleva la foto de capçalera"
+
+#: src/PostTypes/CentroPostType.php:48
+msgctxt "Overrides the \"Use as featured image\" phrase"
+msgid "Usar como foto de cabecera"
+msgstr "Utilitza com a foto de capçalera"
+
+#: src/PostTypes/CentroPostType.php:49
+msgctxt "The post type archive label"
+msgid "Directorio de radios escolares"
+msgstr "Directori de ràdios escolars"
+
+#: src/PostTypes/CentroPostType.php:50
+msgctxt "The post type attributes label"
+msgid "Atributos de centro"
+msgstr "Atributs del centre"
+
+#: src/PostTypes/CentroPostType.php:51
+msgctxt "Overrides the \"Insert into post\" phrase"
+msgid "Insertar en la ficha de centro"
+msgstr "Inserix en la fitxa del centre"
+
+#: src/PostTypes/CentroPostType.php:52
+msgctxt "Overrides the \"Uploaded to this post\" phrase"
+msgid "Subido a este centro"
+msgstr "Pujat a este centre"
+
+#: src/PostTypes/CentroPostType.php:53
+msgctxt "Screen reader text for the filter links"
+msgid "Filtrar lista de centros"
+msgstr "Filtra la llista de centres"
+
+#: src/PostTypes/CentroPostType.php:54
+msgctxt "Screen reader text for the pagination"
+msgid "Navegación de lista de centros"
+msgstr "Navegació de la llista de centres"
+
+#: src/PostTypes/CentroPostType.php:55
+msgctxt "Screen reader text for the items list"
+msgid "Lista de centros"
+msgstr "Llista de centres"
+
+#: src/Privacy/PrivacyPolicy.php:44
+msgid "RadioEdu Conecta (Traspasando Fronteras)"
+msgstr "RadioEdu Conecta (Traspasando Fronteras)"
+
+#: src/Privacy/PrivacyPolicy.php:45
+msgid "Este sitio utiliza el plugin RadioEdu Conecta para gestionar el directorio de radios escolares. Los datos de contacto del docente coordinador (nombre y correo electrónico profesional) se almacenan de forma interna y nunca se exponen públicamente en el directorio web ni en las respuestas públicas de la API REST."
+msgstr "Este lloc utilitza l'extensió RadioEdu Conecta per a gestionar el directori de ràdios escolars. Les dades de contacte del docent coordinador (nom i correu electrònic professional) s'emmagatzemen internament i mai s'exposen públicament en el directori web ni en les respostes públiques de l'API REST."
+
+#: src/Privacy/PrivacyPolicy.php:48
+msgid "Al activar voluntariamente la vista de mapa interactivo, el navegador del usuario se conecta con los servidores de OpenStreetMap Foundation para descargar la cartografía."
+msgstr "En activar voluntàriament la vista de mapa interactiu, el navegador de l'usuari es connecta amb els servidors de l'OpenStreetMap Foundation per a descarregar la cartografia."
+
+#: src/Privacy/PrivacyPolicy.php:49
+msgid "Los centros marcados como favoritos y la aceptación del mapa se guardan únicamente en el almacenamiento local del navegador del visitante y no se envían al servidor."
+msgstr "Els centres marcats com a preferits i l'acceptació del mapa es guarden únicament en l'emmagatzematge local del navegador del visitant i no s'envien al servidor."
+
+#: src/Privacy/PrivacyPolicy.php:63
+#: src/Privacy/PrivacyPolicy.php:77
+msgid "RadioEdu Conecta (Coordinadores y Propuestas)"
+msgstr "RadioEdu Conecta (coordinadors i propostes)"
+
+#: src/Privacy/PrivacyPolicy.php:125
+msgid "RadioEdu Conecta - Coordinación de Centros"
+msgstr "RadioEdu Conecta - Coordinació de centres"
+
+#: src/Privacy/PrivacyPolicy.php:129
+msgid "Centro escolar"
+msgstr "Centre escolar"
+
+#: src/Privacy/PrivacyPolicy.php:133
+msgid "Nombre del coordinador"
+msgstr "Nom del coordinador"
+
+#: src/Privacy/PrivacyPolicy.php:137
+msgid "Email de coordinación"
+msgstr "Correu electrònic de coordinació"
+
+#: src/Privacy/PrivacyPolicy.php:167
+msgid "RadioEdu Conecta - Propuestas de Colaboración"
+msgstr "RadioEdu Conecta - Propostes de col·laboració"
+
+#: src/Privacy/PrivacyPolicy.php:171
+msgid "Centro emisor"
+msgstr "Centre emissor"
+
+#: src/Privacy/PrivacyPolicy.php:175
+msgid "Centro receptor"
+msgstr "Centre receptor"
+
+#: src/Privacy/PrivacyPolicy.php:179
+#: templates/single-centro.php:96
+msgid "Cursos / Edades"
+msgstr "Cursos / edats"
+
+#: src/Privacy/PrivacyPolicy.php:183
+#: src/Taxonomies/TaxonomiesRegistrar.php:102
+msgid "Idiomas"
+msgstr "Idiomes"
+
+#: src/Privacy/PrivacyPolicy.php:187
+#: templates/match-drawer.php:89
+msgid "Fechas aproximadas"
+msgstr "Dates aproximades"
+
+#: src/Privacy/PrivacyPolicy.php:191
+msgid "Respuesta"
+msgstr "Resposta"
+
+#: src/Privacy/PrivacyPolicy.php:199
+#: templates/match-drawer.php:65
+msgid "Idea de proyecto"
+msgstr "Idea de projecte"
+
+#: src/Privacy/PrivacyPolicy.php:327
+msgid "Se han eliminado los textos enviados y la vinculación con la cuenta. Los centros, las fechas, el estado y las respuestas de otros participantes se conservan como historial compartido; revise esas respuestas si contienen datos personales de la persona solicitante."
+msgstr "S'han eliminat els textos enviats i la vinculació amb el compte. Els centres, les dates, l'estat i les respostes d'altres participants es conserven com a historial compartit; reviseu estes respostes per si contenen dades personals de la persona sol·licitant."
+
+#: src/Privacy/PrivacyPolicy.php:340
+msgid "No se han podido eliminar todos los datos. Reintente la solicitud de borrado."
+msgstr "No s'han pogut eliminar totes les dades. Torneu a fer la sol·licitud d'esborrament."
+
+#: src/Rest/CentrosController.php:343
+#: src/Rest/ColaboracionesController.php:572
+msgid "Número de página de resultados."
+msgstr "Número de pàgina de resultats."
+
+#: src/Rest/CentrosController.php:351
+msgid "Número de centros por página."
+msgstr "Nombre de centres per pàgina."
+
+#: src/Rest/CentrosController.php:360
+msgid "Término de búsqueda por nombre o palabra clave."
+msgstr "Terme de busca per nom o paraula clau."
+
+#: src/Rest/CentrosController.php:367
+msgid "Criterio de ordenación."
+msgstr "Criteri d'ordenació."
+
+#: src/Rest/CentrosController.php:375
+msgid "ID del centro de referencia para calcular afinidad."
+msgstr "ID del centre de referència per a calcular l'afinitat."
+
+#: src/Rest/CentrosController.php:382
+msgid "Slug de etapa educativa."
+msgstr "Slug d'etapa educativa."
+
+#: src/Rest/CentrosController.php:388
+msgid "Slug de idioma."
+msgstr "Slug d'idioma."
+
+#: src/Rest/CentrosController.php:394
+msgid "Slug de temática."
+msgstr "Slug de temàtica."
+
+#: src/Rest/CentrosController.php:400
+msgid "Slug de formato de programa."
+msgstr "Slug de format de programa."
+
+#: src/Rest/CentrosController.php:406
+msgid "Slug de ubicación geográfica."
+msgstr "Slug d'ubicació geogràfica."
+
+#: src/Rest/ColaboracionesController.php:91
+msgid "ID de la propuesta de colaboración."
+msgstr "ID de la proposta de col·laboració."
+
+#: src/Rest/ColaboracionesController.php:99
+msgid "Nuevo estado de la propuesta."
+msgstr "Estat nou de la proposta."
+
+#: src/Rest/ColaboracionesController.php:107
+msgid "Mensaje de respuesta para el centro emisor."
+msgstr "Missatge de resposta per al centre emissor."
+
+#: src/Rest/ColaboracionesController.php:347
+msgid "Has alcanzado el límite de propuestas por hora. Por favor, inténtalo más tarde."
+msgstr "Has arribat al límit de propostes per hora. Torna-ho a intentar més tard."
+
+#: src/Rest/ColaboracionesController.php:362
+msgid "No puedes enviar una propuesta de colaboración a tu propio centro escolar."
+msgstr "No pots enviar una proposta de col·laboració al teu propi centre escolar."
+
+#: src/Rest/ColaboracionesController.php:370
+msgid "Por favor, describe brevemente la idea del proyecto conjunto."
+msgstr "Descriu breument la idea del projecte conjunt."
+
+#: src/Rest/ColaboracionesController.php:386
+msgid "Uno de los centros especificados no es válido o no está publicado."
+msgstr "Un dels centres especificats no és vàlid o no està publicat."
+
+#: src/Rest/ColaboracionesController.php:395
+msgid "No tienes permisos para enviar propuestas en nombre del centro emisor seleccionado."
+msgstr "No tens permisos per a enviar propostes en nom del centre emissor seleccionat."
+
+#: src/Rest/ColaboracionesController.php:404
+msgid "Este centro escolar no está disponible actualmente para recibir nuevas propuestas de colaboración."
+msgstr "Este centre escolar no està disponible actualment per a rebre propostes de col·laboració noves."
+
+#: src/Rest/ColaboracionesController.php:433
+msgid "No se pudo registrar la propuesta en la base de datos."
+msgstr "No s'ha pogut registrar la proposta en la base de dades."
+
+#: src/Rest/ColaboracionesController.php:454
+msgid "¡Propuesta de match enviada con éxito! La emisora receptora recibirá una notificación para comenzar a coordinar el proyecto."
+msgstr "S'ha enviat la proposta de match! L'emissora receptora rebrà una notificació per a començar a coordinar el projecte."
+
+#: src/Rest/ColaboracionesController.php:492
+msgid "Estado de la colaboración actualizado correctamente."
+msgstr "S'ha actualitzat correctament l'estat de la col·laboració."
+
+#: src/Rest/ColaboracionesController.php:521
+msgid "El estado indicado no es válido."
+msgstr "L'estat indicat no és vàlid."
+
+#: src/Rest/ColaboracionesController.php:530
+msgid "La propuesta de colaboración no existe."
+msgstr "La proposta de col·laboració no existix."
+
+#: src/Rest/ColaboracionesController.php:541
+msgid "El mensaje de respuesta es demasiado largo."
+msgstr "El missatge de resposta és massa llarg."
+
+#: src/Rest/ColaboracionesController.php:552
+msgid "Esta propuesta ya ha sido respondida y no puede modificarse."
+msgstr "Esta proposta ja s'ha respost i no es pot modificar."
+
+#: src/Rest/ColaboracionesController.php:599
+msgid "ID del centro que envía la propuesta."
+msgstr "ID del centre que envia la proposta."
+
+#: src/Rest/ColaboracionesController.php:607
+msgid "ID del centro que recibe la propuesta."
+msgstr "ID del centre que rep la proposta."
+
+#: src/Rest/ColaboracionesController.php:615
+msgid "Idea del proyecto conjunto."
+msgstr "Idea del projecte conjunt."
+
+#: src/Rest/ColaboracionesController.php:624
+msgid "Curso o edades del alumnado participante."
+msgstr "Curs o edats de l'alumnat participant."
+
+#: src/Rest/ColaboracionesController.php:632
+msgid "Idiomas de trabajo del proyecto."
+msgstr "Idiomes de treball del projecte."
+
+#: src/Rest/ColaboracionesController.php:640
+msgid "Fechas aproximadas del proyecto."
+msgstr "Dates aproximades del projecte."
+
+#: src/Rest/NetworkSyncController.php:59
+msgid "Número de sitios ya procesados."
+msgstr "Nombre de llocs ja processats."
+
+#: src/Rest/NetworkSyncController.php:68
+msgid "Si los autores de las fichas reciben el rol Autor en el sitio principal. Si se omite, se usa la última elección."
+msgstr "Si els autors de les fitxes reben el rol Autor en el lloc principal. Si s'omet, s'utilitza l'última elecció."
+
+#: src/Rest/NetworkSyncController.php:91
+msgid "La sincronización de red solo funciona en el sitio principal de una red multisitio."
+msgstr "La sincronització de xarxa només funciona en el lloc principal d'una xarxa multilloc."
+
+#: src/Rest/NetworkSyncController.php:94
+msgid "No tienes permiso para sincronizar las fichas de la red."
+msgstr "No tens permís per a sincronitzar les fitxes de la xarxa."
+
+#: src/Rest/NetworkSyncController.php:142
+msgid "Sitios procesados en este lote."
+msgstr "Llocs processats en este lot."
+
+#: src/Rest/NetworkSyncController.php:143
+msgid "Sitios de la red que se sincronizan."
+msgstr "Llocs de la xarxa que se sincronitzen."
+
+#: src/Rest/NetworkSyncController.php:144
+msgid "Valor de offset del siguiente lote."
+msgstr "Valor d'offset del lot següent."
+
+#: src/Rest/NetworkSyncController.php:148
+msgid "Si este es el último lote."
+msgstr "Si este és l'últim lot."
+
+#: src/Rest/NetworkSyncController.php:150
+msgid "Fichas creadas."
+msgstr "Fitxes creades."
+
+#: src/Rest/NetworkSyncController.php:151
+msgid "Fichas actualizadas."
+msgstr "Fitxes actualitzades."
+
+#: src/Rest/NetworkSyncController.php:152
+msgid "Fichas creadas a mano reutilizadas."
+msgstr "Fitxes creades a mà reutilitzades."
+
+#: src/Rest/NetworkSyncController.php:153
+msgid "Fichas omitidas porque están en la papelera."
+msgstr "Fitxes omeses perquè són en la paperera."
+
+#: src/Rest/NetworkSyncController.php:154
+msgid "Autores de fichas que han recibido el rol Autor en el sitio principal."
+msgstr "Autors de fitxes que han rebut el rol Autor en el lloc principal."
+
+#: src/Rest/NetworkSyncController.php:158
+msgid "Fichas sincronizadas en este lote."
+msgstr "Fitxes sincronitzades en este lot."
+
+#: src/Rest/NetworkSyncController.php:195
+msgid "Fichas cuyo sitio de origen ya no existe (solo en el último lote)."
+msgstr "Fitxes el lloc d'origen de les quals ja no existix (només en l'últim lot)."
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:59
+msgctxt "taxonomy general name"
+msgid "Etapas Educativas"
+msgstr "Etapes educatives"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:60
+msgctxt "taxonomy singular name"
+msgid "Etapa Educativa"
+msgstr "Etapa educativa"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:61
+msgid "Buscar etapas educativas"
+msgstr "Busca etapes educatives"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:62
+msgid "Todas las etapas"
+msgstr "Totes les etapes"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:63
+msgid "Etapa superior"
+msgstr "Etapa superior"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:64
+msgid "Etapa superior:"
+msgstr "Etapa superior:"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:65
+msgid "Editar etapa"
+msgstr "Edita l'etapa"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:66
+msgid "Actualizar etapa"
+msgstr "Actualitza l'etapa"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:67
+msgid "Añadir nueva etapa educativa"
+msgstr "Afig una etapa educativa nova"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:68
+msgid "Nombre de nueva etapa"
+msgstr "Nom de l'etapa nova"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:69
+msgid "Etapas Educativas"
+msgstr "Etapes educatives"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:94
+msgctxt "taxonomy general name"
+msgid "Idiomas"
+msgstr "Idiomes"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:95
+msgctxt "taxonomy singular name"
+msgid "Idioma"
+msgstr "Idioma"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:96
+msgid "Buscar idiomas"
+msgstr "Busca idiomes"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:97
+msgid "Todos los idiomas"
+msgstr "Tots els idiomes"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:98
+msgid "Editar idioma"
+msgstr "Edita l'idioma"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:99
+msgid "Actualizar idioma"
+msgstr "Actualitza l'idioma"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:100
+msgid "Añadir nuevo idioma"
+msgstr "Afig un idioma nou"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:101
+msgid "Nombre del nuevo idioma"
+msgstr "Nom de l'idioma nou"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:127
+msgctxt "taxonomy general name"
+msgid "Temas de Interés"
+msgstr "Temes d'interés"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:128
+msgctxt "taxonomy singular name"
+msgid "Tema de Interés"
+msgstr "Tema d'interés"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:129
+msgid "Buscar temas"
+msgstr "Busca temes"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:130
+msgid "Todos los temas"
+msgstr "Tots els temes"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:131
+msgid "Editar tema"
+msgstr "Edita el tema"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:132
+msgid "Actualizar tema"
+msgstr "Actualitza el tema"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:133
+msgid "Añadir nuevo tema"
+msgstr "Afig un tema nou"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:134
+msgid "Nombre del nuevo tema"
+msgstr "Nom del tema nou"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:135
+msgid "Temas de Interés"
+msgstr "Temes d'interés"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:160
+msgctxt "taxonomy general name"
+msgid "Formatos de Radio"
+msgstr "Formats de ràdio"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:161
+msgctxt "taxonomy singular name"
+msgid "Formato de Radio"
+msgstr "Format de ràdio"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:162
+msgid "Buscar formatos"
+msgstr "Busca formats"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:163
+msgid "Todos los formatos"
+msgstr "Tots els formats"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:164
+msgid "Editar formato"
+msgstr "Edita el format"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:165
+msgid "Actualizar formato"
+msgstr "Actualitza el format"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:166
+msgid "Añadir nuevo formato"
+msgstr "Afig un format nou"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:167
+msgid "Nombre del nuevo formato"
+msgstr "Nom del format nou"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:168
+msgid "Formatos de Radio"
+msgstr "Formats de ràdio"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:193
+msgctxt "taxonomy general name"
+msgid "Ubicaciones"
+msgstr "Ubicacions"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:194
+msgctxt "taxonomy singular name"
+msgid "Ubicación"
+msgstr "Ubicació"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:195
+msgid "Buscar ubicaciones"
+msgstr "Busca ubicacions"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:196
+msgid "Todas las ubicaciones"
+msgstr "Totes les ubicacions"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:197
+msgid "Ubicación superior"
+msgstr "Ubicació superior"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:198
+msgid "Ubicación superior:"
+msgstr "Ubicació superior:"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:199
+msgid "Editar ubicación"
+msgstr "Edita la ubicació"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:200
+msgid "Actualizar ubicación"
+msgstr "Actualitza la ubicació"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:201
+msgid "Añadir nueva ubicación"
+msgstr "Afig una ubicació nova"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:202
+msgid "Nombre de la ubicación"
+msgstr "Nom de la ubicació"
+
+#: src/Taxonomies/TaxonomiesRegistrar.php:203
+msgid "Ubicaciones"
+msgstr "Ubicacions"
+
+#: templates/directorio.php:33
+msgid "Traspasando Fronteras"
+msgstr "Traspasando Fronteras"
+
+#: templates/directorio.php:35
+msgid "Conectamos radios escolares de Extremadura con otras emisoras de España y del mundo."
+msgstr "Connectem ràdios escolars d'Extremadura amb altres emissores d'Espanya i del món."
+
+#: templates/directorio.php:40
+msgid "Diferentes voces, un mismo mundo"
+msgstr "Veus diferents, un mateix món"
+
+#: templates/directorio.php:41
+msgid "RADIOS ESCOLARES QUE HACEN UN MUNDO MÁS GRANDE 🌍"
+msgstr "RÀDIOS ESCOLARS QUE FAN UN MÓN MÉS GRAN 🌍"
+
+#: templates/directorio.php:47
+msgid "Filtros del directorio"
+msgstr "Filtres del directori"
+
+#: templates/directorio.php:53
+msgid "Ubicación"
+msgstr "Ubicació"
+
+#: templates/directorio.php:56
+msgid "Cualquier lugar"
+msgstr "Qualsevol lloc"
+
+#: templates/directorio.php:70
+msgid "Idioma"
+msgstr "Idioma"
+
+#: templates/directorio.php:73
+msgid "Cualquier idioma"
+msgstr "Qualsevol idioma"
+
+#: templates/directorio.php:87
+msgid "Etapa educativa"
+msgstr "Etapa educativa"
+
+#: templates/directorio.php:90
+msgid "Cualquiera"
+msgstr "Qualsevol"
+
+#: templates/directorio.php:104
+msgid "Temas"
+msgstr "Temes"
+
+#: templates/directorio.php:107
+msgid "Cualquier tema"
+msgstr "Qualsevol tema"
+
+#: templates/directorio.php:121
+msgid "Formato"
+msgstr "Format"
+
+#: templates/directorio.php:124
+msgid "Cualquier formato"
+msgstr "Qualsevol format"
+
+#: templates/directorio.php:138
+msgid "Busca colaboración con..."
+msgstr "Busca col·laboració amb..."
+
+#: templates/directorio.php:140
+msgid "Cualquier centro o temática..."
+msgstr "Qualsevol centre o temàtica..."
+
+#: templates/directorio.php:146
+msgid "Buscar centros"
+msgstr "Busca centres"
+
+#. translators: %s: Number of schools found.
+#: templates/directorio.php:161
+#: build/directorio.js:3
+#, php-format,js-format
+msgid "Resultados (%s centros)"
+msgstr "Resultats (%s centres)"
+
+#: templates/directorio.php:172
+msgid "Vista de mapa"
+msgstr "Vista de mapa"
+
+#: templates/directorio.php:177
+msgid "Ordenar por"
+msgstr "Ordena per"
+
+#: templates/directorio.php:179
+msgid "Más afines"
+msgstr "Més afins"
+
+#: templates/directorio.php:180
+msgid "Más recientes"
+msgstr "Més recents"
+
+#: templates/directorio.php:181
+msgid "Alfabético (A-Z)"
+msgstr "Alfabètic (A-Z)"
+
+#: templates/directorio.php:189
+msgid "No se han podido cargar los centros. Vuelve a pulsar Buscar centros para reintentar."
+msgstr "No s'han pogut carregar els centres. Torna a polsar Busca centres per a intentar-ho de nou."
+
+#: templates/directorio.php:207
+msgid "Mapa geográfico interactivo (OpenStreetMap)"
+msgstr "Mapa geogràfic interactiu (OpenStreetMap)"
+
+#: templates/directorio.php:208
+msgid "Al cargar el mapa cartográfico se establecerá conexión con los servidores externos de OpenStreetMap Foundation para descargar las imágenes del mapa."
+msgstr "En carregar el mapa cartogràfic s'establirà connexió amb els servidors externs de l'OpenStreetMap Foundation per a descarregar les imatges del mapa."
+
+#: templates/directorio.php:210
+msgid "Aceptar y mostrar el mapa interactivo"
+msgstr "Accepta i mostra el mapa interactiu"
+
+#: templates/directorio.php:225
+msgid "Cargar más centros"
+msgstr "Carrega més centres"
+
+#: templates/directorio.php:232
+msgid "Buscando centros afines en la red..."
+msgstr "S'estan buscant centres afins en la xarxa..."
+
+#: templates/directorio.php:238
+msgid "No se han encontrado emisoras con estos filtros"
+msgstr "No s'han trobat emissores amb estos filtres"
+
+#: templates/directorio.php:239
+msgid "Prueba a seleccionar otros temas, idiomas o restablecer la búsqueda."
+msgstr "Prova de seleccionar altres temes o idiomes, o restablix la busca."
+
+#: templates/directorio.php:241
+msgid "Limpiar todos los filtros"
+msgstr "Neteja tots els filtres"
+
+#: templates/match-drawer.php:23
+msgid "Solicitud de match"
+msgstr "Sol·licitud de match"
+
+#: templates/match-drawer.php:24
+msgid "¡Cuéntanos tu idea y empezad a crear juntos!"
+msgstr "Conta'ns la teua idea i comenceu a crear junts!"
+
+#: templates/match-drawer.php:26
+msgid "Cerrar panel"
+msgstr "Tanca el tauler"
+
+#: templates/match-drawer.php:35
+#: templates/match-drawer.php:46
+msgid "Tu centro"
+msgstr "El teu centre"
+
+#: templates/match-drawer.php:48
+msgid "Sin centro asignado como coordinador"
+msgstr "No tens cap centre assignat com a coordinador"
+
+#: templates/match-drawer.php:48
+msgid "Debes iniciar sesión para enviar propuestas"
+msgstr "Has d'iniciar la sessió per a enviar propostes"
+
+#: templates/match-drawer.php:56
+msgid "Centro con el que quieres colaborar"
+msgstr "Centre amb el qual vols col·laborar"
+
+#: templates/match-drawer.php:67
+msgid "Ejemplo: Queremos crear un podcast conjunto sobre la vida en entornos rurales, con entrevistas a estudiantes de ambos centros..."
+msgstr "Exemple: Volem crear un pòdcast conjunt sobre la vida en entorns rurals, amb entrevistes a estudiants dels dos centres..."
+
+#: templates/match-drawer.php:74
+msgid "Curso o edades"
+msgstr "Curs o edats"
+
+#: templates/match-drawer.php:76
+msgid "Ej: 12-14 años (1º-2º ESO)"
+msgstr "P. ex.: 12-14 anys (1r-2n d'ESO)"
+
+#: templates/match-drawer.php:80
+msgid "Idioma(s)"
+msgstr "Idioma(es)"
+
+#: templates/match-drawer.php:82
+msgid "Ej: Español / Inglés"
+msgstr "P. ex.: Valencià / Anglés"
+
+#: templates/match-drawer.php:91
+msgid "Ej: 2º Trimestre (Enero - Marzo)"
+msgstr "P. ex.: 2n trimestre (gener - març)"
+
+#: templates/match-drawer.php:100
+#: build/directorio.js:3
+msgid "Enviar propuesta"
+msgstr "Envia la proposta"
+
+#: templates/match-drawer.php:110
+msgid "1. Encuentra"
+msgstr "1. Troba"
+
+#: templates/match-drawer.php:111
+msgid "Busca centros afines a tus intereses"
+msgstr "Busca centres afins als teus interessos"
+
+#: templates/match-drawer.php:116
+msgid "2. Conecta"
+msgstr "2. Connecta"
+
+#: templates/match-drawer.php:117
+msgid "Envía tu propuesta de match"
+msgstr "Envia la teua proposta de match"
+
+#: templates/match-drawer.php:122
+msgid "3. Crea"
+msgstr "3. Crea"
+
+#: templates/match-drawer.php:123
+msgid "¡Desarrollad juntos vuestro proyecto!"
+msgstr "Desenvolupeu junts el vostre projecte!"
+
+#: templates/single-centro.php:38
+msgid "Volver al directorio Traspasando Fronteras"
+msgstr "Torna al directori Traspasando Fronteras"
+
+#: templates/single-centro.php:50
+msgid "Disponible para colaborar"
+msgstr "Disponible per a col·laborar"
+
+#: templates/single-centro.php:52
+msgid "No disponible actualmente"
+msgstr "No disponible actualment"
+
+#: templates/single-centro.php:74
+#: templates/single-centro.php:122
+#: build/directorio.js:3
+msgid "Extremadura"
+msgstr "Extremadura"
+
+#: templates/single-centro.php:106
+msgid "Idiomas de trabajo"
+msgstr "Idiomes de treball"
+
+#: templates/single-centro.php:124
+#: build/directorio.js:3
+msgid "Proponer match"
+msgstr "Proposa un match"
+
+#: templates/single-centro.php:128
+#: build/directorio.js:3
+msgid "No disponible"
+msgstr "No disponible"
+
+#: templates/single-centro.php:134
+msgid "Escuchar Podcast / Emisora"
+msgstr "Escolta el pòdcast / l'emissora"
+
+#: templates/single-centro.php:140
+msgid "Web del centro"
+msgstr "Web del centre"
+
+#: templates/single-centro.php:150
+msgid "Sobre nuestra emisora escolar"
+msgstr "Sobre la nostra emissora escolar"
+
+#: build/admin.js:1
+#: build/centro-panel.js:1
+msgid "Seleccionar logo de la radio"
+msgstr "Selecciona el logotip de la ràdio"
+
+#: build/admin.js:1
+msgid "Usar este logo"
+msgstr "Utilitza este logotip"
+
+#: build/centro-panel.js:1
+msgid "Necesitas permiso para subir archivos para cambiar el logo."
+msgstr "Necessites permís per a pujar fitxers per a canviar el logotip."
+
+#: build/centro-panel.js:1
+msgid "Datos de la emisora"
+msgstr "Dades de l'emissora"
+
+#: build/centro-panel.js:1
+msgid "Ej: 10–14 años (5º Primaria a 2º ESO)"
+msgstr "P. ex.: 10–14 anys (de 5é de Primària a 2n d'ESO)"
+
+#: build/centro-panel.js:1
+msgid "Ubicación en el mapa"
+msgstr "Ubicació en el mapa"
+
+#: build/centro-panel.js:1
+msgid "Latitud"
+msgstr "Latitud"
+
+#: build/centro-panel.js:1
+msgid "Longitud"
+msgstr "Longitud"
+
+#: build/centro-panel.js:1
+msgid "Coordinación"
+msgstr "Coordinació"
+
+#: build/directorio.js:3
+msgid "No se encontraron centros con los filtros seleccionados."
+msgstr "No s'han trobat centres amb els filtres seleccionats."
+
+#: build/directorio.js:3
+msgid "Cargando centros…"
+msgstr "S'estan carregant els centres…"
+
+#: build/directorio.js:3
+msgid "Ver perfil"
+msgstr "Mostra el perfil"
+
+#: build/directorio.js:3
+msgid "Añadir a favoritos"
+msgstr "Afig als preferits"
+
+#: build/directorio.js:3
+msgid "Quitar de favoritos"
+msgstr "Lleva dels preferits"
+
+#: build/directorio.js:3
+msgid "Enviando propuesta…"
+msgstr "S'està enviant la proposta…"
+
+#: build/directorio.js:3
+msgid "¡Propuesta enviada con éxito!"
+msgstr "S'ha enviat la proposta!"
+
+#: build/directorio.js:3
+msgid "Debes iniciar sesión con tu cuenta de coordinador de centro para enviar propuestas de colaboración."
+msgstr "Has d'iniciar la sessió amb el teu compte de coordinador de centre per a enviar propostes de col·laboració."
+
+#: build/directorio.js:3
+msgid "Tu cuenta actual no dispone de permisos de coordinador para proponer colaboraciones."
+msgstr "El teu compte actual no té permisos de coordinador per a proposar col·laboracions."
+
+#: build/directorio.js:3
+msgid "Por favor, selecciona tu centro escolar."
+msgstr "Selecciona el teu centre escolar."
+
+#: build/directorio.js:3
+msgid "Ha ocurrido un error al procesar la solicitud."
+msgstr "S'ha produït un error en processar la sol·licitud."
+
+#: build/directorio.js:3
+msgid "Iniciar sesión"
+msgstr "Inicia la sessió"
+
+#: build/directorio.js:3
+msgid "Colaboradores de OpenStreetMap"
+msgstr "Col·laboradors d'OpenStreetMap"
+
+#: build/network-sync.js:1
+msgid "Sincronizando…"
+msgstr "S'està sincronitzant…"
+
+#. translators: 1: processed sites, 2: total sites.
+#: build/network-sync.js:2
+#, js-format
+msgid "Procesados %1$d de %2$d sitios…"
+msgstr "S'han processat %1$d de %2$d llocs…"
+
+#: build/network-sync.js:2
+#: build/network-sync.js:11
+msgid "Sincronización terminada."
+msgstr "S'ha acabat la sincronització."
+
+#. translators: %d: number of fichas.
+#: build/network-sync.js:3
+#, js-format
+msgid "%d ficha creada."
+msgid_plural "%d fichas creadas."
+msgstr[0] "S'ha creat %d fitxa."
+msgstr[1] "S'han creat %d fitxes."
+
+#. translators: %d: number of fichas.
+#: build/network-sync.js:4
+#, js-format
+msgid "%d ficha actualizada."
+msgid_plural "%d fichas actualizadas."
+msgstr[0] "S'ha actualitzat %d fitxa."
+msgstr[1] "S'han actualitzat %d fitxes."
+
+#. translators: %d: number of fichas.
+#: build/network-sync.js:5
+#, js-format
+msgid "%d ficha creada a mano reutilizada."
+msgid_plural "%d fichas creadas a mano reutilizadas."
+msgstr[0] "S'ha reutilitzat %d fitxa creada a mà."
+msgstr[1] "S'han reutilitzat %d fitxes creades a mà."
+
+#. translators: %d: number of fichas.
+#: build/network-sync.js:6
+#, js-format
+msgid "%d ficha omitida porque está en la papelera."
+msgid_plural "%d fichas omitidas porque están en la papelera."
+msgstr[0] "S'ha omés %d fitxa perquè és en la paperera."
+msgstr[1] "S'han omés %d fitxes perquè són en la paperera."
+
+#. translators: %d: number of coordinators.
+#: build/network-sync.js:7
+#, js-format
+msgid "%d coordinador ha recibido el rol Autor en el sitio principal."
+msgid_plural "%d coordinadores han recibido el rol Autor en el sitio principal."
+msgstr[0] "%d coordinador ha rebut el rol Autor en el lloc principal."
+msgstr[1] "%d coordinadors han rebut el rol Autor en el lloc principal."
+
+#: build/network-sync.js:7
+msgid "Sitios que no se han podido sincronizar:"
+msgstr "Llocs que no s'han pogut sincronitzar:"
+
+#. translators: 1: site ID, 2: error message.
+#: build/network-sync.js:8
+#, js-format
+msgid "Sitio %1$d: %2$s"
+msgstr "Lloc %1$d: %2$s"
+
+#: build/network-sync.js:8
+msgid "Fichas cuyo sitio ya no existe (no se han borrado):"
+msgstr "Fitxes el lloc de les quals ja no existix (no s'han esborrat):"
+
+#. translators: %d: ID of the site that no longer exists.
+#: build/network-sync.js:9
+#, js-format
+msgid "(sitio %d)"
+msgstr "(lloc %d)"
+
+#: build/network-sync.js:9
+msgid "Creada"
+msgstr "Creada"
+
+#: build/network-sync.js:9
+msgid "Actualizada"
+msgstr "Actualitzada"
+
+#: build/network-sync.js:9
+msgid "Reutilizada (ficha hecha a mano)"
+msgstr "Reutilitzada (fitxa feta a mà)"
+
+#: build/network-sync.js:9
+msgid "Omitida (en la papelera)"
+msgstr "Omesa (en la paperera)"
+
+#. translators: %d: number of synced stations.
+#: build/network-sync.js:10
+#, js-format
+msgid "%d emisora sincronizada"
+msgid_plural "%d emisoras sincronizadas"
+msgstr[0] "%d emissora sincronitzada"
+msgstr[1] "%d emissores sincronitzades"
+
+#: build/network-sync.js:10
+msgid "Resultado de la sincronización por emisora"
+msgstr "Resultat de la sincronització per emissora"
+
+#: build/network-sync.js:10
+msgid "Emisora"
+msgstr "Emissora"
+
+#: build/network-sync.js:10
+msgid "Sitio de origen"
+msgstr "Lloc d'origen"
+
+#: build/network-sync.js:10
+msgid "Resultado"
+msgstr "Resultat"
+
+#: build/network-sync.js:10
+msgid "Rol Autor añadido"
+msgstr "Rol Autor afegit"
+
+#. translators: %d: ficha ID.
+#: build/network-sync.js:11
+#, js-format
+msgid "Ficha %d"
+msgstr "Fitxa %d"
+
+#: build/network-sync.js:11
+msgid "No"
+msgstr "No"
+
+#. translators: 1: created fichas, 2: updated fichas, 3: problems.
+#: build/network-sync.js:12
+#, js-format
+msgid "Sincronización terminada: %1$d creadas, %2$d actualizadas, %3$d avisos."
+msgstr "Sincronització acabada: %1$d creades, %2$d actualitzades, %3$d avisos."
+
+#. translators: %s: error message.
+#: build/network-sync.js:13
+#, js-format
+msgid "La sincronización se ha detenido: %s"
+msgstr "La sincronització s'ha detingut: %s"
+
+#: build/network-sync.js:13
+msgid "error desconocido"
+msgstr "error desconegut"
+
+#: src/Privacy/PrivacyPolicy.php:46
+msgid "Las propuestas de colaboración guardan la cuenta de usuario que las envía, los centros implicados, el texto del proyecto y la respuesta, junto con la cuenta que la escribe. El correo de contacto del centro receptor solo se comparte con el centro emisor cuando la propuesta es aceptada."
+msgstr "Les propostes de col·laboració guarden el compte d'usuari que les envia, els centres implicats, el text del projecte i la resposta, juntament amb el compte que l'escriu. El correu de contacte del centre receptor només es compartix amb el centre emissor quan s'accepta la proposta."
+
+#. translators: %d: number of replies kept.
+#: src/Privacy/PrivacyPolicy.php:251
+#, php-format
+msgid "Se conserva %d respuesta anterior a la versión 1.1 en propuestas recibidas por los centros de esta persona, porque no registra quién la escribió. Revísela en Colaboraciones (Matches) por si contiene datos personales."
+msgid_plural "Se conservan %d respuestas anteriores a la versión 1.1 en propuestas recibidas por los centros de esta persona, porque no registran quién las escribió. Revíselas en Colaboraciones (Matches) por si contienen datos personales."
+msgstr[0] "Es conserva %d resposta anterior a la versió 1.1 en propostes rebudes pels centres d'esta persona, perquè no registra qui la va escriure. Reviseu-la en Col·laboracions (matches) per si conté dades personals."
+msgstr[1] "Es conserven %d respostes anteriors a la versió 1.1 en propostes rebudes pels centres d'esta persona, perquè no registren qui les va escriure. Reviseu-les en Col·laboracions (matches) per si contenen dades personals."
+
+#: src/Rest/ColaboracionesController.php:547
+msgid "No se pudo guardar la respuesta. Inténtalo de nuevo."
+msgstr "No s'ha pogut guardar la resposta. Torna-ho a intentar."
+
+#: src/Privacy/PrivacyPolicy.php:47
+msgid "Las propuestas no caducan: se conservan como historial compartido hasta que se atiende una solicitud de borrado de datos personales, que anonimiza la parte de la persona solicitante, o hasta que se desinstala el plugin."
+msgstr "Les propostes no caduquen: es conserven com a historial compartit fins que s'atén una sol·licitud d'esborrament de dades personals, que anonimitza la part de la persona sol·licitant, o fins que es desinstal·la l'extensió."
+
+#: src/Rest/ColaboracionesController.php:580
+msgid "Número de propuestas por página."
+msgstr "Nombre de propostes per pàgina."
+
+#: src/Admin/ColaboracionesAdminPage.php:153
+msgid "La respuesta a la propuesta de colaboración se ha guardado correctamente."
+msgstr "La resposta a la proposta de col·laboració s'ha guardat correctament."
+
+#: src/Admin/ColaboracionesAdminPage.php:154
+msgid "La respuesta a la propuesta de colaboración se ha guardado, pero no se ha podido enviar el aviso por correo al centro emisor."
+msgstr "La resposta a la proposta de col·laboració s'ha guardat, però no s'ha pogut enviar l'avís per correu al centre emissor."
+
+#: src/Rest/ColaboracionesController.php:455
+msgid "¡Propuesta de match enviada con éxito! La emisora receptora la verá en su panel de Colaboraciones."
+msgstr "S'ha enviat la proposta de match! L'emissora receptora la vorà en el seu tauler de Col·laboracions."
+
+#: src/Rest/ColaboracionesController.php:456
+msgid "¡Propuesta de match enviada con éxito! No se ha podido enviar el aviso por correo, pero la emisora receptora la verá en su panel de Colaboraciones."
+msgstr "S'ha enviat la proposta de match! No s'ha pogut enviar l'avís per correu, però l'emissora receptora la vorà en el seu tauler de Col·laboracions."
+
+#. translators: 1: number of centros on the map, 2: number of results.
+#: build/directorio.js:4
+#, js-format
+msgid "El mapa muestra %1$s de %2$s centros. Usa los filtros para acotar la búsqueda."
+msgstr "El mapa mostra %1$s de %2$s centres. Utilitza els filtres per a acotar la busca."
+
+#: src/Network/NetworkSync.php:212
+msgid "Otra sincronización está actualizando la ficha de este sitio. Vuelve a sincronizar dentro de un momento."
+msgstr "Una altra sincronització està actualitzant la fitxa d'este lloc. Torna a sincronitzar d'ací a una estona."
+
+#. translators: 1: opening link tag to the list of radios, 2: closing link tag.
+#: templates/directorio.php:195
+#, php-format
+msgid "El buscador del directorio necesita JavaScript. Mientras tanto, puedes ver el %1$slistado completo de radios%2$s."
+msgstr "El cercador del directori necessita JavaScript. Mentrestant, pots vore el %1$sllistat complet de ràdios%2$s."
+
+#: blocks/directorio/block.json
+msgctxt "block title"
+msgid "Directorio Traspasando Fronteras"
+msgstr "Directori Traspasando Fronteras"
+
+#: blocks/directorio/block.json
+msgctxt "block description"
+msgid "Directorio interactivo de radios escolares con filtros, mapa y propuestas de colaboración."
+msgstr "Directori interactiu de ràdios escolars amb filtres, mapa i propostes de col·laboració."
+
+#: blocks/directorio/block.json
+msgctxt "block keyword"
+msgid "radio escolar"
+msgstr "ràdio escolar"
+
+#: blocks/directorio/block.json
+msgctxt "block keyword"
+msgid "directorio"
+msgstr "directori"
+
+#: blocks/directorio/block.json
+msgctxt "block keyword"
+msgid "colaboración"
+msgstr "col·laboració"
+
+#: blocks/directorio/block.json
+msgctxt "block keyword"
+msgid "podcast"
+msgstr "pòdcast"

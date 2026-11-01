@@ -1,0 +1,4 @@
+
+> radioedu-conecta@1.1.0 lint:js
+> wp-scripts lint-js assets/js tests/e2e playwright.config.js --ignore-pattern assets/js/leaflet.js
+

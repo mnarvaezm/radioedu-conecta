@@ -1,0 +1,50 @@
+radioedu-conecta.php:68:		add_action(
+radioedu-conecta.php:85:		add_action(
+radioedu-conecta.php:160:add_action( 'init', 'radioedu_conecta_load_textdomain', 0 );
+radioedu-conecta.php:173:add_action( 'plugins_loaded', 'radioedu_conecta_bootstrap' );
+radioedu-conecta.php:196:add_filter( 'plugin_action_links_' . RADIOEDU_CONECTA_BASENAME, 'radioedu_conecta_action_links' );
+src\Capabilities\CentroLimit.php:57:		add_filter( 'user_has_cap', [ self::class, 'grant_create_cap' ], 10, 4 );
+src\Capabilities\CentroLimit.php:58:		add_action( 'clean_post_cache', [ self::class, 'flush_count_cache_for_post' ], 10, 2 );
+src\Capabilities\CentroLimit.php:59:		add_action( 'admin_notices', [ self::class, 'render_limit_notice' ] );
+src\Admin\DemoDataImporter.php:64:		add_action( 'admin_post_radioedu_import_demo_data', [ self::class, 'handle_import_request' ] );
+src\Admin\ColaboracionesAdminPage.php:40:		add_action( 'admin_menu', [ self::class, 'add_submenu_page' ] );
+src\Admin\ColaboracionesAdminPage.php:41:		add_action( 'admin_post_radioedu_respond_match', [ self::class, 'handle_respond_match' ] );
+src\Admin\ColaboracionesAdminPage.php:42:		add_action( 'admin_enqueue_scripts', [ self::class, 'enqueue_assets' ] );
+src\Admin\CentroEditorPanel.php:36:		add_action( 'enqueue_block_editor_assets', [ self::class, 'enqueue_assets' ] );
+src\Admin\CentroMetaBoxes.php:36:		add_action( 'add_meta_boxes', [ self::class, 'add_meta_boxes' ] );
+src\Admin\CentroMetaBoxes.php:37:		add_action( 'save_post_' . CentroPostType::POST_TYPE, [ self::class, 'save_meta_boxes' ], 10, 2 );
+src\Admin\CentroMetaBoxes.php:38:		add_action( 'admin_enqueue_scripts', [ self::class, 'enqueue_admin_assets' ] );
+src\Admin\NetworkSyncPage.php:45:		add_action( 'network_admin_menu', [ self::class, 'add_page' ] );
+src\Admin\NetworkSyncPage.php:46:		add_action( 'admin_enqueue_scripts', [ self::class, 'enqueue_assets' ] );
+src\Frontend\DirectorioShortcode.php:53:		add_shortcode( self::SHORTCODE_TAG, [ self::class, 'render_shortcode' ] );
+src\Frontend\DirectorioShortcode.php:55:		add_action( 'init', [ self::class, 'register_assets' ] );
+src\Frontend\DirectorioShortcode.php:56:		add_action( 'init', [ self::class, 'register_block' ] );
+src\Frontend\DirectorioShortcode.php:57:		add_action( 'wp_enqueue_scripts', [ self::class, 'enqueue_assets' ] );
+src\Frontend\DirectorioShortcode.php:58:		add_filter( 'the_content', [ self::class, 'render_single_centro_profile' ], 20 );
+src\Frontend\DirectorioShortcode.php:61:		add_action( 'init', [ self::class, 'register_profile_block_template' ] );
+src\Frontend\DirectorioShortcode.php:62:		add_filter( 'template_include', [ self::class, 'use_profile_page_template' ], 20 );
+src\Frontend\DirectorioShortcode.php:64:		add_filter( 'has_post_thumbnail', [ self::class, 'hide_theme_featured_image' ], 10, 2 );
+src\Frontend\DirectorioShortcode.php:65:		add_filter( 'post_thumbnail_html', [ self::class, 'hide_theme_featured_image_html' ], 10, 2 );
+src\Frontend\DirectorioShortcode.php:231:		register_block_type(
+src\Plugin.php:67:		add_action( 'init', [ $this, 'maybe_update_db_schema' ], 1 );
+src\Plugin.php:71:		add_action( 'init', [ CentroPostType::class, 'register' ], 5 );
+src\Plugin.php:72:		add_action( 'init', [ CentroMeta::class, 'register' ], 5 );
+src\Plugin.php:73:		add_filter( 'rest_prepare_' . CentroPostType::POST_TYPE, [ CentroMeta::class, 'hide_private_meta' ], 10, 2 );
+src\Plugin.php:74:		add_filter( 'rest_pre_insert_' . CentroPostType::POST_TYPE, [ CentroMeta::class, 'validate_rest_logo' ], 10, 2 );
+src\Plugin.php:75:		add_action( 'init', [ TaxonomiesRegistrar::class, 'register_all' ], 5 );
+src\Plugin.php:77:		add_action( 'init', [ Icons::class, 'register' ] );
+src\Plugin.php:98:		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
+src\Plugin.php:105:			add_action( 'wp_initialize_site', [ $this, 'on_initialize_site' ], 20, 1 );
+src\Plugin.php:106:			add_filter( 'wpmu_drop_tables', [ ColaboracionesTable::class, 'add_to_dropped_tables' ] );
+src\Plugin.php:113:	public function register_rest_routes(): void {
+src\Admin\Settings.php:29:		add_action( 'admin_menu', [ self::class, 'add_settings_page' ] );
+src\Admin\Settings.php:30:		add_action( 'admin_init', [ self::class, 'register_settings' ] );
+src\Admin\Settings.php:33:		add_filter( 'option_page_capability_' . self::SETTINGS_GROUP, [ self::class, 'get_settings_capability' ] );
+src\Privacy\PrivacyPolicy.php:29:		add_action( 'admin_init', [ self::class, 'add_privacy_policy_content' ] );
+src\Privacy\PrivacyPolicy.php:30:		add_filter( 'wp_privacy_personal_data_exporters', [ self::class, 'register_exporter' ] );
+src\Privacy\PrivacyPolicy.php:31:		add_filter( 'wp_privacy_personal_data_erasers', [ self::class, 'register_eraser' ] );
+src\Rest\CentrosController.php:47:		register_rest_route(
+src\Rest\CentrosController.php:174:			add_filter( 'posts_clauses', $affinity_filter, 10, 2 );
+src\Rest\ColaboracionesController.php:52:		register_rest_route(
+src\Rest\ColaboracionesController.php:72:		register_rest_route(
+src\Rest\NetworkSyncController.php:49:		register_rest_route(

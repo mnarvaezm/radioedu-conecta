@@ -6,6 +6,9 @@
  * @package RadioEdu\Conecta
  */
 
+declare( strict_types=1 );
+
+defined( 'ABSPATH' ) || exit;
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 /**
@@ -88,10 +91,16 @@ function radioedu_conecta_uninstall_single_site(): void {
 	}
 
 	// 4. Eliminar opciones del plugin.
+	$page_id = (int) get_option( 'radioedu_conecta_directory_page_id', 0 );
+	if ( $page_id > 0 && 'page' === get_post_type( $page_id ) && '1' === get_post_meta( $page_id, '_radioedu_conecta_demo', true ) ) {
+		wp_delete_post( $page_id, true );
+	}
+	delete_option( 'radioedu_conecta_directory_page_id' );
 	delete_option( 'radioedu_conecta_settings' );
 	delete_option( 'radioedu_conecta_db_version' );
+	delete_option( 'rewrite_rules' );
 
-	// 5. Eliminar transients de rate-limiting (radioedu_rate_{user_id}).
+	// 5. Eliminar los transients del plugin (radioedu_rate_{user_id} y radioedu_conecta_schema_retry).
 	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Transients with dynamic keys cannot be enumerated through the Options API.
 	$wpdb->query(
 		$wpdb->prepare(
@@ -125,6 +134,32 @@ function radioedu_conecta_uninstall_single_site(): void {
 			}
 		}
 	}
+
+	// 7. Quitar de las preferencias del editor de cada usuario solo el ámbito del plugin
+	// ("radioedu-conecta", con centroPanelOpened); las de core y otros plugins se conservan.
+	$preferences_key = $wpdb->get_blog_prefix() . 'persisted_preferences';
+	$last_user       = 0;
+	do {
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Finds, in batches by user ID, the users whose stored preferences mention the plugin scope.
+		$user_ids = $wpdb->get_col(
+			$wpdb->prepare(
+				'SELECT user_id FROM %i WHERE meta_key = %s AND meta_value LIKE %s AND user_id > %d ORDER BY user_id ASC LIMIT 500',
+				$wpdb->usermeta,
+				$preferences_key,
+				'%' . $wpdb->esc_like( 'radioedu-conecta' ) . '%',
+				$last_user
+			)
+		);
+		foreach ( $user_ids as $user_id ) {
+			$last_user   = (int) $user_id;
+			$preferences = get_user_meta( $last_user, $preferences_key, true );
+			if ( is_array( $preferences ) && isset( $preferences['radioedu-conecta'] ) ) {
+				unset( $preferences['radioedu-conecta'] );
+				update_user_meta( $last_user, $preferences_key, $preferences );
+			}
+		}
+		$more_users = 500 === count( $user_ids );
+	} while ( $more_users );
 }
 
 /**
@@ -136,18 +171,48 @@ function radioedu_conecta_uninstall(): void {
 		return;
 	}
 
-	$site_ids = get_sites(
-		[
-			'fields' => 'ids',
-			'number' => 0,
-		]
-	);
+	$offset = 0;
+	do {
+		$site_ids = get_sites(
+			[
+				'fields'  => 'ids',
+				'number'  => 100,
+				'offset'  => $offset,
+				'orderby' => 'id',
+				'order'   => 'ASC',
+			]
+		);
+		foreach ( $site_ids as $site_id ) {
+			switch_to_blog( (int) $site_id );
+			try {
+				radioedu_conecta_uninstall_single_site();
+			} finally {
+				restore_current_blog();
+			}
+		}
+		$offset  += 100;
+		$has_more = count( $site_ids ) === 100;
+	} while ( $has_more );
 
-	foreach ( $site_ids as $site_id ) {
-		switch_to_blog( (int) $site_id );
-		radioedu_conecta_uninstall_single_site();
-		restore_current_blog();
-	}
+	// Network option of the network sync ("give the Author role" choice), on every network: the sites
+	// above were removed on all of them, and an installation can hold more than one network.
+	$offset = 0;
+	do {
+		$network_ids = get_networks(
+			[
+				'fields'  => 'ids',
+				'number'  => 100,
+				'offset'  => $offset,
+				'orderby' => 'id',
+				'order'   => 'ASC',
+			]
+		);
+		foreach ( $network_ids as $network_id ) {
+			delete_network_option( (int) $network_id, 'radioedu_conecta_sync_grant_author' );
+		}
+		$offset  += 100;
+		$has_more = count( $network_ids ) === 100;
+	} while ( $has_more );
 }
 
 radioedu_conecta_uninstall();

@@ -227,9 +227,135 @@ class RestSecurityAndPermissionsTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A coordinator sends up to 20 proposals per hour; the next one gets a 429.
+	 */
+	public function test_proposals_are_limited_to_twenty_per_hour(): void {
+		$coord    = self::factory()->user->create( [ 'role' => 'author' ] );
+		$sender   = self::factory()->post->create( [ 'post_type' => CentroPostType::POST_TYPE, 'post_status' => 'publish', 'post_author' => $coord ] );
+		$receiver = self::factory()->post->create( [ 'post_type' => CentroPostType::POST_TYPE, 'post_status' => 'publish' ] );
+		$this->assertSame( 20, ColaboracionesController::RATE_LIMIT_PER_HOUR );
+
+		$controller = new ColaboracionesController();
+		wp_set_current_user( $coord );
+		$request = new WP_REST_Request( 'POST', '/radioedu-conecta/v1/colaboraciones' );
+		$request->set_param( 'centro_emisor_id', $sender );
+		$request->set_param( 'centro_receptor_id', $receiver );
+		$request->set_param( 'idea_proyecto', 'Podcast conjunto' );
+		for ( $i = 1; $i <= 20; ++$i ) {
+			$this->assertSame( 201, $controller->create_item( $request )->get_status(), "Proposal $i" );
+		}
+
+		$over = $controller->create_item( $request );
+		$this->assertWPError( $over );
+		$this->assertSame( 'radioedu_rate_limit', $over->get_error_code() );
+		$this->assertSame( 429, $over->get_error_data()['status'] );
+	}
+
+	/**
+	 * Two proposals sent at once with one place left: exactly one is accepted.
+	 */
+	public function test_two_proposals_at_once_cannot_both_take_the_last_place_of_the_hour(): void {
+		$coord    = self::factory()->user->create( [ 'role' => 'author' ] );
+		$sender   = self::factory()->post->create( [ 'post_type' => CentroPostType::POST_TYPE, 'post_status' => 'publish', 'post_author' => $coord ] );
+		$receiver = self::factory()->post->create( [ 'post_type' => CentroPostType::POST_TYPE, 'post_status' => 'publish' ] );
+		wp_set_current_user( $coord );
+		set_transient( 'radioedu_rate_' . $coord, [ 'count' => 19, 'expires' => time() + HOUR_IN_SECONDS ], HOUR_IN_SECONDS );
+
+		$request = new WP_REST_Request( 'POST', '/radioedu-conecta/v1/colaboraciones' );
+		$request->set_body_params( [ 'centro_emisor_id' => $sender, 'centro_receptor_id' => $receiver, 'idea_proyecto' => 'Podcast conjunto' ] );
+		// The second proposal arrives while the first one is being written.
+		$table      = ColaboracionesTable::get_table_name();
+		$started    = false;
+		$second     = null;
+		$interleave = static function ( string $query ) use ( &$started, &$second, $request, $table ): string {
+			if ( ! $started && str_contains( $query, $table ) && preg_match( '/^\s*INSERT\s/i', $query ) ) {
+				$started = true;
+				$second  = rest_do_request( clone $request );
+			}
+			return $query;
+		};
+		add_filter( 'query', $interleave );
+		try {
+			$first = rest_do_request( $request );
+		} finally {
+			remove_filter( 'query', $interleave );
+		}
+
+		$this->assertSame( 201, $first->get_status() );
+		$this->assertSame( 429, $second->get_status() );
+		$this->assertSame( 20, get_transient( 'radioedu_rate_' . $coord )['count'] );
+		$this->assertSame( '1', (string) $GLOBALS['wpdb']->get_var( $GLOBALS['wpdb']->prepare( 'SELECT IS_FREE_LOCK( %s )', ColaboracionesController::rate_lock_name( $coord ) ) ), 'The lock is released afterwards.' );
+	}
+
+	/**
+	 * The rate lock of a request that ended does not block the next proposal.
+	 */
+	public function test_the_rate_lock_of_a_request_that_ended_does_not_block_the_next_proposal(): void {
+		$coord    = self::factory()->user->create( [ 'role' => 'author' ] );
+		$sender   = self::factory()->post->create( [ 'post_type' => CentroPostType::POST_TYPE, 'post_status' => 'publish', 'post_author' => $coord ] );
+		$receiver = self::factory()->post->create( [ 'post_type' => CentroPostType::POST_TYPE, 'post_status' => 'publish' ] );
+		wp_set_current_user( $coord );
+		$other = new \wpdb( DB_USER, DB_PASSWORD, DB_NAME, DB_HOST );
+		$this->assertSame( '1', (string) $other->get_var( $other->prepare( 'SELECT GET_LOCK( %s, 0 )', ColaboracionesController::rate_lock_name( $coord ) ) ) );
+
+		// That request ends: the server releases its lock with the connection.
+		$other->close();
+		$request = new WP_REST_Request( 'POST', '/radioedu-conecta/v1/colaboraciones' );
+		$request->set_body_params( [ 'centro_emisor_id' => $sender, 'centro_receptor_id' => $receiver, 'idea_proyecto' => 'Podcast conjunto' ] );
+		$this->assertSame( 201, rest_do_request( $request )->get_status() );
+	}
+
+	/**
+	 * A database error while answering is a retryable 500, not "already answered".
+	 */
+	public function test_a_storage_error_while_answering_is_not_reported_as_already_answered(): void {
+		global $wpdb;
+		$coord  = self::factory()->user->create( [ 'role' => 'author' ] );
+		$center = self::factory()->post->create(
+			[
+				'post_type'   => CentroPostType::POST_TYPE,
+				'post_status' => 'publish',
+				'post_author' => $coord,
+			]
+		);
+		$wpdb->insert(
+			ColaboracionesTable::get_table_name(),
+			[
+				'centro_emisor_id'   => 1,
+				'centro_receptor_id' => $center,
+				'usuario_emisor_id'  => 1,
+				'idea_proyecto'      => 'Test',
+				'created_at'         => current_time( 'mysql' ),
+				'updated_at'         => current_time( 'mysql' ),
+			]
+		);
+		$colab_id = (int) $wpdb->insert_id;
+		$table    = ColaboracionesTable::get_table_name();
+		$refuse   = static function ( string $query ) use ( $table ): string {
+			return str_starts_with( ltrim( $query ), 'UPDATE `' . $table . '`' ) ? '' : $query;
+		};
+
+		wp_set_current_user( $coord );
+		add_filter( 'query', $refuse );
+		try {
+			$result = ColaboracionesController::respond_to_proposal( $colab_id, 'aceptada', '' );
+		} finally {
+			remove_filter( 'query', $refuse );
+		}
+		$this->assertWPError( $result );
+		$this->assertSame( 'radioedu_db_error', $result->get_error_code() );
+		$this->assertSame( 500, $result->get_error_data()['status'] );
+		$this->assertSame( 'pendiente', ColaboracionesTable::get_by_id( $colab_id )->estado );
+
+		$this->assertNotWPError( ColaboracionesController::respond_to_proposal( $colab_id, 'aceptada', '' ) );
+		$this->assertSame( 'aceptada', ColaboracionesTable::get_by_id( $colab_id )->estado );
+	}
+
+	/**
 	 * Answering a non-existent proposal returns 404 instead of silently succeeding.
 	 */
 	public function test_answering_missing_proposal_returns_not_found(): void {
+		wp_set_current_user( self::factory()->user->create( [ 'role' => 'administrator' ] ) );
 		$result = ColaboracionesController::respond_to_proposal( 999999, 'aceptada', '' );
 
 		$this->assertWPError( $result );
