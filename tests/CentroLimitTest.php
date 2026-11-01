@@ -171,8 +171,6 @@ class CentroLimitTest extends WP_UnitTestCase {
 		$this->set_limit( '1' );
 		switch_to_blog( $site );
 		try {
-			RoleCapabilities::add_capabilities();
-			CentroPostType::register();
 			$this->set_limit( '1' );
 			$this->centro( $author );
 		} finally {
