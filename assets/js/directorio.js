@@ -175,6 +175,8 @@ import { speak } from '@wordpress/a11y';
 		let totalResults = 0;
 		let directoryRequest = null;
 		let mapRequest = null;
+		// Filters and order of the search being shown, captured when it started.
+		let appliedSearch = { filters: {}, orden: 'afines' };
 		let submitting = false;
 
 		// The map shows every result, not only the pages of cards already loaded, up to this ceiling.
@@ -260,7 +262,35 @@ import { speak } from '@wordpress/a11y';
 		}
 
 		/**
-		 * URL of the centros endpoint with the active filters.
+		 * Reads the filters of the form as they are now.
+		 *
+		 * @return {Object} Filter values by request parameter, without the empty ones.
+		 */
+		function readFilters() {
+			const controls = {
+				ubicacion: filterUbicacion,
+				idioma: filterIdioma,
+				etapa: filterEtapa,
+				tematica: filterTematica,
+				formato: filterFormato,
+			};
+			const filters = {};
+			Object.keys( controls ).forEach( function ( key ) {
+				if ( controls[ key ] && controls[ key ].value ) {
+					filters[ key ] = controls[ key ].value;
+				}
+			} );
+			if ( filterSearch && filterSearch.value.trim() ) {
+				filters.search = filterSearch.value.trim();
+			}
+			return filters;
+		}
+
+		/**
+		 * URL of the centros endpoint with the filters of the search being shown.
+		 *
+		 * Every page of a search (more cards, map pages) uses the filters captured when that search
+		 * started, not what the form holds now: the user may have edited it without searching.
 		 *
 		 * @param {number} page    Page to request.
 		 * @param {number} perPage Results per page.
@@ -278,24 +308,10 @@ import { speak } from '@wordpress/a11y';
 
 			// No afines_a: the endpoint picks the user's own centro itself, and skips it for global
 			// managers, whose first "managed" centro (userCenterId) is an arbitrary one.
-			const filters = {
-				ubicacion: filterUbicacion,
-				idioma: filterIdioma,
-				etapa: filterEtapa,
-				tematica: filterTematica,
-				formato: filterFormato,
-			};
+			const filters = appliedSearch.filters;
 			Object.keys( filters ).forEach( function ( key ) {
-				if ( filters[ key ] && filters[ key ].value ) {
-					endpoint.searchParams.set( key, filters[ key ].value );
-				}
+				endpoint.searchParams.set( key, filters[ key ] );
 			} );
-			if ( filterSearch && filterSearch.value.trim() ) {
-				endpoint.searchParams.set(
-					'search',
-					filterSearch.value.trim()
-				);
-			}
 
 			return endpoint.href;
 		}
@@ -419,6 +435,15 @@ import { speak } from '@wordpress/a11y';
 				errorState.hidden = true;
 			}
 			if ( ! isAppend ) {
+				// A new search: capture its filters and order, and drop the map pages of the old one.
+				appliedSearch = {
+					filters: readFilters(),
+					orden: sortSelect ? sortSelect.value : 'afines',
+				};
+				if ( mapRequest ) {
+					mapRequest.abort();
+					mapRequest = null;
+				}
 				currentPage = 1;
 				cardsContainer.style.display = 'none';
 				noResultsState.style.display = 'none';
@@ -428,17 +453,10 @@ import { speak } from '@wordpress/a11y';
 			}
 			loadingState.style.display = 'block';
 
-			fetch(
-				centrosUrl(
-					requestedPage,
-					24,
-					sortSelect ? sortSelect.value : 'afines'
-				),
-				{
-					headers: fetchHeaders(),
-					signal: request.signal,
-				}
-			)
+			fetch( centrosUrl( requestedPage, 24, appliedSearch.orden ), {
+				headers: fetchHeaders(),
+				signal: request.signal,
+			} )
 				.then( function ( response ) {
 					if ( ! response.ok ) {
 						throw new Error( 'HTTP ' + response.status );

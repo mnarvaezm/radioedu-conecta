@@ -157,6 +157,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * Multisite: el resumen final de la sincronización lista todas las fichas cuyo sitio ya no existe, no solo las de las 1.000 primeras.
 * Sin JavaScript, el directorio muestra el número real de emisoras y un enlace a su listado en lugar de «0 centros».
 * La desinstalación también quita a cada usuario la preferencia del editor propia del plugin (si se abrió el panel de la emisora) y conserva las de WordPress y otros plugins.
+* *Cargar más centros* y las páginas del mapa conservan los filtros de la búsqueda que se está mostrando, aunque después se haya editado el formulario sin buscar.
 * Pruebas E2E con Playwright y `wp-env` (datos del centro en los paneles del editor de WordPress 7.1, incluido el logo, y bloque del directorio).
 
 ### 1.0.0
