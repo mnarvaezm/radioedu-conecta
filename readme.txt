@@ -120,7 +120,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * The "Radios por usuario" limit also applies when a coordinator restores a station from the trash or saves a second "Add New" tab opened before reaching the limit, in the block editor or the classic editor, and two creations at the same moment cannot both take the last place.
 * Coordinators can send up to 20 proposals per hour instead of 10. The limit is meant against spam: simultaneous requests may exceed it by a few.
 * The proposals listing is paginated: the REST endpoint accepts `page` and `per_page` and returns `X-WP-Total`, and the admin screen shows 20 proposals per page. Before, proposals beyond the newest 100 could not be seen or answered.
-* Coordinators see the proposals of every station they manage, however many they have, and editors see every proposal. The sender selector lists up to 500 stations instead of 50 or 100.
+* Coordinators see the proposals of every station they manage, however many they have, and editors see every proposal. The sender selector lists up to 2,000 stations instead of 50 or 100, twice the largest expected network.
 * Proposal and answer messages say what happened to the email: sent, turned off in the settings, or not sent. Before, they always promised a notification.
 * With "Más afines" sorting, administrators and editors, who have no station of their own, no longer get results ranked by the terms of the first station in alphabetical order.
 * The map view shows every result of the search, up to 500 markers, instead of only the 24 loaded cards, and says so when the limit leaves some out.

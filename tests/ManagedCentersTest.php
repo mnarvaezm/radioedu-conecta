@@ -67,6 +67,22 @@ class ManagedCentersTest extends WP_UnitTestCase {
 		$this->assertSame( [ $id ], $this->listed_ids() );
 	}
 
+	public function test_the_sender_selector_lists_every_station_of_a_large_network(): void {
+		global $wpdb;
+		$editor = self::factory()->user->create( [ 'role' => 'editor' ] );
+		// A network of about a thousand radios, inserted directly to keep the test fast.
+		$now = current_time( 'mysql' );
+		for ( $i = 1; $i <= 1001; ++$i ) {
+			$wpdb->insert( $wpdb->posts, [ 'post_type' => CentroPostType::POST_TYPE, 'post_status' => 'publish', 'post_title' => sprintf( 'Radio %04d', $i ), 'post_date' => $now, 'post_date_gmt' => $now, 'post_modified' => $now, 'post_modified_gmt' => $now, 'post_content' => '', 'post_excerpt' => '', 'to_ping' => '', 'pinged' => '', 'post_content_filtered' => '' ] );
+		}
+		$last = (int) $wpdb->insert_id;
+
+		$ids = ColaboracionesController::get_user_managed_center_ids( $editor );
+		$this->assertCount( 1001, $ids );
+		$this->assertSame( $last, end( $ids ), 'Sorted by title, the last station comes last.' );
+		$this->assertGreaterThan( 1001, ColaboracionesController::MAX_MANAGED_CENTERS );
+	}
+
 	public function test_editors_see_every_proposal(): void {
 		$editor = self::factory()->user->create( [ 'role' => 'editor' ] );
 		$id     = $this->proposal_to( $this->centro( 0 ) );

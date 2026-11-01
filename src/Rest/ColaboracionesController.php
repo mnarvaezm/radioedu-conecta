@@ -36,8 +36,11 @@ class ColaboracionesController extends WP_REST_Controller {
 
 	/**
 	 * Most centros listed for one user in the match panel's sender selector.
+	 *
+	 * Twice the largest expected network (about 1,000 school radios), so administrators and editors,
+	 * who manage every centro, find all of them in the selector.
 	 */
-	public const MAX_MANAGED_CENTERS = 500;
+	public const MAX_MANAGED_CENTERS = 2000;
 
 	/**
 	 * Namespace de la REST API de RadioEdu Conecta.
@@ -260,7 +263,7 @@ class ColaboracionesController extends WP_REST_Controller {
 	 * Devuelve los IDs de los centros publicados que un usuario coordina o puede editar.
 	 *
 	 * Feeds the sender selector of the match panel and the default affinity reference, sorted by
-	 * title. MAX_MANAGED_CENTERS is a safety ceiling, well above any real coordinator; the
+	 * title. MAX_MANAGED_CENTERS is a safety ceiling above the largest expected network; the
 	 * proposal listings do not depend on this list.
 	 *
 	 * @since 1.1 Up to MAX_MANAGED_CENTERS centros instead of 50 or 100, sorted by title.
