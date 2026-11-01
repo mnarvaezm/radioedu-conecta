@@ -1,5 +1,6 @@
 /**
- * PHP-only directory block (supports.autoRegister) and the SVG icons it renders.
+ * Directory block registered from block.json without editor JavaScript (supports.autoRegister),
+ * and the SVG icons it renders.
  */
 const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
 

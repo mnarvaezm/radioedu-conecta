@@ -94,7 +94,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 
 = 1.1 =
 * Requires WordPress 7.1.
-* New "Directorio Traspasando Fronteras" block, registered in PHP only (`supports.autoRegister`) and equivalent to the `[radioedu_directorio]` shortcode.
+* New "Directorio Traspasando Fronteras" block, registered from `block.json` with no editor JavaScript (`supports.autoRegister`) and equivalent to the `[radioedu_directorio]` shortcode.
 * Interface icons use the WordPress 7.1 Icons API (core collection plus a `radioedu-conecta` collection) instead of emoji.
 * Multisite: new network admin button that creates or updates one station profile per network site in the main site's directory. It reuses hand-made profiles with the same website and lists the profiles of sites that no longer exist. A checkbox, checked by default, gives coordinators the Author role on the main site.
 * New "Radios por usuario" setting (Ajustes -> Coordinadores) limits how many stations each coordinator (Author role) can create. Empty, the default, means no limit; 0 lets coordinators only edit stations assigned by an administrator. Administrators and editors have no limit.

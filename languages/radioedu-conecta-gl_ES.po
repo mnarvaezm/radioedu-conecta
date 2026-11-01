@@ -735,26 +735,6 @@ msgstr "Ficha de centro de radio"
 msgid "Perfil público de un centro: cabecera y pie del tema alrededor de la ficha, sin repetir su título, autor, fecha ni imagen de cabecera."
 msgstr "Perfil público dun centro: cabeceira e pé do tema arredor da ficha, sen repetir o seu título, autor, data nin imaxe de cabeceira."
 
-#: src/Frontend/DirectorioShortcode.php:239
-msgid "Directorio Traspasando Fronteras"
-msgstr "Directorio Traspasando Fronteras"
-
-#: src/Frontend/DirectorioShortcode.php:240
-msgid "Directorio interactivo de radios escolares con filtros, mapa y propuestas de colaboración."
-msgstr "Directorio interactivo de radios escolares con filtros, mapa e propostas de colaboración."
-
-#: src/Frontend/DirectorioShortcode.php:244
-msgid "radio escolar"
-msgstr "radio escolar"
-
-#: src/Frontend/DirectorioShortcode.php:245
-msgid "directorio"
-msgstr "directorio"
-
-#: src/Frontend/DirectorioShortcode.php:246
-msgid "colaboración"
-msgstr "colaboración"
-
 #: src/Icons.php:40
 msgid "Iconos del directorio de radios escolares Traspasando Fronteras."
 msgstr "Iconas do directorio de radios escolares Traspasando Fronteras."
@@ -1992,3 +1972,33 @@ msgstr "Outra sincronización está a actualizar a ficha deste sitio. Volve sinc
 #, php-format
 msgid "El buscador del directorio necesita JavaScript. Mientras tanto, puedes ver el %1$slistado completo de radios%2$s."
 msgstr "O buscador do directorio necesita JavaScript. Mentres tanto, podes ver o %1$slistado completo de radios%2$s."
+
+#: blocks/directorio/block.json
+msgctxt "block title"
+msgid "Directorio Traspasando Fronteras"
+msgstr "Directorio Traspasando Fronteras"
+
+#: blocks/directorio/block.json
+msgctxt "block description"
+msgid "Directorio interactivo de radios escolares con filtros, mapa y propuestas de colaboración."
+msgstr "Directorio interactivo de radios escolares con filtros, mapa e propostas de colaboración."
+
+#: blocks/directorio/block.json
+msgctxt "block keyword"
+msgid "radio escolar"
+msgstr "radio escolar"
+
+#: blocks/directorio/block.json
+msgctxt "block keyword"
+msgid "directorio"
+msgstr "directorio"
+
+#: blocks/directorio/block.json
+msgctxt "block keyword"
+msgid "colaboración"
+msgstr "colaboración"
+
+#: blocks/directorio/block.json
+msgctxt "block keyword"
+msgid "podcast"
+msgstr "podcast"

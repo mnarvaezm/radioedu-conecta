@@ -80,7 +80,7 @@ c:\radioedu-conecta\
 │   ├── Emails/
 │   │   └── NotificationService.php      # wp_mail() notification pipeline for proposals and match responses
 │   ├── Frontend/
-│   │   └── DirectorioShortcode.php      # Shortcode [radioedu_directorio], PHP-only block radioedu-conecta/directorio, single profile filter & assets
+│   │   └── DirectorioShortcode.php      # Shortcode [radioedu_directorio], block radioedu-conecta/directorio (render callback), single profile filter & assets
 │   ├── PostTypes/
 │   │   ├── CentroPostType.php           # Custom Post Type registration (`radioedu_centro`)
 │   │   └── CentroMeta.php               # register_post_meta() for every `_radioedu_*` key (type, sanitizer, edit-context REST, auth)
@@ -117,6 +117,9 @@ c:\radioedu-conecta\
 │   │   ├── network-sync.js              # Source: network admin sync button (batched apiFetch loop, progress, summary)
 │   │   └── leaflet.js                   # Self-contained Leaflet 1.9.4 JavaScript runtime (zero CDN)
 │   └── leaflet-LICENSE.txt              # Leaflet 1.9.4 BSD-2-Clause license, covering leaflet.js, leaflet.css and css/images/
+├── blocks/
+│   └── directorio/
+│       └── block.json                   # Metadata of the radioedu-conecta/directorio block (title, keywords, supports, style)
 ├── build/                               # Committed `npm run build` output (@wordpress/scripts); the only JS the plugin loads
 │   ├── admin.js / admin.asset.php       # Compiled admin.js + generated dependencies (wp-i18n) and version hash
 │   ├── centro-panel.js / centro-panel.asset.php # Compiled panels + dependencies (wp-editor, wp-plugins, wp-components…)
@@ -348,9 +351,9 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
 5. Result notices (here and in **Ajustes**) are printed with core `wp_admin_notice()`. The requirement notices of the main file use it too, with a classic-markup fallback for WordPress < 6.4, where that check is the only code that runs.
 
 ### 7.3 Directory Block (`radioedu-conecta/directorio`)
-1. Registered in PHP only (`DirectorioShortcode::register_block()`) with `supports.autoRegister` (WordPress 7.0+): core registers it in the editor and previews it with ServerSideRender, so the plugin ships no editor JavaScript.
-2. `render_block()` wraps the shortcode output in `get_block_wrapper_attributes()` (align `wide`/`full`). `multiple => false` because the directory markup uses fixed IDs.
-3. `style_handles` loads `directorio.css` in the editor iframe; front-end assets are registered on `init` and enqueued in the `<head>` when the post contains the block or the shortcode. The shortcode `[radioedu_directorio]` remains supported.
+1. Registered from [blocks/directorio/block.json](file:///c:/radioedu-conecta/blocks/directorio/block.json) by `DirectorioShortcode::register_block()`, which only adds the PHP `render_callback`. block.json holds the title, description, keywords (translated with the `radioedu-conecta` text domain and the "block title", "block description" and "block keyword" contexts), the `widgets` category, the `microphone` icon, the supports and the style. With `supports.autoRegister` (WordPress 7.0+) core registers the block in the editor and previews it with ServerSideRender, so the plugin ships no editor JavaScript.
+2. `render_block()` wraps the shortcode output in `get_block_wrapper_attributes()` (align `wide`/`full`). `"multiple": false` because the directory markup uses fixed IDs.
+3. The block.json `style` (handle `radioedu-directorio-css`) loads `directorio.css` in the editor iframe; front-end assets are registered on `init` and enqueued in the `<head>` when the post contains the block or the shortcode. The shortcode `[radioedu_directorio]` remains supported.
 
 ### 7.4 SVG Icons (WordPress 7.1 Icons API)
 1. UI icons come from `wp_get_icon()`: the core `core/*` collection when WordPress ships a suitable icon, and the plugin collection `radioedu-conecta` (registered in `Icons::register()` from `assets/icons/*.svg`) for the rest: close, globe, graduation, headphones, institution, map, microphone, send.

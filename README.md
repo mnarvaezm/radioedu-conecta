@@ -61,7 +61,7 @@ npm run build    # regenera build/*.js y build/*.asset.php; haz commit del resul
 
 Si falta `build/`, el plugin no falla: el directorio se muestra sin la parte interactiva y el editor de centros, sin los paneles de datos.
 
-El bloque del directorio no necesita JavaScript de editor: se registra solo con PHP (`supports.autoRegister`) y WordPress lo previsualiza en el editor con ServerSideRender.
+El bloque del directorio no necesita JavaScript de editor: sus metadatos están en `blocks/directorio/block.json`, el renderizado es una función PHP y, con `supports.autoRegister`, WordPress lo previsualiza en el editor con ServerSideRender.
 
 ### Traducciones
 
@@ -119,7 +119,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 
 ### 1.1
 * Requiere WordPress 7.1.
-* Nuevo bloque **Directorio Traspasando Fronteras** registrado solo con PHP (`supports.autoRegister`), equivalente al shortcode `[radioedu_directorio]`.
+* Nuevo bloque **Directorio Traspasando Fronteras**, registrado desde `block.json` y sin JavaScript de editor (`supports.autoRegister`), equivalente al shortcode `[radioedu_directorio]`.
 * Iconos SVG de la API de iconos de WordPress 7.1 en lugar de emojis en el directorio, la ficha, el panel lateral y la pantalla de Colaboraciones.
 * Multisite: botón de red **Sincronizar fichas con los sitios de la red** (**Administración de la red → Ajustes → RadioEdu Conecta**), que crea o actualiza en el sitio principal una ficha por cada sitio de la red, reutiliza las fichas hechas a mano con la misma web y lista en un resumen las fichas de sitios que ya no existen. Una casilla, marcada por defecto, da a los coordinadores el rol Autor en el portal principal.
 * Nuevo ajuste **Radios por usuario** (**Ajustes → Coordinadores**): limita cuántas radios puede crear cada coordinador (rol Autor). Vacío, el valor por defecto, significa sin límite; con 0 solo editan las que les asigne un administrador. Administradores y editores no tienen límite. El límite se aplica en el menú, en la pantalla de creación y en la REST.

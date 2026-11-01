@@ -24,6 +24,11 @@ class DirectorioBlockTest extends WP_UnitTestCase {
 		$block_type = WP_Block_Type_Registry::get_instance()->get_registered( DirectorioShortcode::BLOCK_NAME );
 
 		$this->assertNotNull( $block_type );
+		// Metadata comes from blocks/directorio/block.json, translated with the plugin text domain.
+		$this->assertFileExists( RADIOEDU_CONECTA_DIR . 'blocks/directorio/block.json' );
+		$this->assertSame( 'Directorio Traspasando Fronteras', $block_type->title );
+		$this->assertSame( 'widgets', $block_type->category );
+		$this->assertContains( 'podcast', $block_type->keywords );
 		$this->assertTrue( $block_type->supports['autoRegister'] );
 		$this->assertFalse( $block_type->supports['multiple'] );
 		$this->assertIsCallable( $block_type->render_callback );

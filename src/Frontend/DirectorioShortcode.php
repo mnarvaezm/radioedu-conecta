@@ -224,36 +224,20 @@ class DirectorioShortcode {
 	}
 
 	/**
-	 * Registra el bloque del directorio solo con PHP (sin JavaScript de editor propio).
+	 * Registra el bloque del directorio a partir de blocks/directorio/block.json.
 	 *
-	 * Con `autoRegister` (WordPress 7.0+) el editor lo registra por su cuenta y lo previsualiza
-	 * con ServerSideRender, así que el bloque y el shortcode comparten el mismo renderizado.
-	 * El directorio usa IDs fijos en su marcado, por eso solo se permite una instancia por entrada.
+	 * The metadata (title, description, keywords, supports and style) lives in block.json, and
+	 * WordPress translates it with the plugin text domain. There is no editor JavaScript: with
+	 * `autoRegister` (WordPress 7.0+) the editor registers the block itself and previews it with
+	 * ServerSideRender, so the block and the shortcode share the same rendering. The directory
+	 * uses fixed IDs in its markup, which is why block.json allows one instance per post.
 	 *
 	 * @since 1.1
 	 */
 	public static function register_block(): void {
 		register_block_type(
-			self::BLOCK_NAME,
+			RADIOEDU_CONECTA_DIR . 'blocks/directorio',
 			[
-				'title'           => __( 'Directorio Traspasando Fronteras', 'radioedu-conecta' ),
-				'description'     => __( 'Directorio interactivo de radios escolares con filtros, mapa y propuestas de colaboración.', 'radioedu-conecta' ),
-				'category'        => 'widgets',
-				'icon'            => 'microphone',
-				'keywords'        => [
-					__( 'radio escolar', 'radioedu-conecta' ),
-					__( 'directorio', 'radioedu-conecta' ),
-					__( 'colaboración', 'radioedu-conecta' ),
-					'podcast',
-				],
-				'attributes'      => [],
-				'supports'        => [
-					'autoRegister' => true,
-					'html'         => false,
-					'multiple'     => false,
-					'align'        => [ 'wide', 'full' ],
-				],
-				'style_handles'   => [ 'radioedu-directorio-css' ],
 				'render_callback' => [ self::class, 'render_block' ],
 			]
 		);

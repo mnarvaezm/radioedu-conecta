@@ -735,26 +735,6 @@ msgstr "Irrati-ikastetxearen fitxa"
 msgid "Perfil público de un centro: cabecera y pie del tema alrededor de la ficha, sin repetir su título, autor, fecha ni imagen de cabecera."
 msgstr "Ikastetxe baten profil publikoa: gaiaren goiburua eta orri-oina fitxaren inguruan, haren izenburua, egilea, data eta goiburuko irudia errepikatu gabe."
 
-#: src/Frontend/DirectorioShortcode.php:239
-msgid "Directorio Traspasando Fronteras"
-msgstr "Traspasando Fronteras direktorioa"
-
-#: src/Frontend/DirectorioShortcode.php:240
-msgid "Directorio interactivo de radios escolares con filtros, mapa y propuestas de colaboración."
-msgstr "Eskola-irratien direktorio interaktiboa, iragazkiekin, maparekin eta lankidetza-proposamenekin."
-
-#: src/Frontend/DirectorioShortcode.php:244
-msgid "radio escolar"
-msgstr "eskola-irratia"
-
-#: src/Frontend/DirectorioShortcode.php:245
-msgid "directorio"
-msgstr "direktorioa"
-
-#: src/Frontend/DirectorioShortcode.php:246
-msgid "colaboración"
-msgstr "lankidetza"
-
 #: src/Icons.php:40
 msgid "Iconos del directorio de radios escolares Traspasando Fronteras."
 msgstr "Traspasando Fronteras eskola-irratien direktorioaren ikonoak."
@@ -1992,3 +1972,33 @@ msgstr "Beste sinkronizazio bat gune honen fitxa eguneratzen ari da. Sinkronizat
 #, php-format
 msgid "El buscador del directorio necesita JavaScript. Mientras tanto, puedes ver el %1$slistado completo de radios%2$s."
 msgstr "Direktorioaren bilatzaileak JavaScript behar du. Bitartean, %1$sirratien zerrenda osoa%2$s ikus dezakezu."
+
+#: blocks/directorio/block.json
+msgctxt "block title"
+msgid "Directorio Traspasando Fronteras"
+msgstr "Traspasando Fronteras direktorioa"
+
+#: blocks/directorio/block.json
+msgctxt "block description"
+msgid "Directorio interactivo de radios escolares con filtros, mapa y propuestas de colaboración."
+msgstr "Eskola-irratien direktorio interaktiboa, iragazkiekin, maparekin eta lankidetza-proposamenekin."
+
+#: blocks/directorio/block.json
+msgctxt "block keyword"
+msgid "radio escolar"
+msgstr "eskola-irratia"
+
+#: blocks/directorio/block.json
+msgctxt "block keyword"
+msgid "directorio"
+msgstr "direktorioa"
+
+#: blocks/directorio/block.json
+msgctxt "block keyword"
+msgid "colaboración"
+msgstr "lankidetza"
+
+#: blocks/directorio/block.json
+msgctxt "block keyword"
+msgid "podcast"
+msgstr "podcast"
