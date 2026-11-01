@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # See https://raw.githubusercontent.com/wp-cli/scaffold-command/master/templates/install-wp-tests.sh
+# One local change, marked "Local change", so the update check below always reports a newer version.
 
 # Set up colors for output
 RED="\033[0;31m"
@@ -88,12 +89,10 @@ if [[ $WP_VERSION =~ ^[0-9]+\.[0-9]+\-(beta|RC)[0-9]+$ ]]; then
 elif [[ $WP_VERSION =~ ^[0-9]+\.[0-9]+$ ]]; then
 	WP_TESTS_TAG="branches/$WP_VERSION"
 elif [[ $WP_VERSION =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
-	if [[ $WP_VERSION =~ [0-9]+\.[0-9]+\.[0] ]]; then
-		# version x.x.0 means the first release of the major version, so strip off the .0 and download version x.x
-		WP_TESTS_TAG="tags/${WP_VERSION%??}"
-	else
-		WP_TESTS_TAG="tags/$WP_VERSION"
-	fi
+	# Local change to the upstream script: the wordpress-develop tags on GitHub keep the .0 of a
+	# major release (7.1.0, not 7.1), so the tag is the version as given. Only the core archive on
+	# wordpress.org drops it (wordpress-7.1.tar.gz), which install_wp() below still does.
+	WP_TESTS_TAG="tags/$WP_VERSION"
 elif [[ $WP_VERSION == 'nightly' || $WP_VERSION == 'trunk' ]]; then
 	WP_TESTS_TAG="trunk"
 else
