@@ -1,6 +1,5 @@
 {
 	"build/admin.js": [ "build/admin.min.js" ],
 	"build/centro-panel.js": [ "build/centro-panel.js" ],
-	"build/directorio.js": [ "build/directorio.js" ],
 	"build/network-sync.js": [ "build/network-sync.js" ]
 }

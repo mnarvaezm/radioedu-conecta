@@ -11,6 +11,7 @@
 	"attributes": {},
 	"supports": {
 		"autoRegister": true,
+		"interactivity": { "interactive": true },
 		"html": false,
 		"multiple": false,
 		"align": [ "wide", "full" ]

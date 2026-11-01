@@ -1,10 +1,12 @@
 /**
  * Directory behaviour fixed after the 2026-10-31 audit: the match panel with a late reply
  * (F-11), the map with every result (F-12), "Cargar más" and the map keeping the filters of
- * the search being shown (R-04), reflow at 320 px (F-13) and the page without JavaScript (F-16).
+ * the search being shown (R-04), reflow at 320 px (F-13) and the page without JavaScript (F-16),
+ * which since 1.2 renders its cards on the server, searches by GET and links its pages.
  *
  * Map tiles are blocked, so nothing is sent to OpenStreetMap, and the proposal request of the
- * match panel is answered by the test, so no proposal is stored and no email is sent.
+ * match panel is answered by the test, so no proposal is stored and no email is sent. Leaflet
+ * itself must not be downloaded before the map is accepted.
  */
 const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
 
@@ -75,9 +77,13 @@ test.describe( 'Directorio: robustez', () => {
 		page,
 	} ) => {
 		const tileRequests = [];
+		const leafletRequests = [];
 		page.on( 'request', ( request ) => {
 			if ( request.url().includes( 'tile.openstreetmap.org' ) ) {
 				tileRequests.push( request.url() );
+			}
+			if ( request.url().includes( '/build/leaflet.js' ) ) {
+				leafletRequests.push( request.url() );
 			}
 		} );
 
@@ -88,9 +94,11 @@ test.describe( 'Directorio: robustez', () => {
 		await expect( page.locator( '#radioedu-js-fallback' ) ).toBeHidden();
 
 		await page.click( '#radioedu-btn-toggle-map' );
-		// No tile is requested before the visitor accepts the map.
+		// Neither a tile nor the map library is requested before the visitor accepts the map.
 		expect( tileRequests ).toHaveLength( 0 );
+		expect( leafletRequests ).toHaveLength( 0 );
 		await page.click( '#radioedu-btn-accept-map' );
+		await expect.poll( () => leafletRequests.length ).toBe( 1 );
 
 		await expect
 			.poll( () => page.locator( '.leaflet-marker-icon' ).count(), {
@@ -134,6 +142,10 @@ test.describe( 'Directorio: robustez', () => {
 		await expect( page.locator( '.radioedu-card' ) ).toHaveCount(
 			CARDS_PER_PAGE
 		);
+		// The address shows the search, so reloading or sharing it opens the same results.
+		await expect
+			.poll( () => new URL( page.url() ).searchParams.get( 'buscar' ) )
+			.toBe( PREFIX );
 
 		// Edited after searching: the map must keep showing the search above.
 		await page.fill( '#radioedu-filter-search', 'ZZZ-SIN-RESULTADOS' );
@@ -283,7 +295,7 @@ test.describe( 'Directorio: robustez', () => {
 		expect( layout.scrollWidth ).toBeLessThanOrEqual( layout.width );
 	} );
 
-	test( 'sin JavaScript muestra el número real de radios y un enlace al listado', async ( {
+	test( 'sin JavaScript muestra las radios, busca y pasa de página', async ( {
 		browser,
 		requestUtils,
 	} ) => {
@@ -298,14 +310,53 @@ test.describe( 'Directorio: robustez', () => {
 		try {
 			const noScript = await context.newPage();
 			await noScript.goto( directoryUrl );
+			const cards = noScript.locator( '.radioedu-card' );
+
+			// The server renders the first page, with the real count.
 			await expect(
 				noScript.locator( '#radioedu-count-number' )
 			).toHaveText( String( directory.total ) );
+			await expect( cards ).toHaveCount( CARDS_PER_PAGE );
+			await expect(
+				noScript.locator( '#radioedu-js-fallback' )
+			).toBeVisible();
+			// What needs JavaScript is not offered.
+			await expect(
+				noScript.locator( '#radioedu-btn-toggle-map' )
+			).toBeHidden();
+			await expect(
+				cards.first().locator( '.radioedu-btn-match' )
+			).toBeHidden();
+			await expect(
+				cards.first().locator( '.radioedu-card-fav-btn' )
+			).toBeHidden();
 
-			const link = noScript.locator( '#radioedu-js-fallback a' );
-			await expect( link ).toBeVisible();
-			await noScript.goto( await link.getAttribute( 'href' ) );
-			await expect( noScript.locator( 'body' ) ).toContainText( PREFIX );
+			// The pages of results are links.
+			await noScript.click( '#radioedu-btn-load-more' );
+			expect(
+				new URL( noScript.url() ).searchParams.get( 'pagina' )
+			).toBe( '2' );
+			await expect( cards ).toHaveCount(
+				Math.min( directory.total - CARDS_PER_PAGE, CARDS_PER_PAGE )
+			);
+			await expect(
+				noScript.locator( '#radioedu-btn-load-prev' )
+			).toBeVisible();
+
+			// The filters form is sent by GET and the server applies it.
+			await noScript.fill( '#radioedu-filter-search', `${ PREFIX } 07` );
+			await noScript.click( '#radioedu-btn-buscar' );
+			expect(
+				new URL( noScript.url() ).searchParams.get( 'buscar' )
+			).toBe( `${ PREFIX } 07` );
+			expect(
+				new URL( noScript.url() ).searchParams.get( 'pagina' )
+			).toBeNull();
+			await expect( cards ).toHaveCount( 1 );
+			await expect( cards ).toContainText( `${ PREFIX } 07` );
+			await expect(
+				noScript.locator( '#radioedu-filter-search' )
+			).toHaveValue( `${ PREFIX } 07` );
 		} finally {
 			await context.close();
 		}

@@ -17,7 +17,7 @@ Interactive directory and collaboration system ("Traspasando Fronteras") that co
 It allows schools that run a school radio station to:
 
 * Publish a station profile with cover image, circular logo, location, educational stages, working languages, topics, programme formats and links to their podcast and official website, edited in sidebar panels of the block editor (or in a meta box with the classic editor).
-* Search and filter related schools in real time with the interactive faceted directory, available as the "Directorio Traspasando Fronteras" block or the `[radioedu_directorio]` shortcode (taxonomy-based affinity sorting and pagination), and a map view powered by a locally bundled copy of Leaflet.
+* Search and filter related schools in real time with the interactive faceted directory, available as the "Directorio Traspasando Fronteras" block or the `[radioedu_directorio]` shortcode (taxonomy-based affinity sorting and pagination), and a map view powered by a locally bundled copy of Leaflet. The directory works without JavaScript too: the server renders the first page of results, and the filters and the pages work as a form and links.
 * Open the individual profile page of each station and propose a collaboration ("match") directly from the profile or from the directory, through an accessible side panel.
 * Send and manage formal collaboration proposals between radio coordinators from **RadioEdu Centros -> Colaboraciones (Matches)** without exposing personal email addresses on the public site.
 
@@ -40,12 +40,12 @@ The plugin contains no telemetry and makes no other calls to external services.
 
 == Third-party libraries ==
 
-* **Leaflet 1.9.4** (`assets/js/leaflet.js`, `assets/css/leaflet.css`, `assets/css/images/`), bundled locally. BSD-2-Clause license, GPL-compatible. The full license text ships in `assets/leaflet-LICENSE.txt`. Unminified source: https://github.com/Leaflet/Leaflet/tree/v1.9.4
+* **Leaflet 1.9.4** (npm package `leaflet`, compiled into `build/leaflet.js`; `assets/css/leaflet.css`, `assets/css/images/`), bundled locally and downloaded only after the visitor accepts the map. BSD-2-Clause license, GPL-compatible. The full license text ships in `assets/leaflet-LICENSE.txt`. Unminified source: https://github.com/Leaflet/Leaflet/tree/v1.9.4
 * **WordPress icons** (`assets/icons/close.svg`, `globe.svg`, `institution.svg`, `send.svg`): SVG paths from `@wordpress/icons` 10.32.0, GPL-2.0-or-later. Source: https://github.com/WordPress/gutenberg/tree/trunk/packages/icons. The other icons in `assets/icons/` were drawn for this plugin and share its license.
 
 == Source code ==
 
-The minified scripts in `build/` are compiled from the human-readable sources shipped in `assets/js/admin.js`, `assets/js/centro-panel.js`, `assets/js/directorio.js` and `assets/js/network-sync.js` with `@wordpress/scripts` (version 37), using its default webpack configuration: `npx wp-scripts build assets/js/admin.js assets/js/centro-panel.js assets/js/directorio.js assets/js/network-sync.js`. The `@wordpress/*` packages they import (such as `i18n`, `a11y`, `api-fetch`, `dom-ready`, `editor`, `components` and `element`) are not bundled; they are loaded from WordPress core as script dependencies.
+The minified scripts in `build/` are compiled from the human-readable sources shipped in `assets/js/admin.js`, `assets/js/centro-panel.js` and `assets/js/network-sync.js`, and the directory script module from `assets/js/directorio-view.js`, with `@wordpress/scripts` (version 37) and the default webpack configuration it extends in `webpack.config.js` (in the source repository): `npx wp-scripts build --experimental-modules --source-path=assets/js`. `build/leaflet.js` is Leaflet 1.9.4 from npm, split out of the module. The `@wordpress/*` packages they import (such as `i18n`, `a11y`, `api-fetch`, `dom-ready`, `editor`, `components`, `element` and `interactivity`) are not bundled; they are loaded from WordPress core as script and script module dependencies.
 
 == Installation ==
 
@@ -59,6 +59,10 @@ The minified scripts in `build/` are compiled from the human-readable sources sh
 = Which PHP version should I use? =
 
 The plugin requires PHP 8.1 and is tested on PHP 8.1 to 8.5. PHP 8.1 no longer receives security fixes from the PHP project, and PHP 8.2 only receives them until the end of 2026, so use PHP 8.3 or later in production.
+
+= Does the directory work without JavaScript? =
+
+Yes. The server renders the first page of results, the filters form is sent as a normal form and the pages of results are links. The map, the favourites and the collaboration proposals need JavaScript, and the directory says so.
 
 = Is it compatible with WordPress Multisite? =
 
@@ -99,6 +103,10 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 = 1.2 =
 * The plugin declares an `Update URI` header: it is distributed outside the WordPress.org directory, so WordPress never offers it the update of a directory plugin with the same slug.
 * Tested on PHP 8.1 to 8.5 and on WordPress 7.1.0. PHP 8.1 remains the minimum, but PHP 8.3 or later is recommended in production.
+* The directory uses the WordPress Interactivity API (`assets/js/directorio-view.js`, a script module) instead of its own script. The server renders the first page of results with the same directives, so the cards show without waiting for the REST API and without JavaScript.
+* Without JavaScript, the directory searches and paginates: the filters form is sent by GET (`?ubicacion=`, `idioma`, `etapa`, `tematica`, `formato`, `buscar`, `orden` and `pagina`) and "Cargar más centros" links to the next page. With JavaScript, the address follows each search. The map, the favourites and the proposals still need JavaScript, and the page says so.
+* Leaflet is downloaded only when the visitor accepts the map, not on every visit to the directory. It now comes from npm (`leaflet` 1.9.4).
+* Developers: `window.radioeduConectaData` and the `radioedu-directorio-js` and `radioedu-leaflet-js` handles are gone. The module is `radioedu-conecta/directorio`; its config and state live in the `radioedu-conecta/directorio` store namespace.
 * The centros REST endpoint returns names, places and tags as plain text: a station with an apostrophe or an "&" in its name no longer shows `&#8217;` or `&amp;` on its card.
 
 = 1.1 =
@@ -155,7 +163,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 == Upgrade Notice ==
 
 = 1.2 =
-Distributed outside WordPress.org, now declared with an Update URI header. Tested on PHP 8.1 to 8.5; PHP 8.3 or later is recommended.
+The directory now uses the WordPress Interactivity API, renders its first page on the server and works without JavaScript; Leaflet loads only after the map is accepted. Declares an Update URI (distributed outside WordPress.org) and is tested on PHP 8.1 to 8.5.
 
 = 1.1 =
 Requires WordPress 7.1. Adds the directory block, SVG icons and editor sidebar panels for school data. Demo content is no longer created on activation; import it from RadioEdu Centros -> Ajustes.

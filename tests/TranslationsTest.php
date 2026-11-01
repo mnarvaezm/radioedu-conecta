@@ -83,7 +83,6 @@ class TranslationsTest extends WP_UnitTestCase {
 		return [
 			'admin'        => 'Usar este logo',
 			'centro-panel' => 'Datos de la emisora',
-			'directorio'   => 'Añadir a favoritos',
 			'network-sync' => 'Sitio de origen',
 		];
 	}
@@ -99,7 +98,6 @@ class TranslationsTest extends WP_UnitTestCase {
 				[
 					'admin'        => 'Utilitza aquest logotip',
 					'centro-panel' => "Dades de l'emissora",
-					'directorio'   => 'Afegeix als preferits',
 					'network-sync' => "Lloc d'origen",
 				],
 			],
@@ -109,7 +107,6 @@ class TranslationsTest extends WP_UnitTestCase {
 				[
 					'admin'        => 'Utilitza este logotip',
 					'centro-panel' => "Dades de l'emissora",
-					'directorio'   => 'Afig als preferits',
 					'network-sync' => "Lloc d'origen",
 				],
 			],
@@ -119,7 +116,6 @@ class TranslationsTest extends WP_UnitTestCase {
 				[
 					'admin'        => 'Usar este logo',
 					'centro-panel' => 'Datos da emisora',
-					'directorio'   => 'Engadir a favoritos',
 					'network-sync' => 'Sitio de orixe',
 				],
 			],
@@ -129,7 +125,6 @@ class TranslationsTest extends WP_UnitTestCase {
 				[
 					'admin'        => 'Erabili logo hau',
 					'centro-panel' => 'Irratiaren datuak',
-					'directorio'   => 'Gehitu gogokoetara',
 					'network-sync' => 'Jatorrizko gunea',
 				],
 			],

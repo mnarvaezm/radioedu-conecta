@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-01T03:35:49+00:00\n"
+"POT-Creation-Date: 2026-11-01T20:54:07+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: radioedu-conecta\n"
@@ -42,18 +42,18 @@ msgid "https://radioedu.educarex.es"
 msgstr ""
 
 #. translators: 1: Required PHP version, 2: Current PHP version
-#: radioedu-conecta.php:74
+#: radioedu-conecta.php:75
 #, php-format
 msgid "RadioEdu Conecta requires PHP version %1$s or higher. Your server is running PHP %2$s."
 msgstr ""
 
 #. translators: 1: Required WordPress version, 2: Current WordPress version
-#: radioedu-conecta.php:92
+#: radioedu-conecta.php:93
 #, php-format
 msgid "RadioEdu Conecta requires WordPress %1$s or higher. You are using WordPress %2$s."
 msgstr ""
 
-#: radioedu-conecta.php:190
+#: radioedu-conecta.php:191
 #: src/Admin/Settings.php:52
 msgid "Ajustes"
 msgstr ""
@@ -313,9 +313,9 @@ msgid "Colaboraciones (Matches)"
 msgstr ""
 
 #: src/Admin/ColaboracionesAdminPage.php:89
-#: src/Admin/DemoDataImporter.php:83
-#: src/Rest/ColaboracionesController.php:326
-#: src/Rest/ColaboracionesController.php:515
+#: src/Admin/DemoDataImporter.php:84
+#: src/Rest/ColaboracionesController.php:350
+#: src/Rest/ColaboracionesController.php:652
 msgid "No tienes permisos para realizar esta acción."
 msgstr ""
 
@@ -324,7 +324,7 @@ msgid "Parámetros de respuesta no válidos."
 msgstr ""
 
 #: src/Admin/ColaboracionesAdminPage.php:105
-#: src/Rest/ColaboracionesController.php:536
+#: src/Rest/ColaboracionesController.php:673
 msgid "No tienes permisos para responder a las propuestas de este centro."
 msgstr ""
 
@@ -632,12 +632,12 @@ msgstr ""
 msgid "Sincronizar / Cargar las 6 emisoras de ejemplo"
 msgstr ""
 
-#: src/Capabilities/CentroLimit.php:195
+#: src/Capabilities/CentroLimit.php:251
 msgid "Las radios las da de alta un administrador. Puedes editar las que tengas asignadas."
 msgstr ""
 
 #. translators: %d: maximum number of radios per user.
-#: src/Capabilities/CentroLimit.php:200
+#: src/Capabilities/CentroLimit.php:256
 #, php-format
 msgid "Has alcanzado el máximo de %d radio por usuario. Para dar de alta otra, contacta con un administrador."
 msgid_plural "Has alcanzado el máximo de %d radios por usuario. Para dar de alta otra, contacta con un administrador."
@@ -735,12 +735,80 @@ msgstr ""
 msgid "RadioEdu Conecta - Traspasando Fronteras"
 msgstr ""
 
-#: src/Frontend/DirectorioShortcode.php:90
+#: src/Frontend/DirectorioShortcode.php:83
 msgid "Ficha de centro de radio"
 msgstr ""
 
-#: src/Frontend/DirectorioShortcode.php:91
+#: src/Frontend/DirectorioShortcode.php:84
 msgid "Perfil público de un centro: cabecera y pie del tema alrededor de la ficha, sin repetir su título, autor, fecha ni imagen de cabecera."
+msgstr ""
+
+#: src/Frontend/DirectorioShortcode.php:538
+#: src/Frontend/DirectoryStore.php:237
+#: src/Frontend/DirectoryStore.php:521
+#: templates/single-centro.php:77
+msgid "Extremadura"
+msgstr ""
+
+#. translators: %s: Number of schools found.
+#: src/Frontend/DirectoryStore.php:226
+#: templates/directorio.php:133
+#, php-format
+msgid "Resultados (%s centros)"
+msgstr ""
+
+#: src/Frontend/DirectoryStore.php:227
+msgid "Ha ocurrido un error al procesar la solicitud."
+msgstr ""
+
+#: src/Frontend/DirectoryStore.php:228
+#: templates/directorio.php:202
+msgid "Ver perfil"
+msgstr ""
+
+#: src/Frontend/DirectoryStore.php:229
+#: src/Frontend/DirectoryStore.php:542
+#: templates/match-drawer.php:109
+msgid "Enviar propuesta"
+msgstr ""
+
+#: src/Frontend/DirectoryStore.php:230
+msgid "Enviando propuesta…"
+msgstr ""
+
+#: src/Frontend/DirectoryStore.php:231
+msgid "¡Propuesta enviada con éxito!"
+msgstr ""
+
+#: src/Frontend/DirectoryStore.php:232
+msgid "Debes iniciar sesión con tu cuenta de coordinador de centro para enviar propuestas de colaboración."
+msgstr ""
+
+#: src/Frontend/DirectoryStore.php:233
+msgid "Tu cuenta actual no dispone de permisos de coordinador para proponer colaboraciones."
+msgstr ""
+
+#: src/Frontend/DirectoryStore.php:234
+msgid "Por favor, selecciona tu centro escolar."
+msgstr ""
+
+#: src/Frontend/DirectoryStore.php:235
+#: src/Frontend/DirectoryStore.php:537
+msgid "Añadir a favoritos"
+msgstr ""
+
+#: src/Frontend/DirectoryStore.php:236
+msgid "Quitar de favoritos"
+msgstr ""
+
+#: src/Frontend/DirectoryStore.php:238
+msgid "Colaboradores de OpenStreetMap"
+msgstr ""
+
+#. translators: 1: number of centros on the map, 2: number of results.
+#: src/Frontend/DirectoryStore.php:240
+#, php-format
+msgid "El mapa muestra %1$s de %2$s centros. Usa los filtros para acotar la búsqueda."
 msgstr ""
 
 #: src/Icons.php:40
@@ -779,11 +847,11 @@ msgstr ""
 msgid "Enviar"
 msgstr ""
 
-#: src/Network/NetworkSync.php:212
+#: src/Network/NetworkSync.php:214
 msgid "Otra sincronización está actualizando la ficha de este sitio. Vuelve a sincronizar dentro de un momento."
 msgstr ""
 
-#: src/Network/NetworkSync.php:426
+#: src/Network/NetworkSync.php:449
 msgid "El sitio no existe."
 msgstr ""
 
@@ -1020,7 +1088,7 @@ msgid "Centro receptor"
 msgstr ""
 
 #: src/Privacy/PrivacyPolicy.php:179
-#: templates/single-centro.php:96
+#: templates/single-centro.php:99
 msgid "Cursos / Edades"
 msgstr ""
 
@@ -1030,7 +1098,7 @@ msgid "Idiomas"
 msgstr ""
 
 #: src/Privacy/PrivacyPolicy.php:187
-#: templates/match-drawer.php:89
+#: templates/match-drawer.php:95
 msgid "Fechas aproximadas"
 msgstr ""
 
@@ -1039,7 +1107,7 @@ msgid "Respuesta"
 msgstr ""
 
 #: src/Privacy/PrivacyPolicy.php:199
-#: templates/match-drawer.php:65
+#: templates/match-drawer.php:71
 msgid "Idea de proyecto"
 msgstr ""
 
@@ -1059,148 +1127,148 @@ msgstr ""
 msgid "No se han podido eliminar todos los datos. Reintente la solicitud de borrado."
 msgstr ""
 
-#: src/Rest/CentrosController.php:343
-#: src/Rest/ColaboracionesController.php:572
+#: src/Rest/CentrosController.php:358
+#: src/Rest/ColaboracionesController.php:709
 msgid "Número de página de resultados."
 msgstr ""
 
-#: src/Rest/CentrosController.php:351
+#: src/Rest/CentrosController.php:366
 msgid "Número de centros por página."
 msgstr ""
 
-#: src/Rest/CentrosController.php:360
+#: src/Rest/CentrosController.php:375
 msgid "Término de búsqueda por nombre o palabra clave."
 msgstr ""
 
-#: src/Rest/CentrosController.php:367
+#: src/Rest/CentrosController.php:382
 msgid "Criterio de ordenación."
 msgstr ""
 
-#: src/Rest/CentrosController.php:375
+#: src/Rest/CentrosController.php:390
 msgid "ID del centro de referencia para calcular afinidad."
 msgstr ""
 
-#: src/Rest/CentrosController.php:382
+#: src/Rest/CentrosController.php:397
 msgid "Slug de etapa educativa."
 msgstr ""
 
-#: src/Rest/CentrosController.php:388
+#: src/Rest/CentrosController.php:403
 msgid "Slug de idioma."
 msgstr ""
 
-#: src/Rest/CentrosController.php:394
+#: src/Rest/CentrosController.php:409
 msgid "Slug de temática."
 msgstr ""
 
-#: src/Rest/CentrosController.php:400
+#: src/Rest/CentrosController.php:415
 msgid "Slug de formato de programa."
 msgstr ""
 
-#: src/Rest/CentrosController.php:406
+#: src/Rest/CentrosController.php:421
 msgid "Slug de ubicación geográfica."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:91
+#: src/Rest/ColaboracionesController.php:112
 msgid "ID de la propuesta de colaboración."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:99
+#: src/Rest/ColaboracionesController.php:120
 msgid "Nuevo estado de la propuesta."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:107
+#: src/Rest/ColaboracionesController.php:128
 msgid "Mensaje de respuesta para el centro emisor."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:347
-msgid "Has alcanzado el límite de propuestas por hora. Por favor, inténtalo más tarde."
-msgstr ""
-
-#: src/Rest/ColaboracionesController.php:362
-msgid "No puedes enviar una propuesta de colaboración a tu propio centro escolar."
-msgstr ""
-
-#: src/Rest/ColaboracionesController.php:370
-msgid "Por favor, describe brevemente la idea del proyecto conjunto."
-msgstr ""
-
-#: src/Rest/ColaboracionesController.php:386
-msgid "Uno de los centros especificados no es válido o no está publicado."
-msgstr ""
-
-#: src/Rest/ColaboracionesController.php:395
-msgid "No tienes permisos para enviar propuestas en nombre del centro emisor seleccionado."
-msgstr ""
-
-#: src/Rest/ColaboracionesController.php:404
-msgid "Este centro escolar no está disponible actualmente para recibir nuevas propuestas de colaboración."
-msgstr ""
-
-#: src/Rest/ColaboracionesController.php:433
-msgid "No se pudo registrar la propuesta en la base de datos."
-msgstr ""
-
-#: src/Rest/ColaboracionesController.php:454
+#: src/Rest/ColaboracionesController.php:374
 msgid "¡Propuesta de match enviada con éxito! La emisora receptora recibirá una notificación para comenzar a coordinar el proyecto."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:455
+#: src/Rest/ColaboracionesController.php:375
 msgid "¡Propuesta de match enviada con éxito! La emisora receptora la verá en su panel de Colaboraciones."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:456
+#: src/Rest/ColaboracionesController.php:376
 msgid "¡Propuesta de match enviada con éxito! No se ha podido enviar el aviso por correo, pero la emisora receptora la verá en su panel de Colaboraciones."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:492
+#: src/Rest/ColaboracionesController.php:430
+msgid "No puedes enviar una propuesta de colaboración a tu propio centro escolar."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:438
+msgid "Por favor, describe brevemente la idea del proyecto conjunto."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:454
+msgid "Uno de los centros especificados no es válido o no está publicado."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:463
+msgid "No tienes permisos para enviar propuestas en nombre del centro emisor seleccionado."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:472
+msgid "Este centro escolar no está disponible actualmente para recibir nuevas propuestas de colaboración."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:504
+msgid "No se pudo registrar la propuesta en la base de datos."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:538
+msgid "Has alcanzado el límite de propuestas por hora. Por favor, inténtalo más tarde."
+msgstr ""
+
+#: src/Rest/ColaboracionesController.php:629
 msgid "Estado de la colaboración actualizado correctamente."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:521
+#: src/Rest/ColaboracionesController.php:658
 msgid "El estado indicado no es válido."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:530
+#: src/Rest/ColaboracionesController.php:667
 msgid "La propuesta de colaboración no existe."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:541
+#: src/Rest/ColaboracionesController.php:678
 msgid "El mensaje de respuesta es demasiado largo."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:547
+#: src/Rest/ColaboracionesController.php:684
 msgid "No se pudo guardar la respuesta. Inténtalo de nuevo."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:552
+#: src/Rest/ColaboracionesController.php:689
 msgid "Esta propuesta ya ha sido respondida y no puede modificarse."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:580
+#: src/Rest/ColaboracionesController.php:717
 msgid "Número de propuestas por página."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:599
+#: src/Rest/ColaboracionesController.php:736
 msgid "ID del centro que envía la propuesta."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:607
+#: src/Rest/ColaboracionesController.php:744
 msgid "ID del centro que recibe la propuesta."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:615
+#: src/Rest/ColaboracionesController.php:752
 msgid "Idea del proyecto conjunto."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:624
+#: src/Rest/ColaboracionesController.php:761
 msgid "Curso o edades del alumnado participante."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:632
+#: src/Rest/ColaboracionesController.php:769
 msgid "Idiomas de trabajo del proyecto."
 msgstr ""
 
-#: src/Rest/ColaboracionesController.php:640
+#: src/Rest/ColaboracionesController.php:777
 msgid "Fechas aproximadas del proyecto."
 msgstr ""
 
@@ -1466,270 +1534,262 @@ msgstr ""
 msgid "Ubicaciones"
 msgstr ""
 
-#: templates/directorio.php:33
-msgid "Traspasando Fronteras"
-msgstr ""
-
 #: templates/directorio.php:35
-msgid "Conectamos radios escolares de Extremadura con otras emisoras de España y del mundo."
-msgstr ""
-
-#: templates/directorio.php:40
-msgid "Diferentes voces, un mismo mundo"
-msgstr ""
-
-#: templates/directorio.php:41
-msgid "RADIOS ESCOLARES QUE HACEN UN MUNDO MÁS GRANDE 🌍"
-msgstr ""
-
-#: templates/directorio.php:47
-msgid "Filtros del directorio"
-msgstr ""
-
-#: templates/directorio.php:53
 msgid "Ubicación"
 msgstr ""
 
-#: templates/directorio.php:56
+#: templates/directorio.php:36
 msgid "Cualquier lugar"
 msgstr ""
 
-#: templates/directorio.php:70
+#: templates/directorio.php:40
 msgid "Idioma"
 msgstr ""
 
-#: templates/directorio.php:73
+#: templates/directorio.php:41
 msgid "Cualquier idioma"
 msgstr ""
 
-#: templates/directorio.php:87
+#: templates/directorio.php:45
 msgid "Etapa educativa"
 msgstr ""
 
-#: templates/directorio.php:90
+#: templates/directorio.php:46
 msgid "Cualquiera"
 msgstr ""
 
-#: templates/directorio.php:104
+#: templates/directorio.php:50
 msgid "Temas"
 msgstr ""
 
-#: templates/directorio.php:107
+#: templates/directorio.php:51
 msgid "Cualquier tema"
 msgstr ""
 
-#: templates/directorio.php:121
+#: templates/directorio.php:55
 msgid "Formato"
 msgstr ""
 
-#: templates/directorio.php:124
+#: templates/directorio.php:56
 msgid "Cualquier formato"
 msgstr ""
 
-#: templates/directorio.php:138
-msgid "Busca colaboración con..."
-msgstr ""
-
-#: templates/directorio.php:140
-msgid "Cualquier centro o temática..."
-msgstr ""
-
-#: templates/directorio.php:146
-msgid "Buscar centros"
-msgstr ""
-
-#. translators: %s: Number of schools found.
-#: templates/directorio.php:161
-#: build/directorio.js:3
-#, php-format,js-format
-msgid "Resultados (%s centros)"
-msgstr ""
-
-#: templates/directorio.php:172
-msgid "Vista de mapa"
-msgstr ""
-
-#: templates/directorio.php:177
-msgid "Ordenar por"
-msgstr ""
-
-#: templates/directorio.php:179
+#: templates/directorio.php:60
 msgid "Más afines"
 msgstr ""
 
-#: templates/directorio.php:180
+#: templates/directorio.php:61
 msgid "Más recientes"
 msgstr ""
 
-#: templates/directorio.php:181
+#: templates/directorio.php:62
 msgid "Alfabético (A-Z)"
 msgstr ""
 
-#: templates/directorio.php:189
+#: templates/directorio.php:71
+msgid "Traspasando Fronteras"
+msgstr ""
+
+#: templates/directorio.php:73
+msgid "Conectamos radios escolares de Extremadura con otras emisoras de España y del mundo."
+msgstr ""
+
+#: templates/directorio.php:78
+msgid "Diferentes voces, un mismo mundo"
+msgstr ""
+
+#: templates/directorio.php:79
+msgid "RADIOS ESCOLARES QUE HACEN UN MUNDO MÁS GRANDE 🌍"
+msgstr ""
+
+#: templates/directorio.php:85
+msgid "Filtros del directorio"
+msgstr ""
+
+#: templates/directorio.php:110
+msgid "Busca colaboración con..."
+msgstr ""
+
+#: templates/directorio.php:112
+msgid "Cualquier centro o temática..."
+msgstr ""
+
+#: templates/directorio.php:118
+msgid "Buscar centros"
+msgstr ""
+
+#: templates/directorio.php:144
+msgid "Vista de mapa"
+msgstr ""
+
+#: templates/directorio.php:149
+msgid "Ordenar por"
+msgstr ""
+
+#: templates/directorio.php:161
 msgid "No se han podido cargar los centros. Vuelve a pulsar Buscar centros para reintentar."
 msgstr ""
 
-#. translators: 1: opening link tag to the list of radios, 2: closing link tag.
-#: templates/directorio.php:195
-#, php-format
-msgid "El buscador del directorio necesita JavaScript. Mientras tanto, puedes ver el %1$slistado completo de radios%2$s."
+#: templates/directorio.php:162
+msgid "El mapa, los favoritos y las propuestas de colaboración necesitan JavaScript."
 msgstr ""
 
-#: templates/directorio.php:207
+#: templates/directorio.php:168
 msgid "Mapa geográfico interactivo (OpenStreetMap)"
 msgstr ""
 
-#: templates/directorio.php:208
+#: templates/directorio.php:169
 msgid "Al cargar el mapa cartográfico se establecerá conexión con los servidores externos de OpenStreetMap Foundation para descargar las imágenes del mapa."
 msgstr ""
 
-#: templates/directorio.php:210
+#: templates/directorio.php:171
 msgid "Aceptar y mostrar el mapa interactivo"
 msgstr ""
 
-#: templates/directorio.php:225
-msgid "Cargar más centros"
-msgstr ""
-
-#: templates/directorio.php:232
-msgid "Buscando centros afines en la red..."
-msgstr ""
-
-#: templates/directorio.php:238
-msgid "No se han encontrado emisoras con estos filtros"
-msgstr ""
-
-#: templates/directorio.php:239
-msgid "Prueba a seleccionar otros temas, idiomas o restablecer la búsqueda."
-msgstr ""
-
-#: templates/directorio.php:241
-msgid "Limpiar todos los filtros"
-msgstr ""
-
-#: templates/match-drawer.php:23
-msgid "Solicitud de match"
-msgstr ""
-
-#: templates/match-drawer.php:24
-msgid "¡Cuéntanos tu idea y empezad a crear juntos!"
-msgstr ""
-
-#: templates/match-drawer.php:26
-msgid "Cerrar panel"
-msgstr ""
-
-#: templates/match-drawer.php:35
-#: templates/match-drawer.php:46
-msgid "Tu centro"
-msgstr ""
-
-#: templates/match-drawer.php:48
-msgid "Sin centro asignado como coordinador"
-msgstr ""
-
-#: templates/match-drawer.php:48
-msgid "Debes iniciar sesión para enviar propuestas"
-msgstr ""
-
-#: templates/match-drawer.php:56
-msgid "Centro con el que quieres colaborar"
-msgstr ""
-
-#: templates/match-drawer.php:67
-msgid "Ejemplo: Queremos crear un podcast conjunto sobre la vida en entornos rurales, con entrevistas a estudiantes de ambos centros..."
-msgstr ""
-
-#: templates/match-drawer.php:74
-msgid "Curso o edades"
-msgstr ""
-
-#: templates/match-drawer.php:76
-msgid "Ej: 12-14 años (1º-2º ESO)"
-msgstr ""
-
-#: templates/match-drawer.php:80
-msgid "Idioma(s)"
-msgstr ""
-
-#: templates/match-drawer.php:82
-msgid "Ej: Español / Inglés"
-msgstr ""
-
-#: templates/match-drawer.php:91
-msgid "Ej: 2º Trimestre (Enero - Marzo)"
-msgstr ""
-
-#: templates/match-drawer.php:100
-#: build/directorio.js:3
-msgid "Enviar propuesta"
-msgstr ""
-
-#: templates/match-drawer.php:110
-msgid "1. Encuentra"
-msgstr ""
-
-#: templates/match-drawer.php:111
-msgid "Busca centros afines a tus intereses"
-msgstr ""
-
-#: templates/match-drawer.php:116
-msgid "2. Conecta"
-msgstr ""
-
-#: templates/match-drawer.php:117
-msgid "Envía tu propuesta de match"
-msgstr ""
-
-#: templates/match-drawer.php:122
-msgid "3. Crea"
-msgstr ""
-
-#: templates/match-drawer.php:123
-msgid "¡Desarrollad juntos vuestro proyecto!"
-msgstr ""
-
-#: templates/single-centro.php:38
-msgid "Volver al directorio Traspasando Fronteras"
-msgstr ""
-
-#: templates/single-centro.php:50
-msgid "Disponible para colaborar"
-msgstr ""
-
-#: templates/single-centro.php:52
-msgid "No disponible actualmente"
-msgstr ""
-
-#: templates/single-centro.php:74
-#: templates/single-centro.php:122
-#: build/directorio.js:3
-msgid "Extremadura"
-msgstr ""
-
-#: templates/single-centro.php:106
-msgid "Idiomas de trabajo"
-msgstr ""
-
-#: templates/single-centro.php:124
-#: build/directorio.js:3
+#: templates/directorio.php:204
+#: templates/single-centro.php:127
 msgid "Proponer match"
 msgstr ""
 
-#: templates/single-centro.php:128
-#: build/directorio.js:3
+#: templates/directorio.php:205
+#: templates/single-centro.php:131
 msgid "No disponible"
 msgstr ""
 
-#: templates/single-centro.php:134
+#: templates/directorio.php:214
+msgid "Páginas de resultados"
+msgstr ""
+
+#: templates/directorio.php:215
+msgid "Centros anteriores"
+msgstr ""
+
+#: templates/directorio.php:216
+msgid "Cargar más centros"
+msgstr ""
+
+#: templates/directorio.php:222
+msgid "Buscando centros afines en la red..."
+msgstr ""
+
+#: templates/directorio.php:228
+msgid "No se han encontrado emisoras con estos filtros"
+msgstr ""
+
+#: templates/directorio.php:229
+msgid "Prueba a seleccionar otros temas, idiomas o restablecer la búsqueda."
+msgstr ""
+
+#: templates/directorio.php:231
+msgid "Limpiar todos los filtros"
+msgstr ""
+
+#: templates/match-drawer.php:29
+msgid "Solicitud de match"
+msgstr ""
+
+#: templates/match-drawer.php:30
+msgid "¡Cuéntanos tu idea y empezad a crear juntos!"
+msgstr ""
+
+#: templates/match-drawer.php:32
+msgid "Cerrar panel"
+msgstr ""
+
+#: templates/match-drawer.php:41
+#: templates/match-drawer.php:52
+msgid "Tu centro"
+msgstr ""
+
+#: templates/match-drawer.php:54
+msgid "Sin centro asignado como coordinador"
+msgstr ""
+
+#: templates/match-drawer.php:54
+msgid "Debes iniciar sesión para enviar propuestas"
+msgstr ""
+
+#: templates/match-drawer.php:62
+msgid "Centro con el que quieres colaborar"
+msgstr ""
+
+#: templates/match-drawer.php:73
+msgid "Ejemplo: Queremos crear un podcast conjunto sobre la vida en entornos rurales, con entrevistas a estudiantes de ambos centros..."
+msgstr ""
+
+#: templates/match-drawer.php:80
+msgid "Curso o edades"
+msgstr ""
+
+#: templates/match-drawer.php:82
+msgid "Ej: 12-14 años (1º-2º ESO)"
+msgstr ""
+
+#: templates/match-drawer.php:86
+msgid "Idioma(s)"
+msgstr ""
+
+#: templates/match-drawer.php:88
+msgid "Ej: Español / Inglés"
+msgstr ""
+
+#: templates/match-drawer.php:97
+msgid "Ej: 2º Trimestre (Enero - Marzo)"
+msgstr ""
+
+#: templates/match-drawer.php:103
+msgid "Iniciar sesión"
+msgstr ""
+
+#: templates/match-drawer.php:119
+msgid "1. Encuentra"
+msgstr ""
+
+#: templates/match-drawer.php:120
+msgid "Busca centros afines a tus intereses"
+msgstr ""
+
+#: templates/match-drawer.php:125
+msgid "2. Conecta"
+msgstr ""
+
+#: templates/match-drawer.php:126
+msgid "Envía tu propuesta de match"
+msgstr ""
+
+#: templates/match-drawer.php:131
+msgid "3. Crea"
+msgstr ""
+
+#: templates/match-drawer.php:132
+msgid "¡Desarrollad juntos vuestro proyecto!"
+msgstr ""
+
+#: templates/single-centro.php:41
+msgid "Volver al directorio Traspasando Fronteras"
+msgstr ""
+
+#: templates/single-centro.php:53
+msgid "Disponible para colaborar"
+msgstr ""
+
+#: templates/single-centro.php:55
+msgid "No disponible actualmente"
+msgstr ""
+
+#: templates/single-centro.php:109
+msgid "Idiomas de trabajo"
+msgstr ""
+
+#: templates/single-centro.php:137
 msgid "Escuchar Podcast / Emisora"
 msgstr ""
 
-#: templates/single-centro.php:140
+#: templates/single-centro.php:143
 msgid "Web del centro"
 msgstr ""
 
-#: templates/single-centro.php:150
+#: templates/single-centro.php:153
 msgid "Sobre nuestra emisora escolar"
 msgstr ""
 
@@ -1768,64 +1828,6 @@ msgstr ""
 
 #: build/centro-panel.js:1
 msgid "Coordinación"
-msgstr ""
-
-#: build/directorio.js:3
-msgid "No se encontraron centros con los filtros seleccionados."
-msgstr ""
-
-#: build/directorio.js:3
-msgid "Cargando centros…"
-msgstr ""
-
-#: build/directorio.js:3
-msgid "Ver perfil"
-msgstr ""
-
-#: build/directorio.js:3
-msgid "Añadir a favoritos"
-msgstr ""
-
-#: build/directorio.js:3
-msgid "Quitar de favoritos"
-msgstr ""
-
-#: build/directorio.js:3
-msgid "Enviando propuesta…"
-msgstr ""
-
-#: build/directorio.js:3
-msgid "¡Propuesta enviada con éxito!"
-msgstr ""
-
-#: build/directorio.js:3
-msgid "Debes iniciar sesión con tu cuenta de coordinador de centro para enviar propuestas de colaboración."
-msgstr ""
-
-#: build/directorio.js:3
-msgid "Tu cuenta actual no dispone de permisos de coordinador para proponer colaboraciones."
-msgstr ""
-
-#: build/directorio.js:3
-msgid "Por favor, selecciona tu centro escolar."
-msgstr ""
-
-#: build/directorio.js:3
-msgid "Ha ocurrido un error al procesar la solicitud."
-msgstr ""
-
-#: build/directorio.js:3
-msgid "Iniciar sesión"
-msgstr ""
-
-#: build/directorio.js:3
-msgid "Colaboradores de OpenStreetMap"
-msgstr ""
-
-#. translators: 1: number of centros on the map, 2: number of results.
-#: build/directorio.js:4
-#, js-format
-msgid "El mapa muestra %1$s de %2$s centros. Usa los filtros para acotar la búsqueda."
 msgstr ""
 
 #: build/network-sync.js:1

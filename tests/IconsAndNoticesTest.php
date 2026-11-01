@@ -29,7 +29,7 @@ class IconsAndNoticesTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Returns the icon names referenced by the templates, the admin page and directorio.js.
+	 * Returns the icon names referenced by the templates and the admin page.
 	 *
 	 * @return array<int, string>
 	 */
@@ -95,7 +95,6 @@ class IconsAndNoticesTest extends WP_UnitTestCase {
 		$html = DirectorioShortcode::render_shortcode();
 
 		$this->assertStringContainsString( 'radioedu-svg-icon--map-marker', $html );
-		$this->assertStringContainsString( '<template id="radioedu-icon-templates">', $html );
 		$this->assertStringContainsString( 'radioedu-svg-icon--star-empty', $html );
 		foreach ( [ '📍', '🔍', '✈️', '✕', '➔' ] as $emoji ) {
 			$this->assertStringNotContainsString( $emoji, $html );

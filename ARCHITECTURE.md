@@ -58,6 +58,7 @@ c:\radioedu-conecta\
 ├── package.json                         # npm script configurations (@wordpress/scripts, wp-env, Playwright)
 ├── playwright.config.js                 # E2E config: extends @wordpress/scripts defaults, specs in tests/e2e
 ├── eslint.config.cjs                    # wp-scripts ESLint defaults + @wordpress/* packages loaded from core (not installed)
+├── webpack.config.js                    # Builds the three scripts and the directory script module (wp-scripts 37 builds modules only from block.json)
 ├── .wp-env.json                         # Reproducible E2E site (latest WordPress, PHP 8.1, plugin mounted)
 ├── .distignore                          # Build exclusion rules for release distribution
 ├── .gitignore                           # Git repository exclusions
@@ -81,7 +82,8 @@ c:\radioedu-conecta\
 │   ├── Emails/
 │   │   └── NotificationService.php      # wp_mail() notification pipeline for proposals and match responses
 │   ├── Frontend/
-│   │   └── DirectorioShortcode.php      # Shortcode [radioedu_directorio], block radioedu-conecta/directorio (render callback), single profile filter & assets
+│   │   ├── DirectorioShortcode.php      # Shortcode [radioedu_directorio], block radioedu-conecta/directorio (render callback), single profile filter & assets
+│   │   └── DirectoryStore.php           # Interactivity API store radioedu-conecta/directorio: module, config, server state, URL search, derived closures
 │   ├── PostTypes/
 │   │   ├── CentroPostType.php           # Custom Post Type registration (`radioedu_centro`)
 │   │   └── CentroMeta.php               # register_post_meta() for every `_radioedu_*` key (type, sanitizer, edit-context REST, auth)
@@ -114,17 +116,17 @@ c:\radioedu-conecta\
 │   ├── js/
 │   │   ├── admin.js                     # Source: WP Media Uploader connector for the classic meta box logo
 │   │   ├── centro-panel.js              # Source: block editor sidebar panels of the centro fields (registerPlugin)
-│   │   ├── directorio.js                # Source: frontend reactive controller (DOM builder, Leaflet manager, Drawer)
-│   │   ├── network-sync.js              # Source: network admin sync button (batched apiFetch loop, progress, summary)
-│   │   └── leaflet.js                   # Self-contained Leaflet 1.9.4 JavaScript runtime (zero CDN)
-│   └── leaflet-LICENSE.txt              # Leaflet 1.9.4 BSD-2-Clause license, covering leaflet.js, leaflet.css and css/images/
+│   │   ├── directorio-view.js           # Source: script module, Interactivity API store of the directory and the proposal drawer
+│   │   └── network-sync.js              # Source: network admin sync button (batched apiFetch loop, progress, summary)
+│   └── leaflet-LICENSE.txt              # Leaflet 1.9.4 BSD-2-Clause license, covering build/leaflet.js, leaflet.css and css/images/
 ├── blocks/
 │   └── directorio/
 │       └── block.json                   # Metadata of the radioedu-conecta/directorio block (title, keywords, supports, style)
 ├── build/                               # Committed `npm run build` output (@wordpress/scripts); the only JS the plugin loads
 │   ├── admin.js / admin.asset.php       # Compiled admin.js + generated dependencies (wp-i18n) and version hash
 │   ├── centro-panel.js / centro-panel.asset.php # Compiled panels + dependencies (wp-editor, wp-plugins, wp-components…)
-│   ├── directorio.js / directorio.asset.php # Compiled directorio.js + dependencies (wp-a11y, wp-i18n)
+│   ├── directorio-view.js / directorio-view.asset.php # Compiled module + dependencies (@wordpress/interactivity static, @wordpress/a11y dynamic)
+│   ├── leaflet.js                       # Leaflet 1.9.4 from npm, split out of the module and imported only after map consent
 │   └── network-sync.js / network-sync.asset.php # Compiled network sync + dependencies (wp-api-fetch, wp-a11y, wp-dom-ready, wp-i18n)
 ├── languages/
 │   ├── radioedu-conecta.pot             # GNU gettext internationalization template (Spanish source strings)
@@ -143,7 +145,7 @@ c:\radioedu-conecta\
 ### 3.1 Zero Third-Party CDN Dependency & Explicit Map Tile Consent
 * **Context:** Extremadura's regional educational network (*Educarex*) operates behind strict institutional proxies and firewall rules that block external unverified CDNs. Furthermore, WordPress.org Official Guidelines and GDPR forbid loading external resources without explicit user consent.
 * **Implementation:**
-  - The Leaflet map engine (`leaflet.js` v1.9.4, `leaflet.css` v1.9.4) and all demo station images are vendored locally in `/assets/`.
+  - The Leaflet map engine (v1.9.4) and all demo station images ship with the plugin. Leaflet comes from npm and is compiled into `build/leaflet.js`, a chunk the directory module imports only after the visitor accepts the map; `leaflet.css` and its images stay in `/assets/css/`.
   - External OpenStreetMap cartography tiles (`tile.openstreetmap.org`) are **never** loaded automatically on page load; the user must explicitly click **"Aceptar y mostrar el mapa interactivo"** (`#radioedu-btn-accept-map`) before any connection to OpenStreetMap servers is established.
 
 ### 3.2 Asymmetric RGPD / GDPR Privacy Model & Core Privacy Tools
@@ -158,14 +160,26 @@ c:\radioedu-conecta\
 ### 3.3 Strict Output Escaping, Zero `innerHTML`, and URL Validation
 * **Server-side (PHP):** Strict "Late Escaping" rule. Variables are escaped at the exact moment of output using `esc_html()`, `esc_attr()`, `esc_url()`, `wp_kses_post()`, or `wp_json_encode()`. All SQL queries use `$wpdb->prepare()` with `%i` identifier placeholders for table names.
 * **Profile description:** the one exception. The description is the output of the core `the_content` filters, which the profile prints as themes print `the_content()`. kses already cleaned it on save for users without `unfiltered_html`, and the embed iframes come from core's own handlers. Running `wp_kses_post()` on it again stripped those players (audit finding F-15). No iframe allowlist is added, and the station data around it is still escaped.
-* **Client-side (JavaScript):** `assets/js/directorio.js` (compiled to `build/directorio.js`) prohibits `innerHTML` and HTML string concatenation. All dynamic card nodes, badges, and Leaflet map popups (`marker.bindPopup(popupNode)`) are assembled using `document.createElement()` and `textContent`. All external URLs are validated via `sanitizeHttpUrl()` (`http:` / `https:` whitelist) and escaped before CSS `url(...)` injection. Icons the script needs (favourite stars, send) are server-rendered SVGs inside `<template id="radioedu-icon-templates">` that the script clones with `cloneNode()`. Server-side, the profile cover URL is percent-encoded for CSS context (`DirectorioShortcode::css_safe_url()`) because `esc_url()` keeps quotes and parentheses that the browser decodes before parsing CSS.
-* **Without JavaScript:** the directory template prints the real number of published stations and a notice linking to the post type archive (`/centros-radioedu/`), which the theme lists without JavaScript. `directorio.js` hides the notice when it starts, so it stays visible when the script is missing (no `build/`) or fails to load.
-* **Map markers:** the cards load 24 at a time, so the map view fetches the results of the current search itself, 100 per request, and draws up to 1,000 markers, the size of the largest expected network (`MAP_MAX_CENTROS` in `directorio.js`). A `role="status"` note says how many are shown when the ceiling leaves some out. A new search cancels the pending map requests. Every page of a search, more cards or map pages, uses the filters and order captured when that search started (`appliedSearch`), not what the form holds later: the user may edit it without searching (second review R-04).
+* **Client-side (JavaScript):** the directory is an Interactivity API store (`assets/js/directorio-view.js`, compiled to `build/directorio-view.js`). Its directives only write text (`data-wp-text`) and attributes (`data-wp-bind`, `data-wp-class`, `data-wp-style`); there is no `innerHTML` and no HTML built from strings. The cards come from a `<template data-wp-each>` with the icons already inside, and the Leaflet popups are DOM nodes (`marker.bindPopup(popupNode)`). URLs are kept only when they are `http:` or `https:` (`safeHttpUrl()` in the browser, `esc_url_raw( $url, [ 'http', 'https' ] )` in the server closures). The cover URL is percent-encoded for the CSS context on both sides (`DirectoryStore::css_safe_url()` and `cssUrl()`), because `esc_url()` keeps quotes and parentheses that the browser decodes before parsing CSS.
+* **Profile description and directives:** the coordinator writes the description, and kses keeps `data-*` attributes, so it could carry `data-wp-*` directives. The profile is not one interactive region: only the "Proponer match" button and the drawer are. The template prints a placeholder comment where the description goes, the directives are processed, and only then the placeholder is replaced with the `the_content` output, so the server never runs directives the coordinator wrote.
+* **Without JavaScript:** the server renders the first page of results with the same directives (`DirectoryStore`), so the directory works without the module (no JavaScript, no `build/`):
+  - The filters form is sent by GET with the parameters `ubicacion`, `idioma`, `etapa`, `tematica`, `formato`, `buscar`, `orden` and `pagina`. "search" and "page" are public WordPress query vars, hence `buscar` and `pagina`; the taxonomy query vars are the taxonomy names, so the filter names do not collide. `DirectoryStore::requested_search()` keeps a filter only when it is the slug of an existing term, the order only when the endpoint knows it, and the page between 1 and 10,000.
+  - With plain permalinks the page URL has a query (`?page_id=`), which a GET form would drop, so the form repeats it as hidden fields (`DirectoryStore::base_query_args()`).
+  - "Cargar más centros" is a link to the next page and "Centros anteriores" to the previous one. With JavaScript, the first one loads more cards in place, and each search updates the address with `history.replaceState()`, so reloading or sharing it shows the same results.
+  - The parts that need JavaScript (map toggle, favourites, "Proponer match") are rendered with `hidden` and shown by the store; a `<noscript>` notice says what needs JavaScript. An unavailable station still shows its disabled "No disponible" button.
+* **Map markers:** the cards load 24 at a time, so the map view fetches the results of the current search itself, 100 per request, and draws up to 1,000 markers, the size of the largest expected network (`MAP_MAX_CENTROS` in `directorio-view.js`). A `role="status"` note says how many are shown when the ceiling leaves some out. A new search cancels the pending map requests. Every page of a search, more cards or map pages, uses the filters and order captured when that search started (`state.applied`), not what the form holds later: the user may edit it without searching (second review R-04).
+
+### 3.5 Interactivity API store
+* **Namespace and module:** `radioedu-conecta/directorio`, registered from `build/directorio-view.asset.php` on `init`. The block declares `supports.interactivity.interactive`, so WordPress processes its directives; the shortcode and the profile call `wp_interactivity_process_directives()` themselves.
+* **Config** (`wp_interactivity_config()`): REST URL, nonce for signed-in users, `isLoggedIn`, `canPropose`, page size, thousands separator, map centre, flag badges, default logo and the translated texts. A script module cannot import `@wordpress/i18n` with `@wordpress/scripts` 37, so its texts come translated from PHP.
+* **Server state** (`wp_interactivity_state()`): the stations of the first page (from `CentrosController::get_items()`, the same query, fields and affinity order as the REST requests), totals, pages, the applied search, the page links and, on a profile, the preselected receiver.
+* **Derived state:** every getter of the module that the first render needs has a PHP closure of the same name in `DirectoryStore::derived_state()`, which the Interactivity API evaluates while rendering (per card, through `wp_interactivity_get_context()`).
+* **Client defaults:** the runtime loads the server state first and then merges the store definition over it, so a value declared in `store()` replaces the server value. The module declares only what the server never sets (loading flags, map, favourites, drawer flags) and fills the server keys afterwards, only where the page lacks them.
 
 
 ### 3.4 Landmarks
 The directory and the profile render inside the theme's page, so they never add page-level landmarks of their own:
-* **Directory:** no `<main>` and no `<header>`. Its two named regions are `<section aria-label="Filtros del directorio">` and `<section aria-labelledby="radioedu-results-heading">` ("Resultados (N centros)").
+* **Directory:** no `<main>` and no `<header>`. Its named regions are `<section aria-label="Filtros del directorio">` and `<section aria-labelledby="radioedu-results-heading">` ("Resultados (N centros)"), plus `<nav aria-label="Páginas de resultados">` when there is more than one page.
 * **Profile:** the profile is an `<article>`. The page's single `<main>` comes from the block template, the theme, or the classic template when the theme's header left none open (section 4.1).
 * **Text colours** that sit on the theme background rather than on a white card ("Ordenar por") use `#475569`, which keeps 4.5:1 on tinted backgrounds such as Twenty Twenty's beige.
 
@@ -353,7 +367,7 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
 
 ### 7.3 Directory Block (`radioedu-conecta/directorio`)
 1. Registered from [blocks/directorio/block.json](file:///c:/radioedu-conecta/blocks/directorio/block.json) by `DirectorioShortcode::register_block()`, which only adds the PHP `render_callback`. block.json holds the title, description, keywords (translated with the `radioedu-conecta` text domain and the "block title", "block description" and "block keyword" contexts), the `widgets` category, the `microphone` icon, the supports and the style. With `supports.autoRegister` (WordPress 7.0+) core registers the block in the editor and previews it with ServerSideRender, so the plugin ships no editor JavaScript.
-2. `render_block()` wraps the shortcode output in `get_block_wrapper_attributes()` (align `wide`/`full`). `"multiple": false` because the directory markup uses fixed IDs.
+2. `render_block()` wraps the directory markup in `get_block_wrapper_attributes()` (align `wide`/`full`) and leaves its directives to WordPress, because block.json declares `supports.interactivity.interactive`; the shortcode processes them itself. `"multiple": false` because the directory markup uses fixed IDs.
 3. The block.json `style` (handle `radioedu-directorio-css`) loads `directorio.css` in the editor iframe; front-end assets are registered on `init` and enqueued in the `<head>` when the post contains the block or the shortcode. The shortcode `[radioedu_directorio]` remains supported.
 
 ### 7.4 SVG Icons (WordPress 7.1 Icons API)
@@ -378,9 +392,9 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
 2. **PHP:** `radioedu_conecta_load_textdomain()` (`init`, priority 0, in the main file, outside the requirements check so the requirement notices are translated too) calls `load_plugin_textdomain()` to register the folder.
    - WordPress 7.1 loads translations just in time. It looks in `wp-content/languages/plugins` first and in the registered folder last, so official language packs win.
    - Without the call, WordPress never reads `languages/`. Plugin Check flags the call for plugins hosted on WordPress.org; the `phpcs:ignore` next to it records why it is needed here.
-3. **Scripts:** each `wp_set_script_translations()` call passes `languages/`. WordPress looks for `radioedu-conecta-{locale}-{md5}.json`, where md5 is the hash of the script path relative to the plugin (`build/directorio.js`), and prints it inline before the script.
+3. **Scripts:** each `wp_set_script_translations()` call passes `languages/`. WordPress looks for `radioedu-conecta-{locale}-{md5}.json`, where md5 is the hash of the script path relative to the plugin (`build/network-sync.js`), and prints it inline before the script. The directory module has no translatable strings of its own: its texts come translated in the store config (section 3.5).
 4. **Build:** `wp i18n make-json --no-purge --use-map=bin/i18n-js-map.json`, then `make-mo` and `make-php`.
-   - The map works around WP-CLI 2.12, which strips `.min` with an unescaped regex and turns `build/admin.js` into `build/a.js`. It also limits the JSON files to the four scripts, so new scripts must be added to it.
+   - The map works around WP-CLI 2.12, which strips `.min` with an unescaped regex and turns `build/admin.js` into `build/a.js`. It also limits the JSON files to the three scripts, so new scripts must be added to it.
    - `--no-purge` keeps script strings in the `.po`/`.mo`, because some are shared with PHP.
 5. **Tests:** `TranslationsTest` checks the `init` registration, a PHP string in each locale, the JSON of every script in each locale and the plural forms.
 

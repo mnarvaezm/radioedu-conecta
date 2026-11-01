@@ -17,7 +17,9 @@
  * @var bool                     $disponible
  * @var array<int, array{name: string, color: string}> $tags
  * @var string                   $directorio_url
- * @var string                   $raw_description_html
+ * @var string                   $description_slot      Placeholder replaced by the description once the directives are processed.
+ * @var array<string, mixed>     $match_context         Context of the "Proponer match" button.
+ * @var string                   $login_url             Login URL that comes back to this profile.
  * @var array<int, array{id: int, nombre: string}> $user_centers_list
  * @var int                      $drawer_receptor_id
  * @var string                   $drawer_receptor_label
@@ -25,6 +27,7 @@
 
 declare( strict_types=1 );
 
+use RadioEdu\Conecta\Frontend\DirectoryStore;
 use RadioEdu\Conecta\Icons;
 
 defined( 'ABSPATH' ) || exit;
@@ -111,15 +114,15 @@ defined( 'ABSPATH' ) || exit;
 			</div>
 
 			<!-- Botones de acción (Proponer match directo / Podcast / Web del centro) -->
-			<div class="radioedu-profile-actions">
+			<div class="radioedu-profile-actions" data-wp-interactive="<?php echo esc_attr( DirectoryStore::NAMESPACE ); ?>" <?php echo wp_interactivity_data_wp_context( $match_context ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_interactivity_data_wp_context() returns the attribute already JSON-encoded and escaped. ?>>
 				<?php if ( $disponible ) : ?>
 					<button
 						type="button"
 						id="radioedu-single-btn-match"
 						class="radioedu-btn-match radioedu-profile-btn-inline"
-						data-id="<?php echo esc_attr( (string) $post_id ); ?>"
-						data-nombre="<?php echo esc_attr( $title ); ?>"
-						data-ubicacion="<?php echo esc_attr( '' !== $ubicacion ? $ubicacion : __( 'Extremadura', 'radioedu-conecta' ) ); ?>"
+						hidden
+						data-wp-bind--hidden="!state.hasJs"
+						data-wp-on--click="actions.openDrawer"
 					>
 						<?php Icons::render( 'radioedu-conecta/send' ); ?> <?php esc_html_e( 'Proponer match', 'radioedu-conecta' ); ?>
 					</button>
@@ -151,8 +154,8 @@ defined( 'ABSPATH' ) || exit;
 			</h2>
 			<div class="radioedu-profile-description-content">
 				<?php
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output of the core the_content filters, printed as any theme prints the_content(): kses cleaned it on save for users without unfiltered_html, and embed iframes come from core's own handlers. wp_kses_post() here stripped those players.
-				echo $raw_description_html;
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- An HTML comment built by render_single_centro_profile(), which puts the output of the core the_content filters in its place after processing the directives.
+				echo $description_slot;
 				?>
 			</div>
 		</div>

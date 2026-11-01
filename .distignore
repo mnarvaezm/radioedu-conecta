@@ -32,5 +32,6 @@ dist
 .phpunit.result.cache
 playwright.config.js
 eslint.config.cjs
+webpack.config.js
 .wp-env.json
 artifacts

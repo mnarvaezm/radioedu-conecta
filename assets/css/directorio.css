@@ -28,6 +28,16 @@
 	--radioedu-shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12);
 }
 
+/*
+ * The directives hide parts with the hidden attribute, which the display
+ * rules of this file would otherwise override.
+ */
+.radioedu-app-container [hidden],
+.radioedu-single-profile [hidden],
+.radioedu-drawer-root [hidden] {
+	display: none !important;
+}
+
 .radioedu-app-container {
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 	color: var(--radioedu-text-dark);
@@ -1031,4 +1041,21 @@
 	.radioedu-profile-title {
 		font-size: 1.55rem;
 	}
+}
+
+/* Icon and text wrappers of buttons whose content follows the state. */
+.radioedu-btn-match > span,
+.radioedu-card-fav-btn > span {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+/* Pages of results: links without JavaScript, more cards with it. */
+.radioedu-pagination {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 12px;
+	margin-top: 28px;
 }

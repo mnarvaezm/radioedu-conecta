@@ -10,7 +10,6 @@ declare( strict_types=1 );
 namespace RadioEdu\Conecta\Frontend;
 
 use RadioEdu\Conecta\Admin\DemoDataImporter;
-use RadioEdu\Conecta\Admin\Settings;
 use RadioEdu\Conecta\PostTypes\CentroPostType;
 use RadioEdu\Conecta\Rest\ColaboracionesController;
 use RadioEdu\Conecta\Taxonomies\TaxonomiesRegistrar;
@@ -45,17 +44,11 @@ class DirectorioShortcode {
 	public const PROFILE_BLOCK_TEMPLATE = 'radioedu-conecta//single-radioedu_centro';
 
 	/**
-	 * Controla que window.radioeduConectaData no se inyecte más de una vez por petición.
-	 *
-	 * @var bool
-	 */
-	private static bool $inline_data_added = false;
-
-	/**
 	 * Registra el shortcode, el bloque y el filtro de perfil individual en WordPress.
 	 */
 	public static function register(): void {
 		add_shortcode( self::SHORTCODE_TAG, [ self::class, 'render_shortcode' ] );
+		DirectoryStore::register();
 		// Assets are registered on init so the block can declare its stylesheet for the editor.
 		add_action( 'init', [ self::class, 'register_assets' ] );
 		add_action( 'init', [ self::class, 'register_block' ] );
@@ -231,6 +224,7 @@ class DirectorioShortcode {
 	 * `autoRegister` (WordPress 7.0+) the editor registers the block itself and previews it with
 	 * ServerSideRender, so the block and the shortcode share the same rendering. The directory
 	 * uses fixed IDs in its markup, which is why block.json allows one instance per post.
+	 * block.json also declares the block interactive, so WordPress processes its directives.
 	 *
 	 * @since 1.1
 	 */
@@ -244,14 +238,18 @@ class DirectorioShortcode {
 	}
 
 	/**
-	 * Renderiza el bloque del directorio reutilizando la salida del shortcode.
+	 * Renders the directory block with the same markup as the shortcode.
+	 *
+	 * The block is interactive (block.json), so WordPress processes its directives after this
+	 * callback; doing it here as well would process them twice.
 	 *
 	 * @since 1.1
+	 * @since 1.2 Leaves the directives to WordPress.
 	 *
 	 * @return string Salida HTML del bloque.
 	 */
 	public static function render_block(): string {
-		return sprintf( '<div %s>%s</div>', get_block_wrapper_attributes(), self::render_shortcode() );
+		return sprintf( '<div %s>%s</div>', get_block_wrapper_attributes(), self::render_directory() );
 	}
 
 	/**
@@ -381,7 +379,6 @@ class DirectorioShortcode {
 	public static function enqueue_assets(): void {
 		if ( is_singular( CentroPostType::POST_TYPE ) ) {
 			wp_enqueue_style( 'radioedu-directorio-css' );
-			wp_enqueue_script( 'radioedu-directorio-js' );
 		}
 
 		$post = get_post();
@@ -392,13 +389,17 @@ class DirectorioShortcode {
 	}
 
 	/**
-	 * Registra los assets de front-end para su posterior encolado condicional.
+	 * Registra los estilos de front-end para su posterior encolado condicional.
+	 *
+	 * The scripts are a script module now, registered by DirectoryStore. Leaflet is part of it and
+	 * is downloaded only after the visitor accepts the map; its stylesheet stays here.
+	 *
+	 * @since 1.2 Registers only the styles.
 	 */
 	public static function register_assets(): void {
-		$css_ver    = file_exists( RADIOEDU_CONECTA_DIR . 'assets/css/directorio.css' )
+		$css_ver = file_exists( RADIOEDU_CONECTA_DIR . 'assets/css/directorio.css' )
 			? (string) filemtime( RADIOEDU_CONECTA_DIR . 'assets/css/directorio.css' )
 			: RADIOEDU_CONECTA_VERSION;
-		$asset_file = RADIOEDU_CONECTA_DIR . 'build/directorio.asset.php';
 
 		wp_register_style(
 			'radioedu-directorio-css',
@@ -414,117 +415,30 @@ class DirectorioShortcode {
 			[],
 			'1.9.4'
 		);
-
-		wp_register_script(
-			'radioedu-leaflet-js',
-			RADIOEDU_CONECTA_URL . 'assets/js/leaflet.js',
-			[],
-			'1.9.4',
-			[
-				'in_footer' => true,
-				'strategy'  => 'defer',
-			]
-		);
-
-		// The source uses ES imports, so only the compiled bundle can run. Without a build the
-		// script is skipped and the page degrades to static markup instead of a fatal error.
-		if ( is_readable( $asset_file ) ) {
-			$asset = require $asset_file;
-
-			// Leaflet no es dependencia: directorio.js comprueba su presencia al activar el mapa,
-			// así la ficha individual no descarga la librería del mapa.
-			wp_register_script(
-				'radioedu-directorio-js',
-				RADIOEDU_CONECTA_URL . 'build/directorio.js',
-				$asset['dependencies'],
-				$asset['version'],
-				[
-					'in_footer' => true,
-					'strategy'  => 'defer',
-				]
-			);
-			wp_set_script_translations( 'radioedu-directorio-js', 'radioedu-conecta', RADIOEDU_CONECTA_DIR . 'languages' );
-		}
 	}
 
 	/**
-	 * Obtiene los centros gestionados por el usuario actual y construye el payload para JS.
+	 * Lists the stations the current user manages, for the sender selector of the proposal panel.
 	 *
-	 * @return array{user_center_id: int, user_center_name: string, user_centers_list: array<int, array{id: int, nombre: string}>}
+	 * @since 1.2 Replaces build_user_context_and_js_data(); the module config holds the rest.
+	 *
+	 * @return array<int, array{id: int, nombre: string}> Stations.
 	 */
-	private static function build_user_context_and_js_data(): array {
-		$current_user_id   = get_current_user_id();
-		$user_center_id    = 0;
-		$user_center_name  = '';
-		$user_centers_list = [];
-
-		if ( $current_user_id > 0 ) {
-			$managed_ids = ColaboracionesController::get_user_managed_center_ids( $current_user_id );
-
-			foreach ( $managed_ids as $p_id ) {
-				$c_title = get_the_title( $p_id );
-				if ( 0 === $user_center_id ) {
-					$user_center_id   = $p_id;
-					$user_center_name = $c_title;
-				}
-				$user_centers_list[] = [
-					'id'     => $p_id,
-					'nombre' => $c_title,
-				];
-			}
+	private static function user_centers(): array {
+		$current_user_id = get_current_user_id();
+		if ( $current_user_id <= 0 ) {
+			return [];
 		}
 
-		if ( ! self::$inline_data_added ) {
-			$js_data = [
-				'restUrl'        => esc_url_raw( rest_url( 'radioedu-conecta/v1/' ) ),
-				'restNonce'      => is_user_logged_in() ? wp_create_nonce( 'wp_rest' ) : '',
-				'isLoggedIn'     => is_user_logged_in(),
-				'loginUrl'       => esc_url_raw( wp_login_url( (string) get_permalink() ) ),
-				'canPropose'     => current_user_can( 'propose_radioedu_colaboracion' ),
-				'userCenterId'   => $user_center_id,
-				'userCenterName' => $user_center_name,
-				'userCenters'    => $user_centers_list,
-				'mapCenter'      => [
-					'lat'  => (float) Settings::get( 'default_lat', '39.4699' ),
-					'lng'  => (float) Settings::get( 'default_lng', '-6.3708' ),
-					'zoom' => (int) Settings::get( 'default_zoom', 8 ),
-				],
-
+		$centers = [];
+		foreach ( ColaboracionesController::get_user_managed_center_ids( $current_user_id ) as $center_id ) {
+			$centers[] = [
+				'id'     => $center_id,
+				'nombre' => get_the_title( $center_id ),
 			];
-
-			wp_add_inline_script(
-				'radioedu-directorio-js',
-				'window.radioeduConectaData = ' . wp_json_encode( $js_data ) . ';',
-				'before'
-			);
-			self::$inline_data_added = true;
 		}
 
-		return [
-			'user_center_id'    => $user_center_id,
-			'user_center_name'  => $user_center_name,
-			'user_centers_list' => $user_centers_list,
-		];
-	}
-
-	/**
-	 * Prepara una URL para insertarla dentro de `url('...')` en un atributo style.
-	 *
-	 * La función esc_url() conserva comillas simples y paréntesis, y el navegador decodifica las
-	 * entidades del atributo antes de interpretar el CSS; por eso se codifican aquí para
-	 * impedir que una URL manipulada cierre `url()` e inyecte reglas CSS.
-	 *
-	 * @param string $url URL de la imagen.
-	 * @return string URL http(s) segura para contexto CSS o cadena vacía.
-	 */
-	private static function css_safe_url( string $url ): string {
-		$url = esc_url_raw( $url, [ 'http', 'https' ] );
-
-		return str_replace(
-			[ '"', "'", '(', ')', '\\', ' ' ],
-			[ '%22', '%27', '%28', '%29', '%5C', '%20' ],
-			$url
-		);
+		return $centers;
 	}
 
 	/**
@@ -547,10 +461,9 @@ class DirectorioShortcode {
 			self::register_assets();
 		}
 		wp_enqueue_style( 'radioedu-directorio-css' );
-		wp_enqueue_script( 'radioedu-directorio-js' );
+		DirectoryStore::enqueue();
 
-		$user_ctx          = self::build_user_context_and_js_data();
-		$user_centers_list = $user_ctx['user_centers_list'];
+		$user_centers_list = self::user_centers();
 
 		$title     = get_the_title( $post_id );
 		$logo_id   = (int) get_post_meta( $post_id, '_radioedu_logo_id', true );
@@ -567,10 +480,10 @@ class DirectorioShortcode {
 		if ( '' === $logo_url ) {
 			$logo_url = DemoDataImporter::get_demo_image_url( $post_id, 'logo' );
 		}
-		$cover_url = self::css_safe_url( $cover_url );
+		$cover_url = DirectoryStore::css_safe_url( $cover_url );
 
 		$bandera     = (string) get_post_meta( $post_id, '_radioedu_bandera', true );
-		$flag_emoji  = self::get_flag_emoji( '' !== $bandera ? $bandera : 'es-ex' );
+		$flag_emoji  = DirectoryStore::flag_icon( '' !== $bandera ? $bandera : 'es-ex' );
 		$podcast_url = (string) get_post_meta( $post_id, '_radioedu_podcast_url', true );
 		$web_centro  = (string) get_post_meta( $post_id, '_radioedu_web_centro', true );
 		$edades      = (string) get_post_meta( $post_id, '_radioedu_edades', true );
@@ -613,124 +526,111 @@ class DirectorioShortcode {
 
 		$directorio_url = self::get_directory_url();
 
-		$raw_description_html = $content;
-
 		// Datos del panel lateral de propuesta (receptor preseleccionado: el centro del perfil).
+		$plain_title           = self::plain_text( $title );
 		$drawer_receptor_id    = $post_id;
-		$drawer_receptor_label = $title . ( '' !== $ubicacion ? ' (' . $ubicacion . ')' : '' );
+		$drawer_receptor_label = $plain_title . ( '' !== $ubicacion ? ' (' . self::plain_text( $ubicacion ) . ')' : '' );
+		DirectoryStore::add_drawer_state( $drawer_receptor_id, $drawer_receptor_label );
+		$match_context = [
+			'centro' => [
+				'id'        => $post_id,
+				'nombre'    => $plain_title,
+				'ubicacion' => '' !== $ubicacion ? self::plain_text( $ubicacion ) : __( 'Extremadura', 'radioedu-conecta' ),
+			],
+		];
+
+		// The coordinator writes the description, and kses keeps data-* attributes, so it could
+		// carry directives. It goes in after the directives are processed, outside any
+		// interactive region of the template.
+		$description_slot = '<!-- radioedu-conecta-description-' . wp_generate_uuid4() . ' -->';
+		$login_url        = wp_login_url( (string) get_permalink( $post_id ) );
 
 		ob_start();
 		include RADIOEDU_CONECTA_DIR . 'templates/single-centro.php';
-		return (string) ob_get_clean();
+		$html = wp_interactivity_process_directives( (string) ob_get_clean() );
+
+		return str_replace( $description_slot, $content, $html );
 	}
 
 	/**
-	 * Devuelve el icono representativo de la bandera/región.
+	 * Decodes the entities of a rendered title or term name, for a text context.
 	 *
-	 * @param string $code Código de bandera.
-	 * @return string Emoji o insignia.
+	 * Rendered titles (get_the_title()) and term names carry HTML entities (&#8217;, &amp;). Text
+	 * written by a directive is escaped again, so it needs the plain characters.
+	 *
+	 * @since 1.2
+	 *
+	 * @param string $text Rendered text.
+	 * @return string Plain text.
 	 */
-	private static function get_flag_emoji( string $code ): string {
-		$flags = [
-			'es-ex' => '🟩⬜⬛',
-			'es-ct' => '🟨🟥',
-			'es-vc' => '🇪🇸',
-			'es-ar' => '🇪🇸',
-			'es-an' => '🟩⬜🟩',
-			'es-md' => '🇪🇸',
-			'es-ga' => '🇪🇸',
-			'es-pv' => '🇪🇸',
-			'es'    => '🇪🇸',
-			'pt'    => '🇵🇹',
-			'fr'    => '🇫🇷',
-			'it'    => '🇮🇹',
-			'ie'    => '🇮🇪',
-			'uk'    => '🇬🇧',
-			'de'    => '🇩🇪',
-			'mx'    => '🇲🇽',
-			'ar'    => '🇦🇷',
-			'co'    => '🇨🇴',
-			'cl'    => '🇨🇱',
-			'eu'    => '🇪🇺',
-			'world' => '🌍',
-		];
-
-		return $flags[ $code ] ?? '📻';
+	public static function plain_text( string $text ): string {
+		return html_entity_decode( $text, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 	}
 
 	/**
 	 * Renderiza el directorio completo.
 	 *
+	 * @since 1.2 Processes the directives of the markup, which the block leaves to WordPress.
+	 *
 	 * @param array<string, mixed>|string $atts Atributos del shortcode.
 	 * @return string Salida HTML del directorio.
 	 */
 	public static function render_shortcode( array|string $atts = [] ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- WordPress supplies shortcode attributes.
+		return wp_interactivity_process_directives( self::render_directory() );
+	}
+
+	/**
+	 * Renders the directory markup, with its directives, for the shortcode and the block.
+	 *
+	 * The first page of results of the search in the URL is rendered here, so the directory
+	 * shows its stations and its filters work without JavaScript.
+	 *
+	 * @since 1.2
+	 *
+	 * @return string Markup, before the directives are processed.
+	 */
+	private static function render_directory(): string {
 		self::remember_directory_page();
 
 		if ( ! wp_style_is( 'radioedu-directorio-css', 'registered' ) ) {
 			self::register_assets();
 		}
 
-		// Encolar los assets condicionalmente sólo en la página donde se use el shortcode.
+		// Encolar los assets condicionalmente sólo en la página donde se use el directorio.
 		wp_enqueue_style( 'radioedu-leaflet-css' );
 		wp_enqueue_style( 'radioedu-directorio-css' );
-		wp_enqueue_script( 'radioedu-leaflet-js' );
-		wp_enqueue_script( 'radioedu-directorio-js' );
+		DirectoryStore::enqueue();
 
-		$user_ctx          = self::build_user_context_and_js_data();
-		$user_center_id    = $user_ctx['user_center_id'];
-		$user_center_name  = $user_ctx['user_center_name'];
-		$user_centers_list = $user_ctx['user_centers_list'];
+		$user_centers_list = self::user_centers();
 
-		// Obtener términos de taxonomías para los selectores de filtro.
-		$etapas      = get_terms(
-			[
-				'taxonomy'   => TaxonomiesRegistrar::TAX_ETAPA,
-				'hide_empty' => false,
-			]
-		);
-		$idiomas     = get_terms(
-			[
-				'taxonomy'   => TaxonomiesRegistrar::TAX_IDIOMA,
-				'hide_empty' => false,
-			]
-		);
-		$tematicas   = get_terms(
-			[
-				'taxonomy'   => TaxonomiesRegistrar::TAX_TEMATICA,
-				'hide_empty' => false,
-			]
-		);
-		$formatos    = get_terms(
-			[
-				'taxonomy'   => TaxonomiesRegistrar::TAX_FORMATO,
-				'hide_empty' => false,
-			]
-		);
-		$ubicaciones = get_terms(
-			[
-				'taxonomy'   => TaxonomiesRegistrar::TAX_LOCALIZACION,
-				'hide_empty' => false,
-			]
-		);
+		// Terms of each filter, for its selector and to check the filters in the URL.
+		$filter_terms = [];
+		foreach ( DirectoryStore::FILTER_PARAMS as $param => $taxonomy ) {
+			$found                  = get_terms(
+				[
+					'taxonomy'   => $taxonomy,
+					'hide_empty' => false,
+				]
+			);
+			$filter_terms[ $param ] = is_array( $found ) ? array_values( $found ) : [];
+		}
 
-		// El receptor del panel lateral se rellena desde JS al pulsar "Proponer match" en una tarjeta.
+		$search   = DirectoryStore::requested_search( array_map( static fn( array $terms ): array => wp_list_pluck( $terms, 'slug' ), $filter_terms ) );
+		$results  = DirectoryStore::load_results( $search );
+		$base_url = DirectoryStore::base_url();
+		DirectoryStore::add_directory_state( $search, $results, $base_url );
+
+		// A GET form drops the query of its action, so the page arguments go as hidden fields.
+		$form_action = (string) strtok( $base_url, '?' );
+		$form_fields = DirectoryStore::base_query_args( $base_url );
+		$next_url    = DirectoryStore::page_url( $base_url, $search, $search['page'] + 1 );
+		$prev_url    = $search['page'] > 1 ? DirectoryStore::page_url( $base_url, $search, $search['page'] - 1 ) : '';
+		$total_label = number_format_i18n( $results['total'] );
+		$login_url   = wp_login_url( $base_url );
+
+		// El receptor del panel lateral se rellena al pulsar "Proponer match" en una tarjeta.
 		$drawer_receptor_id    = 0;
 		$drawer_receptor_label = '';
-
-		// Shown before the script runs, and kept when it cannot run: the real count, and a link to the
-		// post type archive, which the theme lists without JavaScript.
-		$total_query   = new \WP_Query(
-			[
-				'post_type'      => CentroPostType::POST_TYPE,
-				'post_status'    => 'publish',
-				'has_password'   => false,
-				'posts_per_page' => 1,
-				'fields'         => 'ids',
-			]
-		);
-		$total_centros = (int) $total_query->found_posts;
-		$archive_url   = (string) get_post_type_archive_link( CentroPostType::POST_TYPE );
 
 		ob_start();
 		include RADIOEDU_CONECTA_DIR . 'templates/directorio.php';

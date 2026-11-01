@@ -22,6 +22,7 @@
    - Búsqueda instantánea combinando **Ubicación**, **Idioma**, **Etapa educativa**, **Temas de interés**, **Formato de programa** y texto libre.
    - Ordenación inteligente por **Más afines** (priorizando emisoras disponibles y coincidencia de etiquetas con el centro del usuario), **Más recientes** o **Alfabético (A-Z)**, con paginación dinámica (*"Cargar más centros"*).
    - Sistema de favoritos persistente en el navegador (icono de estrella).
+   - Funciona también sin JavaScript: el servidor pinta la primera página de resultados, el formulario de filtros se envía por GET y las páginas son enlaces. La dirección refleja la búsqueda, así que se puede guardar o compartir.
    - Iconos SVG de la API de iconos de WordPress 7.1 (colección `core` y colección propia `radioedu-conecta`), que heredan el color del tema y se ocultan a los lectores de pantalla cuando son decorativos.
 2. **Mapa Geográfico Interactivo (Leaflet Local + RGPD)**:
    - Librería Leaflet 1.9.4 empaquetada localmente (cero CDNs externas) y carga de cartografía de OpenStreetMap bajo consentimiento explícito del usuario.
@@ -53,14 +54,14 @@
 
 ## Desarrollo
 
-El JavaScript fuente (`assets/js/admin.js`, `assets/js/centro-panel.js`, `assets/js/directorio.js`, `assets/js/network-sync.js`) usa paquetes `@wordpress/*` (JSX y componentes del editor en los paneles del centro), así que el navegador solo puede ejecutar la versión compilada en `build/`. Esos paquetes los aporta WordPress como scripts del core: no se instalan con npm y [eslint.config.cjs](eslint.config.cjs) los declara para el lint. La carpeta `build/` se versiona y la CI comprueba que está al día:
+El JavaScript fuente (`assets/js/admin.js`, `assets/js/centro-panel.js`, `assets/js/network-sync.js` y el módulo `assets/js/directorio-view.js`) usa paquetes `@wordpress/*` (JSX y componentes del editor en los paneles del centro, y la Interactivity API en el directorio), así que el navegador solo puede ejecutar la versión compilada en `build/`. [webpack.config.js](webpack.config.js) compila los tres scripts y el módulo, porque `@wordpress/scripts` 37 no compila módulos a partir de entradas sueltas. Leaflet se instala con npm y sale en un fichero aparte, `build/leaflet.js`, que el módulo solo descarga cuando el visitante acepta el mapa. Esos paquetes los aporta WordPress como scripts del core: no se instalan con npm y [eslint.config.cjs](eslint.config.cjs) los declara para el lint. La carpeta `build/` se versiona y la CI comprueba que está al día:
 
 ```bash
 npm ci
 npm run build    # regenera build/*.js y build/*.asset.php; haz commit del resultado
 ```
 
-Si falta `build/`, el plugin no falla: el directorio se muestra sin la parte interactiva y el editor de centros, sin los paneles de datos.
+Si falta `build/`, el plugin no falla: el directorio funciona como sin JavaScript (resultados, filtros y páginas, sin mapa, favoritos ni propuestas) y el editor de centros, sin los paneles de datos.
 
 El bloque del directorio no necesita JavaScript de editor: sus metadatos están en `blocks/directorio/block.json`, el renderizado es una función PHP y, con `supports.autoRegister`, WordPress lo previsualiza en el editor con ServerSideRender.
 
@@ -121,6 +122,10 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 ### 1.2
 * El plugin declara la cabecera `Update URI`: se distribuye fuera del directorio de WordPress.org, así que WordPress nunca le ofrece la actualización de otro plugin del directorio con el mismo slug.
 * Probado con PHP 8.1 a 8.5 y con WordPress 7.1.0. PHP 8.1 sigue siendo el mínimo, pero en producción se recomienda PHP 8.3 o superior.
+* El directorio usa la Interactivity API de WordPress (`assets/js/directorio-view.js`, un módulo de script) en lugar del script propio. El servidor pinta la primera página de resultados con las mismas directivas, así que las tarjetas aparecen sin esperar a la REST y sin JavaScript.
+* Sin JavaScript, el directorio busca y pagina: el formulario de filtros se envía por GET (`?ubicacion=`, `idioma`, `etapa`, `tematica`, `formato`, `buscar`, `orden` y `pagina`) y *Cargar más centros* es un enlace a la página siguiente. Con JavaScript, la dirección se actualiza con cada búsqueda. El mapa, los favoritos y las propuestas siguen necesitando JavaScript, y se avisa de ello.
+* Leaflet se descarga solo cuando el visitante acepta el mapa, no en cada visita al directorio. Ahora se instala desde npm (`leaflet` 1.9.4).
+* Desarrolladores: desaparecen `window.radioeduConectaData` y los handles `radioedu-directorio-js` y `radioedu-leaflet-js`. El módulo es `radioedu-conecta/directorio`, y su configuración y su estado se leen con `getConfig()` y `store()` del espacio de nombres `radioedu-conecta/directorio`.
 * La REST de centros devuelve el nombre, la ubicación y las etiquetas como texto plano: una emisora con un apóstrofo o un «&» en el nombre ya no muestra `&#8217;` o `&amp;` en su tarjeta.
 
 ### 1.1

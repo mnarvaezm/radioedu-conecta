@@ -10,6 +10,7 @@ declare( strict_types=1 );
 namespace RadioEdu\Conecta\Tests;
 
 use RadioEdu\Conecta\Frontend\DirectorioShortcode;
+use RadioEdu\Conecta\Frontend\DirectoryStore;
 use RadioEdu\Conecta\PostTypes\CentroPostType;
 use WP_Block_Type_Registry;
 use WP_HTML_Tag_Processor;
@@ -19,6 +20,13 @@ use WP_UnitTestCase;
  * Verifies the block registration and that it renders the same directory as the shortcode.
  */
 class DirectorioBlockTest extends WP_UnitTestCase {
+
+	public function set_up(): void {
+		parent::set_up();
+		// The Interactivity API merges state for the whole request: start each test from none.
+		$GLOBALS['wp_interactivity'] = new \WP_Interactivity_API();
+		( new \ReflectionProperty( DirectoryStore::class, 'prepared' ) )->setValue( null, false );
+	}
 
 	public function test_block_is_registered_for_automatic_editor_registration(): void {
 		$block_type = WP_Block_Type_Registry::get_instance()->get_registered( DirectorioShortcode::BLOCK_NAME );
@@ -30,6 +38,8 @@ class DirectorioBlockTest extends WP_UnitTestCase {
 		$this->assertSame( 'widgets', $block_type->category );
 		$this->assertContains( 'podcast', $block_type->keywords );
 		$this->assertTrue( $block_type->supports['autoRegister'] );
+		// WordPress processes the directives of interactive blocks itself.
+		$this->assertTrue( $block_type->supports['interactivity']['interactive'] );
 		$this->assertFalse( $block_type->supports['multiple'] );
 		$this->assertIsCallable( $block_type->render_callback );
 		$this->assertContains( 'radioedu-directorio-css', $block_type->style_handles );
@@ -74,16 +84,18 @@ class DirectorioBlockTest extends WP_UnitTestCase {
 		$this->assertGreaterThan( $grid, strrpos( $html, '</section>' ) );
 	}
 
-	public function test_without_javascript_the_directory_shows_the_real_count_and_a_list_link(): void {
+	public function test_without_javascript_the_directory_shows_its_stations_and_count(): void {
 		self::factory()->post->create_many( 3, [ 'post_type' => CentroPostType::POST_TYPE, 'post_status' => 'publish' ] );
 		self::factory()->post->create( [ 'post_type' => CentroPostType::POST_TYPE, 'post_status' => 'publish', 'post_password' => 'secret' ] );
 		self::factory()->post->create( [ 'post_type' => CentroPostType::POST_TYPE, 'post_status' => 'draft' ] );
 
 		$html = DirectorioShortcode::render_shortcode();
 
-		$this->assertStringContainsString( '<span id="radioedu-count-number">3</span>', $html );
-		$this->assertStringContainsString( 'id="radioedu-js-fallback"', $html );
-		$this->assertStringContainsString( 'href="' . esc_url( get_post_type_archive_link( CentroPostType::POST_TYPE ) ) . '"', $html );
+		// Only the three published stations without a password, rendered on the server.
+		$this->assertStringContainsString( '<span id="radioedu-count-number" data-wp-text="state.totalLabel">3</span>', $html );
+		$this->assertSame( 3, substr_count( $html, 'data-wp-each-child="radioedu-conecta/directorio::state.centros"' ) );
+		// The notice for browsers without JavaScript names what needs it.
+		$this->assertStringContainsString( '<noscript><p id="radioedu-js-fallback"', $html );
 	}
 
 	public function test_styles_are_enqueued_early_for_pages_with_the_block(): void {
