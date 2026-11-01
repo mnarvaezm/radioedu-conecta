@@ -1,11 +1,10 @@
 # Informe de auditoría — RadioEdu Conecta
 
-> **Actualización 2026-11-01.** Después de la auditoría se trataron todos sus hallazgos, con un commit por hallazgo en `feat/wp71-apis`. El código corregido final es `7c9c6d7`:
+> **Actualización 2026-11-01.** Después de la auditoría se trataron todos sus hallazgos, con un commit por hallazgo en `feat/wp71-apis`. El código corregido final es `5b36de5`:
 >
 > - **24 hallazgos:**
->   - 21 corregidos;
->   - F-02 y F-22 cerrados por decisión del responsable y documentados;
->   - S-02 aceptado, con el límite elevado a 20 propuestas por hora.
+>   - 22 corregidos, S-02 incluido, con el límite elevado a 20 propuestas por hora;
+>   - F-02 y F-22 cerrados por decisión del responsable y documentados.
 > - **Desviaciones frente a AGENTS.md:**
 >   - Q-02 y Q-06 corregidas;
 >   - Q-01 resuelta ajustando la norma;
@@ -13,7 +12,7 @@
 >   - Q-04 ejecutada;
 >   - queda pendiente Q-05.
 > - **Segunda revisión independiente:** confirmó cinco problemas en las correcciones (R-01 a R-05), también corregidos.
-> - **Verificación reiniciada:** una tercera revisión dejó abiertos S-01 (creaciones simultáneas), F-04 (índices), F-06 (selector), una opción en instalaciones con varias redes, una afirmación sobre el «cursor estable» y el ZIP. Todos están corregidos o rectificados; S-02 sigue aceptado.
+> - **Verificación reiniciada:** una tercera revisión dejó abiertos S-01 (creaciones simultáneas), F-04 (índices), F-06 (selector), una opción en instalaciones con varias redes, una afirmación sobre el «cursor estable» y el ZIP. Todos están corregidos o rectificados. S-02, que se había aceptado como riesgo, también se corrigió después.
 >
 > El estado, la verificación, los matices y lo pendiente están en [Seguimiento de correcciones](#seguimiento-de-correcciones-2026-11-01). El resto del informe describe el código auditado: `922c042` con los cambios locales que después fueron `dc245a9`. Sus referencias de línea ya no coinciden con el código corregido.
 
@@ -328,16 +327,16 @@ Claude (asistente de programación) hizo las correcciones a petición del respon
 - su entrada en el changelog de `readme.txt` y `README.md`;
 - cambios en `ARCHITECTURE.md` y `TESTING-PROTOCOL.md` cuando procedía.
 
-Las cadenas nuevas o modificadas se tradujeron al catalán, valenciano, gallego y euskera. Las correcciones están en la rama `feat/wp71-apis`, que todavía no se ha fusionado con `main`. El ZIP `radioedu-conecta_1.1.zip` se regeneró con el código de `7c9c6d7`.
+Las cadenas nuevas o modificadas se tradujeron al catalán, valenciano, gallego y euskera. Las correcciones están en la rama `feat/wp71-apis`, que todavía no se ha fusionado con `main`. El ZIP `radioedu-conecta_1.1.zip` se regeneró con el código de `5b36de5`.
 
 **Resumen:**
 
 | Grupo | Total | Resultado |
 | --- | --- | --- |
-| Hallazgos de la auditoría (S-01, S-02, F-01 a F-22) | 24 | 21 corregidos; F-02 y F-22 cerrados por decisión documentada; S-02 aceptado con el límite a 20 por hora |
+| Hallazgos de la auditoría (S-01, S-02, F-01 a F-22) | 24 | 22 corregidos (S-02 incluido, con el límite a 20 por hora); F-02 y F-22 cerrados por decisión documentada |
 | Desviaciones frente a AGENTS.md (Q-01 a Q-06) | 6 | Q-02 y Q-06 corregidas; Q-01 con la norma ajustada; Q-03 con excepciones inventariadas; Q-04 ejecutada; **Q-05 pendiente** |
 | Segunda revisión (R-01 a R-05) | 5 | Los 5 corregidos |
-| Verificación reiniciada (S-01, F-04, F-06, varias redes, cursor, ZIP) | 6 | Corregidos, salvo el cursor, que se rectificó en la documentación; S-02 sigue aceptado |
+| Verificación reiniciada (S-01, F-04, F-06, varias redes, cursor, ZIP) | 6 | Corregidos, salvo el cursor, que se rectificó en la documentación. S-02 también se corrigió después |
 | Candidatos por validar | 4 | El de varias redes, confirmado y corregido; los otros 3, sin abordar |
 | Recomendaciones de endurecimiento | 8 | Sin abordar, salvo parte de la de E2E (ver «Pendiente») |
 
@@ -374,7 +373,7 @@ Antes de corregir se contrastó el informe con el código. Los 24 hallazgos se c
 | F-02 | P1 → decisión | Se mantiene; documentado | `d78e419` | — |
 | F-22 | P2 → decisión | Sin purga automática; documentado | `53bcda0` | Párrafo de conservación en el texto sugerido de la política de privacidad |
 | S-01 | Baja | Corregido | `8810283`, `0db0982`, `0814b22` | Tres tests en `CentroLimitTest`; los dos de evasión fallan sin el arreglo. El editor clásico se cubrió después (R-01), y las creaciones simultáneas con un bloqueo por autor (verificación reiniciada). |
-| S-02 | Baja | Aceptado; límite a 20/h | `8cd26ec` | `test_proposals_are_limited_to_twenty_per_hour` |
+| S-02 | Baja | Corregido; límite a 20/h | `8cd26ec`, `5b36de5` | `test_proposals_are_limited_to_twenty_per_hour`. Primero se aceptó como riesgo; después, con un bloqueo por usuario, dos envíos simultáneos con una plaza dan un 201 y un 429 (falla sin el arreglo). |
 | F-05 | P2 | Corregido | `3f48467`, `4ca647d`, `aedfd3d` | `ProposalPaginationTest`. Una página enorme se resolvió después (R-05). |
 | F-06 | P2 | Corregido | `72f9279`, `4ca647d`, `89f13e1` | `ManagedCentersTest`: 53 centros, email sin distinguir mayúsculas, editores y una red de 1.001 radios en el selector (tope de 2.000). |
 | F-08 | P2 | Corregido | `00547fc` | `NotificationResultTest` |
@@ -421,7 +420,7 @@ Dos commits son correcciones de seguimiento:
 - **F-21.** La revisión completa se hace en la última petición de la sincronización. No se midió el tiempo en redes muy grandes.
 - **F-22.** Las propuestas no caducan. El responsable lo decidió de forma provisional («en principio»), y el texto sugerido de la política de privacidad lo indica.
 - **S-01.** Las comprobaciones y escrituras simultáneas del mismo autor se serializan con un bloqueo `GET_LOCK` por autor y sitio. Una petición espera hasta 10 segundos a la otra y, si no termina, rechaza el guardado. Con un proxy de base de datos que comparta conexiones aplica la misma condición que en F-19.
-- **S-02.** El contador sigue sin ser atómico: envíos simultáneos pueden superar el límite en alguno.
+- **S-02.** El límite es estricto: la comprobación, el guardado y el contador se hacen bajo un bloqueo `GET_LOCK` por usuario y sitio. Una propuesta espera hasta 10 segundos a otra del mismo usuario y, si no termina, recibe el 429. El correo de aviso se envía ya fuera del bloqueo. Con un proxy de base de datos que comparta conexiones aplica la misma condición que en F-19.
 - **Contratos.** Cambian firmas públicas que podría usar un desarrollo externo:
   - `respond_to_proposal()` devuelve el estado del aviso;
   - `get_for_user()` y `count_for_user()` ya no reciben IDs de centros;
@@ -441,17 +440,17 @@ Dos commits son correcciones de seguimiento:
 
 ### Verificación del estado final
 
-Sobre `7c9c6d7`, el último commit con cambios de código, en el entorno de QA local (WordPress 7.1.4, PHP 8.1, MariaDB 10.11):
+Sobre `5b36de5`, el último commit con cambios de código, en el entorno de QA local (WordPress 7.1.4, PHP 8.1, MariaDB 10.11):
 
 | Verificación | Resultado |
 | --- | --- |
-| PHPUnit, sitio único | 148 tests: 127 ejecutados sin fallos y 21 omitidos por ser solo de multisitio |
-| PHPUnit, multisitio | 148 tests sin fallos (941 aserciones) |
+| PHPUnit, sitio único | 150 tests: 129 ejecutados sin fallos y 21 omitidos por ser solo de multisitio |
+| PHPUnit, multisitio | 150 tests sin fallos (947 aserciones) |
 | PHPCS (WordPress, Extra, Docs, PHPCompatibilityWP 8.1+) | Sin errores; PHPCompatibilityWP también sobre `tests/` |
 | PHPStan nivel 6 | Sin errores |
 | Lint JS y CSS | Sin errores |
 | Plugin Check 2.1.0 | Sin errores ni avisos, sobre el plugin instalado desde el ZIP regenerado |
-| Pruebas de la verificación reiniciada | Pasan las de S-01, F-04, F-06 y varias redes; solo falla, a propósito, la de S-02, riesgo aceptado |
+| Pruebas de la verificación reiniciada | Pasan todas: S-01, S-02, F-04, F-06 y varias redes |
 | ZIP | `radioedu-conecta_1.1.zip` regenerado: 102 ficheros, idénticos byte a byte a `HEAD`, con la licencia de Leaflet y `block.json`, sin `docs`, `tests` ni `vendor`; instalado en QA desde el propio ZIP |
 | Navegador (Edge con Playwright) | Repetidas sobre el código final: F-11 (panel), F-13 (320 px), F-16 (sin JavaScript), Q-02 (bloque en el editor) y R-04 (mapa con 210 radios y filtros). F-12 se comprobó con 66 radios en su commit, y el mapa completo vuelve a cubrirlo R-04. |
 | Desinstalación | Real, en el entorno de QA (F-20) |
@@ -494,7 +493,7 @@ Una tercera revisión independiente (`docs/auditoria/2026-11-01-reinicio/`, sin 
 | Documentación (V-02) | Se afirmaba un «cursor estable», pero se pagina por desplazamiento. | `33d18c8` | ARCHITECTURE.md y este seguimiento describen ahora orden determinista con `OFFSET`/`paged`; el cursor estable vuelve a «Pendiente». |
 | Distribución | El ZIP era anterior a las correcciones. | — | Regenerado e instalado en QA desde el propio paquete (ver «Verificación del estado final»). El ZIP no se versiona. |
 
-S-02 sigue siendo un riesgo aceptado: la prueba de la revisión que exige un límite estricto falla, como se espera. También quedan pendientes las validaciones de compatibilidad.
+S-02, que se había aceptado como riesgo, se corrigió después a petición del responsable (`5b36de5`) con el mismo mecanismo que S-01: la prueba de la revisión que exige un límite estricto pasa ahora. Quedan pendientes las validaciones de compatibilidad.
 
 ### Pendiente
 
@@ -527,7 +526,7 @@ S-02 sigue siendo un riesgo aceptado: la prueba de la revisión que exige un lí
 
 **Antes de publicar:**
 
-- Revisar el resultado de la CI remota de la rama y fusionar con `main` mediante un PR. El ZIP ya está regenerado con el código de `7c9c6d7`; si cambia el código, hay que volver a generarlo.
+- Revisar el resultado de la CI remota de la rama y fusionar con `main` mediante un PR. El ZIP ya está regenerado con el código de `5b36de5`; si cambia el código, hay que volver a generarlo.
 - Pedir una revisión nativa de las traducciones, en especial de las 13 cadenas nuevas o modificadas en este seguimiento:
   - las 12 de las correcciones;
   - la palabra clave «podcast» del bloque.
