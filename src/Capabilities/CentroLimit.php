@@ -52,15 +52,36 @@ final class CentroLimit {
 	private static array $counts = [];
 
 	/**
+	 * Seconds a save waits for another request that holds the same author's quota lock.
+	 */
+	private const QUOTA_LOCK_WAIT = 10;
+
+	/**
+	 * Places reserved in this request, by author: IDs of the centros about to count (0 for a new one).
+	 *
+	 * @var array<int, array<int, int>>
+	 */
+	private static array $reservations = [];
+
+	/**
+	 * Authors whose quota lock this request holds.
+	 *
+	 * @var array<int, true>
+	 */
+	private static array $quota_locks = [];
+
+	/**
 	 * Registers the hooks.
 	 *
 	 * @since 1.1
 	 */
 	public static function register(): void {
 		add_filter( 'user_has_cap', [ self::class, 'grant_create_cap' ], 10, 4 );
-		add_filter( 'rest_pre_insert_' . CentroPostType::POST_TYPE, [ self::class, 'check_rest_status_change' ], 10, 2 );
+		add_filter( 'rest_pre_insert_' . CentroPostType::POST_TYPE, [ self::class, 'check_rest_status_change' ], 100, 2 );
 		add_filter( 'pre_untrash_post', [ self::class, 'check_untrash' ], 10, 2 );
 		add_filter( 'wp_insert_post_data', [ self::class, 'keep_uncounted_status' ], 10, 2 );
+		add_action( 'wp_insert_post', [ self::class, 'release_reservation' ], 10, 3 );
+		add_action( 'shutdown', [ self::class, 'release_all_quota_locks' ] );
 		add_action( 'clean_post_cache', [ self::class, 'flush_count_cache_for_post' ], 10, 2 );
 		add_action( 'admin_notices', [ self::class, 'render_limit_notice' ] );
 	}
@@ -269,7 +290,129 @@ final class CentroLimit {
 			return false;
 		}
 
-		return self::is_over_limit( $author_id );
+		$limit = self::get_limit();
+		if ( null === $limit ) {
+			return false;
+		}
+
+		// The same save may be checked twice (REST then wp_insert_post_data, untrash then the update).
+		if ( $post_id > 0 && in_array( $post_id, self::$reservations[ $author_id ] ?? [], true ) ) {
+			return false;
+		}
+
+		// Check and write under the author's lock, so two requests at once cannot both take the
+		// last place. If the other request does not finish in time, refuse rather than risk it.
+		if ( ! self::lock_quota( $author_id ) ) {
+			return true;
+		}
+
+		self::flush_count_cache();
+		$taken = self::count_user_centros( $author_id, max( 1, $limit ) ) + count( self::$reservations[ $author_id ] ?? [] );
+		if ( 0 === $limit || $taken >= $limit ) {
+			if ( empty( self::$reservations[ $author_id ] ) ) {
+				self::unlock_quota( $author_id );
+			}
+			return true;
+		}
+
+		self::$reservations[ $author_id ][] = $post_id;
+		return false;
+	}
+
+	/**
+	 * Frees the place reserved for a centro once it is saved, and the author's lock with the last one.
+	 *
+	 * @since 1.1
+	 *
+	 * @param int     $post_id Post ID.
+	 * @param WP_Post $post    Saved post.
+	 * @param bool    $update  Whether an existing post was updated.
+	 */
+	public static function release_reservation( int $post_id, WP_Post $post, bool $update ): void {
+		$author_id = (int) $post->post_author;
+		if ( CentroPostType::POST_TYPE !== $post->post_type || empty( self::$reservations[ $author_id ] ) ) {
+			return;
+		}
+
+		// A new centro was reserved as 0, before it had an ID.
+		$key = array_search( $update ? $post_id : 0, self::$reservations[ $author_id ], true );
+		if ( false !== $key ) {
+			unset( self::$reservations[ $author_id ][ $key ] );
+		}
+		if ( empty( self::$reservations[ $author_id ] ) ) {
+			unset( self::$reservations[ $author_id ] );
+			self::unlock_quota( $author_id );
+		}
+	}
+
+	/**
+	 * Releases every quota lock this request still holds, for example after a failed save.
+	 *
+	 * @since 1.1
+	 */
+	public static function release_all_quota_locks(): void {
+		foreach ( array_keys( self::$quota_locks ) as $author_id ) {
+			self::unlock_quota( $author_id );
+		}
+		self::$reservations = [];
+	}
+
+	/**
+	 * Takes the author's quota lock, waiting for another request that holds it.
+	 *
+	 * A MySQL/MariaDB named lock (GET_LOCK) belongs to the database connection, and the server
+	 * releases it if the request dies. A request that already holds it keeps it.
+	 *
+	 * @param int $author_id Author whose centros are counted.
+	 * @return bool True when this request holds the lock.
+	 */
+	private static function lock_quota( int $author_id ): bool {
+		global $wpdb;
+		if ( isset( self::$quota_locks[ $author_id ] ) ) {
+			return true;
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Named lock tied to this connection; no core API provides one.
+		if ( '1' !== (string) $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK( %s, %d )', self::quota_lock_name( $author_id ), self::QUOTA_LOCK_WAIT ) ) ) {
+			return false;
+		}
+
+		self::$quota_locks[ $author_id ] = true;
+		return true;
+	}
+
+	/**
+	 * Releases the author's quota lock, if this request holds it.
+	 *
+	 * @param int $author_id Author whose centros are counted.
+	 */
+	private static function unlock_quota( int $author_id ): void {
+		global $wpdb;
+		if ( ! isset( self::$quota_locks[ $author_id ] ) ) {
+			return;
+		}
+
+		unset( self::$quota_locks[ $author_id ] );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Releases the named lock taken in lock_quota().
+		$wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK( %s )', self::quota_lock_name( $author_id ) ) );
+	}
+
+	/**
+	 * Returns the name of the quota lock of an author on the current site.
+	 *
+	 * Named locks are shared by every database on the server, and each site has its own limit, so
+	 * the name hashes the database and the site's table prefix. It stays under 64 characters.
+	 *
+	 * @since 1.1
+	 *
+	 * @param int $author_id Author whose centros are counted.
+	 * @return string Lock name.
+	 */
+	public static function quota_lock_name( int $author_id ): string {
+		global $wpdb;
+		$database = defined( 'DB_NAME' ) ? (string) constant( 'DB_NAME' ) : '';
+
+		return 'radioedu_conecta_quota_' . substr( md5( $database . '|' . $wpdb->prefix ), 0, 12 ) . '_' . $author_id;
 	}
 
 	/**

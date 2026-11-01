@@ -31,6 +31,8 @@ class CentroLimitTest extends WP_UnitTestCase {
 	}
 
 	public function tear_down(): void {
+		// What the shutdown hook does at the end of a real request.
+		CentroLimit::release_all_quota_locks();
 		wp_set_current_user( 0 );
 		$GLOBALS['current_screen'] = null;
 		$GLOBALS['wp_rest_server'] = null;
@@ -200,6 +202,53 @@ class CentroLimitTest extends WP_UnitTestCase {
 			$this->assertSame( '3', Settings::sanitize_settings( [ CentroLimit::SETTING => $invalid ] )[ CentroLimit::SETTING ], $invalid );
 		}
 		$this->assertSame( '', Settings::sanitize_settings( [] )[ CentroLimit::SETTING ] );
+	}
+
+	public function test_two_creations_at_once_cannot_both_take_the_last_place(): void {
+		$this->set_limit( '1' );
+		$author = $this->user( 'author' );
+		wp_set_current_user( $author );
+		$request = new WP_REST_Request( 'POST', '/wp/v2/centros' );
+		$request->set_body_params( [ 'title' => 'Concurrent', 'status' => 'publish' ] );
+
+		// The second creation arrives after the first passed its checks and before it is written.
+		$started    = false;
+		$second     = null;
+		$interleave = static function ( array $data ) use ( &$started, &$second, $request ): array {
+			if ( ! $started && CentroPostType::POST_TYPE === $data['post_type'] ) {
+				$started = true;
+				$second  = rest_do_request( clone $request );
+			}
+			return $data;
+		};
+		add_filter( 'wp_insert_post_data', $interleave, 99 );
+		try {
+			$first = rest_do_request( $request );
+		} finally {
+			remove_filter( 'wp_insert_post_data', $interleave, 99 );
+		}
+
+		$this->assertSame( 201, $first->get_status() );
+		$this->assertSame( 403, $second->get_status() );
+		$this->assertCount( 1, get_posts( [ 'post_type' => CentroPostType::POST_TYPE, 'author' => $author, 'post_status' => 'any', 'fields' => 'ids' ] ) );
+
+		// Once saved, the place is freed: the author's lock is not left behind.
+		$this->assertSame( '1', (string) $GLOBALS['wpdb']->get_var( $GLOBALS['wpdb']->prepare( 'SELECT IS_FREE_LOCK( %s )', CentroLimit::quota_lock_name( $author ) ) ) );
+	}
+
+	public function test_the_lock_of_a_request_that_ended_does_not_block_the_next_save(): void {
+		$this->set_limit( '2' );
+		$author = $this->user( 'author' );
+		$tab    = $this->centro( $author, 'auto-draft' );
+		wp_set_current_user( $author );
+		$other = new \wpdb( DB_USER, DB_PASSWORD, DB_NAME, DB_HOST );
+		$this->assertSame( '1', (string) $other->get_var( $other->prepare( 'SELECT GET_LOCK( %s, 0 )', CentroLimit::quota_lock_name( $author ) ) ) );
+
+		// That request ends: the server releases its lock with the connection.
+		$other->close();
+		$request = new WP_REST_Request( 'POST', '/wp/v2/centros/' . $tab );
+		$request->set_body_params( [ 'status' => 'publish' ] );
+		$this->assertSame( 200, rest_do_request( $request )->get_status() );
 	}
 
 	public function test_the_classic_editor_cannot_publish_an_old_auto_draft_at_the_limit(): void {
