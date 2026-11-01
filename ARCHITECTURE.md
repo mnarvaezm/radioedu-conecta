@@ -280,7 +280,7 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
   - The capability only guards creation, so status changes are checked too. A change from a status that does not count to one that counts is refused for limited users at the limit: `CentroLimit::check_rest_status_change()` (`rest_pre_insert_radioedu_centro`, 403 `radioedu_centro_limit`) covers the block editor, including an auto-draft opened in a second tab before the limit was reached, and `CentroLimit::check_untrash()` (`pre_untrash_post`) covers the **Restaurar** link. Without them a coordinator could trash a centro, create another and restore the first (audit finding S-01). The classic editor saving an old auto-draft is not covered.
 * **Counting:**
   - Counted: centros authored by the user in `publish`, `future`, `draft`, `pending` or `private`. Trash and `auto-draft` (created when opening the editor) do not count.
-  - The query stops at the limit (`posts_per_page`). Results are cached per request and flushed on `clean_post_cache` for centros.
+  - The query stops at the limit (`posts_per_page`). Results are cached per request, keyed by site, user and limit so `switch_to_blog()` never reuses another site's count, and flushed on `clean_post_cache` for centros.
 * **Exception:** administrators and editors may still assign more centros to a coordinator by setting them as author. The limit only stops self-service creation.
 * **Notice:** coordinators at the limit see an info notice on the centros list (`admin_notices`).
 

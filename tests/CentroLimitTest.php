@@ -162,6 +162,35 @@ class CentroLimitTest extends WP_UnitTestCase {
 		$this->assertNotFalse( wp_untrash_post( $trashed ) );
 	}
 
+	public function test_the_count_cache_keeps_each_site_apart(): void {
+		if ( ! is_multisite() ) {
+			$this->markTestSkipped( 'Multisite only.' );
+		}
+		$author = $this->user( 'author' );
+		$site   = self::factory()->blog->create();
+		$this->set_limit( '1' );
+		switch_to_blog( $site );
+		try {
+			RoleCapabilities::add_capabilities();
+			CentroPostType::register();
+			$this->set_limit( '1' );
+			$this->centro( $author );
+		} finally {
+			restore_current_blog();
+		}
+		CentroLimit::flush_count_cache();
+
+		// Checked on the main site first, then on the subsite in the same request, both ways.
+		$this->assertFalse( CentroLimit::has_reached_limit( $author ) );
+		switch_to_blog( $site );
+		try {
+			$this->assertTrue( CentroLimit::has_reached_limit( $author ) );
+		} finally {
+			restore_current_blog();
+		}
+		$this->assertFalse( CentroLimit::has_reached_limit( $author ) );
+	}
+
 	public function test_settings_sanitize_the_limit(): void {
 		$this->set_limit( '3' );
 

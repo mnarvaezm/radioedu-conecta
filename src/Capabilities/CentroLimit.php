@@ -45,7 +45,7 @@ final class CentroLimit {
 	private const COUNTED_STATUSES = [ 'publish', 'future', 'draft', 'pending', 'private' ];
 
 	/**
-	 * Per-request counts, keyed by "user:limit".
+	 * Per-request counts, keyed by "blog:user:limit": in Multisite each site has its own centros.
 	 *
 	 * @var array<string, int>
 	 */
@@ -283,7 +283,7 @@ final class CentroLimit {
 	 * @return int Number of centros authored by the user, at most $up_to.
 	 */
 	private static function count_user_centros( int $user_id, int $up_to ): int {
-		$key = $user_id . ':' . $up_to;
+		$key = get_current_blog_id() . ':' . $user_id . ':' . $up_to;
 		if ( ! isset( self::$counts[ $key ] ) ) {
 			self::$counts[ $key ] = count(
 				get_posts(
