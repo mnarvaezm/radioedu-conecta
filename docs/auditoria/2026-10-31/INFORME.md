@@ -453,10 +453,23 @@ Sobre `5b36de5`, el último commit con cambios de código, en el entorno de QA l
 | Pruebas de la verificación reiniciada | Pasan todas: S-01, S-02, F-04, F-06 y varias redes |
 | ZIP | `radioedu-conecta_1.1.zip` regenerado: 102 ficheros, idénticos byte a byte a `HEAD`, con la licencia de Leaflet y `block.json`, sin `docs`, `tests` ni `vendor`; instalado en QA desde el propio ZIP |
 | Navegador (Edge con Playwright) | Repetidas sobre el código final: F-11 (panel), F-13 (320 px), F-16 (sin JavaScript), Q-02 (bloque en el editor) y R-04 (mapa con 210 radios y filtros). F-12 se comprobó con 66 radios en su commit, y el mapa completo vuelve a cubrirlo R-04. |
+| E2E del repositorio (`tests/e2e`) | 8 de 8 pasan en el entorno de QA con Twenty Twenty-Five (38 s), con Edge. Con YOOtheme, la prueba de los paneles del editor falla por un aviso de consola del propio tema, no del plugin (ver más abajo) |
 | Desinstalación | Real, en el entorno de QA (F-20) |
 | Migración | Esquema 1.0.2 → 1.0.3 sobre una tabla real en el entorno de QA (F-01, F-04) |
 
-La suite E2E del propio repositorio (`tests/e2e`) no se ha vuelto a ejecutar en local tras los cambios; la ejecutará la CI. Los scripts de navegador están en `evidencias/seguimiento-2026-11-01/`. Usan el entorno desechable del puerto 8091 y su cuenta de pruebas, y no deben ejecutarse contra otros sitios.
+Después, las comprobaciones de navegador del seguimiento se trasladaron a `tests/e2e/directorio-robustez.spec.js`, para que también las ejecute la CI:
+
+- F-11: el panel de propuesta, con una respuesta tardía.
+- F-12: el mapa con todos los resultados, no solo las tarjetas cargadas.
+- R-04: *Cargar más* y el mapa con los filtros de la búsqueda mostrada.
+- F-13: la página a 320 px.
+- F-16: la página sin JavaScript.
+
+Q-02, el bloque en el editor, ya lo cubría `directorio-block.spec.js`. La prueba crea 30 radios, así que el mapa pide una sola página de 100. El recorrido de varias páginas del mapa (210 radios) sigue solo en el script de evidencias, aunque todas las páginas se piden con la misma función.
+
+Con YOOtheme, `centro-logo.spec.js` falla porque WordPress avisa en la consola de que el tema usa controles de barra de herramientas obsoletos; la prueba no admite avisos de consola. Con Twenty Twenty-Five, el tema de `wp-env` y de la CI, pasa.
+
+Los scripts de navegador están en `evidencias/seguimiento-2026-11-01/`. Usan el entorno desechable del puerto 8091 y su cuenta de pruebas, y no deben ejecutarse contra otros sitios.
 
 ### Segunda revisión: R-01 a R-05
 
@@ -512,11 +525,10 @@ S-02, que se había aceptado como riesgo, se corrigió después a petición del 
   - Respuestas demasiado largas en el escritorio, que se truncan en vez de rechazarse: pendiente.
   - Paginación de términos en el render y en la desinstalación: pendiente.
   - Entorno y CI reproducibles, y revisión de `bin/install-wp-tests.sh`: pendiente.
-  - Más E2E: parcial. Las pruebas de navegador de este seguimiento no están en `tests/e2e`.
+  - Más E2E: parcial. Las pruebas de navegador de este seguimiento ya están en `tests/e2e`: mapa, filtros y paginación, panel de propuesta, 320 px y sin JavaScript. Faltan envío y respuesta reales de propuestas, errores y reintentos, privacidad, cupo de radios y sincronización de red.
 
 **Derivado de las correcciones:**
 
-- Pasar las comprobaciones de navegador de F-11, F-12, F-13, F-16, Q-02 y R-04 a `tests/e2e` (Playwright), para que la CI las ejecute.
 - Automatizar la prueba de desinstalación de F-20 en un entorno desechable.
 - Avisar en el escritorio cuando falla la migración (F-04).
 - Crear una herramienta para revisar las respuestas sin autor anteriores a 1.1 (F-01).

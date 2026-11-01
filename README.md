@@ -160,7 +160,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * *Cargar más centros* y las páginas del mapa conservan los filtros de la búsqueda que se está mostrando, aunque después se haya editado el formulario sin buscar.
 * El enlace *Volver al directorio* también encuentra el directorio cuando está dentro de un patrón sincronizado.
 * Multisite: la desinstalación elimina la opción de la sincronización de red en todas las redes cuando la instalación tiene varias.
-* Pruebas E2E con Playwright y `wp-env` (datos del centro en los paneles del editor de WordPress 7.1, incluido el logo, y bloque del directorio).
+* Pruebas E2E con Playwright y `wp-env`: datos del centro en los paneles del editor de WordPress 7.1, incluido el logo; bloque del directorio; y el mapa con todos los resultados, *Cargar más* con los filtros de la búsqueda, el panel de propuesta con una respuesta tardía, la página a 320 px y sin JavaScript.
 
 ### 1.0.0
 * Lanzamiento completo del directorio interactivo `[radioedu_directorio]`, CPT `radioedu_centro` y 5 taxonomías facetadas con mapeo completo de capacidades.

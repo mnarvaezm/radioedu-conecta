@@ -112,6 +112,12 @@ npx playwright install chromium && npm run wp-env start && npm run test:e2e   # 
 npm audit --audit-level=high && composer audit
 ```
 
-Plugin Check debe ejecutarse sobre la copia distribuible (respetando `.distignore`), no sobre el repositorio completo: `wp plugin check radioedu-conecta`. Comprueba también que, sin la carpeta `build/`, el directorio y el editor de centros cargan sin errores fatales (solo pierden la interactividad).
+Plugin Check debe ejecutarse sobre la copia distribuible (respetando `.distignore`), no sobre el repositorio completo: `wp plugin check radioedu-conecta`. Comprueba también que, sin la carpeta `build/`, el directorio y el editor de centros cargan sin errores fatales: pierden la interactividad, y el directorio muestra el número de radios y el enlace a su listado.
 
-Las pruebas E2E (`tests/e2e`) crean y borran su propio contenido. Para lanzarlas contra otro sitio desechable en lugar de `wp-env`, indica su URL y, si quieres, un navegador instalado: `WP_BASE_URL=http://localhost:8091 PLAYWRIGHT_CHANNEL=msedge npm run test:e2e`. Necesitan la cuenta `admin` / `password` con el idioma de usuario en inglés, porque las utilidades de `@wordpress/e2e-test-utils-playwright` pulsan los botones del editor por su texto en inglés. La prueba de los paneles falla si la consola del navegador muestra errores o avisos, salvo un aviso conocido del propio WordPress 7.1 sobre sus estilos globales en el editor.
+Las pruebas E2E (`tests/e2e`) crean y borran su propio contenido:
+
+- `centro-logo.spec.js`: datos del centro en los paneles del editor, incluido el logo.
+- `directorio-block.spec.js`: el bloque en el editor y en la web.
+- `directorio-robustez.spec.js`: el mapa con todos los resultados (F-12), *Cargar más* con los filtros de la búsqueda mostrada (R-04), el panel de propuesta con una respuesta tardía (F-11), la página a 320 px (F-13) y sin JavaScript (F-16). Crea 30 radios con coordenadas, bloquea las teselas de OpenStreetMap y responde ella misma a la propuesta, así que no guarda propuestas ni envía correos.
+
+Para lanzarlas contra otro sitio desechable en lugar de `wp-env`, indica su URL, su contraseña de `admin` si no es `password` y, si quieres, un navegador instalado: `WP_BASE_URL=http://localhost:8091 WP_PASSWORD=admin PLAYWRIGHT_CHANNEL=msedge npm run test:e2e`. Necesitan la cuenta `admin` con el idioma de usuario en inglés, porque las utilidades de `@wordpress/e2e-test-utils-playwright` pulsan los botones del editor por su texto en inglés. La prueba de los paneles falla si la consola del navegador muestra errores o avisos, salvo un aviso conocido del propio WordPress 7.1 sobre sus estilos globales en el editor. Con un tema que añade sus propios avisos al editor también falla: con YOOtheme, WordPress avisa de controles de barra de herramientas obsoletos que no son del plugin. Lánzalas con un tema por defecto, como Twenty Twenty-Five, que es el que usa `wp-env`.
