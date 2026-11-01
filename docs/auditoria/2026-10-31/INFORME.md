@@ -10,7 +10,7 @@
 >   - Q-01 resuelta ajustando la norma;
 >   - Q-03 resuelta con un inventario de excepciones;
 >   - Q-04 ejecutada;
->   - queda pendiente Q-05.
+>   - Q-05 resuelta en la 1.2: pruebas con PHP 8.1 a 8.5 y recomendación de PHP 8.3 o superior.
 > - **Segunda revisión independiente:** confirmó cinco problemas en las correcciones (R-01 a R-05), también corregidos.
 > - **Verificación reiniciada:** una tercera revisión dejó abiertos S-01 (creaciones simultáneas), F-04 (índices), F-06 (selector), una opción en instalaciones con varias redes, una afirmación sobre el «cursor estable» y el ZIP. Todos están corregidos o rectificados. S-02, que se había aceptado como riesgo, también se corrigió después.
 >
@@ -334,7 +334,7 @@ Las cadenas nuevas o modificadas se tradujeron al catalán, valenciano, gallego 
 | Grupo | Total | Resultado |
 | --- | --- | --- |
 | Hallazgos de la auditoría (S-01, S-02, F-01 a F-22) | 24 | 22 corregidos (S-02 incluido, con el límite a 20 por hora); F-02 y F-22 cerrados por decisión documentada |
-| Desviaciones frente a AGENTS.md (Q-01 a Q-06) | 6 | Q-02 y Q-06 corregidas; Q-01 con la norma ajustada; Q-03 con excepciones inventariadas; Q-04 ejecutada; **Q-05 pendiente** |
+| Desviaciones frente a AGENTS.md (Q-01 a Q-06) | 6 | Q-02 y Q-06 corregidas; Q-01 con la norma ajustada; Q-03 con excepciones inventariadas; Q-04 ejecutada; Q-05 resuelta en la 1.2 |
 | Segunda revisión (R-01 a R-05) | 5 | Los 5 corregidos |
 | Verificación reiniciada (S-01, F-04, F-06, varias redes, cursor, ZIP) | 6 | Corregidos, salvo el cursor, que se rectificó en la documentación. S-02 también se corrigió después |
 | Candidatos por validar | 4 | El de varias redes, confirmado y corregido; los otros 3, sin abordar |
@@ -510,6 +510,16 @@ Una tercera revisión independiente (`docs/auditoria/2026-11-01-reinicio/`, sin 
 
 S-02, que se había aceptado como riesgo, se corrigió después a petición del responsable (`5b36de5`) con el mismo mecanismo que S-01: la prueba de la revisión que exige un límite estricto pasa ahora. Quedan pendientes las validaciones de compatibilidad.
 
+### Después de la fusión: inicio de la 1.2
+
+La rama `feat/wp71-apis` se fusionó con `main` mediante el PR #1, como *merge commit* (`dc8e1e5`), así que los hashes de este seguimiento siguen existiendo en `main`. La primera ejecución de la CI falló en los 8 trabajos de PHPUnit: la prueba de las traducciones de los scripts dependía de la ruta del repositorio, que en la CI es más profunda que en local. Se corrigió la prueba (`3c226e3`), no las traducciones, y los 12 trabajos pasaron.
+
+La 1.2 se desarrolla en la rama `feat/1.2`:
+
+- **Q-05** (`b78f548`, `3fb54fb`). La CI ejecuta PHPUnit con PHP 8.1 a 8.5 sobre la última versión de WordPress, y con PHP 8.1 sobre WordPress 7.1.0. Antes, sus ejes `7.1` y `latest` instalaban la misma 7.1.4. Para probar la 7.1.0 hubo que corregir `bin/install-wp-tests.sh`, que buscaba la etiqueta `7.1` de `wordpress-develop` cuando las etiquetas conservan el `.0`. El original de WP-CLI tiene el mismo fallo. PHP 8.1 sigue siendo el mínimo, y el readme recomienda PHP 8.3 o superior, porque la 8.1 ya no recibe parches y la 8.2 solo hasta finales de 2026. En local, la suite pasa con PHP 8.2, 8.3, 8.4 y 8.5.12, y con WordPress 7.1.0, en sitio único y en multisitio.
+- **Distribución** (`a7871de`). El plugin no se publicará en WordPress.org, así que declara `Update URI`, como pide AGENTS.md §1. Plugin Check marca esa cabecera con `plugin_updater_detected`, y solo ese código se ignora, en la CI y en el protocolo de pruebas. `Contributors` del readme queda como dato informativo.
+- **Versión 1.2** (`4f1ed4f`).
+
 ### Pendiente
 
 **De la auditoría, sin abordar:**
@@ -518,7 +528,6 @@ S-02, que se había aceptado como riesgo, se corrigió después a petición del 
   - titularidad de las fichas reutilizadas;
   - sitios con privacidad adicional;
   - consumo a gran escala.
-- La desviación Q-05 frente a AGENTS.md: pruebas y recomendación para versiones de PHP con soporte. Q-01, Q-02 y Q-03 se resolvieron después; ver la tabla de estado.
 - Las recomendaciones de endurecimiento:
   - Cursor estable: pendiente. El listado de propuestas y la revisión de fichas huérfanas tienen un orden determinista (fecha e ID, o ID), pero paginan por desplazamiento (`OFFSET`, `paged`), igual que la sincronización por lotes. Si el conjunto cambia entre dos páginas, un elemento puede saltarse o repetirse. Una versión anterior de este seguimiento lo daba por hecho; era inexacto.
   - Clave de idempotencia al crear propuestas: pendiente.
@@ -526,7 +535,7 @@ S-02, que se había aceptado como riesgo, se corrigió después a petición del 
   - Carga reducida del mapa, `prefers-reduced-motion` y prueba con lector de pantalla: pendiente.
   - Respuestas demasiado largas en el escritorio, que se truncan en vez de rechazarse: pendiente.
   - Paginación de términos en el render y en la desinstalación: pendiente.
-  - Entorno y CI reproducibles, y revisión de `bin/install-wp-tests.sh`: pendiente.
+  - Entorno y CI reproducibles, y revisión de `bin/install-wp-tests.sh`: parcial. En la 1.2 se corrigió que no instalara las pruebas de una versión x.y.0 (`b78f548`). Siguen los puntos de la auditoría: HTTP para resolver `latest`, descargas sin comprobar el hash, rutas sin comillas en `rm` y reutilización de una instalación sin comprobar su versión.
   - Más E2E: parcial. Las pruebas de navegador de este seguimiento ya están en `tests/e2e`: mapa, filtros y paginación, panel de propuesta, 320 px y sin JavaScript. Faltan envío y respuesta reales de propuestas, errores y reintentos, privacidad, cupo de radios y sincronización de red.
 
 **Derivado de las correcciones:**
@@ -540,11 +549,10 @@ S-02, que se había aceptado como riesgo, se corrigió después a petición del 
 
 **Antes de publicar:**
 
-- Revisar el resultado de la CI remota de la rama y fusionar con `main` mediante un PR. El ZIP ya está regenerado con el código de `97b8f69`; si cambia el código, hay que volver a generarlo.
+- Generar `radioedu-conecta_1.2.zip` cuando la 1.2 esté terminada. El ZIP actual, `radioedu-conecta_1.1.zip`, corresponde a la 1.1 fusionada en `main`.
 - Pedir una revisión nativa de las traducciones, en especial de las 13 cadenas nuevas o modificadas en este seguimiento:
   - las 12 de las correcciones;
   - la palabra clave «podcast» del bloque.
 
   Las demás cadenas de `block.json` reutilizan traducciones que ya existían, ahora con contexto.
-- Probar la matriz de PHP 8.2–8.5 y WordPress 7.1.0. La CI cubre PHP 8.1 y 8.3 con WordPress 7.1 y la última versión.
 - Decidir qué hacer con `docs/auditoria/2026-11-01-revision/`, la carpeta de la segunda revisión, que sigue sin versionar. La de esta auditoría ya está versionada, con las evidencias en UTF-8.
