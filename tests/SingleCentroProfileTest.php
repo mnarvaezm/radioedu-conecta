@@ -94,6 +94,22 @@ class SingleCentroProfileTest extends WP_UnitTestCase {
 		$this->assertSame( 1, substr_count( $html, '</main>' ) );
 	}
 
+	public function test_the_profile_keeps_the_embedded_players_of_the_description(): void {
+		global $wpdb;
+		switch_theme( 'default' );
+		$centro = self::factory()->post->create( [ 'post_type' => CentroPostType::POST_TYPE, 'post_status' => 'publish' ] );
+		// Stored as a user with unfiltered_html would store it, bypassing kses on save.
+		$wpdb->update( $wpdb->posts, [ 'post_content' => '<!-- wp:html --><iframe src="https://www.youtube.com/embed/radio" title="Programa"></iframe><!-- /wp:html -->' ], [ 'ID' => $centro ] );
+		clean_post_cache( $centro );
+		$this->go_to( get_permalink( $centro ) );
+
+		ob_start();
+		require RADIOEDU_CONECTA_DIR . 'templates/theme-single-centro.php';
+		$html = (string) ob_get_clean();
+
+		$this->assertStringContainsString( '<iframe src="https://www.youtube.com/embed/radio"', $html );
+	}
+
 	/**
 	 * @return array<string, array{string, bool, string}>
 	 */

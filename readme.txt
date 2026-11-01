@@ -126,6 +126,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * The map view shows every result of the search, up to 500 markers, instead of only the 24 loaded cards, and says so when the limit leaves some out.
 * Accessibility: at 320 px wide (or 400% zoom) the directory no longer scrolls sideways; cards fit the available width and the controls wrap (WCAG 1.4.10).
 * The "Volver al directorio" link of the profiles goes to the page where the directory block or shortcode really is, not only to a page with the "traspasando-fronteras" slug. The new `radioedu_conecta_directory_url` filter can change it.
+* The profile no longer strips embedded players (YouTube, podcasts…) from the description: it prints the content as WordPress filters it, like any theme.
 
 = 1.0.0 =
 * Interactive `[radioedu_directorio]` directory with faceted filters, affinity sorting, pagination and a locally bundled Leaflet map with prior consent for OpenStreetMap tiles.

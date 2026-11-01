@@ -151,6 +151,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * La vista de mapa muestra todos los resultados de la búsqueda, hasta 500 marcadores, en lugar de solo las 24 tarjetas cargadas, y avisa cuando el límite deja alguno fuera.
 * Accesibilidad: a 320 px de ancho (o con zoom del 400 %) el directorio ya no necesita desplazamiento horizontal; las tarjetas se ajustan al ancho disponible y los controles bajan de línea (WCAG 1.4.10).
 * El enlace *Volver al directorio* de las fichas lleva a la página donde está realmente el bloque o el shortcode del directorio, no solo a una página con el slug `traspasando-fronteras`. El nuevo filtro `radioedu_conecta_directory_url` permite cambiarlo.
+* La ficha ya no elimina los reproductores embebidos (YouTube, pódcast…) de la descripción: muestra el contenido tal como lo filtra WordPress, igual que cualquier tema.
 * Pruebas E2E con Playwright y `wp-env` (datos del centro en los paneles del editor de WordPress 7.1, incluido el logo, y bloque del directorio).
 
 ### 1.0.0

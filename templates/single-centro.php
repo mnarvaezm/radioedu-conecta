@@ -150,7 +150,10 @@ defined( 'ABSPATH' ) || exit;
 				<?php esc_html_e( 'Sobre nuestra emisora escolar', 'radioedu-conecta' ); ?>
 			</h2>
 			<div class="radioedu-profile-description-content">
-				<?php echo wp_kses_post( $raw_description_html ); ?>
+				<?php
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output of the core the_content filters, printed as any theme prints the_content(): kses cleaned it on save for users without unfiltered_html, and embed iframes come from core's own handlers. wp_kses_post() here stripped those players.
+				echo $raw_description_html;
+				?>
 			</div>
 		</div>
 
