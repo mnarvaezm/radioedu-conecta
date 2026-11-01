@@ -417,9 +417,41 @@ class NetworkSyncTest extends WP_UnitTestCase {
 		$this->assertSame( [ 999999 ], array_column( NetworkSync::find_orphaned_fichas(), 'blog_id' ) );
 	}
 
-	public function test_a_lock_left_by_a_request_that_died_does_not_block_the_sync(): void {
-		$blog_id = $this->site( 'Radio Bloqueada', $this->teacher() );
-		add_option( NetworkSync::LOCK_PREFIX . $blog_id, (string) ( time() - 120 ), '', false );
+	/**
+	 * Opens a second database connection, which stands for another request.
+	 */
+	private function other_request(): \wpdb {
+		$other = new \wpdb( DB_USER, DB_PASSWORD, DB_NAME, DB_HOST );
+		$this->assertTrue( (bool) $other->check_connection( false ) );
+		return $other;
+	}
+
+	public function test_a_slow_sync_keeps_its_lock_until_it_ends(): void {
+		$blog_id = $this->site( 'Radio Lenta', $this->teacher() );
+		$name    = NetworkSync::lock_name( $blog_id );
+		$other   = $this->other_request();
+
+		// Another request is still syncing this site, however long it takes: no expiry lets this one in.
+		$this->assertSame( '1', (string) $other->get_var( $other->prepare( 'SELECT GET_LOCK( %s, 0 )', $name ) ) );
+		$busy = NetworkSync::sync_site( $blog_id );
+		$this->assertWPError( $busy );
+		$this->assertSame( 'radioedu_sync_busy', $busy->get_error_code() );
+
+		// This request never frees the other one's lock.
+		$this->assertSame( '0', (string) $GLOBALS['wpdb']->get_var( $GLOBALS['wpdb']->prepare( 'SELECT RELEASE_LOCK( %s )', $name ) ) );
+		$this->assertSame( '0', (string) $GLOBALS['wpdb']->get_var( $GLOBALS['wpdb']->prepare( 'SELECT IS_FREE_LOCK( %s )', $name ) ) );
+
+		$other->get_var( $other->prepare( 'SELECT RELEASE_LOCK( %s )', $name ) );
+		$this->assertSame( 'created', NetworkSync::sync_site( $blog_id )['outcome'] );
+	}
+
+	public function test_a_request_that_dies_frees_its_lock_at_once(): void {
+		$blog_id = $this->site( 'Radio Interrumpida', $this->teacher() );
+		$other   = $this->other_request();
+		$other->get_var( $other->prepare( 'SELECT GET_LOCK( %s, 0 )', NetworkSync::lock_name( $blog_id ) ) );
+
+		// The server releases the lock when the connection of the dead request closes.
+		$other->close();
 
 		$this->assertSame( 'created', NetworkSync::sync_site( $blog_id )['outcome'] );
 	}

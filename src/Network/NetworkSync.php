@@ -53,14 +53,16 @@ final class NetworkSync {
 	private const ORPHAN_BATCH = 500;
 
 	/**
-	 * Prefix of the option that locks the sync of one site, followed by the site ID.
+	 * Prefix of the database lock that serializes the sync of one site.
 	 */
 	public const LOCK_PREFIX = 'radioedu_conecta_sync_lock_';
 
 	/**
-	 * Seconds after which a lock left by a request that died is ignored.
+	 * Sites whose sync lock this request holds.
+	 *
+	 * @var array<int, true>
 	 */
-	private const LOCK_TTL = 60;
+	private static array $held_locks = [];
 
 	/**
 	 * Returns the number of sites processed per request.
@@ -289,45 +291,66 @@ final class NetworkSync {
 	/**
 	 * Takes the sync lock of one site.
 	 *
-	 * INSERT IGNORE on the options table is atomic, unlike add_option(), which updates an existing
-	 * row; core's WP_Upgrader::create_lock() works the same way. A lock older than LOCK_TTL was
-	 * left by a request that died, so it is replaced.
+	 * A MySQL/MariaDB named lock (GET_LOCK) belongs to the database connection that took it:
+	 * only that connection can release it, and the server releases it when the connection ends,
+	 * so a request that dies frees it at once and a slow one never loses it. An expiry time would
+	 * let a second sync in while the first is still working. The in-memory list also refuses a
+	 * second sync of the same site within one request, which the connection could otherwise lock
+	 * again.
 	 *
 	 * @param int $blog_id Source site ID.
 	 * @return bool True when this request holds the lock.
 	 */
 	private static function acquire_site_lock( int $blog_id ): bool {
 		global $wpdb;
-		$name = self::LOCK_PREFIX . $blog_id;
-
-		for ( $attempt = 0; $attempt < 2; ++$attempt ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- An atomic lock needs INSERT IGNORE; the Options API overwrites existing rows and caches values.
-			if ( 1 === (int) $wpdb->query( $wpdb->prepare( 'INSERT IGNORE INTO %i (option_name, option_value, autoload) VALUES (%s, %s, %s)', $wpdb->options, $name, (string) time(), 'off' ) ) ) {
-				return true;
-			}
-
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Reads the lock row written above, which the options cache does not know about.
-			$since = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT option_value FROM %i WHERE option_name = %s', $wpdb->options, $name ) );
-			if ( $since > time() - self::LOCK_TTL ) {
-				return false;
-			}
-			// Remove the stale lock only if nobody replaced it in the meantime, then try again.
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Compare-and-delete of the lock row.
-			$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE option_name = %s AND option_value = %s', $wpdb->options, $name, (string) $since ) );
+		if ( isset( self::$held_locks[ $blog_id ] ) ) {
+			return false;
 		}
 
-		return false;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Named lock tied to this connection; no core API provides one.
+		if ( '1' !== (string) $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK( %s, 0 )', self::lock_name( $blog_id ) ) ) ) {
+			return false;
+		}
+
+		self::$held_locks[ $blog_id ] = true;
+		return true;
 	}
 
 	/**
-	 * Releases the sync lock of one site.
+	 * Releases the sync lock of one site, if this request holds it.
+	 *
+	 * RELEASE_LOCK() only frees a lock taken by this connection, so it never frees another
+	 * request's lock.
 	 *
 	 * @param int $blog_id Source site ID.
 	 */
 	private static function release_site_lock( int $blog_id ): void {
 		global $wpdb;
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Deletes the lock row written with INSERT IGNORE.
-		$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE option_name = %s', $wpdb->options, self::LOCK_PREFIX . $blog_id ) );
+		if ( ! isset( self::$held_locks[ $blog_id ] ) ) {
+			return;
+		}
+
+		unset( self::$held_locks[ $blog_id ] );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Releases the named lock taken in acquire_site_lock().
+		$wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK( %s )', self::lock_name( $blog_id ) ) );
+	}
+
+	/**
+	 * Returns the name of the database lock for one site.
+	 *
+	 * Named locks are shared by every database on the server, so the name includes a hash of
+	 * this installation's database and table prefix. It stays under the 64-character limit.
+	 *
+	 * @since 1.1
+	 *
+	 * @param int $blog_id Source site ID.
+	 * @return string Lock name.
+	 */
+	public static function lock_name( int $blog_id ): string {
+		global $wpdb;
+		$database = defined( 'DB_NAME' ) ? (string) constant( 'DB_NAME' ) : '';
+
+		return self::LOCK_PREFIX . substr( md5( $database . '|' . $wpdb->base_prefix ), 0, 12 ) . '_' . $blog_id;
 	}
 
 	/**
