@@ -405,7 +405,7 @@ Dos commits son correcciones de seguimiento:
   - El exportador no las incluye.
 - **F-02.** Tras un borrado de datos, los avisos y el contacto compartido al aceptar usan el correo de la cuenta del autor de la ficha. Es una decisión del responsable, no una corrección.
 - **F-03.** Las demos de 1.0.0 se reconocen por `_radioedu_cover_url`, un metadato interno que solo escribe el importador. Una página del directorio creada por 1.0.0 ya no se adopta como demo, así que la desinstalación la deja.
-- **F-04.** La versión solo se guarda con todas las columnas y todos los índices (V-01). El fallo de migración solo queda registrado con `WP_DEBUG_LOG`; no hay aviso en el escritorio. Mientras la base de datos rechace el cambio, se reintenta como mucho cada 5 minutos.
+- **F-04.** La versión solo se guarda con todas las columnas y todos los índices (V-01). Desde la 1.2 (`fbfd1ec`), un fallo de migración se avisa en las pantallas del plugin a quien puede gestionar el sitio y en Salud del sitio; antes solo quedaba registrado con `WP_DEBUG_LOG`. Mientras la base de datos rechace el cambio, se reintenta como mucho cada 5 minutos.
 - **F-05.** Tras responder una propuesta desde el escritorio se vuelve a la primera página del listado.
 - **F-06.** Hay un cambio de comportamiento: los editores ven todas las propuestas, coherente con que ya podían responderlas. El selector de centro emisor tiene un tope de 2.000, el doble de la red más grande prevista (unas 1.000 radios), y no tiene buscador.
 - **F-08.** `sent` significa que `wp_mail()` aceptó el correo, no que llegara. No hay cola ni reintento.
@@ -566,7 +566,7 @@ La 1.2 se desarrolla en la rama `feat/1.2`:
 **Derivado de las correcciones:**
 
 - Automatizar la prueba de desinstalación de F-20 en un entorno desechable.
-- Avisar en el escritorio cuando falla la migración (F-04).
+- Avisar en el escritorio cuando falla la migración (F-04): hecho en la 1.2 (`fbfd1ec`), con un aviso y una prueba de Salud del sitio.
 - Crear una herramienta para revisar las respuestas sin autor anteriores a 1.1 (F-01).
 - Fusionar de forma asistida las fichas duplicadas que ya existan (F-19).
 - Revisar el plazo de conservación de propuestas con el responsable del tratamiento (F-22).
