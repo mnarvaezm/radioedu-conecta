@@ -358,8 +358,15 @@ class ColaboracionesController extends WP_REST_Controller {
 		if ( ! self::lock_rate( $user_id ) ) {
 			return self::rate_limit_error();
 		}
+		// A retry with the key of a proposal already stored (after a timeout, say) gets that
+		// proposal back: nothing new is stored, mailed or counted.
+		$idempotency = self::idempotency_transient( $user_id, (string) $request->get_param( 'idempotency_key' ) );
+		$replayed    = '' !== $idempotency ? get_transient( $idempotency ) : false;
 		try {
-			$colaboracion_id = $this->store_proposal( $request, $user_id );
+			$colaboracion_id = is_array( $replayed ) ? (int) $replayed['id'] : $this->store_proposal( $request, $user_id );
+			if ( '' !== $idempotency && ! is_array( $replayed ) && is_int( $colaboracion_id ) ) {
+				set_transient( $idempotency, [ 'id' => $colaboracion_id ], HOUR_IN_SECONDS );
+			}
 		} finally {
 			self::unlock_rate( $user_id );
 		}
@@ -369,8 +376,24 @@ class ColaboracionesController extends WP_REST_Controller {
 
 		// Disparar email de notificación al centro receptor. The message says what really happened:
 		// the proposal is stored either way, and the receiving school sees it in its panel.
-		$notification = NotificationService::send_proposal_email( $colaboracion_id );
-		$messages     = [
+		// A retry reports what happened to the first email; one that arrives while that email is
+		// still being sent gets the message that holds either way.
+		if ( is_array( $replayed ) ) {
+			$notification = is_string( $replayed['notificacion'] ?? null ) ? $replayed['notificacion'] : NotificationService::DISABLED;
+		} else {
+			$notification = NotificationService::send_proposal_email( $colaboracion_id );
+			if ( '' !== $idempotency ) {
+				set_transient(
+					$idempotency,
+					[
+						'id'           => $colaboracion_id,
+						'notificacion' => $notification,
+					],
+					HOUR_IN_SECONDS
+				);
+			}
+		}
+		$messages = [
 			NotificationService::SENT     => __( '¡Propuesta de match enviada con éxito! La emisora receptora recibirá una notificación para comenzar a coordinar el proyecto.', 'radioedu-conecta' ),
 			NotificationService::DISABLED => __( '¡Propuesta de match enviada con éxito! La emisora receptora la verá en su panel de Colaboraciones.', 'radioedu-conecta' ),
 			NotificationService::FAILED   => __( '¡Propuesta de match enviada con éxito! No se ha podido enviar el aviso por correo, pero la emisora receptora la verá en su panel de Colaboraciones.', 'radioedu-conecta' ),
@@ -382,9 +405,26 @@ class ColaboracionesController extends WP_REST_Controller {
 				'message'      => $messages[ $notification ] ?? $messages[ NotificationService::FAILED ],
 				'id'           => $colaboracion_id,
 				'notificacion' => $notification,
+				'repetida'     => is_array( $replayed ),
 			],
-			201
+			is_array( $replayed ) ? 200 : 201
 		);
+	}
+
+	/**
+	 * Name of the transient that remembers the proposal sent with an idempotency key.
+	 *
+	 * Scoped to the user, so a key never returns another user's proposal. It holds only the ID
+	 * of the proposal, for an hour.
+	 *
+	 * @since 1.2
+	 *
+	 * @param int    $user_id Sending user.
+	 * @param string $key     Idempotency key, already validated by the endpoint; '' for none.
+	 * @return string Transient name, or '' without a key.
+	 */
+	private static function idempotency_transient( int $user_id, string $key ): string {
+		return '' === $key ? '' : 'radioedu_conecta_idem_' . md5( $user_id . '|' . $key );
 	}
 
 	/**
@@ -781,6 +821,12 @@ class ColaboracionesController extends WP_REST_Controller {
 				'maxLength'         => ColaboracionesTable::MAX_FECHAS_LENGTH,
 				'default'           => '',
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
+			],
+			'idempotency_key'    => [
+				'description'       => __( 'Clave que identifica un envío: al repetirlo con la misma clave no se crea otra propuesta.', 'radioedu-conecta' ),
+				'type'              => 'string',
+				'pattern'           => '^[A-Za-z0-9-]{16,64}$',
 				'validate_callback' => 'rest_validate_request_arg',
 			],
 		];

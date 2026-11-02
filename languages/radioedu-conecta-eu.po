@@ -315,7 +315,7 @@ msgstr "Lankidetzak (matchak)"
 #: src/Admin/ColaboracionesAdminPage.php:89
 #: src/Admin/DemoDataImporter.php:84
 #: src/Rest/ColaboracionesController.php:350
-#: src/Rest/ColaboracionesController.php:652
+#: src/Rest/ColaboracionesController.php:692
 msgid "No tienes permisos para realizar esta acción."
 msgstr "Ez duzu ekintza hau egiteko baimenik."
 
@@ -324,7 +324,7 @@ msgid "Parámetros de respuesta no válidos."
 msgstr "Erantzunaren parametroak ez dira baliozkoak."
 
 #: src/Admin/ColaboracionesAdminPage.php:105
-#: src/Rest/ColaboracionesController.php:673
+#: src/Rest/ColaboracionesController.php:713
 msgid "No tienes permisos para responder a las propuestas de este centro."
 msgstr "Ez duzu ikastetxe honen proposamenei erantzuteko baimenik."
 
@@ -1032,7 +1032,7 @@ msgid "No se han podido eliminar todos los datos. Reintente la solicitud de borr
 msgstr "Ezin izan dira datu guztiak ezabatu. Egin berriro ezabatze-eskaera."
 
 #: src/Rest/CentrosController.php:358
-#: src/Rest/ColaboracionesController.php:711
+#: src/Rest/ColaboracionesController.php:751
 msgid "Número de página de resultados."
 msgstr "Emaitzen orri-zenbakia."
 
@@ -1084,79 +1084,79 @@ msgstr "Proposamenaren egoera berria."
 msgid "Mensaje de respuesta para el centro emisor."
 msgstr "Ikastetxe igorlearentzako erantzun-mezua."
 
-#: src/Rest/ColaboracionesController.php:538
+#: src/Rest/ColaboracionesController.php:578
 msgid "Has alcanzado el límite de propuestas por hora. Por favor, inténtalo más tarde."
 msgstr "Orduko proposamen-mugara iritsi zara. Saiatu berriro geroago."
 
-#: src/Rest/ColaboracionesController.php:430
+#: src/Rest/ColaboracionesController.php:470
 msgid "No puedes enviar una propuesta de colaboración a tu propio centro escolar."
 msgstr "Ezin diozu zure ikastetxeari lankidetza-proposamenik bidali."
 
-#: src/Rest/ColaboracionesController.php:438
+#: src/Rest/ColaboracionesController.php:478
 msgid "Por favor, describe brevemente la idea del proyecto conjunto."
 msgstr "Deskribatu laburki proiektu bateratuaren ideia."
 
-#: src/Rest/ColaboracionesController.php:454
+#: src/Rest/ColaboracionesController.php:494
 msgid "Uno de los centros especificados no es válido o no está publicado."
 msgstr "Zehaztutako ikastetxeetako bat ez da baliozkoa edo ez dago argitaratuta."
 
-#: src/Rest/ColaboracionesController.php:463
+#: src/Rest/ColaboracionesController.php:503
 msgid "No tienes permisos para enviar propuestas en nombre del centro emisor seleccionado."
 msgstr "Ez duzu hautatutako ikastetxe igorlearen izenean proposamenak bidaltzeko baimenik."
 
-#: src/Rest/ColaboracionesController.php:472
+#: src/Rest/ColaboracionesController.php:512
 msgid "Este centro escolar no está disponible actualmente para recibir nuevas propuestas de colaboración."
 msgstr "Ikastetxe hau ez dago une honetan lankidetza-proposamen berriak jasotzeko prest."
 
-#: src/Rest/ColaboracionesController.php:504
+#: src/Rest/ColaboracionesController.php:544
 msgid "No se pudo registrar la propuesta en la base de datos."
 msgstr "Ezin izan da proposamena datu-basean erregistratu."
 
-#: src/Rest/ColaboracionesController.php:374
+#: src/Rest/ColaboracionesController.php:397
 msgid "¡Propuesta de match enviada con éxito! La emisora receptora recibirá una notificación para comenzar a coordinar el proyecto."
 msgstr "Match proposamena bidali da! Irrati hartzaileak jakinarazpen bat jasoko du proiektua koordinatzen hasteko."
 
-#: src/Rest/ColaboracionesController.php:629
+#: src/Rest/ColaboracionesController.php:669
 msgid "Estado de la colaboración actualizado correctamente."
 msgstr "Lankidetzaren egoera behar bezala eguneratu da."
 
-#: src/Rest/ColaboracionesController.php:658
+#: src/Rest/ColaboracionesController.php:698
 msgid "El estado indicado no es válido."
 msgstr "Adierazitako egoera ez da baliozkoa."
 
-#: src/Rest/ColaboracionesController.php:667
+#: src/Rest/ColaboracionesController.php:707
 msgid "La propuesta de colaboración no existe."
 msgstr "Lankidetza-proposamena ez da existitzen."
 
-#: src/Rest/ColaboracionesController.php:680
+#: src/Rest/ColaboracionesController.php:720
 msgid "El mensaje de respuesta es demasiado largo."
 msgstr "Erantzun-mezua luzeegia da."
 
-#: src/Rest/ColaboracionesController.php:691
+#: src/Rest/ColaboracionesController.php:731
 msgid "Esta propuesta ya ha sido respondida y no puede modificarse."
 msgstr "Proposamen honi dagoeneko erantzun zaio, eta ezin da aldatu."
 
-#: src/Rest/ColaboracionesController.php:738
+#: src/Rest/ColaboracionesController.php:778
 msgid "ID del centro que envía la propuesta."
 msgstr "Proposamena bidaltzen duen ikastetxearen IDa."
 
-#: src/Rest/ColaboracionesController.php:746
+#: src/Rest/ColaboracionesController.php:786
 msgid "ID del centro que recibe la propuesta."
 msgstr "Proposamena jasotzen duen ikastetxearen IDa."
 
-#: src/Rest/ColaboracionesController.php:754
+#: src/Rest/ColaboracionesController.php:794
 msgid "Idea del proyecto conjunto."
 msgstr "Proiektu bateratuaren ideia."
 
-#: src/Rest/ColaboracionesController.php:763
+#: src/Rest/ColaboracionesController.php:803
 msgid "Curso o edades del alumnado participante."
 msgstr "Parte hartzen duten ikasleen maila edo adinak."
 
-#: src/Rest/ColaboracionesController.php:771
+#: src/Rest/ColaboracionesController.php:811
 msgid "Idiomas de trabajo del proyecto."
 msgstr "Proiektuaren lan-hizkuntzak."
 
-#: src/Rest/ColaboracionesController.php:779
+#: src/Rest/ColaboracionesController.php:819
 msgid "Fechas aproximadas del proyecto."
 msgstr "Proiektuaren gutxi gorabeherako datak."
 
@@ -1928,7 +1928,7 @@ msgid_plural "Se conservan %d respuestas anteriores a la versión 1.1 en propues
 msgstr[0] "1.1 bertsioa baino lehenagoko %d erantzun gordetzen da pertsona honen ikastetxeek jasotako proposamenetan, ez baita erregistratzen nork idatzi zuen. Berrikusi Lankidetzak (matchak) atalean, datu pertsonalik ba ote duen jakiteko."
 msgstr[1] "1.1 bertsioa baino lehenagoko %d erantzun gordetzen dira pertsona honen ikastetxeek jasotako proposamenetan, ez baita erregistratzen nork idatzi zituen. Berrikusi Lankidetzak (matchak) atalean, datu pertsonalik ba ote duten jakiteko."
 
-#: src/Rest/ColaboracionesController.php:686
+#: src/Rest/ColaboracionesController.php:726
 msgid "No se pudo guardar la respuesta. Inténtalo de nuevo."
 msgstr "Ezin izan da erantzuna gorde. Saiatu berriro."
 
@@ -1936,7 +1936,7 @@ msgstr "Ezin izan da erantzuna gorde. Saiatu berriro."
 msgid "Las propuestas no caducan: se conservan como historial compartido hasta que se atiende una solicitud de borrado de datos personales, que anonimiza la parte de la persona solicitante, o hasta que se desinstala el plugin."
 msgstr "Proposamenek ez dute iraungitze-datarik: historia partekatu gisa gordetzen dira datu pertsonalak ezabatzeko eskaera bat bete arte (eskatzailearen zatia anonimizatzen du) edo plugina desinstalatu arte."
 
-#: src/Rest/ColaboracionesController.php:719
+#: src/Rest/ColaboracionesController.php:759
 msgid "Número de propuestas por página."
 msgstr "Orri bakoitzeko proposamen kopurua."
 
@@ -1948,11 +1948,11 @@ msgstr "Lankidetza-proposamenaren erantzuna behar bezala gorde da."
 msgid "La respuesta a la propuesta de colaboración se ha guardado, pero no se ha podido enviar el aviso por correo al centro emisor."
 msgstr "Lankidetza-proposamenaren erantzuna gorde da, baina ezin izan zaio abisua posta elektronikoz bidali ikastetxe igorleari."
 
-#: src/Rest/ColaboracionesController.php:375
+#: src/Rest/ColaboracionesController.php:398
 msgid "¡Propuesta de match enviada con éxito! La emisora receptora la verá en su panel de Colaboraciones."
 msgstr "Match proposamena bidali da! Irrati hartzaileak bere Lankidetzak panelean ikusiko du."
 
-#: src/Rest/ColaboracionesController.php:376
+#: src/Rest/ColaboracionesController.php:399
 msgid "¡Propuesta de match enviada con éxito! No se ha podido enviar el aviso por correo, pero la emisora receptora la verá en su panel de Colaboraciones."
 msgstr "Match proposamena bidali da! Ezin izan da abisua posta elektronikoz bidali, baina irrati hartzaileak bere Lankidetzak panelean ikusiko du."
 
@@ -2043,3 +2043,7 @@ msgstr "OpenStreetMap-eko mapa kargatzea onartu duzu, nabigatzailea itxi arte."
 #: templates/directorio.php:179
 msgid "Retirar el consentimiento del mapa"
 msgstr "Kendu maparen baimena"
+
+#: src/Rest/ColaboracionesController.php:827
+msgid "Clave que identifica un envío: al repetirlo con la misma clave no se crea otra propuesta."
+msgstr "Bidalketa bat identifikatzen duen gakoa: gako berarekin errepikatzean ez da beste proposamenik sortzen."

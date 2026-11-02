@@ -53,7 +53,26 @@ const runtime = {
 	// Grows on every opening of the panel, so a reply to a proposal sent from an earlier opening is ignored.
 	drawerSession: 0,
 	drawerTimer: null,
+	// Key of the proposal being written and the station it goes to: a retry sends the same key,
+	// so the server does not store the proposal twice.
+	proposalKey: '',
+	proposalKeyFor: 0,
 };
+
+/**
+ * Creates a random key that identifies one proposal.
+ *
+ * Uses getRandomValues(), which, unlike randomUUID(), also works on pages served over HTTP.
+ *
+ * @return {string} 32 hexadecimal characters.
+ */
+function newProposalKey() {
+	const bytes = new Uint8Array( 16 );
+	window.crypto.getRandomValues( bytes );
+	return Array.from( bytes, ( byte ) =>
+		byte.toString( 16 ).padStart( 2, '0' )
+	).join( '' );
+}
 
 /**
  * Returns the store config printed by the server.
@@ -818,6 +837,11 @@ const { state, actions } = store( NAMESPACE, {
 			drawer.isSubmitting = false;
 			drawer.receptorId = receiver.id;
 			drawer.receptorLabel = receiver.label;
+			// The same station keeps its key, in case a proposal sent before reached the server.
+			if ( runtime.proposalKeyFor !== receiver.id ) {
+				runtime.proposalKey = newProposalKey();
+				runtime.proposalKeyFor = receiver.id;
+			}
 
 			// Without a session or the capability the panel opens with a notice instead of an alert().
 			let blocked = '';
@@ -907,6 +931,7 @@ const { state, actions } = store( NAMESPACE, {
 			drawer.isSubmitting = true;
 			// The panel may be closed and opened for another station before the reply arrives.
 			const session = runtime.drawerSession;
+			const key = runtime.proposalKey;
 			let reply = null;
 			try {
 				const response = yield window.fetch(
@@ -924,6 +949,7 @@ const { state, actions } = store( NAMESPACE, {
 							curso_edades: value( 'curso_edades' ),
 							idiomas: value( 'idiomas' ),
 							fechas_aprox: value( 'fechas_aprox' ),
+							idempotency_key: key,
 						} ),
 					}
 				);
@@ -931,6 +957,15 @@ const { state, actions } = store( NAMESPACE, {
 				reply = { ok: response.ok, result: result || {} };
 			} catch {
 				reply = null;
+			}
+			// Once stored, the next proposal needs its own key, even if the panel changed meanwhile.
+			if (
+				reply &&
+				reply.ok &&
+				reply.result.success &&
+				key === runtime.proposalKey
+			) {
+				runtime.proposalKey = newProposalKey();
 			}
 			if ( session !== runtime.drawerSession ) {
 				return;
