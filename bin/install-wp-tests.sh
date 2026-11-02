@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 # See https://raw.githubusercontent.com/wp-cli/scaffold-command/master/templates/install-wp-tests.sh
-# One local change, marked "Local change", so the update check below always reports a newer version.
+# Local changes, marked "Local change", so the update check below always reports a newer version:
+# the tests tag of x.y.0 releases, HTTPS only, checksums of the core archives, quoted paths, a
+# record of the installed version, and escaped database settings.
 
 # Set up colors for output
 RED="\033[0;31m"
@@ -23,23 +25,63 @@ WP_VERSION=${5-latest}
 SKIP_DB_CREATE=${6-false}
 
 TMPDIR=${TMPDIR-/tmp}
-TMPDIR=$(echo $TMPDIR | sed -e "s/\/$//")
+TMPDIR=$(echo "$TMPDIR" | sed -e "s/\/$//")
 WP_TESTS_DIR=${WP_TESTS_DIR-$TMPDIR/wordpress-tests-lib}
 WP_TESTS_FILE="$WP_TESTS_DIR"/includes/functions.php
 WP_CORE_DIR=${WP_CORE_DIR-$TMPDIR/wordpress}
 WP_CORE_FILE="$WP_CORE_DIR"/wp-settings.php
+# Local change: a file in each directory records the tests tag it was installed for, so a later
+# run for another version replaces the directory instead of reusing it.
+INSTALLED_TAG_FILE=.wp-tests-tag
 
+# Local change: HTTPS only, also after a redirect, and an HTTP error fails instead of saving the
+# error page as the download.
 download() {
     if command -v curl > /dev/null 2>&1; then
-        curl -L -s "$1" > "$2";
+        curl -fsSL --proto '=https' --proto-redir '=https' -o "$2" "$1"
         return $?
     elif command -v wget > /dev/null 2>&1; then
-        wget -nv -O "$2" "$1"
+        wget -nv --https-only -O "$2" "$1"
         return $?
     else
         echo -e "${RED}Error: Neither curl nor wget is installed.${RESET}"
         exit 1
     fi
+}
+
+# Local change: checks a wordpress.org core archive against the SHA-1 checksum that wordpress.org
+# publishes next to it. It catches a truncated or swapped download; both come over HTTPS from the
+# same origin. The GitHub archives of the test suite have no published checksum: they rely on
+# HTTPS and on the archive check before extracting.
+verify_core_archive() {
+	local archive_url=$1
+	local file=$2
+	local expected
+	local actual
+
+	download "${archive_url}.sha1" "$TMPDIR/wordpress.tar.gz.sha1"
+	expected=$(tr -d '[:space:]' < "$TMPDIR/wordpress.tar.gz.sha1")
+	rm -f "$TMPDIR/wordpress.tar.gz.sha1"
+	if command -v sha1sum > /dev/null 2>&1; then
+		actual=$(sha1sum "$file" | awk '{print $1}')
+	else
+		actual=$(shasum -a 1 "$file" | awk '{print $1}')
+	fi
+
+	if [[ ! $expected =~ ^[0-9a-f]{40}$ ]] || [ "$expected" != "$actual" ]; then
+		echo -e "${RED}Error:${RESET} The checksum of ${archive_url} does not match the one published by wordpress.org."
+		exit 1
+	fi
+}
+
+# Local change: the tests tag a directory was installed for, or nothing.
+installed_tag() {
+	cat "$1/$INSTALLED_TAG_FILE" 2> /dev/null
+}
+
+# Local change: escapes a value for the replacement of a sed command that uses "|" as delimiter.
+sed_escape() {
+	printf '%s' "$1" | sed 's/[\\|&]/\\&/g'
 }
 
 check_for_updates() {
@@ -96,9 +138,10 @@ elif [[ $WP_VERSION =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
 elif [[ $WP_VERSION == 'nightly' || $WP_VERSION == 'trunk' ]]; then
 	WP_TESTS_TAG="trunk"
 else
-	# http serves a single offer, whereas https serves multiple. we only want one
-	download http://api.wordpress.org/core/version-check/1.7/ /tmp/wp-latest.json
-	LATEST_VERSION=$(grep -oE '"version":"[^"]*' /tmp/wp-latest.json | head -n 1 | sed 's/"version":"//')
+	# Local change: over HTTPS the endpoint serves several offers, and the first is the latest
+	# release (the upstream script used HTTP, which serves only that one).
+	download https://api.wordpress.org/core/version-check/1.7/ "$TMPDIR/wp-latest.json"
+	LATEST_VERSION=$(grep -oE '"version":"[^"]*' "$TMPDIR/wp-latest.json" | head -n 1 | sed 's/"version":"//')
 	if [[ -z "$LATEST_VERSION" ]]; then
 		echo -e "${RED}Error: Latest WordPress version could not be found.${RESET}"
 		exit 1
@@ -114,32 +157,32 @@ set -ex
 
 install_wp() {
 
-	if [ -f $WP_CORE_FILE ]; then
+	if [ -f "$WP_CORE_FILE" ] && [ "$(installed_tag "$WP_CORE_DIR")" == "$WP_TESTS_TAG" ]; then
 		echo -e "${CYAN}WordPress is already installed.${RESET}"
 		return;
 	fi
 
 	echo -e "${CYAN}Installing WordPress...${RESET}"
 
-	rm -rf $WP_CORE_DIR
-	mkdir -p $WP_CORE_DIR
+	rm -rf "${WP_CORE_DIR:?}"
+	mkdir -p "$WP_CORE_DIR"
 
 	if [[ $WP_VERSION == 'nightly' || $WP_VERSION == 'trunk' ]]; then
-		download https://github.com/WordPress/wordpress/archive/refs/heads/master.tar.gz $TMPDIR/wordpress.tar.gz
-		tar --strip-components=1 -zxmf $TMPDIR/wordpress.tar.gz -C $WP_CORE_DIR
+		download https://github.com/WordPress/wordpress/archive/refs/heads/master.tar.gz "$TMPDIR/wordpress.tar.gz"
+		tar --strip-components=1 -zxmf "$TMPDIR/wordpress.tar.gz" -C "$WP_CORE_DIR"
 	else
 		if [ $WP_VERSION == 'latest' ]; then
 			local ARCHIVE_NAME='latest'
 		elif [[ $WP_VERSION =~ [0-9]+\.[0-9]+ ]]; then
 			# https serves multiple offers, whereas http serves single.
-			download https://api.wordpress.org/core/version-check/1.7/ $TMPDIR/wp-latest.json
+			download https://api.wordpress.org/core/version-check/1.7/ "$TMPDIR/wp-latest.json"
 			if [[ $WP_VERSION =~ [0-9]+\.[0-9]+\.[0] ]]; then
 				# version x.x.0 means the first release of the major version, so strip off the .0 and download version x.x
 				LATEST_VERSION=${WP_VERSION%??}
 			else
 				# otherwise, scan the releases and get the most up to date minor version of the major release
 				local VERSION_ESCAPED=`echo $WP_VERSION | sed 's/\./\\\\./g'`
-				LATEST_VERSION=$(grep -o '"version":"'$VERSION_ESCAPED'[^"]*' $TMPDIR/wp-latest.json | sed 's/"version":"//' | head -1)
+				LATEST_VERSION=$(grep -o '"version":"'$VERSION_ESCAPED'[^"]*' "$TMPDIR/wp-latest.json" | sed 's/"version":"//' | head -1)
 			fi
 			if [[ -z "$LATEST_VERSION" ]]; then
 				local ARCHIVE_NAME="wordpress-$WP_VERSION"
@@ -149,9 +192,11 @@ install_wp() {
 		else
 			local ARCHIVE_NAME="wordpress-$WP_VERSION"
 		fi
-		download https://wordpress.org/${ARCHIVE_NAME}.tar.gz  $TMPDIR/wordpress.tar.gz
-		tar --strip-components=1 -zxmf $TMPDIR/wordpress.tar.gz -C $WP_CORE_DIR
+		download "https://wordpress.org/${ARCHIVE_NAME}.tar.gz" "$TMPDIR/wordpress.tar.gz"
+		verify_core_archive "https://wordpress.org/${ARCHIVE_NAME}.tar.gz" "$TMPDIR/wordpress.tar.gz"
+		tar --strip-components=1 -zxmf "$TMPDIR/wordpress.tar.gz" -C "$WP_CORE_DIR"
 	fi
+	printf '%s\n' "$WP_TESTS_TAG" > "$WP_CORE_DIR/$INSTALLED_TAG_FILE"
 	echo -e "${GREEN}WordPress installed successfully.${RESET}"
 }
 
@@ -163,12 +208,12 @@ install_test_suite() {
 		local ioption='-i'
 	fi
 
-	# set up testing suite if it doesn't yet exist or only partially exists
-	if [ ! -f $WP_TESTS_FILE ]; then
+	# set up testing suite if it doesn't yet exist, only partially exists or is for another version
+	if [ ! -f "$WP_TESTS_FILE" ] || [ "$(installed_tag "$WP_TESTS_DIR")" != "$WP_TESTS_TAG" ]; then
 		echo -e "${CYAN}Installing test suite...${RESET}"
 		# set up testing suite
-		rm -rf $WP_TESTS_DIR
-		mkdir -p $WP_TESTS_DIR
+		rm -rf "${WP_TESTS_DIR:?}"
+		mkdir -p "$WP_TESTS_DIR"
 
 		if [[ $WP_TESTS_TAG == 'trunk' ]]; then
 			ref=trunk
@@ -204,6 +249,7 @@ install_test_suite() {
 		mv "$TMPDIR/wordpress-develop-${ref}/tests/phpunit/data" "$WP_TESTS_DIR"/
 		rm -rf "$TMPDIR/wordpress-develop-${ref}"
 		rm "$TMPDIR/wordpress-develop.tar.gz"
+		printf '%s\n' "$WP_TESTS_TAG" > "$WP_TESTS_DIR/$INSTALLED_TAG_FILE"
 		echo -e "${GREEN}Test suite installed.${RESET}"
 	else
 		echo -e "${CYAN}Test suite is already installed.${RESET}"
@@ -224,17 +270,18 @@ install_test_suite() {
 			exit 1
 		fi
 
-		download https://raw.githubusercontent.com/WordPress/wordpress-develop/${ref}/wp-tests-config-sample.php "$WP_TESTS_DIR"/wp-tests-config.php
+		download "https://raw.githubusercontent.com/WordPress/wordpress-develop/${ref}/wp-tests-config-sample.php" "$WP_TESTS_DIR"/wp-tests-config.php
 		# remove all forward slashes in the end
-		WP_CORE_DIR=$(echo $WP_CORE_DIR | sed "s:/\+$::")
+		WP_CORE_DIR=$(echo "$WP_CORE_DIR" | sed "s:/\+$::")
 		# escape special sed replacement characters in $WP_CORE_DIR (backslash, pipe, ampersand)
-		WP_CORE_DIR_ESCAPED=$(printf '%s' "$WP_CORE_DIR" | sed 's/[\\|&]/\\&/g')
+		WP_CORE_DIR_ESCAPED=$(sed_escape "$WP_CORE_DIR")
 		sed $ioption "s|dirname( __FILE__ ) . '/src/'|'${WP_CORE_DIR_ESCAPED}/'|" "$WP_TESTS_DIR"/wp-tests-config.php
 		sed $ioption "s|__DIR__ . '/src/'|'${WP_CORE_DIR_ESCAPED}/'|" "$WP_TESTS_DIR"/wp-tests-config.php
-		sed $ioption "s/youremptytestdbnamehere/$DB_NAME/" "$WP_TESTS_DIR"/wp-tests-config.php
-		sed $ioption "s/yourusernamehere/$DB_USER/" "$WP_TESTS_DIR"/wp-tests-config.php
-		sed $ioption "s/yourpasswordhere/$DB_PASS/" "$WP_TESTS_DIR"/wp-tests-config.php
-		sed $ioption "s|localhost|${DB_HOST}|" "$WP_TESTS_DIR"/wp-tests-config.php
+		# Local change: the database settings are escaped too, so a password with "/" or "&" works.
+		sed $ioption "s|youremptytestdbnamehere|$(sed_escape "$DB_NAME")|" "$WP_TESTS_DIR"/wp-tests-config.php
+		sed $ioption "s|yourusernamehere|$(sed_escape "$DB_USER")|" "$WP_TESTS_DIR"/wp-tests-config.php
+		sed $ioption "s|yourpasswordhere|$(sed_escape "$DB_PASS")|" "$WP_TESTS_DIR"/wp-tests-config.php
+		sed $ioption "s|localhost|$(sed_escape "$DB_HOST")|" "$WP_TESTS_DIR"/wp-tests-config.php
 		echo -e "${GREEN}Test suite configured.${RESET}"
 	else
 		echo -e "${CYAN}Test suite is already configured.${RESET}"
