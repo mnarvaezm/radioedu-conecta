@@ -91,10 +91,10 @@ class ColaboracionesAdminPage {
 
 		check_admin_referer( self::NONCE_ACTION, self::NONCE_NAME );
 
-		$colab_id  = isset( $_POST['colaboracion_id'] ) && is_scalar( $_POST['colaboracion_id'] ) ? absint( wp_unslash( $_POST['colaboracion_id'] ) ) : 0;
-		$estado    = isset( $_POST['estado'] ) ? sanitize_key( wp_unslash( $_POST['estado'] ) ) : '';
+		$colab_id = isset( $_POST['colaboracion_id'] ) && is_scalar( $_POST['colaboracion_id'] ) ? absint( wp_unslash( $_POST['colaboracion_id'] ) ) : 0;
+		$estado   = isset( $_POST['estado'] ) ? sanitize_key( wp_unslash( $_POST['estado'] ) ) : '';
+		// respond_to_proposal() rejects a reply longer than the column instead of cutting it short.
 		$respuesta = isset( $_POST['respuesta_mensaje'] ) ? sanitize_textarea_field( wp_unslash( $_POST['respuesta_mensaje'] ) ) : '';
-		$respuesta = mb_substr( $respuesta, 0, ColaboracionesTable::MAX_RESPUESTA_LENGTH );
 
 		if ( $colab_id <= 0 || ! in_array( $estado, ColaboracionesTable::RESPONSE_STATUSES, true ) ) {
 			wp_die( esc_html__( 'Parámetros de respuesta no válidos.', 'radioedu-conecta' ), '', [ 'response' => 400 ] );
@@ -108,7 +108,15 @@ class ColaboracionesAdminPage {
 		$result = ColaboracionesController::respond_to_proposal( $colab_id, $estado, $respuesta );
 		if ( is_wp_error( $result ) ) {
 			$error_data = $result->get_error_data();
-			wp_die( esc_html( $result->get_error_message() ), '', [ 'response' => is_array( $error_data ) ? (int) $error_data['status'] : 500 ] );
+			// The back link returns to the form, where the browser usually keeps the text written.
+			wp_die(
+				esc_html( $result->get_error_message() ),
+				'',
+				[
+					'response'  => is_array( $error_data ) ? (int) $error_data['status'] : 500,
+					'back_link' => true,
+				]
+			);
 		}
 
 		$redirect_url = add_query_arg(
@@ -251,7 +259,7 @@ class ColaboracionesAdminPage {
 											<textarea
 												id="respuesta_mensaje_<?php echo esc_attr( (string) $colab_id ); ?>"
 												name="respuesta_mensaje"
-												maxlength="2000"
+												maxlength="<?php echo esc_attr( (string) ColaboracionesTable::MAX_RESPUESTA_LENGTH ); ?>"
 												rows="2"
 												style="width: 100%; margin-bottom: 6px;"
 												placeholder="<?php esc_attr_e( 'Escribe un mensaje para el centro emisor...', 'radioedu-conecta' ); ?>"

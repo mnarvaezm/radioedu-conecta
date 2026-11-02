@@ -673,7 +673,9 @@ class ColaboracionesController extends WP_REST_Controller {
 			return new WP_Error( 'radioedu_forbidden_center', __( 'No tienes permisos para responder a las propuestas de este centro.', 'radioedu-conecta' ), [ 'status' => 403 ] );
 		}
 
-		$respuesta = sanitize_textarea_field( $respuesta );
+		// A form sends each line break as CRLF, which the maxlength of its field counts as one
+		// character, so line breaks are counted and stored as LF.
+		$respuesta = str_replace( [ "\r\n", "\r" ], "\n", sanitize_textarea_field( $respuesta ) );
 		if ( mb_strlen( $respuesta ) > ColaboracionesTable::MAX_RESPUESTA_LENGTH ) {
 			return new WP_Error( 'radioedu_invalid_response', __( 'El mensaje de respuesta es demasiado largo.', 'radioedu-conecta' ), [ 'status' => 400 ] );
 		}

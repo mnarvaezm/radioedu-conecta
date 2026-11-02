@@ -341,6 +341,7 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
 * **Permission:** Target station coordinator (`ColaboracionesController::user_can_manage_center( $centro_receptor_id )`) or Admin (`manage_radioedu`).
 * **Result:** Updates table record (`aceptada` or `rechazada`), sets `updated_at`, and triggers `NotificationService::send_status_update_email()`. The response includes `notificacion` with the same values as for proposals, and the **Colaboraciones (Matches)** screen shows a success or warning notice to match.
 * **Single response:** Only `pendiente` proposals can be answered (`ColaboracionesTable::resolve_pending()` conditions the `UPDATE` on `estado = 'pendiente'`). Unknown IDs return `404 radioedu_not_found`; already answered proposals return `409 radioedu_already_resolved` and no email is re-sent. The admin screen (`admin-post.php?action=radioedu_respond_match`) shares the same logic through `ColaboracionesController::respond_to_proposal()`.
+* **Reply length:** at most `ColaboracionesTable::MAX_RESPUESTA_LENGTH` (2,000) characters, with line breaks counted and stored as LF. A form sends them as CRLF, which the `maxlength` of its field counts as one character. A longer reply is rejected with `400 radioedu_invalid_response`, in REST and on the admin screen, where the error page links back to the form; it is never cut short.
 
 ---
 
