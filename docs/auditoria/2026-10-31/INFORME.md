@@ -581,7 +581,11 @@ La 1.2 se desarrolla en la rama `feat/1.2`:
 
 **Antes de publicar:**
 
-- Generar `radioedu-conecta_1.2.zip` cuando la 1.2 esté terminada. El ZIP actual, `radioedu-conecta_1.1.zip`, corresponde a la 1.1 fusionada en `main`.
+- Generar `radioedu-conecta_1.2.zip`: hecho con el código de `48962cd`.
+  - Tiene 101 ficheros, idénticos a ese commit, sin `vendor`, `tests`, `docs` ni herramientas de desarrollo.
+  - Se instaló en QA desde el propio ZIP y Plugin Check no dio avisos.
+  - Con `WP_DEBUG`, `WP_DEBUG_LOG` y `SCRIPT_DEBUG` activos, la batería E2E pasó (19 de 19 con Twenty Twenty-Five y 18 de 18 con YOOtheme) sin ningún aviso en el registro. Se comprobó que el registro funcionaba.
+  - El ZIP de la 1.1 se retiró de la raíz del repositorio; se puede regenerar desde `main`.
 - Pedir una revisión nativa de las traducciones, en especial de las 13 cadenas nuevas o modificadas en este seguimiento:
   - las 12 de las correcciones;
   - la palabra clave «podcast» del bloque.
