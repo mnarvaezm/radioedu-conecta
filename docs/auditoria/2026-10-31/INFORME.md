@@ -413,7 +413,7 @@ Dos commits son correcciones de seguimiento:
 - **F-13.** Se comprobó a 320 px. No se probó el zoom al 400 % por separado ni se hizo una auditoría WCAG completa.
 - **F-14.** Si el directorio está en varias páginas, se guarda la primera que se muestre, mientras siga siendo válida.
 - **F-15.** La descripción se imprime como `the_content()`, así que depende de que el core filtre con kses al guardar. Quien tiene `unfiltered_html` puede publicar cualquier HTML, como en el resto de WordPress.
-- **F-16.** La alternativa sin JavaScript es un enlace al archivo del tipo de contenido, que genera el tema. No es un directorio paginado con filtros.
+- **F-16.** En la 1.1, la alternativa sin JavaScript era un enlace al archivo del tipo de contenido, que genera el tema, no un directorio paginado con filtros. Desde la 1.2, el directorio funciona sin JavaScript: el servidor pinta los resultados, los filtros se envían por GET y las páginas son enlaces. El mapa, los favoritos y las propuestas siguen necesitando JavaScript.
 - **F-19.** Desde R-02, el bloqueo es un bloqueo con nombre de MySQL/MariaDB (`GET_LOCK`) ligado a la conexión, sin caducidad.
   - Los proxies de base de datos que comparten conexiones entre peticiones, como ProxySQL con multiplexación, deben mantener cada petición en una sola conexión.
   - Las fichas duplicadas que ya existan no se fusionan.
@@ -529,6 +529,8 @@ La 1.2 se desarrolla en la rama `feat/1.2`:
     - El envío solo sale de un `submit` del formulario del panel, y kses elimina `<form>` del contenido de esos autores.
     - El panel solo se abre para una radio que el servidor ha listado, con el nombre que dio el servidor.
   - **Pruebas.** Una E2E cubre la ficha y una entrada con el directorio, y falla con el código anterior.
+- **Block Bindings** (`f8163a4`). Nueva fuente `radioedu-conecta/centro` con los datos públicos de la radio y un patrón «Listado de radios» para el bloque Bucle de consulta. El responsable eligió no convertir la ficha en una plantilla de bloques, porque sus sitios usan YOOtheme, un tema clásico, y la ficha conserva su plantilla PHP.
+  - **Superficie.** La fuente es de solo lectura y no tiene claves para el coordinador. Solo da valores de radios que el visitante puede ver, con las mismas comprobaciones que `core/post-meta`. Escapa el texto según el atributo y limita las URL a `http` y `https`. Una prueba con un `javascript:` guardado antes de la sanitización lo confirma.
 
 ### Pendiente
 
@@ -565,4 +567,8 @@ La 1.2 se desarrolla en la rama `feat/1.2`:
   - la palabra clave «podcast» del bloque.
 
   Las demás cadenas de `block.json` reutilizan traducciones que ya existían, ahora con contexto.
+
+  La 1.2 añade siete más:
+  - tres del directorio sin JavaScript;
+  - cuatro de la fuente de Block Bindings y su patrón.
 - Decidir qué hacer con `docs/auditoria/2026-11-01-revision/`, la carpeta de la segunda revisión, que sigue sin versionar. La de esta auditoría ya está versionada, con las evidencias en UTF-8.
