@@ -222,6 +222,7 @@ final class DirectoryStore {
 			],
 			'flags'        => self::FLAG_ICONS,
 			'defaultLogo'  => self::DEFAULT_LOGO,
+			'favoritesKey' => self::favorites_key(),
 			'i18n'         => [
 				/* translators: %s: Number of schools found. */
 				'resultsCount'     => __( 'Resultados (%s centros)', 'radioedu-conecta' ),
@@ -419,6 +420,26 @@ final class DirectoryStore {
 		}
 
 		return $fields;
+	}
+
+	/**
+	 * Key under which the browser keeps the favourite stations of this site.
+	 *
+	 * The sites of a network in subdirectories share one origin, and so one localStorage, while
+	 * each site numbers its stations on its own: with a shared key, a favourite saved on one site
+	 * marked the station with the same ID on another. The main site of the main network, and a
+	 * single site, keep the key the favourites were already saved under.
+	 *
+	 * @since 1.2
+	 *
+	 * @return string Storage key.
+	 */
+	public static function favorites_key(): string {
+		if ( ! is_multisite() || is_main_site( null, get_main_network_id() ) ) {
+			return 'radioedu_favoritos';
+		}
+
+		return 'radioedu_conecta_favoritos_' . get_current_blog_id();
 	}
 
 	/**

@@ -77,7 +77,8 @@ test.describe( 'Bloque Directorio Traspasando Fronteras', () => {
 			card.locator( '.radioedu-btn-match .radioedu-svg-icon--send' )
 		).toBeVisible();
 
-		// The favourite button swaps icons cloned from the server-rendered <template>.
+		// The favourite button shows one of the two server-rendered icons, and the browser keeps
+		// the favourite under the key of a single site.
 		const favorite = card.locator( '.radioedu-card-fav-btn' );
 		await expect(
 			favorite.locator( '.radioedu-svg-icon--star-empty' )
@@ -87,5 +88,9 @@ test.describe( 'Bloque Directorio Traspasando Fronteras', () => {
 		await expect(
 			favorite.locator( '.radioedu-svg-icon--star-filled' )
 		).toBeVisible();
+		const saved = await page.evaluate( () =>
+			JSON.parse( window.localStorage.getItem( 'radioedu_favoritos' ) )
+		);
+		expect( saved ).toContain( centroIds[ 0 ] );
 	} );
 } );

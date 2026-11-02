@@ -165,14 +165,25 @@ async function announce( message, politeness = 'polite' ) {
 }
 
 /**
- * Reads the favourite stations kept in this browser.
+ * Key under which this browser keeps the favourites of this site.
+ *
+ * The sites of a network in subdirectories share one localStorage, so each has its own key.
+ *
+ * @return {string} Storage key.
+ */
+function favoritesKey() {
+	return String( config().favoritesKey || 'radioedu_favoritos' );
+}
+
+/**
+ * Reads the favourite stations kept in this browser for this site.
  *
  * @return {Array<number>} Station IDs.
  */
 function readFavorites() {
 	try {
 		const parsed = JSON.parse(
-			window.localStorage.getItem( 'radioedu_favoritos' ) || '[]'
+			window.localStorage.getItem( favoritesKey() ) || '[]'
 		);
 		return Array.isArray( parsed ) ? parsed : [];
 	} catch {
@@ -729,7 +740,7 @@ const { state, actions } = store( NAMESPACE, {
 				: [ ...state.favorites, id ];
 			try {
 				window.localStorage.setItem(
-					'radioedu_favoritos',
+					favoritesKey(),
 					JSON.stringify( favorites )
 				);
 				state.favorites = favorites;

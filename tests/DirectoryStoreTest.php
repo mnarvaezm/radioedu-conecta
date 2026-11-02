@@ -270,6 +270,21 @@ class DirectoryStoreTest extends WP_UnitTestCase {
 		$this->assertSame( 'Plain <b>text</b>', DirectoryStore::remove_store_directives( 'Plain <b>text</b>' ) );
 	}
 
+	public function test_each_site_of_a_network_keeps_its_own_favourites(): void {
+		// A single site, and the main site of a network, keep the key favourites were saved under.
+		$this->assertSame( 'radioedu_favoritos', DirectoryStore::config()['favoritesKey'] );
+		if ( ! is_multisite() ) {
+			return;
+		}
+
+		$site = self::factory()->blog->create();
+		switch_to_blog( $site );
+		$key = DirectoryStore::config()['favoritesKey'];
+		restore_current_blog();
+
+		$this->assertSame( 'radioedu_conecta_favoritos_' . $site, $key );
+	}
+
 	public function test_the_module_is_registered_from_the_build(): void {
 		// Core registers @wordpress/interactivity on wp_default_scripts, which fires when wp_scripts()
 		// first runs; a module whose dependency is missing is not printed.
