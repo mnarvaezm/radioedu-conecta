@@ -561,7 +561,15 @@ La 1.2 se desarrolla en la rama `feat/1.2`:
     - reinstalación cuando cambia la versión.
 
     También se escapan los datos de la base de datos. `wp-env` instala WordPress 7.1.4 (`5bb9cb8`) y no la última versión. Las acciones de la CI siguen por versión mayor (`@v4`), no por commit, por decisión del responsable.
-  - Más E2E: parcial. Las pruebas de navegador de este seguimiento ya están en `tests/e2e`: mapa, filtros y paginación, panel de propuesta, 320 px y sin JavaScript. Faltan envío y respuesta reales de propuestas, errores y reintentos, privacidad, cupo de radios y sincronización de red.
+  - Más E2E: hecho en la 1.2, salvo la sincronización de red. `colaboraciones.spec.js` (`51a995f`) cubre, sin interceptar peticiones:
+    - el envío y la respuesta reales de propuestas entre dos coordinadores;
+    - los contactos compartidos solo tras aceptar;
+    - un reintento tras una respuesta perdida;
+    - los permisos de suscriptor y de visitante;
+    - la privacidad de los datos del coordinador;
+    - el límite de radios por usuario.
+
+    La suite pasa en QA con Twenty Twenty-Five (19 de 19) y con YOOtheme, y en `wp-env` con WordPress 7.1.4 (19 de 19). La sincronización de red necesita una red multisitio, que `wp-env` no monta. La cubren PHPUnit y una prueba de navegador hecha a mano en una red desechable (`320a034`).
 
 **Derivado de las correcciones:**
 
