@@ -271,6 +271,9 @@ class DirectoryStoreTest extends WP_UnitTestCase {
 	}
 
 	public function test_the_module_is_registered_from_the_build(): void {
+		// Core registers @wordpress/interactivity on wp_default_scripts, which fires when wp_scripts()
+		// first runs; a module whose dependency is missing is not printed.
+		wp_scripts();
 		DirectoryStore::register_module();
 		wp_enqueue_script_module( DirectoryStore::MODULE_ID );
 
