@@ -551,7 +551,13 @@ La 1.2 se desarrolla en la rama `feat/1.2`:
   - Carga reducida del mapa, `prefers-reduced-motion` y prueba con lector de pantalla: parcial. Desde la 1.2, Leaflet solo se descarga cuando el visitante acepta el mapa, y se respeta `prefers-reduced-motion` (`5c6ae72`). Sigue pendiente la prueba con lector de pantalla.
   - Respuestas demasiado largas en el escritorio, que se truncan en vez de rechazarse: hecha en la 1.2 (`0e7411a`).
   - Paginación de términos en el render y en la desinstalación: hecha en la 1.2 (`7d16234`), con un tope de 1.000 términos por filtro y lotes de 100 al desinstalar. No se han movido tareas a segundo plano.
-  - Entorno y CI reproducibles, y revisión de `bin/install-wp-tests.sh`: parcial. En la 1.2 se corrigió que no instalara las pruebas de una versión x.y.0 (`b78f548`). Siguen los puntos de la auditoría: HTTP para resolver `latest`, descargas sin comprobar el hash, rutas sin comillas en `rm` y reutilización de una instalación sin comprobar su versión.
+  - Entorno y CI reproducibles, y revisión de `bin/install-wp-tests.sh`: parcial. En la 1.2 se corrigió que no instalara las pruebas de una versión x.y.0 (`b78f548`). Los cuatro puntos de la auditoría se corrigieron después (`94be5be`):
+    - todo por HTTPS;
+    - comprobación SHA-1 de los archivos de wordpress.org;
+    - rutas entre comillas;
+    - reinstalación cuando cambia la versión.
+
+    También se escapan los datos de la base de datos. Queda fijar versiones: `wp-env` usa la última versión de WordPress (`"core": null`) y las acciones de la CI van por versión mayor (`@v4`), no por commit.
   - Más E2E: parcial. Las pruebas de navegador de este seguimiento ya están en `tests/e2e`: mapa, filtros y paginación, panel de propuesta, 320 px y sin JavaScript. Faltan envío y respuesta reales de propuestas, errores y reintentos, privacidad, cupo de radios y sincronización de red.
 
 **Derivado de las correcciones:**
