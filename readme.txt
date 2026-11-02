@@ -109,6 +109,13 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * Developers: `window.radioeduConectaData` and the `radioedu-directorio-js` and `radioedu-leaflet-js` handles are gone. The module is `radioedu-conecta/directorio`; its config and state live in the `radioedu-conecta/directorio` store namespace.
 * The centros REST endpoint returns names, places and tags as plain text: a station with an apostrophe or an "&" in its name no longer shows `&#8217;` or `&amp;` on its card.
 * New Block Bindings source "Datos de la radio" (`radioedu-conecta/centro`): paragraphs, headings, images and buttons can show the public data of a station (location, ages, languages, tags, availability, podcast, website, logo, cover image and profile link), never the coordinator's. A block whose value is empty is not shown. New "Listado de radios" pattern for the Query Loop block, which lists the stations with that data.
+* Visitors can withdraw the map consent with "Retirar el consentimiento del mapa": the map goes away and stops downloading OpenStreetMap images. The map view says the consent lasts until the browser is closed.
+* With the system "reduce motion" preference, the directory, the profile, the proposal panel and the map have no animations.
+* In a Multisite network with subdirectories, each site keeps its own favourites; before, a favourite marked the station with the same number on the other sites.
+* A proposal sent again after a network error or a timeout is no longer stored, notified or counted twice.
+* On the "Colaboraciones (Matches)" screen, a reply that is too long is rejected with a notice, as in REST, instead of being cut short; line breaks count as one character.
+* The directory filters load at most 1,000 terms, and uninstall deletes terms in batches.
+* Developers: `POST /colaboraciones` accepts `idempotency_key` and answers `repetida`; the browser favourites key comes in the store config (`favoritesKey`).
 
 = 1.1 =
 * Requires WordPress 7.1.

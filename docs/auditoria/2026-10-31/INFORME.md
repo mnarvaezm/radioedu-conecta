@@ -531,6 +531,10 @@ La 1.2 se desarrolla en la rama `feat/1.2`:
   - **Pruebas.** Una E2E cubre la ficha y una entrada con el directorio, y falla con el código anterior.
 - **Block Bindings** (`f8163a4`). Nueva fuente `radioedu-conecta/centro` con los datos públicos de la radio y un patrón «Listado de radios» para el bloque Bucle de consulta. El responsable eligió no convertir la ficha en una plantilla de bloques, porque sus sitios usan YOOtheme, un tema clásico, y la ficha conserva su plantilla PHP.
   - **Superficie.** La fuente es de solo lectura y no tiene claves para el coordinador. Solo da valores de radios que el visitante puede ver, con las mismas comprobaciones que `core/post-meta`. Escapa el texto según el atributo y limita las URL a `http` y `https`. Una prueba con un `javascript:` guardado antes de la sanitización lo confirma.
+- **Abilities API.** El responsable decidió no incluirla en la 1.2.
+- **Endurecimiento.** Se aplicaron las recomendaciones de idempotencia, favoritos por sitio, retirada del consentimiento del mapa, movimiento reducido, respuestas largas y paginación de términos (estado en «Pendiente»). Al probarlas apareció una prueba de PHPUnit que solo pasaba tras otras clases (`bcf8c0a`).
+  - Una prueba de navegador simuló una respuesta perdida después de que el servidor guardara la propuesta. El reenvío con la misma clave dejó una sola propuesta.
+  - Una desinstalación real en QA con 407 términos del plugin no dejó términos del plugin ni huérfanos.
 
 ### Pendiente
 
@@ -542,11 +546,11 @@ La 1.2 se desarrolla en la rama `feat/1.2`:
   - consumo a gran escala.
 - Las recomendaciones de endurecimiento:
   - Cursor estable: pendiente. El listado de propuestas y la revisión de fichas huérfanas tienen un orden determinista (fecha e ID, o ID), pero paginan por desplazamiento (`OFFSET`, `paged`), igual que la sincronización por lotes. Si el conjunto cambia entre dos páginas, un elemento puede saltarse o repetirse. Una versión anterior de este seguimiento lo daba por hecho; era inexacto.
-  - Clave de idempotencia al crear propuestas: pendiente.
-  - Favoritos por sitio y retirada del consentimiento del mapa: pendiente.
-  - Carga reducida del mapa, `prefers-reduced-motion` y prueba con lector de pantalla: parcial. Desde la 1.2, Leaflet solo se descarga cuando el visitante acepta el mapa; siguen pendientes `prefers-reduced-motion` y la prueba con lector de pantalla.
-  - Respuestas demasiado largas en el escritorio, que se truncan en vez de rechazarse: pendiente.
-  - Paginación de términos en el render y en la desinstalación: pendiente.
+  - Clave de idempotencia al crear propuestas: hecha en la 1.2 (`c368cd3`).
+  - Favoritos por sitio y retirada del consentimiento del mapa: hechas en la 1.2 (`024a451`, `ded2808`).
+  - Carga reducida del mapa, `prefers-reduced-motion` y prueba con lector de pantalla: parcial. Desde la 1.2, Leaflet solo se descarga cuando el visitante acepta el mapa, y se respeta `prefers-reduced-motion` (`5c6ae72`). Sigue pendiente la prueba con lector de pantalla.
+  - Respuestas demasiado largas en el escritorio, que se truncan en vez de rechazarse: hecha en la 1.2 (`0e7411a`).
+  - Paginación de términos en el render y en la desinstalación: hecha en la 1.2 (`7d16234`), con un tope de 1.000 términos por filtro y lotes de 100 al desinstalar. No se han movido tareas a segundo plano.
   - Entorno y CI reproducibles, y revisión de `bin/install-wp-tests.sh`: parcial. En la 1.2 se corrigió que no instalara las pruebas de una versión x.y.0 (`b78f548`). Siguen los puntos de la auditoría: HTTP para resolver `latest`, descargas sin comprobar el hash, rutas sin comillas en `rm` y reutilización de una instalación sin comprobar su versión.
   - Más E2E: parcial. Las pruebas de navegador de este seguimiento ya están en `tests/e2e`: mapa, filtros y paginación, panel de propuesta, 320 px y sin JavaScript. Faltan envío y respuesta reales de propuestas, errores y reintentos, privacidad, cupo de radios y sincronización de red.
 

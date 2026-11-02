@@ -128,6 +128,13 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * Desarrolladores: desaparecen `window.radioeduConectaData` y los handles `radioedu-directorio-js` y `radioedu-leaflet-js`. El módulo es `radioedu-conecta/directorio`, y su configuración y su estado se leen con `getConfig()` y `store()` del espacio de nombres `radioedu-conecta/directorio`.
 * La REST de centros devuelve el nombre, la ubicación y las etiquetas como texto plano: una emisora con un apóstrofo o un «&» en el nombre ya no muestra `&#8217;` o `&amp;` en su tarjeta.
 * Nueva fuente de Block Bindings **Datos de la radio** (`radioedu-conecta/centro`): los párrafos, títulos, imágenes y botones pueden mostrar los datos públicos de una radio (ubicación, edades, idiomas, etiquetas, disponibilidad, podcast, web, logo, imagen de cabecera y enlace a la ficha), nunca los del coordinador. Un bloque cuyo dato está vacío no se muestra. Nuevo patrón **Listado de radios** para el bloque Bucle de consulta, que lista las radios con esos datos.
+* El visitante puede retirar el consentimiento del mapa con **Retirar el consentimiento del mapa**: el mapa desaparece y deja de descargar imágenes de OpenStreetMap. La vista de mapa indica que la aceptación dura hasta que se cierra el navegador.
+* Con la preferencia del sistema «reducir movimiento», el directorio, la ficha, el panel de propuesta y el mapa no tienen animaciones.
+* En una red multisitio con subdirectorios, cada sitio guarda sus propios favoritos; antes, un favorito marcaba la radio con el mismo número en los demás sitios.
+* Una propuesta que se vuelve a enviar tras un error de red o un tiempo de espera ya no se guarda, se notifica ni se cuenta dos veces.
+* En **Colaboraciones (Matches)**, una respuesta demasiado larga se rechaza con un aviso, como en la REST, en lugar de cortarse; los saltos de línea cuentan como un carácter.
+* Los filtros del directorio cargan como mucho 1.000 términos, y la desinstalación borra los términos por lotes.
+* Desarrolladores: `POST /colaboraciones` acepta `idempotency_key` y responde `repetida`; la clave de favoritos del navegador llega en la configuración del store (`favoritesKey`).
 
 ### 1.1
 * Requiere WordPress 7.1.
