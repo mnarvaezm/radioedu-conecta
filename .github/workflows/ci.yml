@@ -154,6 +154,13 @@ jobs:
           WP_MULTISITE: ${{ matrix.multisite }}
         run: vendor/bin/phpunit
 
+      # Uninstall drops real tables, which commits the per-test transaction, so its test runs in
+      # a process of its own, after the rest (phpunit.xml.dist leaves the group out).
+      - name: Run the uninstall test
+        env:
+          WP_MULTISITE: ${{ matrix.multisite }}
+        run: vendor/bin/phpunit --group uninstall
+
   plugin-check:
     name: WordPress Plugin Check (PCP)
     runs-on: ubuntu-latest

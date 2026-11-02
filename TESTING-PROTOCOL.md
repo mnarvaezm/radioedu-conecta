@@ -106,13 +106,15 @@ composer stan               # PHPStan nivel 6 con szepeviktor/phpstan-wordpress
 bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 latest
 vendor/bin/phpunit                    # sitio individual
 WP_MULTISITE=1 vendor/bin/phpunit     # multisite
+vendor/bin/phpunit --group uninstall                    # desinstalación real, en su propio proceso
+WP_MULTISITE=1 vendor/bin/phpunit --group uninstall     # desinstalación real en una red
 npm ci && npm run lint:js && npm run lint:css
 npm run build && git diff --exit-code -- build/   # build/ versionado y al día
 npx playwright install chromium && npm run wp-env start && npm run test:e2e   # E2E en http://localhost:8889
 npm audit --audit-level=high && composer audit
 ```
 
-La CI ejecuta PHPUnit, en sitio único y en multisitio, con PHP 8.1 a 8.5 sobre la última versión de WordPress, y con PHP 8.1 sobre WordPress 7.1.0, la combinación más antigua que admite el plugin. Para una versión concreta, pásala a `bin/install-wp-tests.sh` en lugar de `latest`, por ejemplo `7.1.0`. El script es una copia del de WP-CLI con un cambio local: las etiquetas de `wordpress-develop` conservan el `.0`, y el original las busca sin él.
+La CI ejecuta PHPUnit, en sitio único y en multisitio, con PHP 8.1 a 8.5 sobre la última versión de WordPress, y con PHP 8.1 sobre WordPress 7.1.0, la combinación más antigua que admite el plugin. Después ejecuta aparte la prueba de desinstalación (`--group uninstall`, auditoría F-20). Borra las tablas de verdad, y eso confirma la transacción de la prueba. Por eso `phpunit.xml.dist` la deja fuera de la ejecución normal, y el siguiente arranque de PHPUnit reinstala la base de datos de pruebas. Para una versión concreta, pásala a `bin/install-wp-tests.sh` en lugar de `latest`, por ejemplo `7.1.0`. El script es una copia del de WP-CLI con un cambio local: las etiquetas de `wordpress-develop` conservan el `.0`, y el original las busca sin él.
 
 Plugin Check debe ejecutarse sobre la copia distribuible (respetando `.distignore`), no sobre el repositorio completo: `wp plugin check radioedu-conecta --ignore-codes=plugin_updater_detected`. Ese código lo provoca la cabecera `Update URI`, que el plugin declara porque no se publica en WordPress.org; el resto de la comprobación de actualizadores sigue activo. Comprueba también que, sin la carpeta `build/`, el directorio y el editor de centros cargan sin errores fatales: pierden la interactividad, y el directorio muestra el número de radios y el enlace a su listado.
 

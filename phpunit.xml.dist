@@ -14,5 +14,10 @@
 			<directory suffix="Test.php">./tests</directory>
 		</testsuite>
 	</testsuites>
+	<!-- The uninstall test drops tables, which commits the per-test transaction, so it runs on its own: phpunit with the group option set to uninstall. -->
+	<groups>
+		<exclude>
+			<group>uninstall</group>
+		</exclude>
+	</groups>
 </phpunit>
-
