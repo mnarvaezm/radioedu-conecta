@@ -143,6 +143,30 @@ test.describe( 'Directorio: robustez', () => {
 		await expect.poll( markers, { timeout: 30_000 } ).toBeGreaterThan( 0 );
 	} );
 
+	test( 'con movimiento reducido no hay transiciones ni animaciones', async ( {
+		page,
+	} ) => {
+		await page.emulateMedia( { reducedMotion: 'reduce' } );
+		await page.goto( directoryUrl );
+
+		const card = page.locator( '.radioedu-card' ).first();
+		await card.hover();
+		await expect( card ).toHaveCSS( 'transform', 'none' );
+		await expect( page.locator( '#radioedu-match-drawer' ) ).toHaveCSS(
+			'transition-duration',
+			'0s'
+		);
+
+		// Leaflet adds this class to a map with fade animations.
+		await page.click( '#radioedu-btn-toggle-map' );
+		await page.click( '#radioedu-btn-accept-map' );
+		const map = page.locator( '#radioedu-leaflet-map' );
+		await expect( map ).toHaveClass( /leaflet-container/, {
+			timeout: 30_000,
+		} );
+		await expect( map ).not.toHaveClass( /leaflet-fade-anim/ );
+	} );
+
 	test( '«Cargar más» conserva los filtros de la búsqueda mostrada', async ( {
 		page,
 	} ) => {

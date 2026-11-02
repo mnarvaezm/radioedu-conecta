@@ -1074,3 +1074,21 @@
 	gap: 12px;
 	margin-top: 28px;
 }
+
+/* Visitors who ask for less motion: no slides, fades, spins
+   or movement on hover. */
+@media (prefers-reduced-motion: reduce) {
+
+	.radioedu-app-container *,
+	.radioedu-single-profile *,
+	.radioedu-drawer-root * {
+		transition: none !important;
+		animation: none !important;
+	}
+
+	.radioedu-card:hover,
+	.radioedu-card-fav-btn:hover,
+	.radioedu-btn-primary:active {
+		transform: none;
+	}
+}

@@ -395,10 +395,17 @@ function createMap( L, element ) {
 		lng: -6.3708,
 		zoom: 8,
 	};
-	runtime.map = L.map( element, { attributionControl: false } ).setView(
-		[ center.lat, center.lng ],
-		center.zoom
-	);
+	// Visitors who ask for less motion get zooms, pans and fades without animation.
+	const still = window.matchMedia(
+		'(prefers-reduced-motion: reduce)'
+	).matches;
+	runtime.map = L.map( element, {
+		attributionControl: false,
+		zoomAnimation: ! still,
+		fadeAnimation: ! still,
+		markerZoomAnimation: ! still,
+		inertia: ! still,
+	} ).setView( [ center.lat, center.lng ], center.zoom );
 	const attribution = L.control( { position: 'bottomright' } );
 	attribution.onAdd = function () {
 		const container = document.createElement( 'div' );

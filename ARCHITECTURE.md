@@ -148,6 +148,7 @@ c:\radioedu-conecta\
 * **Implementation:**
   - The Leaflet map engine (v1.9.4) and all demo station images ship with the plugin. Leaflet comes from npm and is compiled into `build/leaflet.js`, a chunk the directory module imports only after the visitor accepts the map; `leaflet.css` and its images stay in `/assets/css/`.
   - External OpenStreetMap cartography tiles (`tile.openstreetmap.org`) are **never** loaded automatically on page load; the user must explicitly click **"Aceptar y mostrar el mapa interactivo"** (`#radioedu-btn-accept-map`) before any connection to OpenStreetMap servers is established.
+  - The consent lasts for the browser session (`sessionStorage`, key `radioedu_osm_consent`), and the map view says so before and after accepting. **"Retirar el consentimiento del mapa"** (`#radioedu-btn-withdraw-map`) removes the Leaflet map, cancels a pending results request or drawing, forgets the stored consent and moves the focus back to the accept button, so no more tiles are requested.
 
 ### 3.2 Asymmetric RGPD / GDPR Privacy Model & Core Privacy Tools
 * **Constraint:** School radio station coordinators are public school teachers; their email addresses must never be indexed, scraped, or visible in public DOM/JSON responses.
@@ -188,6 +189,7 @@ The directory and the profile render inside the theme's page, so they never add 
 * **Directory:** no `<main>` and no `<header>`. Its named regions are `<section aria-label="Filtros del directorio">` and `<section aria-labelledby="radioedu-results-heading">` ("Resultados (N centros)"), plus `<nav aria-label="Páginas de resultados">` when there is more than one page.
 * **Profile:** the profile is an `<article>`. The page's single `<main>` comes from the block template, the theme, or the classic template when the theme's header left none open (section 4.1).
 * **Text colours** that sit on the theme background rather than on a white card ("Ordenar por") use `#475569`, which keeps 4.5:1 on tinted backgrounds such as Twenty Twenty's beige.
+* **Reduced motion:** with `prefers-reduced-motion: reduce`, the directory, the profile and the panel have no transitions or animations (the panel appears without sliding, the cards do not rise on hover, the spinner stands still), and the map is created without zoom, fade, marker or inertia animations.
 
 ---
 
