@@ -42,7 +42,11 @@ test.describe( 'Datos del centro en el panel lateral del editor', () => {
 		admin,
 		editor,
 		page,
+		requestUtils,
 	} ) => {
+		// The editor remembers the open panels, and the main panel opens by itself only the first
+		// time: start from the preferences of a new user, whatever an earlier run left.
+		await requestUtils.resetPreferences();
 		const consoleProblems = [];
 		page.on( 'console', ( message ) => {
 			const text = message.text();
