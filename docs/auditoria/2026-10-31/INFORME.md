@@ -545,7 +545,10 @@ La 1.2 se desarrolla en la rama `feat/1.2`:
   - sitios con privacidad adicional;
   - consumo a gran escala.
 - Las recomendaciones de endurecimiento:
-  - Cursor estable: pendiente. El listado de propuestas y la revisión de fichas huérfanas tienen un orden determinista (fecha e ID, o ID), pero paginan por desplazamiento (`OFFSET`, `paged`), igual que la sincronización por lotes. Si el conjunto cambia entre dos páginas, un elemento puede saltarse o repetirse. Una versión anterior de este seguimiento lo daba por hecho; era inexacto.
+  - Cursor estable: hecho en la 1.2 para la sincronización de red (`320a034`), que avanza por ID de sitio. Un sitio borrado entre dos lotes ya no hace que se salte otro; se comprobó en una red de prueba y con PHPUnit.
+    - El responsable decidió dejar el listado de propuestas con páginas numeradas: el escritorio las necesita, y el orden fijo (fecha e ID) hace que, como mucho, un elemento se repita al principio de la página siguiente si llega una propuesta nueva. Es un riesgo aceptado.
+    - La revisión de fichas huérfanas sigue paginando dentro de una sola petición.
+    - Una versión anterior de este seguimiento daba el cursor por hecho; era inexacto.
   - Clave de idempotencia al crear propuestas: hecha en la 1.2 (`c368cd3`).
   - Favoritos por sitio y retirada del consentimiento del mapa: hechas en la 1.2 (`024a451`, `ded2808`).
   - Carga reducida del mapa, `prefers-reduced-motion` y prueba con lector de pantalla: parcial. Desde la 1.2, Leaflet solo se descarga cuando el visitante acepta el mapa, y se respeta `prefers-reduced-motion` (`5c6ae72`). Sigue pendiente la prueba con lector de pantalla.
