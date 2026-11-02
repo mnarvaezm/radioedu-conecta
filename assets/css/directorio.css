@@ -316,6 +316,21 @@
 	color: #475569;
 }
 
+.radioedu-map-consent-status {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px 16px;
+	margin-top: 12px;
+	font-size: 0.88rem;
+	color: #475569;
+}
+
+.radioedu-map-consent-status p {
+	margin: 0;
+}
+
 .radioedu-js-fallback {
 	padding: 16px;
 	border: 1px solid var(--radioedu-border);

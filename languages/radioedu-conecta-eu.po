@@ -328,95 +328,95 @@ msgstr "Erantzunaren parametroak ez dira baliozkoak."
 msgid "No tienes permisos para responder a las propuestas de este centro."
 msgstr "Ez duzu ikastetxe honen proposamenei erantzuteko baimenik."
 
-#: src/Admin/ColaboracionesAdminPage.php:133
+#: src/Admin/ColaboracionesAdminPage.php:141
 #: src/Admin/NetworkSyncPage.php:109
 #: src/Admin/Settings.php:282
 msgid "No tienes permisos suficientes para acceder a esta página."
 msgstr "Ez duzu orri honetara sartzeko behar adina baimenik."
 
-#: src/Admin/ColaboracionesAdminPage.php:159
+#: src/Admin/ColaboracionesAdminPage.php:167
 msgid "Propuestas de Colaboración (Matches) - Traspasando Fronteras"
 msgstr "Lankidetza-proposamenak (matchak) - Traspasando Fronteras"
 
-#: src/Admin/ColaboracionesAdminPage.php:161
+#: src/Admin/ColaboracionesAdminPage.php:169
 msgid "Consulta las solicitudes de hermanamiento recibidas o enviadas por tu emisora escolar y coordina proyectos conjuntos."
 msgstr "Kontsultatu zure eskola-irratiak jaso edo bidalitako senidetze-eskaerak eta koordinatu proiektu bateratuak."
 
-#: src/Admin/ColaboracionesAdminPage.php:152
+#: src/Admin/ColaboracionesAdminPage.php:160
 msgid "La respuesta a la propuesta de colaboración se ha guardado correctamente y se ha notificado al centro emisor."
 msgstr "Lankidetza-proposamenaren erantzuna behar bezala gorde da, eta ikastetxe igorleari jakinarazi zaio."
 
-#: src/Admin/ColaboracionesAdminPage.php:178
+#: src/Admin/ColaboracionesAdminPage.php:186
 msgid "Todavía no hay propuestas de colaboración registradas para tus centros escolares."
 msgstr "Oraindik ez dago lankidetza-proposamenik erregistratuta zure ikastetxeentzat."
 
-#: src/Admin/ColaboracionesAdminPage.php:184
-#: src/Privacy/PrivacyPolicy.php:195
+#: src/Admin/ColaboracionesAdminPage.php:192
+#: src/Privacy/PrivacyPolicy.php:196
 msgid "Fecha"
 msgstr "Data"
 
-#: src/Admin/ColaboracionesAdminPage.php:185
+#: src/Admin/ColaboracionesAdminPage.php:193
 msgid "Centro Emisor"
 msgstr "Ikastetxe igorlea"
 
-#: src/Admin/ColaboracionesAdminPage.php:186
+#: src/Admin/ColaboracionesAdminPage.php:194
 msgid "Centro Receptor"
 msgstr "Ikastetxe hartzailea"
 
-#: src/Admin/ColaboracionesAdminPage.php:187
+#: src/Admin/ColaboracionesAdminPage.php:195
 msgid "Idea del Proyecto y Detalles"
 msgstr "Proiektuaren ideia eta xehetasunak"
 
-#: src/Admin/ColaboracionesAdminPage.php:188
-#: src/Privacy/PrivacyPolicy.php:203
+#: src/Admin/ColaboracionesAdminPage.php:196
+#: src/Privacy/PrivacyPolicy.php:204
 msgid "Estado"
 msgstr "Egoera"
 
-#: src/Admin/ColaboracionesAdminPage.php:189
+#: src/Admin/ColaboracionesAdminPage.php:197
 msgid "Respuesta / Acciones"
 msgstr "Erantzuna / ekintzak"
 
-#: src/Admin/ColaboracionesAdminPage.php:220
+#: src/Admin/ColaboracionesAdminPage.php:228
 msgid "Edades:"
 msgstr "Adinak:"
 
-#: src/Admin/ColaboracionesAdminPage.php:223
+#: src/Admin/ColaboracionesAdminPage.php:231
 msgid "Idiomas:"
 msgstr "Hizkuntzak:"
 
-#: src/Admin/ColaboracionesAdminPage.php:226
+#: src/Admin/ColaboracionesAdminPage.php:234
 msgid "Fechas:"
 msgstr "Datak:"
 
-#: src/Admin/ColaboracionesAdminPage.php:231
+#: src/Admin/ColaboracionesAdminPage.php:239
 msgid "Aceptada"
 msgstr "Onartua"
 
-#: src/Admin/ColaboracionesAdminPage.php:233
+#: src/Admin/ColaboracionesAdminPage.php:241
 msgid "Declinada"
 msgstr "Baztertua"
 
-#: src/Admin/ColaboracionesAdminPage.php:235
+#: src/Admin/ColaboracionesAdminPage.php:243
 msgid "Pendiente"
 msgstr "Zain"
 
-#: src/Admin/ColaboracionesAdminPage.php:249
+#: src/Admin/ColaboracionesAdminPage.php:257
 msgid "Mensaje de respuesta"
 msgstr "Erantzun-mezua"
 
-#: src/Admin/ColaboracionesAdminPage.php:257
+#: src/Admin/ColaboracionesAdminPage.php:265
 msgid "Escribe un mensaje para el centro emisor..."
 msgstr "Idatzi mezu bat ikastetxe igorlearentzat..."
 
-#: src/Admin/ColaboracionesAdminPage.php:260
+#: src/Admin/ColaboracionesAdminPage.php:268
 msgid "Aceptar"
 msgstr "Onartu"
 
-#: src/Admin/ColaboracionesAdminPage.php:263
+#: src/Admin/ColaboracionesAdminPage.php:271
 msgid "Declinar"
 msgstr "Baztertu"
 
-#: src/Admin/ColaboracionesAdminPage.php:267
+#: src/Admin/ColaboracionesAdminPage.php:275
 msgid "En espera de respuesta del centro receptor."
 msgstr "Ikastetxe hartzailearen erantzunaren zain."
 
@@ -962,77 +962,77 @@ msgstr "Gune honek RadioEdu Conecta plugina erabiltzen du eskola-irratien direkt
 msgid "Al activar voluntariamente la vista de mapa interactivo, el navegador del usuario se conecta con los servidores de OpenStreetMap Foundation para descargar la cartografía."
 msgstr "Mapa interaktiboaren ikuspegia borondatez aktibatzean, erabiltzailearen nabigatzailea OpenStreetMap Foundation-en zerbitzariekin konektatzen da kartografia deskargatzeko."
 
-#: src/Privacy/PrivacyPolicy.php:49
+#: src/Privacy/PrivacyPolicy.php:50
 msgid "Los centros marcados como favoritos y la aceptación del mapa se guardan únicamente en el almacenamiento local del navegador del visitante y no se envían al servidor."
 msgstr "Gogoko gisa markatutako ikastetxeak eta maparen onarpena bisitariaren nabigatzailearen biltegiratze lokalean soilik gordetzen dira, eta ez dira zerbitzarira bidaltzen."
 
-#: src/Privacy/PrivacyPolicy.php:63
-#: src/Privacy/PrivacyPolicy.php:77
+#: src/Privacy/PrivacyPolicy.php:64
+#: src/Privacy/PrivacyPolicy.php:78
 msgid "RadioEdu Conecta (Coordinadores y Propuestas)"
 msgstr "RadioEdu Conecta (koordinatzaileak eta proposamenak)"
 
-#: src/Privacy/PrivacyPolicy.php:125
+#: src/Privacy/PrivacyPolicy.php:126
 msgid "RadioEdu Conecta - Coordinación de Centros"
 msgstr "RadioEdu Conecta - Ikastetxeen koordinazioa"
 
-#: src/Privacy/PrivacyPolicy.php:129
+#: src/Privacy/PrivacyPolicy.php:130
 msgid "Centro escolar"
 msgstr "Ikastetxea"
 
-#: src/Privacy/PrivacyPolicy.php:133
+#: src/Privacy/PrivacyPolicy.php:134
 msgid "Nombre del coordinador"
 msgstr "Koordinatzailearen izena"
 
-#: src/Privacy/PrivacyPolicy.php:137
+#: src/Privacy/PrivacyPolicy.php:138
 msgid "Email de coordinación"
 msgstr "Koordinazioko helbide elektronikoa"
 
-#: src/Privacy/PrivacyPolicy.php:167
+#: src/Privacy/PrivacyPolicy.php:168
 msgid "RadioEdu Conecta - Propuestas de Colaboración"
 msgstr "RadioEdu Conecta - Lankidetza-proposamenak"
 
-#: src/Privacy/PrivacyPolicy.php:171
+#: src/Privacy/PrivacyPolicy.php:172
 msgid "Centro emisor"
 msgstr "Ikastetxe igorlea"
 
-#: src/Privacy/PrivacyPolicy.php:175
+#: src/Privacy/PrivacyPolicy.php:176
 msgid "Centro receptor"
 msgstr "Ikastetxe hartzailea"
 
-#: src/Privacy/PrivacyPolicy.php:179
+#: src/Privacy/PrivacyPolicy.php:180
 #: templates/single-centro.php:99
 msgid "Cursos / Edades"
 msgstr "Mailak / adinak"
 
-#: src/Privacy/PrivacyPolicy.php:183
+#: src/Privacy/PrivacyPolicy.php:184
 #: src/Taxonomies/TaxonomiesRegistrar.php:102
 msgid "Idiomas"
 msgstr "Hizkuntzak"
 
-#: src/Privacy/PrivacyPolicy.php:187
+#: src/Privacy/PrivacyPolicy.php:188
 #: templates/match-drawer.php:95
 msgid "Fechas aproximadas"
 msgstr "Gutxi gorabeherako datak"
 
-#: src/Privacy/PrivacyPolicy.php:191
+#: src/Privacy/PrivacyPolicy.php:192
 msgid "Respuesta"
 msgstr "Erantzuna"
 
-#: src/Privacy/PrivacyPolicy.php:199
+#: src/Privacy/PrivacyPolicy.php:200
 #: templates/match-drawer.php:71
 msgid "Idea de proyecto"
 msgstr "Proiektuaren ideia"
 
-#: src/Privacy/PrivacyPolicy.php:327
+#: src/Privacy/PrivacyPolicy.php:328
 msgid "Se han eliminado los textos enviados y la vinculación con la cuenta. Los centros, las fechas, el estado y las respuestas de otros participantes se conservan como historial compartido; revise esas respuestas si contienen datos personales de la persona solicitante."
 msgstr "Bidalitako testuak eta kontuarekiko lotura ezabatu dira. Ikastetxeak, datak, egoera eta beste parte-hartzaile batzuen erantzunak historia partekatu gisa gordetzen dira; berrikusi erantzun horiek, eskatzailearen datu pertsonalik ba ote duten jakiteko."
 
-#: src/Privacy/PrivacyPolicy.php:340
+#: src/Privacy/PrivacyPolicy.php:341
 msgid "No se han podido eliminar todos los datos. Reintente la solicitud de borrado."
 msgstr "Ezin izan dira datu guztiak ezabatu. Egin berriro ezabatze-eskaera."
 
 #: src/Rest/CentrosController.php:358
-#: src/Rest/ColaboracionesController.php:709
+#: src/Rest/ColaboracionesController.php:711
 msgid "Número de página de resultados."
 msgstr "Emaitzen orri-zenbakia."
 
@@ -1128,35 +1128,35 @@ msgstr "Adierazitako egoera ez da baliozkoa."
 msgid "La propuesta de colaboración no existe."
 msgstr "Lankidetza-proposamena ez da existitzen."
 
-#: src/Rest/ColaboracionesController.php:678
+#: src/Rest/ColaboracionesController.php:680
 msgid "El mensaje de respuesta es demasiado largo."
 msgstr "Erantzun-mezua luzeegia da."
 
-#: src/Rest/ColaboracionesController.php:689
+#: src/Rest/ColaboracionesController.php:691
 msgid "Esta propuesta ya ha sido respondida y no puede modificarse."
 msgstr "Proposamen honi dagoeneko erantzun zaio, eta ezin da aldatu."
 
-#: src/Rest/ColaboracionesController.php:736
+#: src/Rest/ColaboracionesController.php:738
 msgid "ID del centro que envía la propuesta."
 msgstr "Proposamena bidaltzen duen ikastetxearen IDa."
 
-#: src/Rest/ColaboracionesController.php:744
+#: src/Rest/ColaboracionesController.php:746
 msgid "ID del centro que recibe la propuesta."
 msgstr "Proposamena jasotzen duen ikastetxearen IDa."
 
-#: src/Rest/ColaboracionesController.php:752
+#: src/Rest/ColaboracionesController.php:754
 msgid "Idea del proyecto conjunto."
 msgstr "Proiektu bateratuaren ideia."
 
-#: src/Rest/ColaboracionesController.php:761
+#: src/Rest/ColaboracionesController.php:763
 msgid "Curso o edades del alumnado participante."
 msgstr "Parte hartzen duten ikasleen maila edo adinak."
 
-#: src/Rest/ColaboracionesController.php:769
+#: src/Rest/ColaboracionesController.php:771
 msgid "Idiomas de trabajo del proyecto."
 msgstr "Proiektuaren lan-hizkuntzak."
 
-#: src/Rest/ColaboracionesController.php:777
+#: src/Rest/ColaboracionesController.php:779
 msgid "Fechas aproximadas del proyecto."
 msgstr "Proiektuaren gutxi gorabeherako datak."
 
@@ -1495,7 +1495,7 @@ msgid "Buscar centros"
 msgstr "Bilatu ikastetxeak"
 
 #. translators: %s: Number of schools found.
-#: src/Frontend/DirectoryStore.php:227
+#: src/Frontend/DirectoryStore.php:228
 #: templates/directorio.php:133
 #, php-format,js-format
 msgid "Resultados (%s centros)"
@@ -1533,27 +1533,27 @@ msgstr "Mapa geografiko interaktiboa (OpenStreetMap)"
 msgid "Al cargar el mapa cartográfico se establecerá conexión con los servidores externos de OpenStreetMap Foundation para descargar las imágenes del mapa."
 msgstr "Mapa kartografikoa kargatzean, OpenStreetMap Foundation-en kanpoko zerbitzariekin konexioa ezarriko da maparen irudiak deskargatzeko."
 
-#: templates/directorio.php:171
+#: templates/directorio.php:172
 msgid "Aceptar y mostrar el mapa interactivo"
 msgstr "Onartu eta erakutsi mapa interaktiboa"
 
-#: templates/directorio.php:216
+#: templates/directorio.php:223
 msgid "Cargar más centros"
 msgstr "Kargatu ikastetxe gehiago"
 
-#: templates/directorio.php:222
+#: templates/directorio.php:229
 msgid "Buscando centros afines en la red..."
 msgstr "Antzeko ikastetxeak bilatzen sarean..."
 
-#: templates/directorio.php:228
+#: templates/directorio.php:235
 msgid "No se han encontrado emisoras con estos filtros"
 msgstr "Ez da irratirik aurkitu iragazki hauekin"
 
-#: templates/directorio.php:229
+#: templates/directorio.php:236
 msgid "Prueba a seleccionar otros temas, idiomas o restablecer la búsqueda."
 msgstr "Saiatu beste gai edo hizkuntza batzuk hautatzen, edo berrezarri bilaketa."
 
-#: templates/directorio.php:231
+#: templates/directorio.php:238
 msgid "Limpiar todos los filtros"
 msgstr "Garbitu iragazki guztiak"
 
@@ -1610,8 +1610,8 @@ msgstr "Adib.: Euskara / Ingelesa"
 msgid "Ej: 2º Trimestre (Enero - Marzo)"
 msgstr "Adib.: 2. hiruhilekoa (urtarrila - martxoa)"
 
-#: src/Frontend/DirectoryStore.php:230
-#: src/Frontend/DirectoryStore.php:583
+#: src/Frontend/DirectoryStore.php:231
+#: src/Frontend/DirectoryStore.php:605
 #: templates/match-drawer.php:109
 msgid "Enviar propuesta"
 msgstr "Bidali proposamena"
@@ -1655,8 +1655,8 @@ msgid "No disponible actualmente"
 msgstr "Une honetan ez dago prest"
 
 #: src/Frontend/DirectorioShortcode.php:538
-#: src/Frontend/DirectoryStore.php:238
-#: src/Frontend/DirectoryStore.php:562
+#: src/Frontend/DirectoryStore.php:239
+#: src/Frontend/DirectoryStore.php:584
 #: templates/single-centro.php:77
 msgid "Extremadura"
 msgstr "Extremadura"
@@ -1665,12 +1665,12 @@ msgstr "Extremadura"
 msgid "Idiomas de trabajo"
 msgstr "Lan-hizkuntzak"
 
-#: templates/directorio.php:204
+#: templates/directorio.php:211
 #: templates/single-centro.php:127
 msgid "Proponer match"
 msgstr "Proposatu match bat"
 
-#: templates/directorio.php:205
+#: templates/directorio.php:212
 #: templates/single-centro.php:131
 msgid "No disponible"
 msgstr "Ez dago prest"
@@ -1725,41 +1725,41 @@ msgstr "Longitudea"
 msgid "Coordinación"
 msgstr "Koordinazioa"
 
-#: src/Frontend/DirectoryStore.php:229
-#: templates/directorio.php:202
+#: src/Frontend/DirectoryStore.php:230
+#: templates/directorio.php:209
 msgid "Ver perfil"
 msgstr "Ikusi profila"
 
-#: src/Frontend/DirectoryStore.php:236
-#: src/Frontend/DirectoryStore.php:578
+#: src/Frontend/DirectoryStore.php:237
+#: src/Frontend/DirectoryStore.php:600
 msgid "Añadir a favoritos"
 msgstr "Gehitu gogokoetara"
 
-#: src/Frontend/DirectoryStore.php:237
+#: src/Frontend/DirectoryStore.php:238
 msgid "Quitar de favoritos"
 msgstr "Kendu gogokoetatik"
 
-#: src/Frontend/DirectoryStore.php:231
+#: src/Frontend/DirectoryStore.php:232
 msgid "Enviando propuesta…"
 msgstr "Proposamena bidaltzen…"
 
-#: src/Frontend/DirectoryStore.php:232
+#: src/Frontend/DirectoryStore.php:233
 msgid "¡Propuesta enviada con éxito!"
 msgstr "Proposamena bidali da!"
 
-#: src/Frontend/DirectoryStore.php:233
+#: src/Frontend/DirectoryStore.php:234
 msgid "Debes iniciar sesión con tu cuenta de coordinador de centro para enviar propuestas de colaboración."
 msgstr "Ikastetxeko koordinatzaile-kontuarekin hasi behar duzu saioa lankidetza-proposamenak bidaltzeko."
 
-#: src/Frontend/DirectoryStore.php:234
+#: src/Frontend/DirectoryStore.php:235
 msgid "Tu cuenta actual no dispone de permisos de coordinador para proponer colaboraciones."
 msgstr "Zure uneko kontuak ez du lankidetzak proposatzeko koordinatzaile-baimenik."
 
-#: src/Frontend/DirectoryStore.php:235
+#: src/Frontend/DirectoryStore.php:236
 msgid "Por favor, selecciona tu centro escolar."
 msgstr "Hautatu zure ikastetxea."
 
-#: src/Frontend/DirectoryStore.php:228
+#: src/Frontend/DirectoryStore.php:229
 msgid "Ha ocurrido un error al procesar la solicitud."
 msgstr "Errore bat gertatu da eskaera prozesatzean."
 
@@ -1767,7 +1767,7 @@ msgstr "Errore bat gertatu da eskaera prozesatzean."
 msgid "Iniciar sesión"
 msgstr "Hasi saioa"
 
-#: src/Frontend/DirectoryStore.php:239
+#: src/Frontend/DirectoryStore.php:240
 msgid "Colaboradores de OpenStreetMap"
 msgstr "OpenStreetMap-en laguntzaileak"
 
@@ -1921,14 +1921,14 @@ msgid "Las propuestas de colaboración guardan la cuenta de usuario que las env�
 msgstr "Lankidetza-proposamenek bidaltzen dituen erabiltzaile-kontua, inplikatutako ikastetxeak, proiektuaren testua eta erantzuna gordetzen dituzte, erantzuna idazten duen kontuarekin batera. Ikastetxe hartzailearen harremanetarako helbide elektronikoa proposamena onartzen denean soilik partekatzen da ikastetxe igorlearekin."
 
 #. translators: %d: number of replies kept.
-#: src/Privacy/PrivacyPolicy.php:251
+#: src/Privacy/PrivacyPolicy.php:252
 #, php-format
 msgid "Se conserva %d respuesta anterior a la versión 1.1 en propuestas recibidas por los centros de esta persona, porque no registra quién la escribió. Revísela en Colaboraciones (Matches) por si contiene datos personales."
 msgid_plural "Se conservan %d respuestas anteriores a la versión 1.1 en propuestas recibidas por los centros de esta persona, porque no registran quién las escribió. Revíselas en Colaboraciones (Matches) por si contienen datos personales."
 msgstr[0] "1.1 bertsioa baino lehenagoko %d erantzun gordetzen da pertsona honen ikastetxeek jasotako proposamenetan, ez baita erregistratzen nork idatzi zuen. Berrikusi Lankidetzak (matchak) atalean, datu pertsonalik ba ote duen jakiteko."
 msgstr[1] "1.1 bertsioa baino lehenagoko %d erantzun gordetzen dira pertsona honen ikastetxeek jasotako proposamenetan, ez baita erregistratzen nork idatzi zituen. Berrikusi Lankidetzak (matchak) atalean, datu pertsonalik ba ote duten jakiteko."
 
-#: src/Rest/ColaboracionesController.php:684
+#: src/Rest/ColaboracionesController.php:686
 msgid "No se pudo guardar la respuesta. Inténtalo de nuevo."
 msgstr "Ezin izan da erantzuna gorde. Saiatu berriro."
 
@@ -1936,15 +1936,15 @@ msgstr "Ezin izan da erantzuna gorde. Saiatu berriro."
 msgid "Las propuestas no caducan: se conservan como historial compartido hasta que se atiende una solicitud de borrado de datos personales, que anonimiza la parte de la persona solicitante, o hasta que se desinstala el plugin."
 msgstr "Proposamenek ez dute iraungitze-datarik: historia partekatu gisa gordetzen dira datu pertsonalak ezabatzeko eskaera bat bete arte (eskatzailearen zatia anonimizatzen du) edo plugina desinstalatu arte."
 
-#: src/Rest/ColaboracionesController.php:717
+#: src/Rest/ColaboracionesController.php:719
 msgid "Número de propuestas por página."
 msgstr "Orri bakoitzeko proposamen kopurua."
 
-#: src/Admin/ColaboracionesAdminPage.php:153
+#: src/Admin/ColaboracionesAdminPage.php:161
 msgid "La respuesta a la propuesta de colaboración se ha guardado correctamente."
 msgstr "Lankidetza-proposamenaren erantzuna behar bezala gorde da."
 
-#: src/Admin/ColaboracionesAdminPage.php:154
+#: src/Admin/ColaboracionesAdminPage.php:162
 msgid "La respuesta a la propuesta de colaboración se ha guardado, pero no se ha podido enviar el aviso por correo al centro emisor."
 msgstr "Lankidetza-proposamenaren erantzuna gorde da, baina ezin izan zaio abisua posta elektronikoz bidali ikastetxe igorleari."
 
@@ -1957,7 +1957,7 @@ msgid "¡Propuesta de match enviada con éxito! No se ha podido enviar el aviso 
 msgstr "Match proposamena bidali da! Ezin izan da abisua posta elektronikoz bidali, baina irrati hartzaileak bere Lankidetzak panelean ikusiko du."
 
 #. translators: 1: number of centros on the map, 2: number of results.
-#: src/Frontend/DirectoryStore.php:241
+#: src/Frontend/DirectoryStore.php:242
 #, js-format,php-format
 msgid "El mapa muestra %1$s de %2$s centros. Usa los filtros para acotar la búsqueda."
 msgstr "Mapak %2$s ikastetxetatik %1$s erakusten ditu. Erabili iragazkiak bilaketa zehazteko."
@@ -2000,11 +2000,11 @@ msgstr "podcast"
 msgid "El mapa, los favoritos y las propuestas de colaboración necesitan JavaScript."
 msgstr "Mapak, gogokoek eta lankidetza-proposamenek JavaScript behar dute."
 
-#: templates/directorio.php:214
+#: templates/directorio.php:221
 msgid "Páginas de resultados"
 msgstr "Emaitzen orriak"
 
-#: templates/directorio.php:215
+#: templates/directorio.php:222
 msgid "Centros anteriores"
 msgstr "Aurreko ikastetxeak"
 
@@ -2023,3 +2023,23 @@ msgstr "Eskola-irratiak sareta batean, irudiarekin, kokapenarekin, adinekin eta 
 #: src/Frontend/CentroBindings.php:330
 msgid "Todavía no hay radios publicadas."
 msgstr "Oraindik ez dago irrati argitaraturik."
+
+#: src/Frontend/DirectoryStore.php:243
+msgid "Has retirado el consentimiento: el mapa ya no se carga."
+msgstr "Baimena kendu duzu: mapa ez da gehiago kargatzen."
+
+#: src/Privacy/PrivacyPolicy.php:49
+msgid "La aceptación dura hasta que se cierra el navegador, y el visitante puede retirarla desde la vista de mapa, que deja entonces de descargar imágenes."
+msgstr "Onarpenak nabigatzailea itxi arte irauten du, eta bisitariak maparen ikuspegitik ken dezake; orduan, ez da irudi gehiagorik deskargatzen."
+
+#: templates/directorio.php:170
+msgid "La aceptación dura hasta que cierres el navegador y puedes retirarla en cualquier momento."
+msgstr "Onarpenak nabigatzailea itxi arte irauten du, eta edozein unetan ken dezakezu."
+
+#: templates/directorio.php:177
+msgid "Has aceptado cargar el mapa de OpenStreetMap hasta que cierres el navegador."
+msgstr "OpenStreetMap-eko mapa kargatzea onartu duzu, nabigatzailea itxi arte."
+
+#: templates/directorio.php:179
+msgid "Retirar el consentimiento del mapa"
+msgstr "Kendu maparen baimena"

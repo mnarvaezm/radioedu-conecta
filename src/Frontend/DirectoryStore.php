@@ -240,6 +240,7 @@ final class DirectoryStore {
 				'mapAttribution'   => __( 'Colaboradores de OpenStreetMap', 'radioedu-conecta' ),
 				/* translators: 1: number of centros on the map, 2: number of results. */
 				'mapPartial'       => __( 'El mapa muestra %1$s de %2$s centros. Usa los filtros para acotar la búsqueda.', 'radioedu-conecta' ),
+				'mapWithdrawn'     => __( 'Has retirado el consentimiento: el mapa ya no se carga.', 'radioedu-conecta' ),
 			],
 		];
 	}

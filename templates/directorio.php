@@ -167,11 +167,18 @@ $radioedu_conecta_orders  = [
 					<div class="radioedu-no-results-icon"><?php Icons::render( 'radioedu-conecta/map' ); ?></div>
 					<h3><?php esc_html_e( 'Mapa geográfico interactivo (OpenStreetMap)', 'radioedu-conecta' ); ?></h3>
 					<p><?php esc_html_e( 'Al cargar el mapa cartográfico se establecerá conexión con los servidores externos de OpenStreetMap Foundation para descargar las imágenes del mapa.', 'radioedu-conecta' ); ?></p>
+					<p><?php esc_html_e( 'La aceptación dura hasta que cierres el navegador y puedes retirarla en cualquier momento.', 'radioedu-conecta' ); ?></p>
 					<button type="button" id="radioedu-btn-accept-map" class="radioedu-btn-primary" data-wp-on--click="actions.acceptMap">
 						<?php esc_html_e( 'Aceptar y mostrar el mapa interactivo', 'radioedu-conecta' ); ?>
 					</button>
 				</div>
 				<div id="radioedu-leaflet-map" style="height: 520px; width: 100%; border-radius: 16px;" hidden data-wp-bind--hidden="!state.hasMapConsent"></div>
+				<div id="radioedu-map-consent-status" class="radioedu-map-consent-status" hidden data-wp-bind--hidden="!state.hasMapConsent">
+					<p><?php esc_html_e( 'Has aceptado cargar el mapa de OpenStreetMap hasta que cierres el navegador.', 'radioedu-conecta' ); ?></p>
+					<button type="button" id="radioedu-btn-withdraw-map" class="radioedu-btn-secondary" data-wp-on--click="actions.withdrawMap">
+						<?php esc_html_e( 'Retirar el consentimiento del mapa', 'radioedu-conecta' ); ?>
+					</button>
+				</div>
 				<p id="radioedu-map-note" class="radioedu-map-note" role="status" hidden data-wp-bind--hidden="!state.mapNoteText" data-wp-text="state.mapNoteText"></p>
 			</div>
 

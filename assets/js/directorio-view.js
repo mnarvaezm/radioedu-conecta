@@ -762,6 +762,38 @@ const { state, actions } = store( NAMESPACE, {
 			}
 		},
 
+		withdrawMap() {
+			// Without consent the page asks OpenStreetMap for nothing more: the map is removed, and
+			// a request or a drawing still pending is dropped.
+			state.hasMapConsent = false;
+			state.mapNoteText = '';
+			runtime.mapVersion = -1;
+			if ( runtime.mapRequest ) {
+				runtime.mapRequest.abort();
+				runtime.mapRequest = null;
+			}
+			if ( runtime.map ) {
+				runtime.map.remove();
+				runtime.map = null;
+			}
+			runtime.markers = [];
+			try {
+				window.sessionStorage.removeItem( 'radioedu_osm_consent' );
+			} catch {
+				// Nothing was stored.
+			}
+			announce( text( 'mapWithdrawn' ) );
+			// The button that had the focus is now hidden: the focus goes to the one that accepts again.
+			window.requestAnimationFrame( () => {
+				const accept = document.getElementById(
+					'radioedu-btn-accept-map'
+				);
+				if ( accept ) {
+					accept.focus();
+				}
+			} );
+		},
+
 		openDrawer() {
 			const { centro } = getContext();
 			const receiver = proposalReceiver(

@@ -108,6 +108,41 @@ test.describe( 'Directorio: robustez', () => {
 		await expect( page.locator( '#radioedu-map-note' ) ).toBeHidden();
 	} );
 
+	test( 'el consentimiento del mapa se puede retirar', async ( { page } ) => {
+		const markers = () => page.locator( '.leaflet-marker-icon' ).count();
+		await page.goto( directoryUrl );
+		await page.click( '#radioedu-btn-toggle-map' );
+		await page.click( '#radioedu-btn-accept-map' );
+		await expect.poll( markers, { timeout: 30_000 } ).toBeGreaterThan( 0 );
+		expect(
+			await page.evaluate( () =>
+				window.sessionStorage.getItem( 'radioedu_osm_consent' )
+			)
+		).toBe( '1' );
+
+		// The map goes away with its tiles, and the focus moves to the button that accepts again.
+		await page.click( '#radioedu-btn-withdraw-map' );
+		await expect(
+			page.locator( '#radioedu-btn-accept-map' )
+		).toBeFocused();
+		await expect( page.locator( '#radioedu-leaflet-map' ) ).toBeHidden();
+		await expect(
+			page.locator( '#radioedu-leaflet-map .leaflet-pane' )
+		).toHaveCount( 0 );
+		expect(
+			await page.evaluate( () =>
+				window.sessionStorage.getItem( 'radioedu_osm_consent' )
+			)
+		).toBeNull();
+
+		// A reload keeps it withdrawn, and accepting again draws the map once more.
+		await page.reload();
+		await page.click( '#radioedu-btn-toggle-map' );
+		await expect( page.locator( '#radioedu-map-consent' ) ).toBeVisible();
+		await page.click( '#radioedu-btn-accept-map' );
+		await expect.poll( markers, { timeout: 30_000 } ).toBeGreaterThan( 0 );
+	} );
+
 	test( '«Cargar más» conserva los filtros de la búsqueda mostrada', async ( {
 		page,
 	} ) => {
