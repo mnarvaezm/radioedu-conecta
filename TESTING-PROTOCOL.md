@@ -120,7 +120,16 @@ Plugin Check debe ejecutarse sobre la copia distribuible (respetando `.distignor
 
 Las pruebas E2E (`tests/e2e`) crean y borran su propio contenido:
 
-- `centro-logo.spec.js`: datos del centro en los paneles del editor, incluido el logo.
+- `centro-logo.spec.js`: datos del centro en los paneles del editor, incluido el logo. Empieza con las preferencias de editor de un usuario nuevo, porque el editor recuerda los paneles abiertos de una ejecución anterior.
+- `colaboraciones.spec.js`: propuestas reales entre dos coordinadores, sin interceptar las peticiones. Cubre:
+  - el envío desde el directorio, con el campo obligatorio marcado si está vacío;
+  - la respuesta desde *Colaboraciones*, y los correos de contacto, que solo aparecen tras aceptarla;
+  - un reenvío tras una respuesta perdida, que no duplica la propuesta;
+  - el panel de un suscriptor y el de un visitante, que explican por qué no pueden enviar;
+  - los datos del coordinador, que no salen en la web ni en la REST pública;
+  - el límite de radios por usuario.
+
+  Crea y borra sus usuarios, radios y página. Las propuestas quedan en la tabla del plugin, que no tiene forma de borrarlas por la API, así que úsala solo en un sitio desechable.
 - `directorio-block.spec.js`: el bloque en el editor y en la web.
 - `listado-radios.spec.js`: el patrón *Listado de radios*, con bloques enlazados a la fuente `radioedu-conecta/centro`. Comprueba en la web que cada radio muestra sus datos y no muestra botón, párrafo ni imagen si le falta ese dato, y en el editor que no hay bloques no válidos.
 - `directorio-robustez.spec.js`: el mapa con todos los resultados (F-12), la retirada del consentimiento del mapa, el movimiento reducido (`prefers-reduced-motion`), *Cargar más* con los filtros de la búsqueda mostrada (R-04), el panel de propuesta con una respuesta tardía (F-11), las directivas escritas en una descripción o en una entrada junto al directorio, que no pueden enviar propuestas ni abrir el panel con otro nombre, la página a 320 px (F-13) y sin JavaScript (F-16): las tarjetas renderizadas en el servidor, la búsqueda por GET y el paso de página. Crea 30 radios con coordenadas, bloquea las teselas de OpenStreetMap y responde ella misma a la propuesta, así que no guarda propuestas ni envía correos.
