@@ -595,4 +595,4 @@ La 1.2 se desarrolla en la rama `feat/1.2`:
   La 1.2 añade siete más:
   - tres del directorio sin JavaScript;
   - cuatro de la fuente de Block Bindings y su patrón.
-- Decidir qué hacer con `docs/auditoria/2026-11-01-revision/`, la carpeta de la segunda revisión, que sigue sin versionar. La de esta auditoría ya está versionada, con las evidencias en UTF-8.
+- Qué hacer con las carpetas de la segunda y la tercera revisión (`docs/auditoria/2026-11-01-revision/` y `docs/auditoria/2026-11-01-reinicio/`): decidido el 2026-11-02. El responsable decidió dejarlas sin versionar, tal como están. La de esta auditoría ya está versionada, con las evidencias en UTF-8.
