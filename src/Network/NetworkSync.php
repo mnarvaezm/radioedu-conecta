@@ -120,28 +120,39 @@ final class NetworkSync {
 	}
 
 	/**
-	 * Syncs one batch of sites.
+	 * Syncs one batch of sites: the next ones, by ID, after the last site of the previous batch.
+	 *
+	 * A cursor by ID, not an offset: a site deleted or created between two batches does not make
+	 * the next batch skip or repeat another one. The IDs of the source sites are read whole (only
+	 * integers, cached by core) and cut here, because get_sites() has no "ID greater than"
+	 * argument and its cache key ignores clauses added by a filter.
 	 *
 	 * @since 1.1
+	 * @since 1.2 Takes the ID of the last site processed instead of an offset.
 	 *
-	 * @param int  $offset            Number of source sites already processed.
+	 * @param int  $after             ID of the last site processed by the previous batch; 0 to start.
 	 * @param bool $grant_author_role Whether ficha authors get the Author role on the main site.
-	 * @return array{processed: int, total: int, next_offset: int, done: bool, created: int, updated: int, reused: int, skipped: int, authors_added: int, synced: list<array{id: int, title: string, blog_id: int, site_url: string, outcome: string, author_added: bool, edit_url: string}>, errors: list<array{blog_id: int, message: string}>, missing: list<array{id: int, title: string, blog_id: int, edit_url: string}>} Batch result. `synced` lists the fichas of this batch; `missing` is only filled in the last batch.
+	 * @return array{processed: int, total: int, progress: int, next_after: int, done: bool, created: int, updated: int, reused: int, skipped: int, authors_added: int, synced: list<array{id: int, title: string, blog_id: int, site_url: string, outcome: string, author_added: bool, edit_url: string}>, errors: list<array{blog_id: int, message: string}>, missing: list<array{id: int, title: string, blog_id: int, edit_url: string}>} Batch result. `synced` lists the fichas of this batch; `missing` is only filled in the last batch.
 	 */
-	public static function sync_batch( int $offset, bool $grant_author_role = true ): array {
+	public static function sync_batch( int $after, bool $grant_author_role = true ): array {
 		$size     = self::get_batch_size();
-		$site_ids = get_sites(
-			array_merge(
-				self::get_source_site_query(),
-				[
-					'fields'  => 'ids',
-					'number'  => $size,
-					'offset'  => max( 0, $offset ),
-					'orderby' => 'id',
-					'order'   => 'ASC',
-				]
+		$all_ids  = array_map(
+			'intval',
+			get_sites(
+				array_merge(
+					self::get_source_site_query(),
+					[
+						'fields'  => 'ids',
+						'number'  => 0,
+						'orderby' => 'id',
+						'order'   => 'ASC',
+					]
+				)
 			)
 		);
+		$after    = max( 0, $after );
+		$pending  = array_values( array_filter( $all_ids, static fn( int $id ): bool => $id > $after ) );
+		$site_ids = array_slice( $pending, 0, $size );
 
 		$counts        = [
 			'created' => 0,
@@ -174,14 +185,15 @@ final class NetworkSync {
 			];
 		}
 
-		$total       = self::count_source_sites();
-		$next_offset = max( 0, $offset ) + count( $site_ids );
-		$done        = count( $site_ids ) < $size || $next_offset >= $total;
+		$next_after = [] === $site_ids ? $after : (int) end( $site_ids );
+		$done       = count( $pending ) <= $size;
 
 		return [
 			'processed'     => count( $site_ids ),
-			'total'         => $total,
-			'next_offset'   => $next_offset,
+			'total'         => count( $all_ids ),
+			// Sites of the network up to the last one processed, for a progress bar.
+			'progress'      => count( array_filter( $all_ids, static fn( int $id ): bool => $id <= $next_after ) ),
+			'next_after'    => $next_after,
 			'done'          => $done,
 			'created'       => $counts['created'],
 			'updated'       => $counts['updated'],

@@ -771,7 +771,7 @@ msgstr "Micrófono"
 msgid "Enviar"
 msgstr "Enviar"
 
-#: src/Network/NetworkSync.php:449
+#: src/Network/NetworkSync.php:461
 msgid "El sitio no existe."
 msgstr "O sitio non existe."
 
@@ -1160,10 +1160,6 @@ msgstr "Idiomas de traballo do proxecto."
 msgid "Fechas aproximadas del proyecto."
 msgstr "Datas aproximadas do proxecto."
 
-#: src/Rest/NetworkSyncController.php:59
-msgid "Número de sitios ya procesados."
-msgstr "Número de sitios xa procesados."
-
 #: src/Rest/NetworkSyncController.php:68
 msgid "Si los autores de las fichas reciben el rol Autor en el sitio principal. Si se omite, se usa la última elección."
 msgstr "Se os autores das fichas reciben o rol Autor no sitio principal. Se se omite, úsase a última elección."
@@ -1176,47 +1172,43 @@ msgstr "A sincronización de rede só funciona no sitio principal dunha rede mul
 msgid "No tienes permiso para sincronizar las fichas de la red."
 msgstr "Non tes permiso para sincronizar as fichas da rede."
 
-#: src/Rest/NetworkSyncController.php:142
+#: src/Rest/NetworkSyncController.php:143
 msgid "Sitios procesados en este lote."
 msgstr "Sitios procesados neste lote."
 
-#: src/Rest/NetworkSyncController.php:143
+#: src/Rest/NetworkSyncController.php:144
 msgid "Sitios de la red que se sincronizan."
 msgstr "Sitios da rede que se sincronizan."
 
-#: src/Rest/NetworkSyncController.php:144
-msgid "Valor de offset del siguiente lote."
-msgstr "Valor de offset do seguinte lote."
-
-#: src/Rest/NetworkSyncController.php:148
+#: src/Rest/NetworkSyncController.php:150
 msgid "Si este es el último lote."
 msgstr "Se este é o último lote."
 
-#: src/Rest/NetworkSyncController.php:150
+#: src/Rest/NetworkSyncController.php:152
 msgid "Fichas creadas."
 msgstr "Fichas creadas."
 
-#: src/Rest/NetworkSyncController.php:151
+#: src/Rest/NetworkSyncController.php:153
 msgid "Fichas actualizadas."
 msgstr "Fichas actualizadas."
 
-#: src/Rest/NetworkSyncController.php:152
+#: src/Rest/NetworkSyncController.php:154
 msgid "Fichas creadas a mano reutilizadas."
 msgstr "Fichas creadas a man reutilizadas."
 
-#: src/Rest/NetworkSyncController.php:153
+#: src/Rest/NetworkSyncController.php:155
 msgid "Fichas omitidas porque están en la papelera."
 msgstr "Fichas omitidas porque están na papeleira."
 
-#: src/Rest/NetworkSyncController.php:154
+#: src/Rest/NetworkSyncController.php:156
 msgid "Autores de fichas que han recibido el rol Autor en el sitio principal."
 msgstr "Autores de fichas que recibiron o rol Autor no sitio principal."
 
-#: src/Rest/NetworkSyncController.php:158
+#: src/Rest/NetworkSyncController.php:160
 msgid "Fichas sincronizadas en este lote."
 msgstr "Fichas sincronizadas neste lote."
 
-#: src/Rest/NetworkSyncController.php:195
+#: src/Rest/NetworkSyncController.php:197
 msgid "Fichas cuyo sitio de origen ya no existe (solo en el último lote)."
 msgstr "Fichas cuxo sitio de orixe xa non existe (só no último lote)."
 
@@ -1495,7 +1487,7 @@ msgid "Buscar centros"
 msgstr "Buscar centros"
 
 #. translators: %s: Number of schools found.
-#: src/Frontend/DirectoryStore.php:228
+#: src/Frontend/DirectoryStore.php:238
 #: templates/directorio.php:133
 #, php-format,js-format
 msgid "Resultados (%s centros)"
@@ -1610,8 +1602,8 @@ msgstr "P. ex.: Galego / Inglés"
 msgid "Ej: 2º Trimestre (Enero - Marzo)"
 msgstr "P. ex.: 2º trimestre (xaneiro - marzo)"
 
-#: src/Frontend/DirectoryStore.php:231
-#: src/Frontend/DirectoryStore.php:605
+#: src/Frontend/DirectoryStore.php:241
+#: src/Frontend/DirectoryStore.php:615
 #: templates/match-drawer.php:109
 msgid "Enviar propuesta"
 msgstr "Enviar proposta"
@@ -1655,8 +1647,8 @@ msgid "No disponible actualmente"
 msgstr "Non dispoñible actualmente"
 
 #: src/Frontend/DirectorioShortcode.php:538
-#: src/Frontend/DirectoryStore.php:239
-#: src/Frontend/DirectoryStore.php:584
+#: src/Frontend/DirectoryStore.php:249
+#: src/Frontend/DirectoryStore.php:594
 #: templates/single-centro.php:77
 msgid "Extremadura"
 msgstr "Estremadura"
@@ -1725,41 +1717,41 @@ msgstr "Lonxitude"
 msgid "Coordinación"
 msgstr "Coordinación"
 
-#: src/Frontend/DirectoryStore.php:230
+#: src/Frontend/DirectoryStore.php:240
 #: templates/directorio.php:209
 msgid "Ver perfil"
 msgstr "Ver perfil"
 
-#: src/Frontend/DirectoryStore.php:237
-#: src/Frontend/DirectoryStore.php:600
+#: src/Frontend/DirectoryStore.php:247
+#: src/Frontend/DirectoryStore.php:610
 msgid "Añadir a favoritos"
 msgstr "Engadir a favoritos"
 
-#: src/Frontend/DirectoryStore.php:238
+#: src/Frontend/DirectoryStore.php:248
 msgid "Quitar de favoritos"
 msgstr "Quitar de favoritos"
 
-#: src/Frontend/DirectoryStore.php:232
+#: src/Frontend/DirectoryStore.php:242
 msgid "Enviando propuesta…"
 msgstr "Enviando proposta…"
 
-#: src/Frontend/DirectoryStore.php:233
+#: src/Frontend/DirectoryStore.php:243
 msgid "¡Propuesta enviada con éxito!"
 msgstr "Enviouse a proposta!"
 
-#: src/Frontend/DirectoryStore.php:234
+#: src/Frontend/DirectoryStore.php:244
 msgid "Debes iniciar sesión con tu cuenta de coordinador de centro para enviar propuestas de colaboración."
 msgstr "Debes iniciar sesión coa túa conta de coordinador de centro para enviar propostas de colaboración."
 
-#: src/Frontend/DirectoryStore.php:235
+#: src/Frontend/DirectoryStore.php:245
 msgid "Tu cuenta actual no dispone de permisos de coordinador para proponer colaboraciones."
 msgstr "A túa conta actual non ten permisos de coordinador para propoñer colaboracións."
 
-#: src/Frontend/DirectoryStore.php:236
+#: src/Frontend/DirectoryStore.php:246
 msgid "Por favor, selecciona tu centro escolar."
 msgstr "Selecciona o teu centro escolar."
 
-#: src/Frontend/DirectoryStore.php:229
+#: src/Frontend/DirectoryStore.php:239
 msgid "Ha ocurrido un error al procesar la solicitud."
 msgstr "Produciuse un erro ao procesar a solicitude."
 
@@ -1767,7 +1759,7 @@ msgstr "Produciuse un erro ao procesar a solicitude."
 msgid "Iniciar sesión"
 msgstr "Iniciar sesión"
 
-#: src/Frontend/DirectoryStore.php:240
+#: src/Frontend/DirectoryStore.php:250
 msgid "Colaboradores de OpenStreetMap"
 msgstr "Colaboradores de OpenStreetMap"
 
@@ -1957,12 +1949,12 @@ msgid "¡Propuesta de match enviada con éxito! No se ha podido enviar el aviso 
 msgstr "Enviouse a proposta de match! Non se puido enviar o aviso por correo, pero a emisora receptora vaina ver no seu panel de Colaboracións."
 
 #. translators: 1: number of centros on the map, 2: number of results.
-#: src/Frontend/DirectoryStore.php:242
+#: src/Frontend/DirectoryStore.php:252
 #, js-format,php-format
 msgid "El mapa muestra %1$s de %2$s centros. Usa los filtros para acotar la búsqueda."
 msgstr "O mapa mostra %1$s de %2$s centros. Usa os filtros para acoutar a busca."
 
-#: src/Network/NetworkSync.php:214
+#: src/Network/NetworkSync.php:226
 msgid "Otra sincronización está actualizando la ficha de este sitio. Vuelve a sincronizar dentro de un momento."
 msgstr "Outra sincronización está a actualizar a ficha deste sitio. Volve sincronizar dentro dun momento."
 
@@ -2024,7 +2016,7 @@ msgstr "Radios escolares en grella, coa súa imaxe, localización, idades e podc
 msgid "Todavía no hay radios publicadas."
 msgstr "Aínda non hai radios publicadas."
 
-#: src/Frontend/DirectoryStore.php:243
+#: src/Frontend/DirectoryStore.php:253
 msgid "Has retirado el consentimiento: el mapa ya no se carga."
 msgstr "Retiraches o consentimento: o mapa xa non se carga."
 
@@ -2047,3 +2039,15 @@ msgstr "Retirar o consentimento do mapa"
 #: src/Rest/ColaboracionesController.php:827
 msgid "Clave que identifica un envío: al repetirlo con la misma clave no se crea otra propuesta."
 msgstr "Clave que identifica un envío: ao repetilo coa mesma clave non se crea outra proposta."
+
+#: src/Rest/NetworkSyncController.php:59
+msgid "ID del último sitio procesado; 0 para empezar."
+msgstr "ID do último sitio procesado; 0 para comezar."
+
+#: src/Rest/NetworkSyncController.php:145
+msgid "Sitios de la red hasta el último procesado, para la barra de progreso."
+msgstr "Sitios da rede ata o último procesado, para a barra de progreso."
+
+#: src/Rest/NetworkSyncController.php:146
+msgid "ID del último sitio procesado, que el siguiente lote recibe como after."
+msgstr "ID do último sitio procesado, que o seguinte lote recibe como after."

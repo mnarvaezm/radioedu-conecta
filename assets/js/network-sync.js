@@ -1,8 +1,9 @@
 /**
  * Network admin page: syncs the fichas of every network site in batches.
  *
- * Calls POST /radioedu-conecta/v1/network-sync in a loop with the `next_offset` of each
- * response, shows the progress and prints a summary built with DOM nodes (no innerHTML).
+ * Calls POST /radioedu-conecta/v1/network-sync in a loop with the `next_after` of each response
+ * (the ID of the last site processed), shows the progress and prints a summary built with DOM
+ * nodes (no innerHTML).
  */
 import apiFetch from '@wordpress/api-fetch';
 import domReady from '@wordpress/dom-ready';
@@ -324,14 +325,14 @@ domReady( () => {
 			errors: [],
 		};
 		let missing = [];
-		let offset = 0;
+		let after = 0;
 
 		try {
 			for (;;) {
 				const batch = await apiFetch( {
 					path: settings.path,
 					method: 'POST',
-					data: { offset, grant_author_role: grantAuthorRole },
+					data: { after, grant_author_role: grantAuthorRole },
 				} );
 				totals.created += batch.created;
 				totals.updated += batch.updated;
@@ -342,20 +343,20 @@ domReady( () => {
 				totals.synced.push( ...( batch.synced || [] ) );
 
 				bar.max = Math.max( 1, batch.total );
-				bar.value = Math.min( batch.next_offset, bar.max );
+				bar.value = Math.min( batch.progress, bar.max );
 				status.textContent = sprintf(
 					/* translators: 1: processed sites, 2: total sites. */
 					__( 'Procesados %1$d de %2$d sitios…', 'radioedu-conecta' ),
-					Math.min( batch.next_offset, batch.total ),
+					Math.min( batch.progress, batch.total ),
 					batch.total
 				);
 
-				// Stop when done, or if the offset stops moving (sites removed meanwhile).
-				if ( batch.done || batch.next_offset <= offset ) {
+				// Stop when done, or if the cursor stops moving.
+				if ( batch.done || batch.next_after <= after ) {
 					missing = batch.missing || [];
 					break;
 				}
-				offset = batch.next_offset;
+				after = batch.next_after;
 			}
 
 			result.append(

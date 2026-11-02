@@ -771,7 +771,7 @@ msgstr "Mikrofonoa"
 msgid "Enviar"
 msgstr "Bidali"
 
-#: src/Network/NetworkSync.php:449
+#: src/Network/NetworkSync.php:461
 msgid "El sitio no existe."
 msgstr "Gunea ez da existitzen."
 
@@ -1160,10 +1160,6 @@ msgstr "Proiektuaren lan-hizkuntzak."
 msgid "Fechas aproximadas del proyecto."
 msgstr "Proiektuaren gutxi gorabeherako datak."
 
-#: src/Rest/NetworkSyncController.php:59
-msgid "Número de sitios ya procesados."
-msgstr "Dagoeneko prozesatutako gune kopurua."
-
 #: src/Rest/NetworkSyncController.php:68
 msgid "Si los autores de las fichas reciben el rol Autor en el sitio principal. Si se omite, se usa la última elección."
 msgstr "Fitxen egileek gune nagusian Egilea rola jasotzen duten ala ez. Adierazten ez bada, azken aukera erabiltzen da."
@@ -1176,47 +1172,43 @@ msgstr "Sareko sinkronizazioak gune anitzeko sare baten gune nagusian soilik fun
 msgid "No tienes permiso para sincronizar las fichas de la red."
 msgstr "Ez duzu sareko fitxak sinkronizatzeko baimenik."
 
-#: src/Rest/NetworkSyncController.php:142
+#: src/Rest/NetworkSyncController.php:143
 msgid "Sitios procesados en este lote."
 msgstr "Sorta honetan prozesatutako guneak."
 
-#: src/Rest/NetworkSyncController.php:143
+#: src/Rest/NetworkSyncController.php:144
 msgid "Sitios de la red que se sincronizan."
 msgstr "Sinkronizatzen diren sareko guneak."
 
-#: src/Rest/NetworkSyncController.php:144
-msgid "Valor de offset del siguiente lote."
-msgstr "Hurrengo sortaren offset balioa."
-
-#: src/Rest/NetworkSyncController.php:148
+#: src/Rest/NetworkSyncController.php:150
 msgid "Si este es el último lote."
 msgstr "Hau azken sorta den ala ez."
 
-#: src/Rest/NetworkSyncController.php:150
+#: src/Rest/NetworkSyncController.php:152
 msgid "Fichas creadas."
 msgstr "Sortutako fitxak."
 
-#: src/Rest/NetworkSyncController.php:151
+#: src/Rest/NetworkSyncController.php:153
 msgid "Fichas actualizadas."
 msgstr "Eguneratutako fitxak."
 
-#: src/Rest/NetworkSyncController.php:152
+#: src/Rest/NetworkSyncController.php:154
 msgid "Fichas creadas a mano reutilizadas."
 msgstr "Berrerabilitako eskuz sortutako fitxak."
 
-#: src/Rest/NetworkSyncController.php:153
+#: src/Rest/NetworkSyncController.php:155
 msgid "Fichas omitidas porque están en la papelera."
 msgstr "Zakarrontzian daudelako saltatutako fitxak."
 
-#: src/Rest/NetworkSyncController.php:154
+#: src/Rest/NetworkSyncController.php:156
 msgid "Autores de fichas que han recibido el rol Autor en el sitio principal."
 msgstr "Gune nagusian Egilea rola jaso duten fitxen egileak."
 
-#: src/Rest/NetworkSyncController.php:158
+#: src/Rest/NetworkSyncController.php:160
 msgid "Fichas sincronizadas en este lote."
 msgstr "Sorta honetan sinkronizatutako fitxak."
 
-#: src/Rest/NetworkSyncController.php:195
+#: src/Rest/NetworkSyncController.php:197
 msgid "Fichas cuyo sitio de origen ya no existe (solo en el último lote)."
 msgstr "Jatorrizko gunerik jada ez duten fitxak (azken sortan soilik)."
 
@@ -1495,7 +1487,7 @@ msgid "Buscar centros"
 msgstr "Bilatu ikastetxeak"
 
 #. translators: %s: Number of schools found.
-#: src/Frontend/DirectoryStore.php:228
+#: src/Frontend/DirectoryStore.php:238
 #: templates/directorio.php:133
 #, php-format,js-format
 msgid "Resultados (%s centros)"
@@ -1610,8 +1602,8 @@ msgstr "Adib.: Euskara / Ingelesa"
 msgid "Ej: 2º Trimestre (Enero - Marzo)"
 msgstr "Adib.: 2. hiruhilekoa (urtarrila - martxoa)"
 
-#: src/Frontend/DirectoryStore.php:231
-#: src/Frontend/DirectoryStore.php:605
+#: src/Frontend/DirectoryStore.php:241
+#: src/Frontend/DirectoryStore.php:615
 #: templates/match-drawer.php:109
 msgid "Enviar propuesta"
 msgstr "Bidali proposamena"
@@ -1655,8 +1647,8 @@ msgid "No disponible actualmente"
 msgstr "Une honetan ez dago prest"
 
 #: src/Frontend/DirectorioShortcode.php:538
-#: src/Frontend/DirectoryStore.php:239
-#: src/Frontend/DirectoryStore.php:584
+#: src/Frontend/DirectoryStore.php:249
+#: src/Frontend/DirectoryStore.php:594
 #: templates/single-centro.php:77
 msgid "Extremadura"
 msgstr "Extremadura"
@@ -1725,41 +1717,41 @@ msgstr "Longitudea"
 msgid "Coordinación"
 msgstr "Koordinazioa"
 
-#: src/Frontend/DirectoryStore.php:230
+#: src/Frontend/DirectoryStore.php:240
 #: templates/directorio.php:209
 msgid "Ver perfil"
 msgstr "Ikusi profila"
 
-#: src/Frontend/DirectoryStore.php:237
-#: src/Frontend/DirectoryStore.php:600
+#: src/Frontend/DirectoryStore.php:247
+#: src/Frontend/DirectoryStore.php:610
 msgid "Añadir a favoritos"
 msgstr "Gehitu gogokoetara"
 
-#: src/Frontend/DirectoryStore.php:238
+#: src/Frontend/DirectoryStore.php:248
 msgid "Quitar de favoritos"
 msgstr "Kendu gogokoetatik"
 
-#: src/Frontend/DirectoryStore.php:232
+#: src/Frontend/DirectoryStore.php:242
 msgid "Enviando propuesta…"
 msgstr "Proposamena bidaltzen…"
 
-#: src/Frontend/DirectoryStore.php:233
+#: src/Frontend/DirectoryStore.php:243
 msgid "¡Propuesta enviada con éxito!"
 msgstr "Proposamena bidali da!"
 
-#: src/Frontend/DirectoryStore.php:234
+#: src/Frontend/DirectoryStore.php:244
 msgid "Debes iniciar sesión con tu cuenta de coordinador de centro para enviar propuestas de colaboración."
 msgstr "Ikastetxeko koordinatzaile-kontuarekin hasi behar duzu saioa lankidetza-proposamenak bidaltzeko."
 
-#: src/Frontend/DirectoryStore.php:235
+#: src/Frontend/DirectoryStore.php:245
 msgid "Tu cuenta actual no dispone de permisos de coordinador para proponer colaboraciones."
 msgstr "Zure uneko kontuak ez du lankidetzak proposatzeko koordinatzaile-baimenik."
 
-#: src/Frontend/DirectoryStore.php:236
+#: src/Frontend/DirectoryStore.php:246
 msgid "Por favor, selecciona tu centro escolar."
 msgstr "Hautatu zure ikastetxea."
 
-#: src/Frontend/DirectoryStore.php:229
+#: src/Frontend/DirectoryStore.php:239
 msgid "Ha ocurrido un error al procesar la solicitud."
 msgstr "Errore bat gertatu da eskaera prozesatzean."
 
@@ -1767,7 +1759,7 @@ msgstr "Errore bat gertatu da eskaera prozesatzean."
 msgid "Iniciar sesión"
 msgstr "Hasi saioa"
 
-#: src/Frontend/DirectoryStore.php:240
+#: src/Frontend/DirectoryStore.php:250
 msgid "Colaboradores de OpenStreetMap"
 msgstr "OpenStreetMap-en laguntzaileak"
 
@@ -1957,12 +1949,12 @@ msgid "¡Propuesta de match enviada con éxito! No se ha podido enviar el aviso 
 msgstr "Match proposamena bidali da! Ezin izan da abisua posta elektronikoz bidali, baina irrati hartzaileak bere Lankidetzak panelean ikusiko du."
 
 #. translators: 1: number of centros on the map, 2: number of results.
-#: src/Frontend/DirectoryStore.php:242
+#: src/Frontend/DirectoryStore.php:252
 #, js-format,php-format
 msgid "El mapa muestra %1$s de %2$s centros. Usa los filtros para acotar la búsqueda."
 msgstr "Mapak %2$s ikastetxetatik %1$s erakusten ditu. Erabili iragazkiak bilaketa zehazteko."
 
-#: src/Network/NetworkSync.php:214
+#: src/Network/NetworkSync.php:226
 msgid "Otra sincronización está actualizando la ficha de este sitio. Vuelve a sincronizar dentro de un momento."
 msgstr "Beste sinkronizazio bat gune honen fitxa eguneratzen ari da. Sinkronizatu berriro une bat barru."
 
@@ -2024,7 +2016,7 @@ msgstr "Eskola-irratiak sareta batean, irudiarekin, kokapenarekin, adinekin eta 
 msgid "Todavía no hay radios publicadas."
 msgstr "Oraindik ez dago irrati argitaraturik."
 
-#: src/Frontend/DirectoryStore.php:243
+#: src/Frontend/DirectoryStore.php:253
 msgid "Has retirado el consentimiento: el mapa ya no se carga."
 msgstr "Baimena kendu duzu: mapa ez da gehiago kargatzen."
 
@@ -2047,3 +2039,15 @@ msgstr "Kendu maparen baimena"
 #: src/Rest/ColaboracionesController.php:827
 msgid "Clave que identifica un envío: al repetirlo con la misma clave no se crea otra propuesta."
 msgstr "Bidalketa bat identifikatzen duen gakoa: gako berarekin errepikatzean ez da beste proposamenik sortzen."
+
+#: src/Rest/NetworkSyncController.php:59
+msgid "ID del último sitio procesado; 0 para empezar."
+msgstr "Prozesatutako azken gunearen IDa; 0 hasteko."
+
+#: src/Rest/NetworkSyncController.php:145
+msgid "Sitios de la red hasta el último procesado, para la barra de progreso."
+msgstr "Sareko guneak, prozesatutako azkenera arte, aurrerapen-barrarako."
+
+#: src/Rest/NetworkSyncController.php:146
+msgid "ID del último sitio procesado, que el siguiente lote recibe como after."
+msgstr "Prozesatutako azken gunearen IDa, hurrengo sortak after gisa jasotzen duena."

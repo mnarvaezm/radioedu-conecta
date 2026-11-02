@@ -22,7 +22,7 @@ defined( 'ABSPATH' ) || exit;
  * `POST /radioedu-conecta/v1/network-sync`: syncs one batch of network sites into fichas.
  *
  * Only on the main site of a multisite network, and only for users who can manage the network.
- * The network admin page calls it in a loop, passing the `next_offset` of each response.
+ * The network admin page calls it in a loop, passing the `next_after` of each response.
  */
 class NetworkSyncController extends WP_REST_Controller {
 
@@ -55,8 +55,8 @@ class NetworkSyncController extends WP_REST_Controller {
 					'callback'            => [ $this, 'create_item' ],
 					'permission_callback' => [ $this, 'create_item_permissions_check' ],
 					'args'                => [
-						'offset'            => [
-							'description'       => __( 'Número de sitios ya procesados.', 'radioedu-conecta' ),
+						'after'             => [
+							'description'       => __( 'ID del último sitio procesado; 0 para empezar.', 'radioedu-conecta' ),
 							'type'              => 'integer',
 							'required'          => false,
 							'default'           => 0,
@@ -100,21 +100,22 @@ class NetworkSyncController extends WP_REST_Controller {
 	/**
 	 * Syncs one batch of sites.
 	 *
-	 * The first batch (offset 0) stores the "give the Author role" choice for the next sync.
+	 * The first batch (after 0) stores the "give the Author role" choice for the next sync.
 	 *
 	 * @since 1.1
+	 * @since 1.2 Pages with `after`, the ID of the last site processed, instead of `offset`.
 	 *
 	 * @param WP_REST_Request $request Request.
 	 * @return WP_REST_Response Batch result.
 	 */
 	public function create_item( $request ): WP_REST_Response {
-		$offset = (int) $request->get_param( 'offset' );
-		$grant  = $request->has_param( 'grant_author_role' ) ? (bool) $request->get_param( 'grant_author_role' ) : NetworkSync::get_grant_author_role();
-		if ( 0 === $offset ) {
+		$after = (int) $request->get_param( 'after' );
+		$grant = $request->has_param( 'grant_author_role' ) ? (bool) $request->get_param( 'grant_author_role' ) : NetworkSync::get_grant_author_role();
+		if ( 0 === $after ) {
 			NetworkSync::set_grant_author_role( $grant );
 		}
 
-		return rest_ensure_response( NetworkSync::sync_batch( $offset, $grant ) );
+		return rest_ensure_response( NetworkSync::sync_batch( $after, $grant ) );
 	}
 
 	/**
@@ -141,7 +142,8 @@ class NetworkSyncController extends WP_REST_Controller {
 			'properties' => [
 				'processed'     => $count + [ 'description' => __( 'Sitios procesados en este lote.', 'radioedu-conecta' ) ],
 				'total'         => $count + [ 'description' => __( 'Sitios de la red que se sincronizan.', 'radioedu-conecta' ) ],
-				'next_offset'   => $count + [ 'description' => __( 'Valor de offset del siguiente lote.', 'radioedu-conecta' ) ],
+				'progress'      => $count + [ 'description' => __( 'Sitios de la red hasta el último procesado, para la barra de progreso.', 'radioedu-conecta' ) ],
+				'next_after'    => $count + [ 'description' => __( 'ID del último sitio procesado, que el siguiente lote recibe como after.', 'radioedu-conecta' ) ],
 				'done'          => [
 					'type'        => 'boolean',
 					'readonly'    => true,

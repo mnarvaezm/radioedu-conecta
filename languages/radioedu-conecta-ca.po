@@ -771,7 +771,7 @@ msgstr "Micròfon"
 msgid "Enviar"
 msgstr "Envia"
 
-#: src/Network/NetworkSync.php:449
+#: src/Network/NetworkSync.php:461
 msgid "El sitio no existe."
 msgstr "El lloc no existeix."
 
@@ -1160,10 +1160,6 @@ msgstr "Idiomes de treball del projecte."
 msgid "Fechas aproximadas del proyecto."
 msgstr "Dates aproximades del projecte."
 
-#: src/Rest/NetworkSyncController.php:59
-msgid "Número de sitios ya procesados."
-msgstr "Nombre de llocs ja processats."
-
 #: src/Rest/NetworkSyncController.php:68
 msgid "Si los autores de las fichas reciben el rol Autor en el sitio principal. Si se omite, se usa la última elección."
 msgstr "Si els autors de les fitxes reben el rol Autor al lloc principal. Si s'omet, s'utilitza l'última elecció."
@@ -1176,47 +1172,43 @@ msgstr "La sincronització de xarxa només funciona al lloc principal d'una xarx
 msgid "No tienes permiso para sincronizar las fichas de la red."
 msgstr "No tens permís per sincronitzar les fitxes de la xarxa."
 
-#: src/Rest/NetworkSyncController.php:142
+#: src/Rest/NetworkSyncController.php:143
 msgid "Sitios procesados en este lote."
 msgstr "Llocs processats en aquest lot."
 
-#: src/Rest/NetworkSyncController.php:143
+#: src/Rest/NetworkSyncController.php:144
 msgid "Sitios de la red que se sincronizan."
 msgstr "Llocs de la xarxa que se sincronitzen."
 
-#: src/Rest/NetworkSyncController.php:144
-msgid "Valor de offset del siguiente lote."
-msgstr "Valor d'offset del lot següent."
-
-#: src/Rest/NetworkSyncController.php:148
+#: src/Rest/NetworkSyncController.php:150
 msgid "Si este es el último lote."
 msgstr "Si aquest és l'últim lot."
 
-#: src/Rest/NetworkSyncController.php:150
+#: src/Rest/NetworkSyncController.php:152
 msgid "Fichas creadas."
 msgstr "Fitxes creades."
 
-#: src/Rest/NetworkSyncController.php:151
+#: src/Rest/NetworkSyncController.php:153
 msgid "Fichas actualizadas."
 msgstr "Fitxes actualitzades."
 
-#: src/Rest/NetworkSyncController.php:152
+#: src/Rest/NetworkSyncController.php:154
 msgid "Fichas creadas a mano reutilizadas."
 msgstr "Fitxes creades a mà reutilitzades."
 
-#: src/Rest/NetworkSyncController.php:153
+#: src/Rest/NetworkSyncController.php:155
 msgid "Fichas omitidas porque están en la papelera."
 msgstr "Fitxes omeses perquè són a la paperera."
 
-#: src/Rest/NetworkSyncController.php:154
+#: src/Rest/NetworkSyncController.php:156
 msgid "Autores de fichas que han recibido el rol Autor en el sitio principal."
 msgstr "Autors de fitxes que han rebut el rol Autor al lloc principal."
 
-#: src/Rest/NetworkSyncController.php:158
+#: src/Rest/NetworkSyncController.php:160
 msgid "Fichas sincronizadas en este lote."
 msgstr "Fitxes sincronitzades en aquest lot."
 
-#: src/Rest/NetworkSyncController.php:195
+#: src/Rest/NetworkSyncController.php:197
 msgid "Fichas cuyo sitio de origen ya no existe (solo en el último lote)."
 msgstr "Fitxes el lloc d'origen de les quals ja no existeix (només a l'últim lot)."
 
@@ -1495,7 +1487,7 @@ msgid "Buscar centros"
 msgstr "Cerca centres"
 
 #. translators: %s: Number of schools found.
-#: src/Frontend/DirectoryStore.php:228
+#: src/Frontend/DirectoryStore.php:238
 #: templates/directorio.php:133
 #, php-format,js-format
 msgid "Resultados (%s centros)"
@@ -1610,8 +1602,8 @@ msgstr "P. ex.: Català / Anglès"
 msgid "Ej: 2º Trimestre (Enero - Marzo)"
 msgstr "P. ex.: 2n trimestre (gener - març)"
 
-#: src/Frontend/DirectoryStore.php:231
-#: src/Frontend/DirectoryStore.php:605
+#: src/Frontend/DirectoryStore.php:241
+#: src/Frontend/DirectoryStore.php:615
 #: templates/match-drawer.php:109
 msgid "Enviar propuesta"
 msgstr "Envia la proposta"
@@ -1655,8 +1647,8 @@ msgid "No disponible actualmente"
 msgstr "No disponible actualment"
 
 #: src/Frontend/DirectorioShortcode.php:538
-#: src/Frontend/DirectoryStore.php:239
-#: src/Frontend/DirectoryStore.php:584
+#: src/Frontend/DirectoryStore.php:249
+#: src/Frontend/DirectoryStore.php:594
 #: templates/single-centro.php:77
 msgid "Extremadura"
 msgstr "Extremadura"
@@ -1725,41 +1717,41 @@ msgstr "Longitud"
 msgid "Coordinación"
 msgstr "Coordinació"
 
-#: src/Frontend/DirectoryStore.php:230
+#: src/Frontend/DirectoryStore.php:240
 #: templates/directorio.php:209
 msgid "Ver perfil"
 msgstr "Mostra el perfil"
 
-#: src/Frontend/DirectoryStore.php:237
-#: src/Frontend/DirectoryStore.php:600
+#: src/Frontend/DirectoryStore.php:247
+#: src/Frontend/DirectoryStore.php:610
 msgid "Añadir a favoritos"
 msgstr "Afegeix als preferits"
 
-#: src/Frontend/DirectoryStore.php:238
+#: src/Frontend/DirectoryStore.php:248
 msgid "Quitar de favoritos"
 msgstr "Treu dels preferits"
 
-#: src/Frontend/DirectoryStore.php:232
+#: src/Frontend/DirectoryStore.php:242
 msgid "Enviando propuesta…"
 msgstr "S'està enviant la proposta…"
 
-#: src/Frontend/DirectoryStore.php:233
+#: src/Frontend/DirectoryStore.php:243
 msgid "¡Propuesta enviada con éxito!"
 msgstr "S'ha enviat la proposta!"
 
-#: src/Frontend/DirectoryStore.php:234
+#: src/Frontend/DirectoryStore.php:244
 msgid "Debes iniciar sesión con tu cuenta de coordinador de centro para enviar propuestas de colaboración."
 msgstr "Has d'iniciar la sessió amb el teu compte de coordinador de centre per enviar propostes de col·laboració."
 
-#: src/Frontend/DirectoryStore.php:235
+#: src/Frontend/DirectoryStore.php:245
 msgid "Tu cuenta actual no dispone de permisos de coordinador para proponer colaboraciones."
 msgstr "El teu compte actual no té permisos de coordinador per proposar col·laboracions."
 
-#: src/Frontend/DirectoryStore.php:236
+#: src/Frontend/DirectoryStore.php:246
 msgid "Por favor, selecciona tu centro escolar."
 msgstr "Selecciona el teu centre escolar."
 
-#: src/Frontend/DirectoryStore.php:229
+#: src/Frontend/DirectoryStore.php:239
 msgid "Ha ocurrido un error al procesar la solicitud."
 msgstr "S'ha produït un error en processar la sol·licitud."
 
@@ -1767,7 +1759,7 @@ msgstr "S'ha produït un error en processar la sol·licitud."
 msgid "Iniciar sesión"
 msgstr "Inicia la sessió"
 
-#: src/Frontend/DirectoryStore.php:240
+#: src/Frontend/DirectoryStore.php:250
 msgid "Colaboradores de OpenStreetMap"
 msgstr "Col·laboradors d'OpenStreetMap"
 
@@ -1957,12 +1949,12 @@ msgid "¡Propuesta de match enviada con éxito! No se ha podido enviar el aviso 
 msgstr "S'ha enviat la proposta de match! No s'ha pogut enviar l'avís per correu, però l'emissora receptora la veurà al seu tauler de Col·laboracions."
 
 #. translators: 1: number of centros on the map, 2: number of results.
-#: src/Frontend/DirectoryStore.php:242
+#: src/Frontend/DirectoryStore.php:252
 #, js-format,php-format
 msgid "El mapa muestra %1$s de %2$s centros. Usa los filtros para acotar la búsqueda."
 msgstr "El mapa mostra %1$s de %2$s centres. Utilitza els filtres per acotar la cerca."
 
-#: src/Network/NetworkSync.php:214
+#: src/Network/NetworkSync.php:226
 msgid "Otra sincronización está actualizando la ficha de este sitio. Vuelve a sincronizar dentro de un momento."
 msgstr "Una altra sincronització està actualitzant la fitxa d'aquest lloc. Torna a sincronitzar d'aquí a una estona."
 
@@ -2024,7 +2016,7 @@ msgstr "Ràdios escolars en quadrícula, amb la seva imatge, ubicació, edats i 
 msgid "Todavía no hay radios publicadas."
 msgstr "Encara no hi ha ràdios publicades."
 
-#: src/Frontend/DirectoryStore.php:243
+#: src/Frontend/DirectoryStore.php:253
 msgid "Has retirado el consentimiento: el mapa ya no se carga."
 msgstr "Has retirat el consentiment: el mapa ja no es carrega."
 
@@ -2047,3 +2039,15 @@ msgstr "Retira el consentiment del mapa"
 #: src/Rest/ColaboracionesController.php:827
 msgid "Clave que identifica un envío: al repetirlo con la misma clave no se crea otra propuesta."
 msgstr "Clau que identifica un enviament: si es repeteix amb la mateixa clau, no es crea una altra proposta."
+
+#: src/Rest/NetworkSyncController.php:59
+msgid "ID del último sitio procesado; 0 para empezar."
+msgstr "ID de l'últim lloc processat; 0 per començar."
+
+#: src/Rest/NetworkSyncController.php:145
+msgid "Sitios de la red hasta el último procesado, para la barra de progreso."
+msgstr "Llocs de la xarxa fins a l'últim processat, per a la barra de progrés."
+
+#: src/Rest/NetworkSyncController.php:146
+msgid "ID del último sitio procesado, que el siguiente lote recibe como after."
+msgstr "ID de l'últim lloc processat, que el lot següent rep com a after."

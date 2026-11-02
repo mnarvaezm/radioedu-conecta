@@ -91,10 +91,10 @@ class NetworkSyncTest extends WP_UnitTestCase {
 	 * @return array<string, mixed>
 	 */
 	private function sync_all( bool $grant_author_role = true ): array {
-		$offset = 0;
+		$after = 0;
 		do {
-			$batch  = NetworkSync::sync_batch( $offset, $grant_author_role );
-			$offset = $batch['next_offset'];
+			$batch = NetworkSync::sync_batch( $after, $grant_author_role );
+			$after = $batch['next_after'];
 		} while ( ! $batch['done'] );
 
 		return $batch;
@@ -153,7 +153,7 @@ class NetworkSyncTest extends WP_UnitTestCase {
 		$this->site( 'Radio Elección', $first );
 
 		$request = new WP_REST_Request( 'POST', '/radioedu-conecta/v1/network-sync' );
-		$request->set_param( 'offset', 0 );
+		$request->set_param( 'after', 0 );
 		$request->set_param( 'grant_author_role', false );
 		$this->assertSame( 200, rest_do_request( $request )->get_status() );
 		$this->assertFalse( NetworkSync::get_grant_author_role() );
@@ -162,7 +162,7 @@ class NetworkSyncTest extends WP_UnitTestCase {
 		// Without the parameter, the stored choice (unchecked) applies.
 		$this->site( 'Radio Sin Parámetro', $second );
 		$omitted = new WP_REST_Request( 'POST', '/radioedu-conecta/v1/network-sync' );
-		$omitted->set_param( 'offset', 0 );
+		$omitted->set_param( 'after', 0 );
 		$this->assertSame( 0, rest_do_request( $omitted )->get_data()['authors_added'] );
 		$this->assertFalse( is_user_member_of_blog( $second, get_main_site_id() ) );
 	}
@@ -315,14 +315,37 @@ class NetworkSyncTest extends WP_UnitTestCase {
 		$batch = NetworkSync::sync_batch( 0 );
 		$this->assertSame( 1, $batch['processed'] );
 		$this->assertSame( 2, $batch['total'] );
-		$this->assertSame( 1, $batch['next_offset'] );
+		$this->assertSame( $first, $batch['next_after'] );
+		$this->assertSame( 1, $batch['progress'] );
 		$this->assertFalse( $batch['done'] );
 		$this->assertSame( [], $batch['missing'] );
 
-		$batch = NetworkSync::sync_batch( $batch['next_offset'] );
+		$batch = NetworkSync::sync_batch( $batch['next_after'] );
 		$this->assertTrue( $batch['done'] );
+		$this->assertSame( 2, $batch['progress'] );
 		$this->assertNotNull( $this->ficha_of( $first ) );
 		$this->assertNotNull( $this->ficha_of( $second ) );
+	}
+
+	public function test_a_site_deleted_between_batches_does_not_skip_another(): void {
+		add_filter( 'radioedu_conecta_network_sync_batch_size', static fn (): int => 1 );
+		$first  = $this->site( 'Radio Primera', $this->teacher() );
+		$second = $this->site( 'Radio Segunda', $this->teacher() );
+		$third  = $this->site( 'Radio Tercera', $this->teacher() );
+
+		$batch = NetworkSync::sync_batch( 0 );
+		$this->assertSame( [ $first ], array_column( $batch['synced'], 'blog_id' ) );
+
+		// With an offset, the next batch would start at the second site left, the third one.
+		wp_delete_site( $first );
+		$batch = NetworkSync::sync_batch( $batch['next_after'] );
+		$this->assertSame( [ $second ], array_column( $batch['synced'], 'blog_id' ) );
+		$this->assertFalse( $batch['done'] );
+
+		$batch = NetworkSync::sync_batch( $batch['next_after'] );
+		$this->assertSame( [ $third ], array_column( $batch['synced'], 'blog_id' ) );
+		$this->assertTrue( $batch['done'] );
+		$this->assertSame( 2, $batch['total'] );
 	}
 
 	public function test_batch_size_is_clamped(): void {
@@ -344,7 +367,7 @@ class NetworkSyncTest extends WP_UnitTestCase {
 	public function test_rest_endpoint_is_only_for_network_administrators_on_the_main_site(): void {
 		$this->site( 'Radio REST', $this->teacher() );
 		$request = new WP_REST_Request( 'POST', '/radioedu-conecta/v1/network-sync' );
-		$request->set_param( 'offset', 0 );
+		$request->set_param( 'after', 0 );
 
 		$site_admin = self::factory()->user->create( [ 'role' => 'administrator' ] );
 		wp_set_current_user( $site_admin );
