@@ -110,7 +110,7 @@ vendor/bin/phpunit --group uninstall                    # desinstalación real, 
 WP_MULTISITE=1 vendor/bin/phpunit --group uninstall     # desinstalación real en una red
 npm ci && npm run lint:js && npm run lint:css
 npm run build && git diff --exit-code -- build/   # build/ versionado y al día
-npx playwright install chromium && npm run wp-env start && npm run test:e2e   # E2E en http://localhost:8889
+npx playwright install chromium && npm run wp-env start && npm run test:e2e   # E2E en http://localhost:8889 (WordPress 7.1.4, fijado en .wp-env.json)
 npm audit --audit-level=high && composer audit
 ```
 

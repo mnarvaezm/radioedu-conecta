@@ -85,7 +85,7 @@ Pruebas de extremo a extremo (Playwright) en un sitio desechable con [`wp-env`](
 
 ```bash
 npx playwright install chromium
-npm run wp-env start   # sitio de pruebas en http://localhost:8889 (admin / password)
+npm run wp-env start   # sitio de pruebas en http://localhost:8889 (admin / password), con WordPress 7.1.4
 npm run test:e2e
 ```
 
