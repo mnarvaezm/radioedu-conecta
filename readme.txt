@@ -115,6 +115,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * A proposal sent again after a network error or a timeout is no longer stored, notified or counted twice.
 * On the "Colaboraciones (Matches)" screen, a reply that is too long is rejected with a notice, as in REST, instead of being cut short; line breaks count as one character.
 * The directory filters load at most 1,000 terms, and uninstall deletes terms in batches.
+* If the database does not allow creating or updating the proposals table, the administrator sees it in a notice on the plugin screens and in Tools -> Site Health, with what to check. Before, only the debug log said so.
 * The network sync advances by site ID instead of by offset: a site deleted or created during the sync no longer makes another one skipped.
 * Developers: `POST /colaboraciones` accepts `idempotency_key` and answers `repetida`; the browser favourites key comes in the store config (`favoritesKey`). `POST /network-sync` takes `after` (the ID of the last site processed) instead of `offset`, and answers `next_after` and `progress` instead of `next_offset`.
 

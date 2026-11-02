@@ -2051,3 +2051,23 @@ msgstr "Sitios da rede ata o último procesado, para a barra de progreso."
 #: src/Rest/NetworkSyncController.php:146
 msgid "ID del último sitio procesado, que el siguiente lote recibe como after."
 msgstr "ID do último sitio procesado, que o seguinte lote recibe como after."
+
+#: src/Admin/SchemaHealth.php:92
+msgid "Tabla de propuestas de RadioEdu Conecta"
+msgstr "Táboa de propostas de RadioEdu Conecta"
+
+#: src/Admin/SchemaHealth.php:111
+msgid "La tabla de propuestas de RadioEdu Conecta está al día"
+msgstr "A táboa de propostas de RadioEdu Conecta está ao día"
+
+#: src/Admin/SchemaHealth.php:112
+msgid "La tabla de propuestas de RadioEdu Conecta no está al día"
+msgstr "A táboa de propostas de RadioEdu Conecta non está ao día"
+
+#: src/Admin/SchemaHealth.php:120
+msgid "La tabla de propuestas de colaboración tiene todas las columnas e índices que usa el plugin."
+msgstr "A táboa de propostas de colaboración ten todas as columnas e índices que usa o plugin."
+
+#: src/Admin/SchemaHealth.php:136
+msgid "RadioEdu Conecta no ha podido crear o actualizar la tabla de propuestas de colaboración en la base de datos, y puede que las propuestas no se guarden. Comprueba que el usuario de la base de datos tiene permiso para crear y modificar tablas (CREATE y ALTER). El plugin lo vuelve a intentar cada 5 minutos."
+msgstr "RadioEdu Conecta non puido crear nin actualizar a táboa de propostas de colaboración na base de datos, e pode que as propostas non se garden. Comproba que o usuario da base de datos ten permiso para crear e modificar táboas (CREATE e ALTER). O plugin volve intentalo cada 5 minutos."

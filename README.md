@@ -134,6 +134,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * Una propuesta que se vuelve a enviar tras un error de red o un tiempo de espera ya no se guarda, se notifica ni se cuenta dos veces.
 * En **Colaboraciones (Matches)**, una respuesta demasiado larga se rechaza con un aviso, como en la REST, en lugar de cortarse; los saltos de línea cuentan como un carácter.
 * Los filtros del directorio cargan como mucho 1.000 términos, y la desinstalación borra los términos por lotes.
+* Si la base de datos no permite crear o actualizar la tabla de propuestas, el administrador lo ve en un aviso en las pantallas del plugin y en **Herramientas → Salud del sitio**, con lo que debe revisar. Antes solo quedaba en el registro de depuración.
 * La sincronización de red avanza por ID de sitio en lugar de por desplazamiento: un sitio borrado o creado durante la sincronización ya no hace que se salte otro.
 * Desarrolladores: `POST /colaboraciones` acepta `idempotency_key` y responde `repetida`; la clave de favoritos del navegador llega en la configuración del store (`favoritesKey`). `POST /network-sync` recibe `after` (ID del último sitio procesado) en lugar de `offset`, y responde `next_after` y `progress` en lugar de `next_offset`.
 

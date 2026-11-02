@@ -71,6 +71,7 @@ c:\radioedu-conecta\
 │   │   ├── CentroEditorPanel.php        # Loads the centro sidebar panels of the block editor (build/centro-panel.js)
 │   │   ├── CentroMetaBoxes.php          # Classic-editor meta box for the same fields (__back_compat_meta_box)
 │   │   ├── NetworkSyncPage.php          # Network Admin → Settings → RadioEdu Conecta (sync button, build/network-sync.js)
+│   │   ├── SchemaHealth.php             # Notice and Site Health test when the proposals table could not be created or updated
 │   │   ├── ColaboracionesAdminPage.php  # Admin panel to view, accept, or decline match proposals
 │   │   ├── DemoDataImporter.php         # Demo stations importer & synchronizer (6 sample stations + images)
 │   │   └── Settings.php                 # WordPress Settings API options (map defaults, notification flags, demo sync)
@@ -270,7 +271,7 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
     KEY estado (estado)
 ) {$charset_collate};
 ```
-* **Schema updates:** `create_table()` saves `radioedu_conecta_db_version` only after `SHOW COLUMNS` confirms every column the plugin uses and `SHOW INDEX` confirms every index (dbDelta() adds a column and its index in separate statements, and the second can fail on its own). If the database refuses the DDL, the version stays behind and `Plugin::maybe_update_db_schema()` retries on a later request, at most every 5 minutes (`radioedu_conecta_schema_retry` transient).
+* **Schema updates:** `create_table()` saves `radioedu_conecta_db_version` only after `SHOW COLUMNS` confirms every column the plugin uses and `SHOW INDEX` confirms every index (dbDelta() adds a column and its index in separate statements, and the second can fail on its own). If the database refuses the DDL, the version stays behind and `Plugin::maybe_update_db_schema()` retries on a later request, at most every 5 minutes (`radioedu_conecta_schema_retry` transient). Meanwhile `SchemaHealth` (since 1.2) tells the administrator: a dismissible error notice on the plugin screens for users with `manage_options`, based on the saved version, and a Site Health test (`radioedu_conecta_schema`) that checks the real columns and indexes and reports `critical` until they are complete.
 * **Who answered:** `usuario_respuesta_id` (since schema 1.0.3) records the account that accepted or declined the proposal, so the reply can be exported and erased for that person. Older replies keep 0.
 
 ---

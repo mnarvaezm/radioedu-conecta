@@ -14,6 +14,7 @@ use RadioEdu\Conecta\Admin\CentroMetaBoxes;
 use RadioEdu\Conecta\Admin\ColaboracionesAdminPage;
 use RadioEdu\Conecta\Admin\DemoDataImporter;
 use RadioEdu\Conecta\Admin\NetworkSyncPage;
+use RadioEdu\Conecta\Admin\SchemaHealth;
 use RadioEdu\Conecta\Admin\Settings;
 use RadioEdu\Conecta\Capabilities\CentroLimit;
 use RadioEdu\Conecta\Capabilities\RoleCapabilities;
@@ -93,6 +94,7 @@ final class Plugin {
 			CentroEditorPanel::register();
 			CentroMetaBoxes::register();
 			ColaboracionesAdminPage::register();
+			SchemaHealth::register();
 			Settings::register();
 			DemoDataImporter::register();
 			if ( is_multisite() ) {
