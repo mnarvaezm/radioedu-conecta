@@ -173,7 +173,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 == Upgrade Notice ==
 
 = 1.2 =
-The directory now uses the WordPress Interactivity API, renders its first page on the server and works without JavaScript; Leaflet loads only after the map is accepted. Adds a Block Bindings source with the public data of each station and a "Listado de radios" pattern. Declares an Update URI (distributed outside WordPress.org) and is tested on PHP 8.1 to 8.5.
+Directory rebuilt on the Interactivity API: rendered on the server, works without JavaScript, map loaded only after consent. Adds a Block Bindings source, a "Listado de radios" pattern and several hardening fixes. Distributed outside WordPress.org (Update URI); tested on PHP 8.1 to 8.5.
 
 = 1.1 =
 Requires WordPress 7.1. Adds the directory block, SVG icons and editor sidebar panels for school data. Demo content is no longer created on activation; import it from RadioEdu Centros -> Ajustes.
