@@ -565,7 +565,7 @@ La 1.2 se desarrolla en la rama `feat/1.2`:
 
 **Derivado de las correcciones:**
 
-- Automatizar la prueba de desinstalación de F-20 en un entorno desechable.
+- Automatizar la prueba de desinstalación de F-20 en un entorno desechable: hecho en la 1.2 (`e5c7891`). Es una prueba de PHPUnit que se ejecuta en su propio proceso (`--group uninstall`), en sitio único y en una red, y la CI la ejecuta en cada combinación de la matriz.
 - Avisar en el escritorio cuando falla la migración (F-04): hecho en la 1.2 (`fbfd1ec`), con un aviso y una prueba de Salud del sitio.
 - Crear una herramienta para revisar las respuestas sin autor anteriores a 1.1 (F-01).
 - Fusionar de forma asistida las fichas duplicadas que ya existan (F-19).
