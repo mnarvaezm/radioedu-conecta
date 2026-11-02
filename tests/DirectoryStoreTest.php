@@ -233,8 +233,10 @@ class DirectoryStoreTest extends WP_UnitTestCase {
 		}
 	}
 
-	public function test_profile_directives_leave_the_description_untouched(): void {
-		$description = '<p data-wp-interactive="radioedu-conecta/directorio" data-wp-text="state.drawer.receptorLabel">Written by the coordinator</p>';
+	public function test_the_profile_description_cannot_use_the_plugin_store(): void {
+		$description = '<fieldset class="trap" data-wp-interactive="radioedu-conecta/directorio" data-wp-on--mouseover="actions.submitProposal">'
+			. '<p data-wp-text="state.drawer.receptorLabel">Written by the coordinator</p></fieldset>'
+			. '<figure data-wp-interactive="core/image" data-wp-context="{}"><img src="https://example.org/a.png" alt=""></figure>';
 		$center      = $this->centros( 1, [ 'post_title' => 'Radio Perfil' ] )[0];
 		$this->go_to( get_permalink( $center ) );
 
@@ -244,10 +246,28 @@ class DirectoryStoreTest extends WP_UnitTestCase {
 			$html = DirectorioShortcode::render_single_centro_profile( $description );
 		}
 
-		// The coordinator's markup arrives as written, after the plugin's own directives ran.
-		$this->assertStringContainsString( $description, $html );
+		$tags = new WP_HTML_Tag_Processor( $html );
+		$this->assertTrue( $tags->next_tag( [ 'class_name' => 'trap' ] ) );
+		// Without the region of a plugin store, the directive left inside names no store.
+		$this->assertNull( $tags->get_attribute( 'data-wp-interactive' ) );
+		$this->assertSame( 'actions.submitProposal', $tags->get_attribute( 'data-wp-on--mouseover' ) );
+		// The server does not run the directives the description keeps, and core blocks keep theirs.
+		$this->assertStringContainsString( '<p data-wp-text="state.drawer.receptorLabel">Written by the coordinator</p>', $html );
+		$this->assertStringContainsString( '<figure data-wp-interactive="core/image" data-wp-context="{}">', $html );
 		$this->assertStringContainsString( 'value="Radio Perfil"', $html );
 		$this->assertStringNotContainsString( 'radioedu-conecta-description-', $html );
+	}
+
+	public function test_directives_naming_a_plugin_store_are_removed_in_every_form(): void {
+		$html = '<div data-wp-interactive=\'{"namespace":"radioedu-conecta/directorio"}\'>'
+			. '<button data-wp-on--click="RadioEdu-Conecta/directorio::actions.openDrawer" data-wp-context="radioedu-conecta/directorio::{&quot;centro&quot;:{&quot;id&quot;:5}}">A</button>'
+			. '<span data-wp-text="core/router::state.url" data-wp-bind--title="radioedu-conecta/otro::state.x">B</span></div>';
+
+		$clean = DirectoryStore::remove_store_directives( $html );
+
+		$this->assertStringNotContainsStringIgnoringCase( 'radioedu', $clean );
+		$this->assertStringContainsString( 'data-wp-text="core/router::state.url"', $clean );
+		$this->assertSame( 'Plain <b>text</b>', DirectoryStore::remove_store_directives( 'Plain <b>text</b>' ) );
 	}
 
 	public function test_the_module_is_registered_from_the_build(): void {

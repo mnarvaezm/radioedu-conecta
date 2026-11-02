@@ -12,6 +12,7 @@ namespace RadioEdu\Conecta\Frontend;
 use RadioEdu\Conecta\Admin\Settings;
 use RadioEdu\Conecta\Rest\CentrosController;
 use RadioEdu\Conecta\Taxonomies\TaxonomiesRegistrar;
+use WP_HTML_Tag_Processor;
 use WP_REST_Request;
 
 defined( 'ABSPATH' ) || exit;
@@ -452,6 +453,46 @@ final class DirectoryStore {
 			[ '%22', '%27', '%28', '%29', '%5C', '%20' ],
 			$url
 		);
+	}
+
+	/**
+	 * Removes the directives that use one of the plugin's stores from markup it did not write.
+	 *
+	 * The kses filters keep data-* attributes, so a station description can carry directives, and
+	 * the client runtime runs every interactive region of the page, not only the plugin's. Without the
+	 * directives that name a store of the plugin, the description cannot open the proposal panel
+	 * or act on the directory. Core blocks keep their own directives (core/image, for example).
+	 *
+	 * @since 1.2
+	 *
+	 * @param string $html Rendered markup.
+	 * @return string The markup without those directives.
+	 */
+	public static function remove_store_directives( string $html ): string {
+		if ( false === stripos( $html, 'data-wp-' ) ) {
+			return $html;
+		}
+
+		$prefix = 'radioedu-conecta/'; // Every store of the plugin.
+		$tags   = new WP_HTML_Tag_Processor( $html );
+		while ( $tags->next_tag() ) {
+			foreach ( $tags->get_attribute_names_with_prefix( 'data-wp-' ) ?? [] as $name ) {
+				$value = $tags->get_attribute( $name );
+				if ( ! is_string( $value ) ) {
+					continue;
+				}
+				// The namespace of data-wp-interactive may come as JSON, where it can be escaped.
+				if ( 'data-wp-interactive' === $name && str_starts_with( ltrim( $value ), '{' ) ) {
+					$decoded = json_decode( $value, true );
+					$value  .= is_array( $decoded ) && is_string( $decoded['namespace'] ?? null ) ? ' ' . $decoded['namespace'] : '';
+				}
+				if ( false !== stripos( $value, $prefix ) ) {
+					$tags->remove_attribute( $name );
+				}
+			}
+		}
+
+		return $tags->get_updated_html();
 	}
 
 	/**

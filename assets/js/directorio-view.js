@@ -554,6 +554,32 @@ function focusDrawer() {
 	( field || panel ).focus();
 }
 
+/**
+ * Finds the station a proposal may be addressed to.
+ *
+ * The client runtime also runs directives written in content the plugin does not control, such
+ * as a station description, and those can set any context. The receiver must therefore be a card
+ * of the results or the station of the profile, and its name comes from the server state.
+ *
+ * @param {number} id Station ID given by the context.
+ * @return {?{id: number, label: string}} Receiver, or null when the server did not list it.
+ */
+function proposalReceiver( id ) {
+	if ( ! id ) {
+		return null;
+	}
+	const centro = state.centros.find( ( item ) => item.id === id );
+	if ( centro ) {
+		return {
+			id,
+			label:
+				String( centro.nombre || '' ) +
+				( centro.ubicacion ? ' (' + centro.ubicacion + ')' : '' ),
+		};
+	}
+	return id === profileReceiver.id ? profileReceiver : null;
+}
+
 const { state, actions } = store( NAMESPACE, {
 	state: {
 		// Only what the server never sets: a value given here overrides the server state.
@@ -727,6 +753,12 @@ const { state, actions } = store( NAMESPACE, {
 
 		openDrawer() {
 			const { centro } = getContext();
+			const receiver = proposalReceiver(
+				Number( centro && centro.id ) || 0
+			);
+			if ( ! receiver ) {
+				return;
+			}
 			const { isLoggedIn, canPropose } = config();
 			const { drawer } = state;
 			runtime.drawerSession++;
@@ -734,10 +766,8 @@ const { state, actions } = store( NAMESPACE, {
 			runtime.lastFocused = getElement().ref;
 
 			drawer.isSubmitting = false;
-			drawer.receptorId = Number( centro.id ) || 0;
-			drawer.receptorLabel =
-				String( centro.nombre || '' ) +
-				( centro.ubicacion ? ' (' + centro.ubicacion + ')' : '' );
+			drawer.receptorId = receiver.id;
+			drawer.receptorLabel = receiver.label;
 
 			// Without a session or the capability the panel opens with a notice instead of an alert().
 			let blocked = '';
@@ -789,6 +819,17 @@ const { state, actions } = store( NAMESPACE, {
 
 		submitProposal: withSyncEvent( function* ( event ) {
 			event.preventDefault();
+			// Only the panel's own form, when it is submitted. Directives in a description can call
+			// this action on any event, but cannot add a form: kses removes it for authors without
+			// unfiltered_html.
+			const form = event.target;
+			if (
+				event.type !== 'submit' ||
+				! ( form instanceof window.HTMLFormElement ) ||
+				form.id !== 'radioedu-match-form'
+			) {
+				return;
+			}
 			const { drawer } = state;
 			const { isLoggedIn, canPropose, restUrl, restNonce } = config();
 			if (
@@ -800,7 +841,6 @@ const { state, actions } = store( NAMESPACE, {
 				return;
 			}
 
-			const form = event.target;
 			const fields = form.elements;
 			const sender = fields.namedItem( 'centro_emisor_id' );
 			const emisorId = sender ? Number( sender.value ) : 0;
@@ -973,3 +1013,9 @@ if ( state.drawer.receptorId === undefined ) {
 if ( state.drawer.receptorLabel === undefined ) {
 	state.drawer.receptorLabel = '';
 }
+
+// The receiver the server preselected on a profile, kept before the panel changes the state.
+const profileReceiver = {
+	id: Number( state.drawer.receptorId ) || 0,
+	label: String( state.drawer.receptorLabel ),
+};

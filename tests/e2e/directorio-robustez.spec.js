@@ -261,6 +261,134 @@ test.describe( 'Directorio: robustez', () => {
 		).toBeEnabled();
 	} );
 
+	test( 'las directivas escritas en el contenido no usan el store del plugin', async ( {
+		page,
+		requestUtils,
+	} ) => {
+		const posted = [];
+		await page.route(
+			'**/radioedu-conecta/v1/colaboraciones**',
+			async ( route ) => {
+				if ( 'POST' !== route.request().method() ) {
+					return route.continue();
+				}
+				posted.push( route.request().postDataJSON() );
+				await route.fulfill( {
+					status: 201,
+					contentType: 'application/json',
+					body: JSON.stringify( { success: true, id: 999 } ),
+				} );
+			}
+		);
+
+		// A hover over the fieldset would send a proposal, and the button would open the panel
+		// for a listed station under another name.
+		const store = 'data-wp-interactive="radioedu-conecta/directorio"';
+		const trap =
+			`<fieldset id="trap" ${ store } data-wp-on--mouseover="actions.submitProposal" style="padding:120px;border:0">` +
+			`<textarea name="centro_emisor_id" style="display:none">${ centroIds[ 1 ] }</textarea>` +
+			'<textarea name="idea_proyecto" style="display:none">Idea que nadie ha escrito</textarea></fieldset>';
+		const spoof =
+			`<button id="spoof" ${ store } data-wp-context='{"centro":{"id":${ centroIds[ 0 ] },"nombre":"Nombre falso"}}' ` +
+			'data-wp-on--mouseover="actions.openDrawer" style="padding:40px">Pasa el ratón</button>';
+		const centro = await requestUtils.rest( {
+			method: 'POST',
+			path: '/wp/v2/centros',
+			data: {
+				title: 'Radio E2E con directivas',
+				status: 'publish',
+				content: trap,
+			},
+		} );
+		const pageWithTraps = await requestUtils.rest( {
+			method: 'POST',
+			path: '/wp/v2/pages',
+			data: {
+				title: 'Directorio E2E con directivas',
+				status: 'publish',
+				content: `<!-- wp:radioedu-conecta/directorio /-->${ spoof }${ trap }`,
+			},
+		} );
+
+		// Requests are routed in the order they leave, so once the proposal sent through the
+		// panel is in, one sent earlier by a hover would be in as well.
+		const ideas = () => posted.map( ( item ) => item.idea_proyecto );
+		const sendRealProposal = async ( idea ) => {
+			await expect(
+				page.locator( '#radioedu-match-drawer' )
+			).toHaveClass( /is-open/ );
+			const receiver = await page
+				.locator( '#radioedu-match-receptor' )
+				.inputValue();
+			const sender = page.locator( 'select#radioedu-match-emisor' );
+			if ( await sender.count() ) {
+				const options = await sender
+					.locator( 'option' )
+					.evaluateAll(
+						( nodes, skip ) =>
+							nodes
+								.map( ( node ) => node.value )
+								.filter( ( value ) => value && value !== skip ),
+						receiver
+					);
+				await sender.selectOption( options[ 0 ] );
+			}
+			await page.fill( '#radioedu-match-idea', idea );
+			await page.click( '#radioedu-btn-submit-match' );
+			await expect.poll( ideas ).toContain( idea );
+			await page.click( '#radioedu-btn-close-drawer' );
+		};
+
+		try {
+			// The profile description loses the region of the plugin store.
+			await page.goto( centro.link );
+			const match = page.locator( '#radioedu-single-btn-match' );
+			await expect( match ).toBeVisible();
+			await expect( page.locator( '#trap' ) ).not.toHaveAttribute(
+				'data-wp-interactive',
+				/.*/
+			);
+			await page.locator( '#trap' ).hover( { position: { x: 5, y: 5 } } );
+			await match.click();
+			await sendRealProposal( 'Propuesta desde la ficha' );
+			expect( ideas() ).toEqual( [ 'Propuesta desde la ficha' ] );
+
+			// Next to the directory the directives stay, but the store ignores them.
+			await page.goto( pageWithTraps.link );
+			const card = page.locator( '.radioedu-card', {
+				hasText: `${ PREFIX } 02`,
+			} );
+			await expect( card.locator( '.radioedu-btn-match' ) ).toBeVisible();
+			await page.locator( '#spoof' ).hover();
+			await expect(
+				page.locator( '#radioedu-match-receptor-txt' )
+			).toHaveValue( new RegExp( `^${ PREFIX } 01` ) );
+			await page.mouse.move( 5, 5 );
+			await page.keyboard.press( 'Escape' );
+			await expect(
+				page.locator( '#radioedu-match-drawer' )
+			).toBeHidden();
+			await page.locator( '#trap' ).hover( { position: { x: 5, y: 5 } } );
+			await card.locator( '.radioedu-btn-match' ).click();
+			await sendRealProposal( 'Propuesta desde el directorio' );
+			expect( ideas() ).toEqual( [
+				'Propuesta desde la ficha',
+				'Propuesta desde el directorio',
+			] );
+		} finally {
+			await requestUtils.rest( {
+				method: 'DELETE',
+				path: `/wp/v2/pages/${ pageWithTraps.id }`,
+				params: { force: true },
+			} );
+			await requestUtils.rest( {
+				method: 'DELETE',
+				path: `/wp/v2/centros/${ centro.id }`,
+				params: { force: true },
+			} );
+		}
+	} );
+
 	test( 'a 320 px de ancho no hay desplazamiento horizontal', async ( {
 		page,
 	} ) => {

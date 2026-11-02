@@ -541,7 +541,8 @@ class DirectorioShortcode {
 
 		// The coordinator writes the description, and kses keeps data-* attributes, so it could
 		// carry directives. It goes in after the directives are processed, outside any
-		// interactive region of the template.
+		// interactive region of the template, and without the directives that name a plugin
+		// store, which the client runtime would otherwise run.
 		$description_slot = '<!-- radioedu-conecta-description-' . wp_generate_uuid4() . ' -->';
 		$login_url        = wp_login_url( (string) get_permalink( $post_id ) );
 
@@ -549,7 +550,7 @@ class DirectorioShortcode {
 		include RADIOEDU_CONECTA_DIR . 'templates/single-centro.php';
 		$html = wp_interactivity_process_directives( (string) ob_get_clean() );
 
-		return str_replace( $description_slot, $content, $html );
+		return str_replace( $description_slot, DirectoryStore::remove_store_directives( $content ), $html );
 	}
 
 	/**
