@@ -18,6 +18,7 @@ use RadioEdu\Conecta\Admin\Settings;
 use RadioEdu\Conecta\Capabilities\CentroLimit;
 use RadioEdu\Conecta\Capabilities\RoleCapabilities;
 use RadioEdu\Conecta\Database\ColaboracionesTable;
+use RadioEdu\Conecta\Frontend\CentroBindings;
 use RadioEdu\Conecta\Frontend\DirectorioShortcode;
 use RadioEdu\Conecta\PostTypes\CentroMeta;
 use RadioEdu\Conecta\PostTypes\CentroPostType;
@@ -104,6 +105,8 @@ final class Plugin {
 
 		// 6. Registrar Shortcodes y Assets del Front-end.
 		DirectorioShortcode::register();
+		// Block Bindings source with the public data of a station, and the pattern that lists stations.
+		CentroBindings::register();
 
 		// 7. Ciclo de vida Multisite: aprovisionar sitios nuevos y borrar la tabla propia al eliminar un sitio.
 		if ( is_multisite() ) {

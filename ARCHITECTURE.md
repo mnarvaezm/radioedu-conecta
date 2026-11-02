@@ -83,6 +83,7 @@ c:\radioedu-conecta\
 │   │   └── NotificationService.php      # wp_mail() notification pipeline for proposals and match responses
 │   ├── Frontend/
 │   │   ├── DirectorioShortcode.php      # Shortcode [radioedu_directorio], block radioedu-conecta/directorio (render callback), single profile filter & assets
+│   │   ├── CentroBindings.php           # Block Bindings source radioedu-conecta/centro (public station data) and pattern "Listado de radios"
 │   │   └── DirectoryStore.php           # Interactivity API store radioedu-conecta/directorio: module, config, server state, URL search, derived closures
 │   ├── PostTypes/
 │   │   ├── CentroPostType.php           # Custom Post Type registration (`radioedu_centro`)
@@ -373,6 +374,14 @@ CREATE TABLE {$wpdb->prefix}radioedu_colaboraciones (
 1. Registered from [blocks/directorio/block.json](file:///c:/radioedu-conecta/blocks/directorio/block.json) by `DirectorioShortcode::register_block()`, which only adds the PHP `render_callback`. block.json holds the title, description, keywords (translated with the `radioedu-conecta` text domain and the "block title", "block description" and "block keyword" contexts), the `widgets` category, the `microphone` icon, the supports and the style. With `supports.autoRegister` (WordPress 7.0+) core registers the block in the editor and previews it with ServerSideRender, so the plugin ships no editor JavaScript.
 2. `render_block()` wraps the directory markup in `get_block_wrapper_attributes()` (align `wide`/`full`) and leaves its directives to WordPress, because block.json declares `supports.interactivity.interactive`; the shortcode processes them itself. `"multiple": false` because the directory markup uses fixed IDs.
 3. The block.json `style` (handle `radioedu-directorio-css`) loads `directorio.css` in the editor iframe; front-end assets are registered on `init` and enqueued in the `<head>` when the post contains the block or the shortcode. The shortcode `[radioedu_directorio]` remains supported.
+
+### 7.3.1 Block Bindings Source (`radioedu-conecta/centro`)
+1. `CentroBindings::register_source()` registers the source on `init`, with the `postId` and `postType` context. The station meta is protected (keys start with `_`), and the core `core/post-meta` source refuses protected meta, so the plugin needs its own source.
+2. A binding names one of `CentroBindings::KEYS` in its `key` argument: `name`, `location`, `flag`, `ages`, `languages`, `tags`, `availability`, `podcast_url`, `website_url`, `logo_url`, `cover_url`, `profile_url`. These are the public data of the cards and the profile; the coordinator's name and email are not keys. An unknown key, an attribute outside text, URL, alt and title, or a text key bound to a URL returns `null`, which leaves the attribute as saved.
+3. A value is given only for a station the visitor can see: the same checks as `core/post-meta` (publicly viewable post or `read_post`, no password). Rich text values are escaped with `esc_html()` (core then runs `wp_kses_post()`); values set as HTML attributes go as plain text, which core escapes; URLs keep only `http` and `https` (`esc_url_raw()`), whatever attribute they fill.
+4. `CentroBindings::hide_empty_block()` (`render_block`) removes a bound block whose text or URL comes out empty, so a station without a podcast shows no button and no empty paragraph or image, and removes a Buttons block whose bound buttons were all removed. It only acts on blocks bound to this source.
+5. WordPress only sends the editor the label of a source registered in PHP, so bound blocks show "Datos de la radio" in the editor and the real values on the site.
+6. The pattern `radioedu-conecta/listado-radios` ("Listado de radios", category Query) is a query loop of stations in a grid of three, with the cover image, title, location, ages and a podcast button bound to the source. The profile itself does not use the source: it keeps its PHP template (section 3.3).
 
 ### 7.4 SVG Icons (WordPress 7.1 Icons API)
 1. UI icons come from `wp_get_icon()`: the core `core/*` collection when WordPress ships a suitable icon, and the plugin collection `radioedu-conecta` (registered in `Icons::register()` from `assets/icons/*.svg`) for the rest: close, globe, graduation, headphones, institution, map, microphone, send.

@@ -1495,7 +1495,7 @@ msgid "Buscar centros"
 msgstr "Cerca centres"
 
 #. translators: %s: Number of schools found.
-#: src/Frontend/DirectoryStore.php:226
+#: src/Frontend/DirectoryStore.php:227
 #: templates/directorio.php:133
 #, php-format,js-format
 msgid "Resultados (%s centros)"
@@ -1610,8 +1610,8 @@ msgstr "P. ex.: Català / Anglès"
 msgid "Ej: 2º Trimestre (Enero - Marzo)"
 msgstr "P. ex.: 2n trimestre (gener - març)"
 
-#: src/Frontend/DirectoryStore.php:229
-#: src/Frontend/DirectoryStore.php:542
+#: src/Frontend/DirectoryStore.php:230
+#: src/Frontend/DirectoryStore.php:583
 #: templates/match-drawer.php:109
 msgid "Enviar propuesta"
 msgstr "Envia la proposta"
@@ -1644,17 +1644,19 @@ msgstr "Desenvolupeu junts el vostre projecte!"
 msgid "Volver al directorio Traspasando Fronteras"
 msgstr "Torna al directori Traspasando Fronteras"
 
+#: src/Frontend/CentroBindings.php:249
 #: templates/single-centro.php:53
 msgid "Disponible para colaborar"
 msgstr "Disponible per col·laborar"
 
+#: src/Frontend/CentroBindings.php:250
 #: templates/single-centro.php:55
 msgid "No disponible actualmente"
 msgstr "No disponible actualment"
 
 #: src/Frontend/DirectorioShortcode.php:538
-#: src/Frontend/DirectoryStore.php:237
-#: src/Frontend/DirectoryStore.php:521
+#: src/Frontend/DirectoryStore.php:238
+#: src/Frontend/DirectoryStore.php:562
 #: templates/single-centro.php:77
 msgid "Extremadura"
 msgstr "Extremadura"
@@ -1673,6 +1675,7 @@ msgstr "Proposa un match"
 msgid "No disponible"
 msgstr "No disponible"
 
+#: src/Frontend/CentroBindings.php:324
 #: templates/single-centro.php:137
 msgid "Escuchar Podcast / Emisora"
 msgstr "Escolta el pòdcast / l'emissora"
@@ -1722,41 +1725,41 @@ msgstr "Longitud"
 msgid "Coordinación"
 msgstr "Coordinació"
 
-#: src/Frontend/DirectoryStore.php:228
+#: src/Frontend/DirectoryStore.php:229
 #: templates/directorio.php:202
 msgid "Ver perfil"
 msgstr "Mostra el perfil"
 
-#: src/Frontend/DirectoryStore.php:235
-#: src/Frontend/DirectoryStore.php:537
+#: src/Frontend/DirectoryStore.php:236
+#: src/Frontend/DirectoryStore.php:578
 msgid "Añadir a favoritos"
 msgstr "Afegeix als preferits"
 
-#: src/Frontend/DirectoryStore.php:236
+#: src/Frontend/DirectoryStore.php:237
 msgid "Quitar de favoritos"
 msgstr "Treu dels preferits"
 
-#: src/Frontend/DirectoryStore.php:230
+#: src/Frontend/DirectoryStore.php:231
 msgid "Enviando propuesta…"
 msgstr "S'està enviant la proposta…"
 
-#: src/Frontend/DirectoryStore.php:231
+#: src/Frontend/DirectoryStore.php:232
 msgid "¡Propuesta enviada con éxito!"
 msgstr "S'ha enviat la proposta!"
 
-#: src/Frontend/DirectoryStore.php:232
+#: src/Frontend/DirectoryStore.php:233
 msgid "Debes iniciar sesión con tu cuenta de coordinador de centro para enviar propuestas de colaboración."
 msgstr "Has d'iniciar la sessió amb el teu compte de coordinador de centre per enviar propostes de col·laboració."
 
-#: src/Frontend/DirectoryStore.php:233
+#: src/Frontend/DirectoryStore.php:234
 msgid "Tu cuenta actual no dispone de permisos de coordinador para proponer colaboraciones."
 msgstr "El teu compte actual no té permisos de coordinador per proposar col·laboracions."
 
-#: src/Frontend/DirectoryStore.php:234
+#: src/Frontend/DirectoryStore.php:235
 msgid "Por favor, selecciona tu centro escolar."
 msgstr "Selecciona el teu centre escolar."
 
-#: src/Frontend/DirectoryStore.php:227
+#: src/Frontend/DirectoryStore.php:228
 msgid "Ha ocurrido un error al procesar la solicitud."
 msgstr "S'ha produït un error en processar la sol·licitud."
 
@@ -1764,7 +1767,7 @@ msgstr "S'ha produït un error en processar la sol·licitud."
 msgid "Iniciar sesión"
 msgstr "Inicia la sessió"
 
-#: src/Frontend/DirectoryStore.php:238
+#: src/Frontend/DirectoryStore.php:239
 msgid "Colaboradores de OpenStreetMap"
 msgstr "Col·laboradors d'OpenStreetMap"
 
@@ -1954,7 +1957,7 @@ msgid "¡Propuesta de match enviada con éxito! No se ha podido enviar el aviso 
 msgstr "S'ha enviat la proposta de match! No s'ha pogut enviar l'avís per correu, però l'emissora receptora la veurà al seu tauler de Col·laboracions."
 
 #. translators: 1: number of centros on the map, 2: number of results.
-#: src/Frontend/DirectoryStore.php:240
+#: src/Frontend/DirectoryStore.php:241
 #, js-format,php-format
 msgid "El mapa muestra %1$s de %2$s centros. Usa los filtros para acotar la búsqueda."
 msgstr "El mapa mostra %1$s de %2$s centres. Utilitza els filtres per acotar la cerca."
@@ -2004,3 +2007,19 @@ msgstr "Pàgines de resultats"
 #: templates/directorio.php:215
 msgid "Centros anteriores"
 msgstr "Centres anteriors"
+
+#: src/Frontend/CentroBindings.php:125
+msgid "Datos de la radio"
+msgstr "Dades de la ràdio"
+
+#: src/Frontend/CentroBindings.php:306
+msgid "Listado de radios"
+msgstr "Llista de ràdios"
+
+#: src/Frontend/CentroBindings.php:307
+msgid "Radios escolares en cuadrícula, con su imagen, ubicación, edades y podcast."
+msgstr "Ràdios escolars en quadrícula, amb la seva imatge, ubicació, edats i pòdcast."
+
+#: src/Frontend/CentroBindings.php:330
+msgid "Todavía no hay radios publicadas."
+msgstr "Encara no hi ha ràdios publicades."

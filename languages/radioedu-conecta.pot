@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-01T20:54:07+00:00\n"
+"POT-Creation-Date: 2026-11-02T01:49:59+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: radioedu-conecta\n"
@@ -735,6 +735,37 @@ msgstr ""
 msgid "RadioEdu Conecta - Traspasando Fronteras"
 msgstr ""
 
+#: src/Frontend/CentroBindings.php:125
+msgid "Datos de la radio"
+msgstr ""
+
+#: src/Frontend/CentroBindings.php:249
+#: templates/single-centro.php:53
+msgid "Disponible para colaborar"
+msgstr ""
+
+#: src/Frontend/CentroBindings.php:250
+#: templates/single-centro.php:55
+msgid "No disponible actualmente"
+msgstr ""
+
+#: src/Frontend/CentroBindings.php:306
+msgid "Listado de radios"
+msgstr ""
+
+#: src/Frontend/CentroBindings.php:307
+msgid "Radios escolares en cuadrícula, con su imagen, ubicación, edades y podcast."
+msgstr ""
+
+#: src/Frontend/CentroBindings.php:324
+#: templates/single-centro.php:137
+msgid "Escuchar Podcast / Emisora"
+msgstr ""
+
+#: src/Frontend/CentroBindings.php:330
+msgid "Todavía no hay radios publicadas."
+msgstr ""
+
 #: src/Frontend/DirectorioShortcode.php:83
 msgid "Ficha de centro de radio"
 msgstr ""
@@ -744,69 +775,69 @@ msgid "Perfil público de un centro: cabecera y pie del tema alrededor de la fic
 msgstr ""
 
 #: src/Frontend/DirectorioShortcode.php:538
-#: src/Frontend/DirectoryStore.php:237
-#: src/Frontend/DirectoryStore.php:521
+#: src/Frontend/DirectoryStore.php:238
+#: src/Frontend/DirectoryStore.php:562
 #: templates/single-centro.php:77
 msgid "Extremadura"
 msgstr ""
 
 #. translators: %s: Number of schools found.
-#: src/Frontend/DirectoryStore.php:226
+#: src/Frontend/DirectoryStore.php:227
 #: templates/directorio.php:133
 #, php-format
 msgid "Resultados (%s centros)"
 msgstr ""
 
-#: src/Frontend/DirectoryStore.php:227
+#: src/Frontend/DirectoryStore.php:228
 msgid "Ha ocurrido un error al procesar la solicitud."
 msgstr ""
 
-#: src/Frontend/DirectoryStore.php:228
+#: src/Frontend/DirectoryStore.php:229
 #: templates/directorio.php:202
 msgid "Ver perfil"
 msgstr ""
 
-#: src/Frontend/DirectoryStore.php:229
-#: src/Frontend/DirectoryStore.php:542
+#: src/Frontend/DirectoryStore.php:230
+#: src/Frontend/DirectoryStore.php:583
 #: templates/match-drawer.php:109
 msgid "Enviar propuesta"
 msgstr ""
 
-#: src/Frontend/DirectoryStore.php:230
+#: src/Frontend/DirectoryStore.php:231
 msgid "Enviando propuesta…"
 msgstr ""
 
-#: src/Frontend/DirectoryStore.php:231
+#: src/Frontend/DirectoryStore.php:232
 msgid "¡Propuesta enviada con éxito!"
 msgstr ""
 
-#: src/Frontend/DirectoryStore.php:232
+#: src/Frontend/DirectoryStore.php:233
 msgid "Debes iniciar sesión con tu cuenta de coordinador de centro para enviar propuestas de colaboración."
 msgstr ""
 
-#: src/Frontend/DirectoryStore.php:233
+#: src/Frontend/DirectoryStore.php:234
 msgid "Tu cuenta actual no dispone de permisos de coordinador para proponer colaboraciones."
 msgstr ""
 
-#: src/Frontend/DirectoryStore.php:234
+#: src/Frontend/DirectoryStore.php:235
 msgid "Por favor, selecciona tu centro escolar."
 msgstr ""
 
-#: src/Frontend/DirectoryStore.php:235
-#: src/Frontend/DirectoryStore.php:537
+#: src/Frontend/DirectoryStore.php:236
+#: src/Frontend/DirectoryStore.php:578
 msgid "Añadir a favoritos"
 msgstr ""
 
-#: src/Frontend/DirectoryStore.php:236
+#: src/Frontend/DirectoryStore.php:237
 msgid "Quitar de favoritos"
 msgstr ""
 
-#: src/Frontend/DirectoryStore.php:238
+#: src/Frontend/DirectoryStore.php:239
 msgid "Colaboradores de OpenStreetMap"
 msgstr ""
 
 #. translators: 1: number of centros on the map, 2: number of results.
-#: src/Frontend/DirectoryStore.php:240
+#: src/Frontend/DirectoryStore.php:241
 #, php-format
 msgid "El mapa muestra %1$s de %2$s centros. Usa los filtros para acotar la búsqueda."
 msgstr ""
@@ -1769,20 +1800,8 @@ msgstr ""
 msgid "Volver al directorio Traspasando Fronteras"
 msgstr ""
 
-#: templates/single-centro.php:53
-msgid "Disponible para colaborar"
-msgstr ""
-
-#: templates/single-centro.php:55
-msgid "No disponible actualmente"
-msgstr ""
-
 #: templates/single-centro.php:109
 msgid "Idiomas de trabajo"
-msgstr ""
-
-#: templates/single-centro.php:137
-msgid "Escuchar Podcast / Emisora"
 msgstr ""
 
 #: templates/single-centro.php:143

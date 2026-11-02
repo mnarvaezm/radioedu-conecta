@@ -108,6 +108,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 * Leaflet is downloaded only when the visitor accepts the map, not on every visit to the directory. It now comes from npm (`leaflet` 1.9.4).
 * Developers: `window.radioeduConectaData` and the `radioedu-directorio-js` and `radioedu-leaflet-js` handles are gone. The module is `radioedu-conecta/directorio`; its config and state live in the `radioedu-conecta/directorio` store namespace.
 * The centros REST endpoint returns names, places and tags as plain text: a station with an apostrophe or an "&" in its name no longer shows `&#8217;` or `&amp;` on its card.
+* New Block Bindings source "Datos de la radio" (`radioedu-conecta/centro`): paragraphs, headings, images and buttons can show the public data of a station (location, ages, languages, tags, availability, podcast, website, logo, cover image and profile link), never the coordinator's. A block whose value is empty is not shown. New "Listado de radios" pattern for the Query Loop block, which lists the stations with that data.
 
 = 1.1 =
 * Requires WordPress 7.1.
@@ -163,7 +164,7 @@ Yes. Both the directory cards and each station's profile page include the "Propo
 == Upgrade Notice ==
 
 = 1.2 =
-The directory now uses the WordPress Interactivity API, renders its first page on the server and works without JavaScript; Leaflet loads only after the map is accepted. Declares an Update URI (distributed outside WordPress.org) and is tested on PHP 8.1 to 8.5.
+The directory now uses the WordPress Interactivity API, renders its first page on the server and works without JavaScript; Leaflet loads only after the map is accepted. Adds a Block Bindings source with the public data of each station and a "Listado de radios" pattern. Declares an Update URI (distributed outside WordPress.org) and is tested on PHP 8.1 to 8.5.
 
 = 1.1 =
 Requires WordPress 7.1. Adds the directory block, SVG icons and editor sidebar panels for school data. Demo content is no longer created on activation; import it from RadioEdu Centros -> Ajustes.

@@ -127,6 +127,7 @@ No. Por privacidad y cumplimiento RGPD, las direcciones de email nunca se expone
 * Leaflet se descarga solo cuando el visitante acepta el mapa, no en cada visita al directorio. Ahora se instala desde npm (`leaflet` 1.9.4).
 * Desarrolladores: desaparecen `window.radioeduConectaData` y los handles `radioedu-directorio-js` y `radioedu-leaflet-js`. El módulo es `radioedu-conecta/directorio`, y su configuración y su estado se leen con `getConfig()` y `store()` del espacio de nombres `radioedu-conecta/directorio`.
 * La REST de centros devuelve el nombre, la ubicación y las etiquetas como texto plano: una emisora con un apóstrofo o un «&» en el nombre ya no muestra `&#8217;` o `&amp;` en su tarjeta.
+* Nueva fuente de Block Bindings **Datos de la radio** (`radioedu-conecta/centro`): los párrafos, títulos, imágenes y botones pueden mostrar los datos públicos de una radio (ubicación, edades, idiomas, etiquetas, disponibilidad, podcast, web, logo, imagen de cabecera y enlace a la ficha), nunca los del coordinador. Un bloque cuyo dato está vacío no se muestra. Nuevo patrón **Listado de radios** para el bloque Bucle de consulta, que lista las radios con esos datos.
 
 ### 1.1
 * Requiere WordPress 7.1.
