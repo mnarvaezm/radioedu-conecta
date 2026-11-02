@@ -604,13 +604,14 @@ class DirectorioShortcode {
 
 		$user_centers_list = self::user_centers();
 
-		// Terms of each filter, for its selector and to check the filters in the URL.
+		// Terms of each filter, for its selector and to check the filters in the URL, with a ceiling.
 		$filter_terms = [];
 		foreach ( DirectoryStore::FILTER_PARAMS as $param => $taxonomy ) {
 			$found                  = get_terms(
 				[
 					'taxonomy'   => $taxonomy,
 					'hide_empty' => false,
+					'number'     => DirectoryStore::MAX_FILTER_TERMS,
 				]
 			);
 			$filter_terms[ $param ] = is_array( $found ) ? array_values( $found ) : [];

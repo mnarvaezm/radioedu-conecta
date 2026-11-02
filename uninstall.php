@@ -73,19 +73,25 @@ function radioedu_conecta_uninstall_single_site(): void {
 
 	// 3. Eliminar los términos de las 5 taxonomías del plugin y la caché de jerarquía del core.
 	foreach ( array_keys( $taxonomies ) as $taxonomy ) {
-		$term_ids = get_terms(
-			[
-				'taxonomy'   => $taxonomy,
-				'hide_empty' => false,
-				'fields'     => 'ids',
-			]
-		);
-
-		if ( is_array( $term_ids ) ) {
-			foreach ( $term_ids as $term_id ) {
-				wp_delete_term( (int) $term_id, $taxonomy );
+		// In batches of 100, so a large network does not load every term at once. A batch in
+		// which nothing could be deleted ends the loop.
+		do {
+			$term_ids = get_terms(
+				[
+					'taxonomy'   => $taxonomy,
+					'hide_empty' => false,
+					'fields'     => 'ids',
+					'number'     => 100,
+					'orderby'    => 'term_id',
+				]
+			);
+			$deleted  = 0;
+			foreach ( is_array( $term_ids ) ? $term_ids : [] as $term_id ) {
+				if ( true === wp_delete_term( (int) $term_id, $taxonomy ) ) {
+					++$deleted;
+				}
 			}
-		}
+		} while ( $deleted > 0 );
 
 		delete_option( $taxonomy . '_children' );
 	}

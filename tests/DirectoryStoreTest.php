@@ -270,6 +270,21 @@ class DirectoryStoreTest extends WP_UnitTestCase {
 		$this->assertSame( 'Plain <b>text</b>', DirectoryStore::remove_store_directives( 'Plain <b>text</b>' ) );
 	}
 
+	public function test_the_filters_load_their_terms_with_a_ceiling(): void {
+		$numbers = [];
+		$capture = static function ( array $args, array $taxonomies ) use ( &$numbers ): array {
+			$numbers[ implode( ',', $taxonomies ) ] = $args['number'];
+			return $args;
+		};
+		add_filter( 'get_terms_args', $capture, 10, 2 );
+		DirectorioShortcode::render_shortcode();
+		remove_filter( 'get_terms_args', $capture );
+
+		foreach ( DirectoryStore::FILTER_PARAMS as $taxonomy ) {
+			$this->assertSame( DirectoryStore::MAX_FILTER_TERMS, $numbers[ $taxonomy ] ?? null, $taxonomy );
+		}
+	}
+
 	public function test_each_site_of_a_network_keeps_its_own_favourites(): void {
 		// A single site, and the main site of a network, keep the key favourites were saved under.
 		$this->assertSame( 'radioedu_favoritos', DirectoryStore::config()['favoritesKey'] );

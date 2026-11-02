@@ -51,6 +51,16 @@ final class DirectoryStore {
 	public const PER_PAGE = 24;
 
 	/**
+	 * Most terms a filter of the directory lists and accepts from the URL.
+	 *
+	 * A safety ceiling for every render: the largest filter, the places, holds one term per town
+	 * of the network, well under it.
+	 *
+	 * @since 1.2
+	 */
+	public const MAX_FILTER_TERMS = 1000;
+
+	/**
 	 * Sort orders the REST endpoint accepts; the first one is the default.
 	 *
 	 * @since 1.2
