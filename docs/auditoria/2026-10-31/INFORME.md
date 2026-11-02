@@ -554,21 +554,20 @@ La 1.2 se desarrolla en la rama `feat/1.2`:
   - Carga reducida del mapa, `prefers-reduced-motion` y prueba con lector de pantalla: parcial. Desde la 1.2, Leaflet solo se descarga cuando el visitante acepta el mapa, y se respeta `prefers-reduced-motion` (`5c6ae72`). Sigue pendiente la prueba con lector de pantalla.
   - Respuestas demasiado largas en el escritorio, que se truncan en vez de rechazarse: hecha en la 1.2 (`0e7411a`).
   - Paginación de términos en el render y en la desinstalación: hecha en la 1.2 (`7d16234`), con un tope de 1.000 términos por filtro y lotes de 100 al desinstalar. No se han movido tareas a segundo plano.
-  - Entorno y CI reproducibles, y revisión de `bin/install-wp-tests.sh`: parcial. En la 1.2 se corrigió que no instalara las pruebas de una versión x.y.0 (`b78f548`). Los cuatro puntos de la auditoría se corrigieron después (`94be5be`):
+  - Entorno y CI reproducibles, y revisión de `bin/install-wp-tests.sh`: hecho en la 1.2. En la 1.2 se corrigió que no instalara las pruebas de una versión x.y.0 (`b78f548`). Los cuatro puntos de la auditoría se corrigieron después (`94be5be`):
     - todo por HTTPS;
     - comprobación SHA-1 de los archivos de wordpress.org;
     - rutas entre comillas;
     - reinstalación cuando cambia la versión.
 
-    También se escapan los datos de la base de datos. Queda fijar versiones: `wp-env` usa la última versión de WordPress (`"core": null`) y las acciones de la CI van por versión mayor (`@v4`), no por commit.
+    También se escapan los datos de la base de datos. `wp-env` instala WordPress 7.1.4 (`5bb9cb8`) y no la última versión. Las acciones de la CI siguen por versión mayor (`@v4`), no por commit, por decisión del responsable.
   - Más E2E: parcial. Las pruebas de navegador de este seguimiento ya están en `tests/e2e`: mapa, filtros y paginación, panel de propuesta, 320 px y sin JavaScript. Faltan envío y respuesta reales de propuestas, errores y reintentos, privacidad, cupo de radios y sincronización de red.
 
 **Derivado de las correcciones:**
 
 - Automatizar la prueba de desinstalación de F-20 en un entorno desechable: hecho en la 1.2 (`e5c7891`). Es una prueba de PHPUnit que se ejecuta en su propio proceso (`--group uninstall`), en sitio único y en una red, y la CI la ejecuta en cada combinación de la matriz.
 - Avisar en el escritorio cuando falla la migración (F-04): hecho en la 1.2 (`fbfd1ec`), con un aviso y una prueba de Salud del sitio.
-- Crear una herramienta para revisar las respuestas sin autor anteriores a 1.1 (F-01).
-- Fusionar de forma asistida las fichas duplicadas que ya existan (F-19).
+- Crear una herramienta para revisar las respuestas sin autor anteriores a 1.1 (F-01) y fusionar de forma asistida las fichas duplicadas que ya existan (F-19): cerradas sin hacer, por decisión del responsable. El plugin no se ha instalado en ningún sitio, así que no hay respuestas anteriores a la 1.1 ni fichas duplicadas por sincronizaciones simultáneas, y la 1.1 ya impide que se creen.
 - Revisar el plazo de conservación de propuestas con el responsable del tratamiento (F-22).
 - Incorporar las conclusiones finales de la segunda revisión cuando termine, y adaptar su prueba del bloqueo al diseño de R-02.
 
