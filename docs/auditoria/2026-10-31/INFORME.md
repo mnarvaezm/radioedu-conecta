@@ -520,6 +520,15 @@ La 1.2 se desarrolla en la rama `feat/1.2`:
 - **Distribución** (`a7871de`). El plugin no se publicará en WordPress.org, así que declara `Update URI`, como pide AGENTS.md §1. Plugin Check marca esa cabecera con `plugin_updater_detected`, y solo ese código se ignora, en la CI y en el protocolo de pruebas. `Contributors` del readme queda como dato informativo.
 - **Versión 1.2** (`4f1ed4f`).
 - **Interactivity API.** El directorio y el panel de propuesta pasan a ser un *store* de la Interactivity API. El servidor renderiza la primera página de resultados, así que el directorio funciona sin JavaScript: busca por GET y pagina con enlaces. Leaflet se descarga solo al aceptar el mapa, lo que cubre parte de la recomendación de carga reducida. Antes, la REST de centros pasa a devolver los nombres sin entidades HTML.
+- **Directivas en el contenido** (`10f93aa`). Fallo introducido por esa reescritura y corregido antes de publicarla:
+  - **Causa.** El runtime del navegador hidrata toda región `data-wp-interactive` de la página, y kses conserva los atributos `data-*`.
+  - **Ataque.** Un coordinador sin `unfiltered_html` podía poner en la descripción de su ficha un `<fieldset>` con `data-wp-on--mouseover="actions.submitProposal"` y un `<textarea name="centro_emisor_id">`.
+  - **Efecto.** Otro coordinador enviaba una propuesta desde su radio solo con pasar el ratón por encima. Si el autor la aceptaba, recibía su contacto. Se reprodujo en QA con dos autores y el envío interceptado.
+  - **Defensas.**
+    - La descripción de la ficha pierde las directivas que nombran un *store* del plugin.
+    - El envío solo sale de un `submit` del formulario del panel, y kses elimina `<form>` del contenido de esos autores.
+    - El panel solo se abre para una radio que el servidor ha listado, con el nombre que dio el servidor.
+  - **Pruebas.** Una E2E cubre la ficha y una entrada con el directorio, y falla con el código anterior.
 
 ### Pendiente
 
